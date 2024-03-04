@@ -36,14 +36,12 @@ public class ParseTagResult {
         return this.bounds != null;
     }
 
-    public Tag<Tags.Node, Number> getNode(){
-        return this.node;
+    public Tag getTag(){
+        if(this.isNode()) return this.node;
+        if(this.isAdress()) return this.adress;
+        if(this.isBounds()) return this.bounds;
+        return null;
     }
-    public Tag<Tags.Adress, String> getAdress(){
-        return this.adress;
-    }
-    public Tag<Tags.Bounds, BigDecimal> getBounds(){
-        return this.bounds;
-    }
+
 
 }

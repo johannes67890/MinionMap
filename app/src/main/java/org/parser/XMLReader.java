@@ -5,12 +5,16 @@ import javax.xml.stream.events.XMLEvent;
 
 import java.io.FileInputStream;
 import java.util.ArrayList;
+import org.Tags;
+
+import java.math.BigDecimal;
+
 
 public class XMLReader {
     XMLEventReader eventReader; 
     XMLEvent event;
 
-    public ParseTagResult bound = new ParseTagResult();
+    public Tag<Tags.Bounds, BigDecimal> bound = new Tag<Tags.Bounds, BigDecimal>();
     public ArrayList<ParseTagResult> nodes = new ArrayList<ParseTagResult>();
     public ArrayList<ParseTagResult> adresses = new ArrayList<ParseTagResult>();
     
@@ -20,18 +24,24 @@ public class XMLReader {
             this.eventReader = factory.createXMLEventReader(new FileInputStream(filename.getFilePath()));
 
             while (eventReader.hasNext()) {
-                ParseTagResult tag = Tag.parseTag(eventReader);
+                Tag tag = Tag.parseTag(eventReader);
 
-                if(tag.isNode()) nodes.add(tag);
-                if(tag.isAdress()) adresses.add(tag);
-                if(tag.isNode()) this.bound = tag;
+                if(!tag.isEmpty()) {
+                   if(tag.getType().containsKey(Tags.Bounds.class)) {
+                       this.bound = tag;
+                    } else if(tag.getType().containsKey(Tags.Node.class)) {
+                        nodes.add(ParseTagResult.fromNodeTag(tag));
+                    } else if(tag.getType().containsKey(Tags.Adress.class)) {
+                        adresses.add(ParseTagResult.fromAdressTag(tag));
+                    }
+                }
             }
             
-
+            
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        
         new XMLParser(this);
 
     }

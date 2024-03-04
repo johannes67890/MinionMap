@@ -7,8 +7,10 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
-
+import java.lang.reflect.*;
 import org.Tags;
+
+import com.google.common.graph.ElementOrder.Type;
 
 public class Tag<K,V> {
     private HashMap<K,V> tag = new HashMap<K,V>();
@@ -19,17 +21,15 @@ public class Tag<K,V> {
         this.tag = map;
     }
 
-    static public ParseTagResult parseTag(XMLEventReader eventReader) {
+    static public Tag parseTag(XMLEventReader eventReader) {
         try {
             XMLEvent event = eventReader.nextEvent();
 
-            if(!isStartTag(event)) return new ParseTagResult();
+            if(!isStartTag(event)) return new Tag();
 
             switch (getTagName(event)) {
                 case "bounds": 
-                    Tag<Tags.Bounds, BigDecimal> bounds = new Tag<Tags.Bounds, BigDecimal>();
-                    bounds.tag = setBounds(event);
-                    return ParseTagResult.fromBoundsTag(bounds);
+                    return new Tag<Tags.Bounds, BigDecimal>(setBounds(event));
                 case "node": 
                     Tag<Tags.Node, Number> node = new Tag<Tags.Node, Number>();
                     node.tag = setNode(event);
@@ -45,9 +45,9 @@ public class Tag<K,V> {
                         });
 
                         adress.tag.putAll(setAdress(eventReader));
-                        return ParseTagResult.fromAdressTag(adress);  
+                        return new Tag<Tags.Adress, String>(adress.tag);  
                     } else {
-                        return ParseTagResult.fromNodeTag(node);
+                        return node;
                     }
                 // case "way": break;
                 default:
@@ -56,13 +56,14 @@ public class Tag<K,V> {
         } catch (Exception e) {
         e.printStackTrace();
         }
-        return new ParseTagResult();
+        return new Tag<>();
     }
 
     @Override
     public String toString() {
         return this.tag.toString();
     }
+
     /**
      * The the current tag. Returns null if the tag is empty.
      * 
@@ -70,6 +71,22 @@ public class Tag<K,V> {
      */
     public HashMap<K,V> getTag() {
         return !this.tag.isEmpty() ? tag : null;
+    }
+
+    public HashMap<Class<?>, V> getType() {
+        HashMap<Class<?>, V> type = new HashMap<Class<?>, V>();
+        
+        if(this.tag.isEmpty()) return null;
+
+        this.tag.forEach((key, value) -> {
+            type.put(key.getClass(), value);
+        });
+
+        return type;
+    }
+
+    public boolean isEmpty() {
+        return this.tag.isEmpty();
     }
 
     static private String getTagName(XMLEvent event) {
