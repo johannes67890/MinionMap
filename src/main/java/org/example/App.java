@@ -18,7 +18,7 @@ public class App {
     public static void main(String[] args) {
         System.out.println(new App().getGreeting());
         // new XMLReader(FileDistributer.test_input);
-        new XMLReader(FileDistributer.test_input);
+        new XMLReader(FileDistributer.input);
         // new XMLWriter("C:\\Users\\johan\\projectTest\\app\\src\\main\\resources\\testMap.xml", "C:\\Users\\johan\\projectTest\\app\\src\\main\\resources\\out.xml");
     }
 }

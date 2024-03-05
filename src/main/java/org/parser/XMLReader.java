@@ -15,8 +15,8 @@ public class XMLReader {
     XMLEvent event;
 
     public TagBound bound = new TagBound();
-    public ArrayList<ParseTagResult> nodes = new ArrayList<ParseTagResult>();
-    public ArrayList<ParseTagResult> adresses = new ArrayList<ParseTagResult>();
+    public ArrayList<TagNode> nodes = new ArrayList<TagNode>();
+    public ArrayList<TagAdress> adresses = new ArrayList<TagAdress>();
     
     public XMLReader(FileDistributer filename) {
         try {
@@ -25,20 +25,16 @@ public class XMLReader {
 
             while (eventReader.hasNext()) {
                 Tag tag = Tag.parseTag(eventReader);
-
+                
                 if(!tag.isEmpty()) {
+                    System.out.println(tag);
                     if(tag.isBounds()) {
                         this.bound = (TagBound) tag;
                     } else if(tag.isNode()) {
-                        nodes.add(ParseTagResult.fromNodeTag(tag));
+                        nodes.add((TagNode) tag);
                     } else if(tag.isAdress()) {
-                        adresses.add(ParseTagResult.fromAdressTag(tag));
+                        adresses.add((TagAdress) tag);
                     }
-                    // } else if(tag.getType().containsKey(Tags.Node.class)) {
-                    //     nodes.add(ParseTagResult.fromNodeTag(tag));
-                    // } else if(tag.getType().containsKey(Tags.Adress.class)) {
-                    //     adresses.add(ParseTagResult.fromAdressTag(tag));
-                    // }
                 }
             }
             

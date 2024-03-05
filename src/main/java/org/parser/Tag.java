@@ -1,17 +1,10 @@
 package org.parser;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 
-import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
-import java.lang.reflect.*;
-import org.Tags;
 
-import com.google.common.graph.ElementOrder.Type;
-import com.google.common.math.BigDecimalMath;
 
 public class Tag<K,V> {
     private HashMap<K ,V> tag = new HashMap<K,V>();
@@ -32,23 +25,9 @@ public class Tag<K,V> {
                 case "bounds": 
                     return new TagBound(event);
                 case "node": 
-
-                    Tag<Tags.Node, Number> node = new Tag<Tags.Node, Number>();
-                    node.tag = setNode(event);
-                    
-                    // If there is children tags in the node tag, then it is an adress tag.
+                    // If there is children tags in the node tag, then it is an adress tag.    
                     if(isStartTag(eventReader.nextTag(), "tag")){
-                        
-                        Tag<Tags.Adress, String> adress = new Tag<Tags.Adress, String>();
-                        // Grab all the tags in the node tag. and convert them to a adress tag.
-                        node.tag.forEach((key, value) -> {
-                            Tags.Adress adressKey = Tags.convert(key);
-                            String adressValue = value.toString();
-                            adress.tag.put(adressKey, adressValue);
-                        });
-
-                        adress.tag.putAll(setAdress(eventReader));
-                        return new Tag<Tags.Adress, String>(adress.tag);  
+                        return new TagAdress(event, eventReader);                         
                     } else {
                         return new TagNode(event);
                     }
@@ -59,7 +38,7 @@ public class Tag<K,V> {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return new Tag<>();
+        return new Tag(); // Return empty tag if no tag is found.
     }
 
     @Override
@@ -80,6 +59,11 @@ public class Tag<K,V> {
         return this.tag.getClass();
     } 
 
+    // Method to set the tag.
+    public void setTag(HashMap<K,V> tag) {
+        this.tag = tag;
+    }
+
     public boolean isBounds() {
         return this.getClass().equals(TagBound.class);
     }
@@ -93,7 +77,7 @@ public class Tag<K,V> {
     }
 
     public boolean isEmpty() {
-        return this.tag.isEmpty();
+        return this.getClass().equals(Tag.class);
     }
 
     static private String getTagName(XMLEvent event) {
@@ -116,7 +100,7 @@ public class Tag<K,V> {
      * @param tag - the tag to check for.
      * @return boolean - true if the XML event is the tag.
      */
-    private boolean isEndTag(XMLEvent event) {
+    static public boolean isEndTag(XMLEvent event) {
         return event.isEndElement() ? true : false; 
     }   
 
@@ -126,7 +110,7 @@ public class Tag<K,V> {
      * @param tag - the tag to check for.
      * @return boolean - true if the XML event is the tag.
      */
-    static private boolean isStartTag(XMLEvent event, String tag) {
+    static public boolean isStartTag(XMLEvent event, String tag) {
         if(event.isStartElement() && event.asStartElement().getName().getLocalPart().equals(tag)) {
             return true;
         }
@@ -139,30 +123,11 @@ public class Tag<K,V> {
      * @param tag - the tag to check for.
      * @return boolean - true if the XML event is the tag.
      */
-    static private boolean isEndTag(XMLEvent event, String tag) {
+    static public boolean isEndTag(XMLEvent event, String tag) {
         if(event.isEndElement() && event.asEndElement().getName().getLocalPart().equals(tag)) {
             return true;
         }
         return false;
     }   
-
-    static private HashMap<Tags.Adress , String> setAdress(XMLEventReader eventReader) throws XMLStreamException {
-        HashMap<Tags.Adress , String> adress = new HashMap<Tags.Adress , String>();
-        Tags.Adress key = null;
-        String value = null;
-
-        while(eventReader.hasNext())  {
-            XMLEvent event = eventReader.nextEvent();
-
-            if(isEndTag(event, "node")) return adress;
-            if(isStartTag(event, "tag")) {
-                key = Tags.convert(event.asStartElement().getAttributeByName(new QName("k")).getValue());
-                value = event.asStartElement().getAttributes().next().getValue();
-                if(key != null && value != null) adress.put(key, value);
-            }
-        }
-
-        return adress;
-    }
 
 }

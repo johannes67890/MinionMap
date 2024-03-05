@@ -10,6 +10,19 @@ public class TagNode extends Tag<Tags.Node, Number> {
         super(setNode(event));
     }
 
+    public Number getID() {
+        return this.getTag().get(Tags.Node.ID);
+    }
+
+    public BigDecimal getLat() {
+        return (BigDecimal) this.getTag().get(Tags.Node.LAT);
+    }
+
+    public BigDecimal getLon() {
+        return (BigDecimal) this.getTag().get(Tags.Node.LON);
+    }
+    
+
     static private HashMap<Tags.Node, Number> setNode(XMLEvent event){
         HashMap<Tags.Node, Number> node = new HashMap<>();
 
