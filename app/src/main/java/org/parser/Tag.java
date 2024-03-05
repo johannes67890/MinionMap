@@ -11,9 +11,10 @@ import java.lang.reflect.*;
 import org.Tags;
 
 import com.google.common.graph.ElementOrder.Type;
+import com.google.common.math.BigDecimalMath;
 
 public class Tag<K,V> {
-    private HashMap<K,V> tag = new HashMap<K,V>();
+    private HashMap<K ,V> tag = new HashMap<K,V>();
 
     public Tag(){};
 
@@ -29,13 +30,15 @@ public class Tag<K,V> {
 
             switch (getTagName(event)) {
                 case "bounds": 
-                    return new Tag<Tags.Bounds, BigDecimal>(setBounds(event));
+                    return new TagBound(event);
                 case "node": 
+
                     Tag<Tags.Node, Number> node = new Tag<Tags.Node, Number>();
                     node.tag = setNode(event);
                     
                     // If there is children tags in the node tag, then it is an adress tag.
                     if(isStartTag(eventReader.nextTag(), "tag")){
+                        
                         Tag<Tags.Adress, String> adress = new Tag<Tags.Adress, String>();
                         // Grab all the tags in the node tag. and convert them to a adress tag.
                         node.tag.forEach((key, value) -> {
@@ -47,14 +50,14 @@ public class Tag<K,V> {
                         adress.tag.putAll(setAdress(eventReader));
                         return new Tag<Tags.Adress, String>(adress.tag);  
                     } else {
-                        return node;
+                        return new TagNode(event);
                     }
                 // case "way": break;
                 default:
                     break;
             }
         } catch (Exception e) {
-        e.printStackTrace();
+            e.printStackTrace();
         }
         return new Tag<>();
     }
@@ -69,20 +72,24 @@ public class Tag<K,V> {
      * 
      * @return The tag of type HashMap<K,V>, where the types are of {@link ParseTagResult}.
      */
-    public HashMap<K,V> getTag() {
+    public HashMap<K, V> getTag() {
         return !this.tag.isEmpty() ? tag : null;
     }
 
-    public HashMap<Class<?>, V> getType() {
-        HashMap<Class<?>, V> type = new HashMap<Class<?>, V>();
-        
-        if(this.tag.isEmpty()) return null;
+    public Class<?> getType() {
+        return this.tag.getClass();
+    } 
 
-        this.tag.forEach((key, value) -> {
-            type.put(key.getClass(), value);
-        });
+    public boolean isBounds() {
+        return this.getClass().equals(TagBound.class);
+    }
 
-        return type;
+    public boolean isNode() {
+        return this.getClass().equals(TagNode.class);
+    }
+
+    public boolean isAdress() {
+        return this.getClass().equals(TagAdress.class);
     }
 
     public boolean isEmpty() {
@@ -138,59 +145,6 @@ public class Tag<K,V> {
         }
         return false;
     }   
-
-    /**
-     * Construct HashMap with bounds from the XML file.
-     * @param event - the XML event.
-     * @return HashMap<{@link Tags.Bounds}, Float> - the bounds from the XML event.
-     */
-    static private HashMap<Tags.Bounds, BigDecimal> setBounds(XMLEvent event) {
-        HashMap<Tags.Bounds, BigDecimal> bounds = new HashMap<Tags.Bounds, BigDecimal>();
-
-        event.asStartElement().getAttributes().forEachRemaining(attribute -> {
-            switch (attribute.getName().getLocalPart()) {
-                case "minlat":
-                    bounds.put(Tags.Bounds.MINLAT, new BigDecimal(attribute.getValue()));
-                    break;
-                case "maxlat":
-                    bounds.put(Tags.Bounds.MAXLAT, new BigDecimal(attribute.getValue()));
-                    break;
-                case "minlon":
-                    bounds.put(Tags.Bounds.MINLON, new BigDecimal(attribute.getValue()));
-                    break;
-                case "maxlon":
-                    bounds.put(Tags.Bounds.MAXLON, new BigDecimal(attribute.getValue()));
-                    break;
-                default:
-                    throw new IllegalArgumentException("Invalid attribute for bounds: " + attribute.getName().getLocalPart());
-            }
-        });
-       
-        return bounds;
-    }
-
-    static private HashMap<Tags.Node, Number> setNode(XMLEvent event){
-        HashMap<Tags.Node, Number> node = new HashMap<>();
-
-        event.asStartElement().getAttributes().forEachRemaining(attribute -> {
-            switch (attribute.getName().getLocalPart()) {
-                case "id":
-                    node.put(Tags.Node.ID, Long.parseLong(attribute.getValue()));
-                    break;
-                case "lat":
-                    node.put(Tags.Node.LAT, new BigDecimal(attribute.getValue()));
-                    break;
-                case "lon":
-                    node.put(Tags.Node.LON, new BigDecimal(attribute.getValue()));
-                    break;
-                default:
-                    break;
-            }
-        });
-
-        return node;
-    }
-
 
     static private HashMap<Tags.Adress , String> setAdress(XMLEventReader eventReader) throws XMLStreamException {
         HashMap<Tags.Adress , String> adress = new HashMap<Tags.Adress , String>();

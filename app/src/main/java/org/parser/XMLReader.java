@@ -14,7 +14,7 @@ public class XMLReader {
     XMLEventReader eventReader; 
     XMLEvent event;
 
-    public Tag<Tags.Bounds, BigDecimal> bound = new Tag<Tags.Bounds, BigDecimal>();
+    public TagBound bound = new TagBound();
     public ArrayList<ParseTagResult> nodes = new ArrayList<ParseTagResult>();
     public ArrayList<ParseTagResult> adresses = new ArrayList<ParseTagResult>();
     
@@ -27,13 +27,18 @@ public class XMLReader {
                 Tag tag = Tag.parseTag(eventReader);
 
                 if(!tag.isEmpty()) {
-                   if(tag.getType().containsKey(Tags.Bounds.class)) {
-                       this.bound = tag;
-                    } else if(tag.getType().containsKey(Tags.Node.class)) {
+                    if(tag.isBounds()) {
+                        this.bound = (TagBound) tag;
+                    } else if(tag.isNode()) {
                         nodes.add(ParseTagResult.fromNodeTag(tag));
-                    } else if(tag.getType().containsKey(Tags.Adress.class)) {
+                    } else if(tag.isAdress()) {
                         adresses.add(ParseTagResult.fromAdressTag(tag));
                     }
+                    // } else if(tag.getType().containsKey(Tags.Node.class)) {
+                    //     nodes.add(ParseTagResult.fromNodeTag(tag));
+                    // } else if(tag.getType().containsKey(Tags.Adress.class)) {
+                    //     adresses.add(ParseTagResult.fromAdressTag(tag));
+                    // }
                 }
             }
             
