@@ -28,7 +28,7 @@ public class MainView {
     }
 
     Stage stage;
-    static StageSelect selectedStage = StageSelect.MainMenu;
+    static StageSelect selectedStage = StageSelect.MapView;
     static int sizeX = 800;
     static int sizeY = 800;
     static Canvas canvas = new Canvas(800, 800);
@@ -43,7 +43,7 @@ public class MainView {
         if (selectedStage == StageSelect.MainMenu){
             dragAndDropStage(stage);
         }else if (selectedStage == StageSelect.MapView){
-            testStage(stage);
+            mapStage(stage);
         }
         
     }
@@ -156,4 +156,37 @@ public class MainView {
 
     }
 
+    public static void mapStage(Stage stage){
+        GridPane mainGrid = new GridPane();
+
+        GridPane leftGrid = new GridPane();
+
+        Scene scene = new Scene(mainGrid, sizeX, sizeY);
+
+        Button menuButton = new Button("Kliktest");
+        Button searchButton = new Button("Search");
+        TextField searchBar = new TextField();
+
+        mainGrid.add(leftGrid, 0,1);
+
+        leftGrid.add(menuButton,0,0);
+
+        leftGrid.add(searchBar,0,1);
+
+        leftGrid.add(searchButton,0,2);
+
+        
+        
+        //Button 0,0
+
+        //Bjælke ned fra knap samme farve som #button
+
+        //Searchbar textfield ish, bare print 
+
+
+
+        stage.setTitle("Danmarks Kortet Uden malmø");
+        stage.setScene(scene);
+        stage.show();
+    }
 }
