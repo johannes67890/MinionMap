@@ -31,7 +31,7 @@ public class MainView {
     static StageSelect selectedStage = StageSelect.MapView;
     static int sizeX = 800;
     static int sizeY = 800;
-    static Canvas canvas = new Canvas(800, 800);
+    static Canvas canvas = new Canvas(sizeX, sizeY);
     static GraphicsContext gc = canvas.getGraphicsContext2D();
 
 
@@ -39,12 +39,14 @@ public class MainView {
 
         this.stage = stage;
 
-
+        mapStage(stage);
+        /*
         if (selectedStage == StageSelect.MainMenu){
             dragAndDropStage(stage);
         }else if (selectedStage == StageSelect.MapView){
             mapStage(stage);
         }
+        */
         
     }
 
@@ -159,21 +161,32 @@ public class MainView {
     public static void mapStage(Stage stage){
         GridPane mainGrid = new GridPane();
 
-        GridPane leftGrid = new GridPane();
+        GridPane rightGrid = new GridPane();
 
         Scene scene = new Scene(mainGrid, sizeX, sizeY);
 
-        Button menuButton = new Button("Kliktest");
+        Button menuButton = new Button("Menu");
         Button searchButton = new Button("Search");
         TextField searchBar = new TextField();
+        HBox topBar = new HBox(10);
+        topBar.getChildren().addAll(menuButton, searchBar, searchButton);
+        topBar.setPrefSize(sizeX, sizeY * 0.1f);
+        searchBar.setMinWidth(sizeX * 0.8f);
+        topBar.setStyle("-fx-background-color: #00FFFF;");
+        topBar.setAlignment(Pos.CENTER);
 
-        mainGrid.add(leftGrid, 0,1);
+        mainGrid.add(rightGrid, 1,0);
 
-        leftGrid.add(menuButton,0,0);
+        rightGrid.add(topBar, 0,0);
 
-        leftGrid.add(searchBar,0,1);
+        rightGrid.add(canvas, 0,1);
+        rightGrid.setVgap(10);
 
-        leftGrid.add(searchButton,0,2);
+        gc.setTransform(new Affine());
+        gc.setFill(Color.RED);
+        gc.fillRect(0, 0, sizeX, sizeY);
+
+        
 
         
         
