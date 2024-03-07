@@ -9,9 +9,9 @@ import org.parser.FileDistributer;
 import org.parser.FileParser;
 import java.util.HashMap;
 import org.parser.OSMReader;
-import org.parser.Tag;
 import org.parser.TagBound;
 import org.parser.TagNode;
+import org.parser.FileParser.CompasPoints;
 
 import java.math.BigDecimal;
 public class FileParserTest {
@@ -41,11 +41,32 @@ public class FileParserTest {
         assertEquals(centerPoint.getLon(), expectedCenterPoint.getLon());
     }
 
+    // TODO: Refactor test so that they calculate expected values based on their respective equation?
+    @Test
+    public void TestCenterPointsOfBound(){
+        TagBound bound = this.reader.getBound();
+        TagNode centerPoint = parser.centerPoint(bound);
+        
+        CompasPoints points = new CompasPoints(centerPoint, bound);
+        
+        // North
+        assertEquals(points.getNorth().getLat(), bound.getMaxLat());
+        assertEquals(points.getNorth().getLon(), new BigDecimal("12.4705650"));
+        // South
+        assertEquals(points.getSouth().getLat(), bound.getMinLat());
+        assertEquals(points.getSouth().getLon(), new BigDecimal("12.4705650"));
+        // East
+        assertEquals(points.getEast().getLat(), new BigDecimal("55.6572100"));
+        assertEquals(points.getEast().getLon(), bound.getMaxLon());
+        // West
+        assertEquals(points.getWest().getLat(), new BigDecimal("55.6572100"));
+        assertEquals(points.getWest().getLon(), bound.getMinLon());
+    }
+
     @Test
     public void testSplitArea() {
         TagBound bound = this.reader.getBound();
-        parser.splitArea(bound);
-
+        
         // Q1 - top left area
         TagBound expectedQ1 = new TagBound(new HashMap<Tags.Bounds, BigDecimal>() {{
             put(Tags.Bounds.MINLAT, new BigDecimal("55.6572100"));
