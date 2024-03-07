@@ -1,5 +1,6 @@
 import java.util.regex.Pattern;
 
+
 public class Address {
     public final String street, house, floor, side, postcode, city;
 
@@ -19,10 +20,14 @@ public class Address {
                 + postcode + " " + city;
     }
 
-    private final static String REGEX =
-            "(?<street>[A-Za-zØÆÅåæø ]+) (?<house>[0-9]+) (?<floor>st|[0-9]+)? ?" +
-            "(?<side>tv|th|mf)?\\.? ?(?<postcode>[0-9]{4}) (?<city>[A-Za-ØÆÅåøæ ]+)";
+    private final static String REGEX = "(?<street>[A-Za-zØÆÅåæø ]+)? ?(?<house>[0-9]{1,3}[A-Za-z]{0,30})? ?(?<floor> st| [0-9]{1,3})? ?(?<side>tv|th|mf)?\\.? ?(?<postcode>[0-9]{4})? ?(?<city>[A-Za-ØÆÅåøæ ]+)?"
+            ;
     private final static Pattern PATTERN = Pattern.compile(REGEX);
+
+
+    //"(?<street>[A-Za-zØÆÅåæø ]+)? ?(?<house>[0-9]{1,3}[A-Za-z]{0,30})? ?(?<floor> st| [0-9]{1,3})? ?(?<side>tv|th|mf)?\\p? ?(?<postcode>[0-9]{4})? ?(?<city>[A-Za-ØÆÅåøæ ]+)?"
+
+    //^(?<street>[A-Za-zØÆÅåæø ]+)? ?(?<house>[0-9]{1,3}[A-Za-z]{0,30})? ?(?<floor> st| [0-9]{1,3})? ?(?<side>tv|th|mf)?\\.? ?(?<postcode>[0-9]{4})? ?(?<city>[A-Za-ØÆÅåøæ ]+)?$
 
     public static Address parse(String input) {
         var builder = new Builder();
