@@ -65,18 +65,25 @@ public class FileParserTest {
 
     @Test
     public void testSplitArea() {
-        TagBound bound = this.reader.getBound();
-        
+    
         // Q1 - top left area
         TagBound expectedQ1 = new TagBound(new HashMap<Tags.Bounds, BigDecimal>() {{
-            put(Tags.Bounds.MINLAT, new BigDecimal("55.6572100"));
+            put(Tags.Bounds.MINLAT, new BigDecimal("55.6581600"));
             put(Tags.Bounds.MAXLAT, new BigDecimal("55.6572100"));
-            put(Tags.Bounds.MINLON, new BigDecimal("12.4705650"));
+            put(Tags.Bounds.MINLON, new BigDecimal("12.4677300"));
             put(Tags.Bounds.MAXLON, new BigDecimal("12.4705650"));
         }});
 
+
         
         // Q2 - top right area
+        TagBound expectedQ2 = new TagBound(new HashMap<Tags.Bounds, BigDecimal>() {{
+            put(Tags.Bounds.MINLAT, new BigDecimal("55.6572100"));
+            put(Tags.Bounds.MAXLAT, new BigDecimal("55.6581600"));
+            put(Tags.Bounds.MINLON, new BigDecimal("12.4705650"));
+            put(Tags.Bounds.MAXLON, new BigDecimal("12.4734000"));
+        }});
+
         // Q3 - bottom left area
         // Q4 - bottom right area
 
