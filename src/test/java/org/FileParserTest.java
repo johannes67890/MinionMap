@@ -63,6 +63,7 @@ public class FileParserTest {
         assertEquals(points.getWest().getLon(), bound.getMinLon());
     }
 
+    // TODO:
     @Test
     public void testSplitArea() {
     
@@ -74,7 +75,7 @@ public class FileParserTest {
             put(Tags.Bounds.MAXLON, new BigDecimal("12.4705650"));
         }});
 
-
+        
         
         // Q2 - top right area
         TagBound expectedQ2 = new TagBound(new HashMap<Tags.Bounds, BigDecimal>() {{
