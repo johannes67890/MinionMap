@@ -2,6 +2,7 @@ package org;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -61,6 +62,16 @@ public class FileParserTest {
         // West
         assertEquals(points.getWest().getLat(), new BigDecimal("55.6572100"));
         assertEquals(points.getWest().getLon(), bound.getMinLon());
+    }
+
+    @Test
+    public void testIsInBounds(){
+        TagNode node = new TagNode(new HashMap<Tags.Node, Number>() {{
+            put(Tags.Node.LAT, new BigDecimal("55.6581162"));
+            put(Tags.Node.LON, new BigDecimal("12.4681259"));
+        }});
+
+        assertTrue(parser.isInBounds(node, this.reader.getBound()));
     }
 
     // TODO:
