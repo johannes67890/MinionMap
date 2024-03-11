@@ -1,24 +1,55 @@
 package org.parser;
 
-import static org.parser.Tag.isEndTag;
-import static org.parser.Tag.isStartTag;
 
 import java.util.HashMap;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 
-import org.Tags;
+enum Adress{
+    ID, LAT, LON, CITY, STREET, HOUSENUMBER, POSTCODE, COUNTRY;
 
-public class TagAdress extends Tag<Tags.Adress, String> {
-    TagAdress(XMLEvent event, XMLEventReader eventReader) throws XMLStreamException {
-        TagNode node = new TagNode(event);
-        HashMap<Tags.Adress, String> adressTag = new HashMap<Tags.Adress, String>();
+    static public Adress convert(Node node) {
+        switch (node) {
+            case ID:
+                return Adress.ID;
+            case LAT:
+                return Adress.LAT;
+            case LON:
+                return Adress.LON;
+            default:
+                throw new IllegalArgumentException("Invalid node: " + node);
+        }
+    }
+    
+    static public Adress convert(String value) {
+        switch (value) {
+            case "addr:city":
+                return Adress.CITY;
+            case "addr:street":
+                return Adress.STREET;
+            case "addr:housenumber":
+                return Adress.HOUSENUMBER;
+            case "addr:postcode":
+                return Adress.POSTCODE;
+            case "addr:country":
+                return Adress.COUNTRY;
+            default:
+                return null;
+        }
+    }
+}
+
+
+public class TagAdress extends Tag<Adress, String> {
+    TagAdress(XMLStreamReader event, XMLStreamReader eventReader) throws XMLStreamException {
+        TagNode node = new Tag.TagNode(event);
+        HashMap<Adress, String> adressTag = new HashMap<Adress, String>();
         
         node.getTag().forEach((key, value) -> {
-            Tags.Adress adressKey = Tags.convert(key);
+            Adress adressKey = Adress.convert(key);
             String adressValue = value.toString();
             adressTag.put(adressKey, adressValue);
         });
@@ -28,21 +59,19 @@ public class TagAdress extends Tag<Tags.Adress, String> {
         super.setTag(adressTag);
     }
 
-       static private HashMap<Tags.Adress , String> setAdress(XMLEventReader eventReader) throws XMLStreamException {
-        HashMap<Tags.Adress , String> adress = new HashMap<Tags.Adress , String>();
-        Tags.Adress key = null;
+       static private HashMap<Adress , String> setAdress(XMLStreamReader eventReader) throws XMLStreamException {
+        HashMap<Adress , String> adress = new HashMap<Adress, String>();
+        Adress key = null;
         String value = null;
-
-        while(eventReader.hasNext())  {
-            XMLEvent event = eventReader.nextEvent();
-
-            if(isEndTag(event, "node")) return adress;
-            if(isStartTag(event, "tag")) {
-                key = Tags.convert(event.asStartElement().getAttributeByName(new QName("k")).getValue());
-                value = event.asStartElement().getAttributes().next().getValue();
-                if(key != null && value != null) adress.put(key, value);
-            }
-        }
+        // TODO: Refactor this method to use the XMLStreamReader instead of the XMLEvent.
+        // while(eventReader.hasNext())  {
+        //     if(isEndTag(event, "node")) return adress;
+        //     if(isStartTag(event, "tag")) {
+        //         key = Adress.convert(event.asStartElement().getAttributeByName(new QName("k")).getValue());
+        //         value = event.asStartElement().getAttributes().next().getValue();
+        //         if(key != null && value != null) adress.put(key, value);
+        //     }
+        // }
 
         return adress;
     }

@@ -1,10 +1,12 @@
 package org.parser;
 
 import java.util.HashMap;
+import java.math.BigDecimal;
+import javax.xml.stream.XMLStreamReader;
 
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.events.XMLEvent;
-
+enum Node {
+    ID, LAT, LON;
+}
 
 public class Tag<K,V> {
     private HashMap<K ,V> tag = new HashMap<K,V>();
@@ -15,22 +17,18 @@ public class Tag<K,V> {
         this.tag = map;
     }
 
-    static public Tag parseTag(XMLEventReader eventReader) {
+    static public Tag parseTag(XMLStreamReader reader) {
         try {
-            XMLEvent event = eventReader.nextEvent();
-
-            if(!isStartTag(event)) return new Tag();
-
-            switch (getTagName(event)) {
+            switch (getTagName(reader)) {
                 case "bounds": 
-                    return new TagBound(event);
-                case "node": 
-                    // If there is children tags in the node tag, then it is an adress tag.    
-                    if(isStartTag(eventReader.nextTag(), "tag")){
-                        return new TagAdress(event, eventReader);                         
-                    } else {
-                        return new TagNode(event);
-                    }
+                    return new TagBound(reader);
+                // case "node": 
+                //     // If there is children tags in the node tag, then it is an adress tag.    
+                //     if(isStartTag(reader.nextTag(), "tag")){
+                //         return new TagAdress(event, reader);                         
+                //     } else {
+                //         return new TagNode(event);
+                //     }
                 // case "way": break;
                 default:
                     break;
@@ -53,6 +51,18 @@ public class Tag<K,V> {
      */
     public HashMap<K, V> getTag() {
         return !this.tag.isEmpty() ? tag : null;
+    }
+
+    public Long getID() {
+        return (Long) this.getTag().get(Node.ID);
+    }
+
+    public BigDecimal getLat() {
+        return (BigDecimal) this.getTag().get(Node.LAT);
+    }
+
+    public BigDecimal getLon() {
+        return (BigDecimal) this.getTag().get(Node.LON);
     }
 
     public Class<?> getType() {
@@ -80,54 +90,33 @@ public class Tag<K,V> {
         return this.getClass().equals(Tag.class);
     }
 
-    static private String getTagName(XMLEvent event) {
-        return event.asStartElement().getName().getLocalPart();
+    static private String getTagName(XMLStreamReader event) {
+        return event.getLocalName().intern();
+    }
+  
+    public static BigDecimal getAttributeByBigDecimal(XMLStreamReader event, String name) {
+        return new BigDecimal(event.getAttributeValue(null, name));
     }
 
+
     /**
-     * Check if the XML event is a specific START tag.
-     * @param event - the XML event.
-     * @param tag - the tag to check for.
-     * @return boolean - true if the XML event is the tag.
+     * InnerTag
      */
-    static private boolean isStartTag(XMLEvent event) {
-        return event.isStartElement() ? true : false; 
-    }  
+
+    public class TagNode extends Tag<Node, Number> {
+
+        TagNode(XMLStreamReader event) {
+            super(setNode(event));
+        }
+        
+        static private HashMap<Node, Number> setNode(XMLStreamReader event){
+            HashMap<Node, Number> node = new HashMap<>();
     
-    /**
-     * Check if the XML event is a specific START tag.
-     * @param event - the XML event.
-     * @param tag - the tag to check for.
-     * @return boolean - true if the XML event is the tag.
-     */
-    static public boolean isEndTag(XMLEvent event) {
-        return event.isEndElement() ? true : false; 
-    }   
-
-    /**
-     * Check if the XML event is a specific START tag.
-     * @param event - the XML event.
-     * @param tag - the tag to check for.
-     * @return boolean - true if the XML event is the tag.
-     */
-    static public boolean isStartTag(XMLEvent event, String tag) {
-        if(event.isStartElement() && event.asStartElement().getName().getLocalPart().equals(tag)) {
-            return true;
+            node.put(Node.ID, getAttributeByBigDecimal(event, "id"));
+            node.put(Node.LAT, getAttributeByBigDecimal(event, "lat"));
+            node.put(Node.LON, getAttributeByBigDecimal(event, "lon"));
+            return node;
         }
-        return false;
-    }   
-
-    /**
-     * Check if the XML event is a specific END tag.
-     * @param event - the XML event.
-     * @param tag - the tag to check for.
-     * @return boolean - true if the XML event is the tag.
-     */
-    static public boolean isEndTag(XMLEvent event, String tag) {
-        if(event.isEndElement() && event.asEndElement().getName().getLocalPart().equals(tag)) {
-            return true;
-        }
-        return false;
-    }   
+    }
 
 }

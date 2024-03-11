@@ -17,20 +17,11 @@ public class XMLReaderTest {
     @BeforeEach
     void setUp() {
         this.reader = new XMLReader(FileDistributer.test_input);
-        this.event = reader.getEvent();
     }
 
     @Test
     void testSetBounds() {
-        HashMap<Tags.Bounds, Float> bounds = new HashMap<Tags.Bounds, Float>(){
-            {
-                put(Tags.Bounds.MINLAT, 55.0000000f);
-                put(Tags.Bounds.MAXLAT, 55.0000000f);
-                put(Tags.Bounds.MINLON, 12.0000000f);
-                put(Tags.Bounds.MAXLON, 12.0000000f);
-            }
-        };
-        // assertEquals(bounds, reader.getBounds());
+        //TODO: 
     }
 
     // TODO: improve this test
