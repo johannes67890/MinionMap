@@ -1,4 +1,3 @@
-import javafx.beans.InvalidationListener;
 import javafx.geometry.Point2D;
 
 public class Controller {
@@ -33,14 +32,8 @@ public class Controller {
     */
     public Controller(MainView view){
 
-        InvalidationListener listener = new InvalidationListener(){
-            @Override
-            public void invalidated(Observable o) {
-                redraw();       
-            }           
-        };
-        MainView.canvas.widthProperty().addListener(listener);
-        MainView.canvas.heightProperty().addListener(listener);
+        MainView.stage.widthProperty().addListener(observable -> MainView.redraw());
+        MainView.stage.heightProperty().addListener(observable -> MainView.redraw());
 
     }
 

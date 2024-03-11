@@ -22,6 +22,7 @@ public class HelloFX extends Application {
     public void start(Stage stage) {
         
         MainView mv = new MainView(stage);
+        Controller controller = new Controller(mv);
         
     }
 

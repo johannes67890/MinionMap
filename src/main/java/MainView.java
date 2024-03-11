@@ -27,10 +27,10 @@ public class MainView {
 
     }
 
-    private static Stage stage;
+    public static Stage stage;
     static StageSelect selectedStage = StageSelect.MapView;
     static int sizeX = 800;
-    static int sizeY = 800;
+    static int sizeY = 600;
     public static Canvas canvas = new Canvas(sizeX, sizeY);
     static GraphicsContext gc = canvas.getGraphicsContext2D();
 
@@ -126,12 +126,11 @@ public class MainView {
     }
 
     public static void mapStage(Stage stage){
-        Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
         
         GridPane mainGrid = new GridPane();
         GridPane rightGrid = new GridPane();
-        System.out.println("Testing");
-        Scene scene = new Scene(mainGrid, stage.getWidth(), stage.getHeight());
+        Scene scene = new Scene(mainGrid, screenBounds.getWidth(), screenBounds.getHeight());
         
 
         Button menuButton = new Button("Menu");
@@ -139,15 +138,13 @@ public class MainView {
         TextField searchBar = new TextField();
         HBox topBar = new HBox(10);
         topBar.getChildren().addAll(menuButton, searchBar, searchButton);
-        topBar.setPrefSize(stage.getWidth(), screenBounds.getHeight() * 0.05f);
+        topBar.setPrefSize(scene.getWidth(), screenBounds.getHeight() * 0.05f);
         searchBar.setMinWidth(sizeX * 0.8f);
         topBar.setStyle("-fx-background-color: #00FFFF;");
         topBar.setAlignment(Pos.CENTER);
-
+        rightGrid.setPrefSize(scene.getWidth(), scene.getHeight());
         mainGrid.add(rightGrid, 1,0);
-
         rightGrid.add(topBar, 0,0);
-
         rightGrid.add(canvas, 0,1);
         rightGrid.setVgap(10);
 
