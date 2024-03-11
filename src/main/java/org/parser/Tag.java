@@ -98,7 +98,6 @@ public class Tag<K,V> {
         return new BigDecimal(event.getAttributeValue(null, name));
     }
 
-
     /**
      * InnerTag
      */
@@ -112,7 +111,7 @@ public class Tag<K,V> {
         static private HashMap<Node, Number> setNode(XMLStreamReader event){
             HashMap<Node, Number> node = new HashMap<>();
     
-            node.put(Node.ID, getAttributeByBigDecimal(event, "id"));
+            node.put(Node.ID, Long.parseUnsignedLong(event.getAttributeValue(null, "id")));
             node.put(Node.LAT, getAttributeByBigDecimal(event, "lat"));
             node.put(Node.LON, getAttributeByBigDecimal(event, "lon"));
             return node;
