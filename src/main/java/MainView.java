@@ -27,17 +27,20 @@ public class MainView {
 
     }
 
-    Stage stage;
+    private static Stage stage;
     static StageSelect selectedStage = StageSelect.MapView;
     static int sizeX = 800;
     static int sizeY = 800;
-    static Canvas canvas = new Canvas(sizeX, sizeY);
+    public static Canvas canvas = new Canvas(sizeX, sizeY);
     static GraphicsContext gc = canvas.getGraphicsContext2D();
 
 
     public MainView(Stage stage){
 
-        this.stage = stage;
+        MainView.stage = stage;
+
+        MainView.stage.setMinWidth(sizeX);
+        MainView.stage.setMinHeight(sizeY);
 
         mapStage(stage);
         /*
@@ -48,42 +51,6 @@ public class MainView {
         }
         */
         
-    }
-
-    public static void testStage(Stage stage){
-
-        BorderPane pane = new BorderPane(canvas);
-        TextArea inputField = new TextArea();
-        Text inputFieldTitle = new Text();
-        inputFieldTitle.setText("Adress:");
-        Button searchButton = new Button();
-        searchButton.setText("Search!");
-
-        GridPane topgp = new GridPane();
-        topgp.setPadding(new Insets(25,25,25,25));
-        GridPane gp = new GridPane();
-
-        Rectangle2D screenBounds = Screen.getPrimary().getBounds();
-        topgp.setMinHeight(screenBounds.getHeight() * 0.05f);
-        topgp.setMaxHeight(screenBounds.getHeight() * 0.05f);
-        
-        topgp.add(inputFieldTitle, 0, 0);
-        topgp.add(inputField, 1,0);
-        topgp.add(searchButton, 2,0);
-
-        gp.add(topgp, 0, 0);
-        gp.add(pane, 0, 1);
-        
-        
-        Scene scene = new Scene(gp);
-        stage.setTitle("Kinky Fætter");
-        stage.setScene(scene);
-        stage.show();
-
-        gc.setTransform(new Affine());
-        gc.setFill(Color.RED);
-        gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
-
     }
 
 
@@ -159,18 +126,20 @@ public class MainView {
     }
 
     public static void mapStage(Stage stage){
+        Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+        
         GridPane mainGrid = new GridPane();
-
         GridPane rightGrid = new GridPane();
-
-        Scene scene = new Scene(mainGrid, sizeX, sizeY);
+        System.out.println("Testing");
+        Scene scene = new Scene(mainGrid, stage.getWidth(), stage.getHeight());
+        
 
         Button menuButton = new Button("Menu");
         Button searchButton = new Button("Search");
         TextField searchBar = new TextField();
         HBox topBar = new HBox(10);
         topBar.getChildren().addAll(menuButton, searchBar, searchButton);
-        topBar.setPrefSize(sizeX, sizeY * 0.1f);
+        topBar.setPrefSize(stage.getWidth(), screenBounds.getHeight() * 0.05f);
         searchBar.setMinWidth(sizeX * 0.8f);
         topBar.setStyle("-fx-background-color: #00FFFF;");
         topBar.setAlignment(Pos.CENTER);
@@ -183,8 +152,14 @@ public class MainView {
         rightGrid.setVgap(10);
 
         gc.setTransform(new Affine());
-        gc.setFill(Color.RED);
+        gc.setFill(Color.WHITE);
         gc.fillRect(0, 0, sizeX, sizeY);
+
+        gc.beginPath();
+        gc.moveTo(0, 0);
+        gc.lineTo(sizeY, sizeX);
+        gc.stroke();
+        gc.closePath();
 
         
 
@@ -201,5 +176,15 @@ public class MainView {
         stage.setTitle("Danmarks Kortet Uden malmø");
         stage.setScene(scene);
         stage.show();
+    }
+
+
+    public static void redraw(){
+
+        if (selectedStage == StageSelect.MainMenu){
+            dragAndDropStage(stage);
+        }else if (selectedStage == StageSelect.MapView){
+            mapStage(stage);
+        }
     }
 }
