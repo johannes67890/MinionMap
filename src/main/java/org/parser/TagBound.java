@@ -41,8 +41,6 @@ public class TagBound extends Tag<Bounds, BigDecimal>{
     static private HashMap<Bounds, BigDecimal> setBounds(XMLStreamReader event) {
         HashMap<Bounds, BigDecimal> bounds = new HashMap<Bounds, BigDecimal>();
 
-
-
         bounds.put(Bounds.MINLAT, getAttributeByBigDecimal(event, "minlat"));
         bounds.put(Bounds.MAXLAT, getAttributeByBigDecimal(event, "maxlat"));
         bounds.put(Bounds.MINLON, getAttributeByBigDecimal(event, "minlon"));

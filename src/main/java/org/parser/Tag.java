@@ -2,11 +2,8 @@ package org.parser;
 
 import java.util.HashMap;
 import java.math.BigDecimal;
-import javax.xml.stream.XMLStreamReader;
 
-enum Node {
-    ID, LAT, LON;
-}
+import javax.xml.stream.XMLStreamReader;
 
 public class Tag<K,V> {
     private HashMap<K ,V> tag = new HashMap<K,V>();
@@ -22,13 +19,9 @@ public class Tag<K,V> {
             switch (getTagName(reader)) {
                 case "bounds": 
                     return new TagBound(reader);
-                // case "node": 
-                //     // If there is children tags in the node tag, then it is an adress tag.    
-                //     if(isStartTag(reader.nextTag(), "tag")){
-                //         return new TagAdress(event, reader);                         
-                //     } else {
-                //         return new TagNode(event);
-                //     }
+                case "node": 
+                    return new TagNode(reader);
+              
                 // case "way": break;
                 default:
                     break;
@@ -74,20 +67,20 @@ public class Tag<K,V> {
         this.tag = tag;
     }
 
-    public boolean isBounds() {
+    public boolean isBoundsType() {
         return this.getClass().equals(TagBound.class);
     }
 
-    public boolean isNode() {
+    public boolean isNodeType() {
         return this.getClass().equals(TagNode.class);
     }
 
-    public boolean isAdress() {
+    public boolean isAdressType() {
         return this.getClass().equals(TagAdress.class);
     }
 
-    public boolean isEmpty() {
-        return this.getClass().equals(Tag.class);
+    private static boolean isAnAdress(XMLStreamReader event) {
+        return event.getAttributeValue(null, "k").equals("addr:street");
     }
 
     static private String getTagName(XMLStreamReader event) {
@@ -97,25 +90,4 @@ public class Tag<K,V> {
     public static BigDecimal getAttributeByBigDecimal(XMLStreamReader event, String name) {
         return new BigDecimal(event.getAttributeValue(null, name));
     }
-
-    /**
-     * InnerTag
-     */
-
-    public class TagNode extends Tag<Node, Number> {
-
-        TagNode(XMLStreamReader event) {
-            super(setNode(event));
-        }
-        
-        static private HashMap<Node, Number> setNode(XMLStreamReader event){
-            HashMap<Node, Number> node = new HashMap<>();
-    
-            node.put(Node.ID, Long.parseUnsignedLong(event.getAttributeValue(null, "id")));
-            node.put(Node.LAT, getAttributeByBigDecimal(event, "lat"));
-            node.put(Node.LON, getAttributeByBigDecimal(event, "lon"));
-            return node;
-        }
-    }
-
 }

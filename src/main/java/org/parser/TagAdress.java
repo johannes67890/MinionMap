@@ -3,10 +3,8 @@ package org.parser;
 
 import java.util.HashMap;
 
-import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.XMLEvent;
 
 enum Adress{
     ID, LAT, LON, CITY, STREET, HOUSENUMBER, POSTCODE, COUNTRY;
@@ -44,35 +42,22 @@ enum Adress{
 
 
 public class TagAdress extends Tag<Adress, String> {
-    TagAdress(XMLStreamReader event, XMLStreamReader eventReader) throws XMLStreamException {
-        TagNode node = new Tag.TagNode(event);
-        HashMap<Adress, String> adressTag = new HashMap<Adress, String>();
-        
-        node.getTag().forEach((key, value) -> {
-            Adress adressKey = Adress.convert(key);
-            String adressValue = value.toString();
-            adressTag.put(adressKey, adressValue);
-        });
 
-
-        adressTag.putAll(setAdress(eventReader));
-        super.setTag(adressTag);
+    public TagAdress(XMLStreamReader reader) throws XMLStreamException {
+        super(setAdress(reader));
     }
 
-       static private HashMap<Adress , String> setAdress(XMLStreamReader eventReader) throws XMLStreamException {
-        HashMap<Adress , String> adress = new HashMap<Adress, String>();
-        Adress key = null;
-        String value = null;
-        // TODO: Refactor this method to use the XMLStreamReader instead of the XMLEvent.
-        // while(eventReader.hasNext())  {
-        //     if(isEndTag(event, "node")) return adress;
-        //     if(isStartTag(event, "tag")) {
-        //         key = Adress.convert(event.asStartElement().getAttributeByName(new QName("k")).getValue());
-        //         value = event.asStartElement().getAttributes().next().getValue();
-        //         if(key != null && value != null) adress.put(key, value);
-        //     }
-        // }
-
+    private static HashMap<Adress, String> setAdress(XMLStreamReader reader) throws XMLStreamException {
+        HashMap<Adress, String> adress = new HashMap<Adress, String>();
+        while (reader.hasNext()) {
+            reader.next();
+            if (reader.getEventType() == XMLStreamReader.START_ELEMENT) {
+                Adress node = Adress.convert(reader.getAttributeLocalName(0));
+                if (node != null) {
+                    adress.put(node, reader.getAttributeValue(0));
+                }
+            }
+        }
         return adress;
     }
 }

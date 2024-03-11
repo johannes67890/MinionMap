@@ -9,13 +9,14 @@ import java.util.ArrayList;
 import java.math.BigDecimal;
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
+import static javax.xml.stream.XMLStreamConstants.ATTRIBUTE;
 
 public class XMLReader {
     XMLStreamReader reader; 
     XMLEvent event;
 
     public TagBound bound = new TagBound();
-    public ArrayList<Tag.TagNode> nodes = new ArrayList<Tag.TagNode>();
+    public ArrayList<TagNode> nodes = new ArrayList<TagNode>();
     public ArrayList<TagAdress> adresses = new ArrayList<TagAdress>();
     
     public XMLReader(FileDistributer filename) {
@@ -26,21 +27,22 @@ public class XMLReader {
                 reader.next();
                 switch (reader.getEventType()) {
                     case START_ELEMENT:
-                        Tag tag = Tag.parseTag(reader);
-                        
+                    Tag t = Tag.parseTag(reader);
+                    if(t.getTag() != null && t.isAdressType()) {
+                       System.out.println(t.getTag());
+                    }
                         break;
-                
+                    case END_ELEMENT:
+                   
+                        break;
                     default:
                         break;
                 }
-                
+
             }
-            
-            
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
         new XMLParser(this);
 
     }
