@@ -1,8 +1,9 @@
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
 public class Address {
-    public final String street, house, floor, side, postcode, city;
+    public String street, house, floor, side, postcode, city;
 
     private Address(
             String _street, String _house, String _floor, String _side,
@@ -32,8 +33,8 @@ public class Address {
     //(?=(?<street>[.A-Za-zØÆÅåæø ]+)) ?(?=(?<house>[0-9]{1,3}[A-Za-z]{0,2}))? ?(?=(?<floor>st|[0-9]{1,3}[.]{1}))? ?(?=(?<side>tv|th|mf))?\.? ?(?=(?<postcode>[0-9]{4}))? ?(?=(?<city>[A-Za-ØÆÅåøæ ]+))?
 
     public static Address parse(String input) {
-        var builder = new Builder();
-        var matcher = PATTERN.matcher(input);
+        Builder builder = new Builder();
+        Matcher matcher = PATTERN.matcher(input);
 
         if(matcher.matches()){
             builder.street = matcher.group("street");
@@ -42,10 +43,45 @@ public class Address {
             builder.side = matcher.group("side");
             builder.postcode = matcher.group("postcode");
             builder.city = matcher.group("city");
-        }
 
+            if(matcher.group("floor") != null && !matcher.group("floor").contains(".")){
+                builder.floor += ".";
+            } else{builder.floor = "";}
+
+            if(matcher.group("side") != null && !matcher.group("side").contains(".")){
+                builder.side += ".";
+            } else{builder.side = ""; }
+            if(matcher.group("street") != null){
+                String[] streetSplit = builder.street.split(" ");
+                builder.street = "";
+                for(String splitString : streetSplit){
+                    splitString = splitString.substring(0,1).toUpperCase() +
+                    splitString.substring(1).toLowerCase();
+                    builder.street += splitString + " ";
+                }
+                builder.street = builder.street.substring(0, builder.street.length() - 1);
+                
+            }
+
+            if(matcher.group("city") != null){
+                String[] citySplit = builder.city.split(" ");
+                builder.city = "";
+                for(String splitString : citySplit){
+                    splitString = splitString.substring(0,1).toUpperCase() +
+                    splitString.substring(1).toLowerCase();
+                    builder.city += splitString + " ";
+                }
+                builder.city = builder.city.substring(0, builder.city.length() - 1);
+                
+            }
+
+        } else{
+            System.out.println("NO MATCH");
+        }
         return builder.build();
     }
+
+
 
     public static class Builder {
         private String street, house, floor, side, postcode, city;
@@ -84,4 +120,10 @@ public class Address {
             return new Address(street, house, floor, side, postcode, city);
         }
     }
+
+    // LevenshteinDistance Algorithm: https://commons.apache.org/proper/commons-lang/javadocs/api-2.5/src-html/org/apache/commons/lang/StringUtils.html#line.6162
+    // possible method for autocorrect: https://zatackcoder.com/java-program-to-check-two-strings-similarity/
+
+
+
 }

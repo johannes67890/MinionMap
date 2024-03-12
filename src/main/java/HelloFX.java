@@ -10,6 +10,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
+
 public class HelloFX extends Application {
 
     @Override
@@ -41,8 +42,6 @@ public class HelloFX extends Application {
             System.out.println("FILE NOT FOUND");
         }
 
-        
-
 
         var input = new TextField();
         var output = new TextArea();
@@ -56,9 +55,41 @@ public class HelloFX extends Application {
             Address a = Address.parse(input.getText());
             output.setText(a.toString());
 
+            long time = System.currentTimeMillis();
+
             if(cityNames.contains(a.city)){
                 System.out.println("CITY FOUND: " + a.city);
-            } else{System.out.println("This City: " + a.city + " does not exist");}
+            } else{
+
+                String topString = null;
+
+                int maxSim = Integer.MAX_VALUE;
+                int current;
+
+                for (String cityName : cityNames){
+                    current = Commons.StringUtility.getLevenshteinDistance(cityName, a.city);
+                    if (current < maxSim){
+                        maxSim = current;
+                        topString = cityName;
+                    }
+                }
+                if (topString != null){
+
+                    System.out.println("Mente du: " + topString + "?");
+
+                } else{System.out.println("This City: " + a.city + " does not exist");}
+
+            } 
+            if(streetNames.contains(a.street)){
+                System.out.println("STREET FOUND: " + a.street);
+            } else{System.out.println("This City: " + a.street + " does not exist");}
+
+            //System.out.println(System.currentTimeMillis() - time);
+
+            System.out.println("ATTEMPTING TO COMPARE ");
+            System.out.println("Similarity between two Strings: " + Commons.StringUtility.getLevenshteinDistance(a.city, a.street));
+
+            System.out.println("hello?");
             
         });
 
