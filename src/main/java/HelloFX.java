@@ -82,14 +82,32 @@ public class HelloFX extends Application {
             } 
             if(streetNames.contains(a.street)){
                 System.out.println("STREET FOUND: " + a.street);
-            } else{System.out.println("This City: " + a.street + " does not exist");}
+            } else{
 
-            //System.out.println(System.currentTimeMillis() - time);
+                String topString = null;
 
-            System.out.println("ATTEMPTING TO COMPARE ");
-            System.out.println("Similarity between two Strings: " + Commons.StringUtility.getLevenshteinDistance(a.city, a.street));
+                int maxSim = Integer.MAX_VALUE;
+                int current;
 
-            System.out.println("hello?");
+                for (String streetName : streetNames){
+                    current = Commons.StringUtility.getLevenshteinDistance(streetName, a.street);
+                    if (current < maxSim){
+                        maxSim = current;
+                        topString = streetName;
+                        if (maxSim <= 1){
+                            break;
+                        }
+                    }
+                }
+                if (topString != null){
+
+                    System.out.println("Mente du: " + topString + "?");
+
+                } else{System.out.println("This City: " + a.street + " does not exist");}
+
+            } 
+
+            System.out.println("Time: " + (System.currentTimeMillis() - time));
             
         });
 
