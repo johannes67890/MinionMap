@@ -23,12 +23,17 @@ public class HelloFX extends Application {
     Scene scene;
 
 
+    /**
+     * Reads files used later in {@link HelloFX its class}
+     */
     public void readFiles(){
 
 
         cityNames = new ArrayList<>();
         streetNames = new ArrayList<>();
         postCodes = new ArrayList<>();
+        String current;
+        String[] splitCurrent;
 
         try{
 
@@ -44,7 +49,10 @@ public class HelloFX extends Application {
             reader.close();
             reader = new BufferedReader(new FileReader("src/main/resources/postnumre.txt"));
             while (reader.ready()){
-                postCodes.add(reader.readLine());
+                current = reader.readLine();
+                splitCurrent = current.split(" ");
+
+                postCodes.add(splitCurrent[0]);
             }
             reader.close();
         
@@ -88,6 +96,13 @@ public class HelloFX extends Application {
     }
 
 
+    /**
+     * 
+     * Looks for single resembling components for the address (streets, cities, postcodes)
+     * Also creates a new address based on input
+     * 
+     * @param input String that will be contructed into an address.
+     */
     public void searchForAdress(String input){
         Address a = Address.parse(input);
             output.setText(a.toString());
@@ -124,6 +139,17 @@ public class HelloFX extends Application {
 
     }
 
+
+    /**
+     * Finds the most similar string in a list with another string
+     * 
+     * <ul>
+     * <li>Note that some strings might be equally similar</li>
+     * </ul>
+     * @param list the list to compare with the string
+     * @param s the string to be compared
+     * @return a string in the list that resembles s the most
+     */
     public String findSimilar(ArrayList<String> list, String s){
         String topString = null;
 
@@ -139,6 +165,17 @@ public class HelloFX extends Application {
         }
         return topString;
     }
+
+    public ArrayList<String> getCities(){
+        return cityNames;
+    }
+    public ArrayList<String> getStreets(){
+        return streetNames;
+    }
+    public ArrayList<String> getPostCodes(){
+        return postCodes;
+    }
+
 
     public static void main(String[] args) {
         launch();
