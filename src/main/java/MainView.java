@@ -1,20 +1,18 @@
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 import javafx.stage.*;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.text.*;
 import javafx.scene.canvas.*;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 
-import java.io.File;
-import java.util.stream.Collectors;
 
 import javafx.event.*;
 
@@ -41,16 +39,9 @@ public class MainView {
 
         MainView.stage.setMinWidth(sizeX);
         MainView.stage.setMinHeight(sizeY);
-
-        mapStage(stage);
-        /*
-        if (selectedStage == StageSelect.MainMenu){
-            dragAndDropStage(stage);
-        }else if (selectedStage == StageSelect.MapView){
-            mapStage(stage);
-        }
-        */
+        MainView.stage.setResizable(true);
         
+        dragAndDropStage(stage);
     }
 
 
@@ -101,8 +92,10 @@ public class MainView {
                     text.setText(db.getFiles().toString());
                     success = true;
                 }
+
                 /* let the source know whether the string was successfully 
                  * transferred and used */
+
                 event.setDropCompleted(success);
 
                 event.consume();
@@ -118,32 +111,50 @@ public class MainView {
 
         submitButton.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent e){
-                selectedStage = StageSelect.MapView;
-                System.out.println(selectedStage);
+                mapStage(stage);
             }
         });
 
     }
 
     public static void mapStage(Stage stage){
+
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-        
+
         GridPane mainGrid = new GridPane();
         GridPane rightGrid = new GridPane();
-        Scene scene = new Scene(mainGrid, screenBounds.getWidth(), screenBounds.getHeight());
         
+        Scene scene = new Scene(mainGrid, sizeY,sizeX);
 
-        Button menuButton = new Button("Menu");
-        Button searchButton = new Button("Search");
+        ImageView menuButtonImage = new ImageView("file:src/main/resources/visuals/hamburber.png");
+        menuButtonImage.setFitHeight(screenBounds.getHeight() * 0.03f);
+        menuButtonImage.setPreserveRatio(true);
+
+        ImageView searchButtonImage = new ImageView("file:src/main/resources/visuals/oompaloop.png");
+        searchButtonImage.setFitHeight(screenBounds.getHeight() * 0.02f);
+        searchButtonImage.setPreserveRatio(true);
+
+        Button menuButton = new Button("", menuButtonImage);
+        Button searchButton = new Button("Search", searchButtonImage);
         TextField searchBar = new TextField();
         HBox topBar = new HBox(10);
+
+        
         topBar.getChildren().addAll(menuButton, searchBar, searchButton);
         topBar.setPrefSize(scene.getWidth(), screenBounds.getHeight() * 0.05f);
-        searchBar.setMinWidth(sizeX * 0.8f);
-        topBar.setStyle("-fx-background-color: #00FFFF;");
+        topBar.setMinHeight(screenBounds.getHeight() * 0.05f);
+        topBar.setMaxHeight(screenBounds.getHeight() * 0.05f);
+        topBar.setPrefWidth(scene.getWidth());
+        topBar.setStyle("-fx-background-color: #8fc9c7;");
         topBar.setAlignment(Pos.CENTER);
-        rightGrid.setPrefSize(scene.getWidth(), scene.getHeight());
+
+        
+        searchBar.setMaxWidth(scene.getWidth() * 0.8f);
+        searchBar.setMinWidth(scene.getWidth() * 0.8f);
+
         mainGrid.add(rightGrid, 1,0);
+        
+        rightGrid.setPrefSize(scene.getWidth(), scene.getHeight());
         rightGrid.add(topBar, 0,0);
         rightGrid.add(canvas, 0,1);
         rightGrid.setVgap(10);
@@ -157,8 +168,6 @@ public class MainView {
         gc.lineTo(sizeY, sizeX);
         gc.stroke();
         gc.closePath();
-
-        
 
         
         

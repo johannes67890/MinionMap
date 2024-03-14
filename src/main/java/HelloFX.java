@@ -1,14 +1,5 @@
 
 import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.scene.paint.Color;
-
-import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.paint.*;
-import javafx.scene.*;
-import javafx.scene.transform.Affine;
 import javafx.stage.Stage;
 import javafx.scene.canvas.*;
 

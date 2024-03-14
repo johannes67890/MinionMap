@@ -1,9 +1,19 @@
-import javafx.geometry.Point2D;
+
 
 public class Controller {
     double lastX;
     double lastY;
-    /*
+    
+    public Controller(MainView view){
+
+        MainView.stage.widthProperty().addListener(observable -> MainView.redraw());
+        MainView.stage.heightProperty().addListener(observable -> MainView.redraw());
+
+    }
+}
+
+
+/*
     public Controller(Model model, View view) {
         view.canvas.setOnMousePressed(e -> {
             lastX = e.getX();
@@ -30,11 +40,3 @@ public class Controller {
         });
     }
     */
-    public Controller(MainView view){
-
-        MainView.stage.widthProperty().addListener(observable -> MainView.redraw());
-        MainView.stage.heightProperty().addListener(observable -> MainView.redraw());
-
-    }
-
-}
