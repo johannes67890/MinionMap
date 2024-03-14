@@ -1,0 +1,60 @@
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
+import javafx.stage.Screen;
+
+public class ResizableCanvas extends Canvas {
+ 
+    public ResizableCanvas() {
+        // Redraw canvas when size changes.
+        widthProperty().addListener(evt -> draw());
+        heightProperty().addListener(evt -> draw());
+        /*
+        heightProperty().addListener(new ChangeListener<Number>() {
+            @Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHeight, Number newSceneHeight) {
+                draw();
+            }
+        });
+
+        widthProperty().addListener(new ChangeListener<Number>() {
+            @Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
+                draw();
+            }
+        });
+        */
+    }
+
+    private void draw() {
+        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+
+        double width = getWidth();
+        double height = getHeight() - (screenBounds.getHeight() * 0.06f);
+
+        GraphicsContext gc = getGraphicsContext2D();
+        gc.clearRect(0, 0, width, height);
+
+        gc.setStroke(Color.RED);
+        gc.strokeLine(0, 0, width, height);
+        gc.strokeLine(0, height, width, 0);
+    }
+
+    // The only reason that the canvas can resize with the window, besides the listeners
+    @Override
+    public boolean isResizable() {
+        return true;
+    }
+
+    @Override
+    public double prefWidth(double height) {
+        return getWidth();
+    }
+
+    @Override
+    public double prefHeight(double width) {
+        return getHeight();
+    }
+    
+}

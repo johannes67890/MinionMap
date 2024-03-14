@@ -1,16 +1,13 @@
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 import javafx.stage.*;
-import javafx.geometry.Pos;
-import javafx.geometry.Rectangle2D;
+import javafx.geometry.*;
 import javafx.scene.Scene;
 import javafx.scene.text.*;
 import javafx.scene.canvas.*;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
+import javafx.scene.input.*;
 import javafx.scene.layout.*;
 
 
@@ -31,6 +28,7 @@ public class MainView {
     static int sizeY = 600;
     public static Canvas canvas = new Canvas(sizeX, sizeY);
     static GraphicsContext gc = canvas.getGraphicsContext2D();
+    static Scene lastScene;
 
 
     public MainView(Stage stage){
@@ -47,18 +45,20 @@ public class MainView {
 
     public static void dragAndDropStage(Stage stage){
 
-        Label title = new Label("Welcome to Map of Denmark!");
+        Label title = new Label("Welcome to our Map of Denmark!");
         title.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 40));
         Label description = new Label("Drag and drop a .osm file here (If no file is dropped when submitting then it loads default map)");
         description.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 20));
         description.setWrapText(true);
         description.setTextAlignment(TextAlignment.CENTER);
         
-        Text text = new Text("NameOFFiel");
-        Pane contentPane = new Pane(text);
+        Text text = new Text("No File Selected");
+
+        HBox contentPane = new HBox(text);
+        contentPane.setAlignment(Pos.CENTER);
         contentPane.setMinSize(sizeX / 5, sizeY / 5);
         contentPane.setMaxWidth(sizeX / 3);
-        contentPane.setStyle("-fx-background-color: #FF0000");
+        contentPane.setStyle("-fx-background-color: #b3b3b3; -fx-background-radius: 18 18 18 18;");
 
         Button submitButton = new Button("Submit");
         submitButton.setMinSize(sizeX / 10, sizeY / 20);
@@ -66,8 +66,6 @@ public class MainView {
         outerBox.setSpacing(10);
         outerBox.setAlignment(Pos.CENTER);
         outerBox.getChildren().addAll(title, description, contentPane, submitButton);
-        
-        
 
         contentPane.setOnDragOver(new EventHandler<DragEvent>() {
 
@@ -111,7 +109,8 @@ public class MainView {
 
         submitButton.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent e){
-                mapStage(stage);
+                selectedStage = StageSelect.MapView;
+                redraw();
             }
         });
 
@@ -184,13 +183,128 @@ public class MainView {
         stage.show();
     }
 
+    public static void mapStageNew(Stage stage){
 
+        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+
+        // Creating the image used for the hamburger menu button
+        ImageView menuButtonImage = new ImageView("file:src/main/resources/visuals/hamburber.png");
+        menuButtonImage.setFitHeight(screenBounds.getHeight() * 0.03f);
+        menuButtonImage.setPreserveRatio(true);
+
+        // Creating the image used for the search button
+        ImageView searchButtonImage = new ImageView("file:src/main/resources/visuals/oompaloop.png");
+        searchButtonImage.setFitHeight(screenBounds.getHeight() * 0.02f);
+        searchButtonImage.setPreserveRatio(true);
+
+        // Instantiation of basic objects within the menu bar at the top of the screen
+        Button menuButton = new Button("", menuButtonImage);
+        Button searchButton = new Button("Search", searchButtonImage);
+        TextField searchBar = new TextField();
+        BorderPane topBar = new BorderPane();
+
+        // Manually setting the size of the objects so that they align
+        searchButton.setPrefHeight(screenBounds.getHeight()*0.03f);
+        searchBar.setPrefHeight(screenBounds.getHeight()*0.03f);
+        
+        topBar.setLeft(menuButton);
+        topBar.setMargin(menuButton, new Insets(5));
+        topBar.setCenter(searchBar);
+        topBar.setMargin(searchBar, new Insets(5));
+        topBar.setRight(searchButton);
+        topBar.setMargin(searchButton, new Insets(5));
+        topBar.setPrefHeight(screenBounds.getHeight() * 0.05f);
+        
+        topBar.setAlignment(searchButton, Pos.CENTER);
+        topBar.setAlignment(menuButton, Pos.CENTER);
+        topBar.setStyle("-fx-background-color: #adadad");
+
+        // Instantiate the main components of the stage
+        ResizableCanvas mapCanvas = new ResizableCanvas(); // This is a custom canvas that can resize and is used to draw the map
+        VBox burgerMenu = burgerMenuInstantiation(); // This is the menu that sits on the left side of the screen when menu button is pressed
+        StackPane mainPane = new StackPane(); // This is the stackpane where the burgermenu and map is overlayed on top of eachother
+        BorderPane bp = new BorderPane(); // This is the main part of the scene where the map is drawn and the top menu bar is
+
+        // Setting up the borderpane by adding topbar to the top of the pane and mapCanvas to the center
+        bp.setTop(topBar);
+        bp.setCenter(mapCanvas);
+
+        // Setting up additional settings for the borderpane
+        bp.setMargin(topBar, new Insets(5));
+
+        // I dont know why it needs the padding, but if it isnt there the bp is going out of the window at the top
+        bp.setPadding(new Insets(55,-5,0,-5));
+
+        mainPane.getChildren().addAll(bp, burgerMenu);
+        burgerMenu.setVisible(false);
+        mainPane.setAlignment(burgerMenu, Pos.CENTER_LEFT);
+
+        mapCanvas.heightProperty().bind(mainPane.heightProperty());
+        mapCanvas.widthProperty().bind(mainPane.widthProperty());
+        Scene scene = new Scene(mainPane);
+
+        stage.setTitle("Map of Denmark");
+        stage.setScene(scene);
+        stage.show();
+
+        // An eventhandler for the burgermenu button. Maybe this should be moved to the controller class
+        menuButton.setOnAction(new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent e){
+                burgerMenu.setVisible(true);
+            }
+        });
+
+    }
+
+    public static VBox burgerMenuInstantiation(){
+
+        // Main object that is going to be returned
+        VBox burgerMenu = new VBox(10);
+
+        // Getting the screen resolution
+        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+
+        // The objects within the menu
+        Label testText = new Label("Hej Kong Marius");
+        ImageView menuButtonImage = new ImageView("file:src/main/resources/visuals/hamburber.png");
+        Button menuButton = new Button("", menuButtonImage);
+        Button backButton = new Button("Upload new file");
+        menuButtonImage.setFitHeight(screenBounds.getHeight() * 0.03f);
+        menuButtonImage.setPreserveRatio(true);
+
+        // Adding all objects to the burgerMenu
+        burgerMenu.getChildren().addAll(menuButton, testText, backButton);
+
+        // Setting additional settings
+        burgerMenu.setMaxWidth(screenBounds.getWidth() * 0.2f);
+        burgerMenu.setStyle("-fx-background-color: #9cc2ff;");
+        burgerMenu.setPadding(new Insets(10));
+        menuButton.setAlignment(Pos.CENTER_LEFT);
+
+        menuButton.setOnAction(new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent e){
+                burgerMenu.setVisible(false);
+            }
+        });
+
+        backButton.setOnAction(new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent e){
+                selectedStage = StageSelect.MainMenu;
+                redraw();
+            }
+        });
+
+        return burgerMenu;
+
+    }
+
+    // A function for redrawing the stage when changing scenes
     public static void redraw(){
 
         if (selectedStage == StageSelect.MainMenu){
             dragAndDropStage(stage);
         }else if (selectedStage == StageSelect.MapView){
-            mapStage(stage);
+            mapStageNew(stage);
         }
     }
 }
