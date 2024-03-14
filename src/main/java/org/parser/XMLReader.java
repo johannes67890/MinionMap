@@ -9,7 +9,6 @@ import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 
 public class XMLReader {
-    private Builder tempElement;
     private TagBound bound;
     private ArrayList<TagNode> nodes = new ArrayList<TagNode>();
     private ArrayList<TagAdress> adresses = new ArrayList<TagAdress>();
@@ -69,7 +68,7 @@ public class XMLReader {
     // static private String getTagName(XMLStreamReader event) {
     //     return event.getLocalName().intern();
     // }
-
+    private Builder tempBuilder = new Builder();
 
     public XMLReader(FileDistributer filename) {
         try {
@@ -84,20 +83,19 @@ public class XMLReader {
                         if(element.equals("bounds")) {
                             this.bound = new TagBound(reader);
                         }else {
-                            tempElement = new Builder(reader, element);
+                            tempBuilder.parse(element, reader);
                         };
                         break;
                     case END_ELEMENT:
                         element = reader.getLocalName().intern();
                         switch (element) {
                             case "node":
-                                if(!tempElement.getAdressBuilder().isEmpty()){
-                                    adresses.add(new TagAdress(tempElement));
+                                if(!tempBuilder.getAdressBuilder().isEmpty()){
+                                    adresses.add(new TagAdress(tempBuilder));
                                 } else {
-                                    nodes.add(new TagNode(tempElement));
+                                    nodes.add(new TagNode(tempBuilder));
                                 }
-                                break;
-                            case "way":
+                                tempBuilder = new Builder(); // reset the builder
                                 break;
                             default:
                                 break;
@@ -105,19 +103,20 @@ public class XMLReader {
                         break;
                     default:
                         break;
-                }
+                    }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println(adresses);
-        //System.out.println(nodes);
-        //System.out.println(bound);
         // new XMLParser(this);
     }
     public class Builder {
         private AdressBuilder adressBuilder = new AdressBuilder();
         private BigDecimal id, lat, lon;
+
+        public boolean isEmpty(){
+            return this.getAdressBuilder().isEmpty() && this.id == null && this.lat == null && this.lon == null;
+        }
 
         public BigDecimal getID(){
             return this.id;
@@ -132,7 +131,7 @@ public class XMLReader {
             return this.adressBuilder;
         }
 
-        Builder(XMLStreamReader reader, String element){
+        private void parse(String element, XMLStreamReader reader){
             switch (element) {
                 case "node":
                     this.id = getAttributeByBigDecimal(reader, "id");
