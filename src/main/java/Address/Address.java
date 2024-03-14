@@ -59,12 +59,10 @@ public class Address {
         Matcher matcher = PATTERN.matcher(input);
 
         if(matcher.matches()){
-            builder.street = matcher.group("street");
             builder.house = matcher.group("house");
             builder.floor = matcher.group("floor");
             builder.side = matcher.group("side");
             builder.postcode = matcher.group("postcode");
-            builder.city = matcher.group("city");
 
             if(matcher.group("floor") != null && !matcher.group("floor").contains(".")){
                 builder.floor += ".";
@@ -73,8 +71,9 @@ public class Address {
             if(matcher.group("side") != null && !matcher.group("side").contains(".")){
                 builder.side += ".";
             } else{builder.side = ""; }
+
             if(matcher.group("street") != null){
-                String[] streetSplit = builder.street.split(" ");
+                String[] streetSplit = matcher.group("street").split(" ");
                 builder.street = "";
                 for(String splitString : streetSplit){
                     splitString = splitString.substring(0,1).toUpperCase() +
@@ -83,10 +82,12 @@ public class Address {
                 }
                 builder.street = builder.street.substring(0, builder.street.length() - 1);
                 
+            } else{
+                builder.street = "";
             }
 
             if(matcher.group("city") != null){
-                String[] citySplit = builder.city.split(" ");
+                String[] citySplit = matcher.group("city").split(" ");
                 builder.city = "";
                 for(String splitString : citySplit){
                     splitString = splitString.substring(0,1).toUpperCase() +
@@ -95,6 +96,8 @@ public class Address {
                 }
                 builder.city = builder.city.substring(0, builder.city.length() - 1);
                 
+            } else{
+                builder.city = "";
             }
 
         } else{

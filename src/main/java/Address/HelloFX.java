@@ -106,7 +106,7 @@ public class HelloFX extends Application {
 
                 } else{System.out.println("This City: " + a.city + " does not exist");}
 
-            } 
+            }
             if(streetNames.contains(a.street)){
                 System.out.println("STREET FOUND: " + a.street);
             } else{
@@ -119,6 +119,9 @@ public class HelloFX extends Application {
 
             } 
             System.out.println("Time: " + (System.currentTimeMillis() - time));
+            System.out.println(a.street);
+
+
     }
 
     public String findSimilar(ArrayList<String> list, String s){
