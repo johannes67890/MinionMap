@@ -2,9 +2,12 @@ package org.parser;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLInputFactory;
 import java.io.FileInputStream;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
+
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 
@@ -17,6 +20,9 @@ public class XMLReader {
   
     public static BigDecimal getAttributeByBigDecimal(XMLStreamReader event, String name) {
         return new BigDecimal(event.getAttributeValue(null, name));
+    }
+    public static Long getAttributeByBigInteger(XMLStreamReader event, String name) {
+        return Long.parseUnsignedLong(event.getAttributeValue(null, name));
     }
     // @Override
     // public String toString() {
@@ -97,6 +103,10 @@ public class XMLReader {
                                 }
                                 tempBuilder = new Builder(); // reset the builder
                                 break;
+                            case "way":
+
+                                tempBuilder = new Builder(); // reset the builder
+
                             default:
                                 break;
                         }
@@ -108,17 +118,22 @@ public class XMLReader {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        System.out.println("Nodes: " + nodes.size());
+        System.out.println("Adresses: " + adresses.size());
+        System.out.println("Bounds: " + bound.toString());
         // new XMLParser(this);
     }
     public class Builder {
         private AdressBuilder adressBuilder = new AdressBuilder();
-        private BigDecimal id, lat, lon;
+        private WayBuilder wayBuilder = new WayBuilder();
+        private Long id;
+        private BigDecimal lat, lon;
 
         public boolean isEmpty(){
             return this.getAdressBuilder().isEmpty() && this.id == null && this.lat == null && this.lon == null;
         }
 
-        public BigDecimal getID(){
+        public Long getID(){
             return this.id;
         }
         public BigDecimal getLat(){
@@ -134,15 +149,22 @@ public class XMLReader {
         private void parse(String element, XMLStreamReader reader){
             switch (element) {
                 case "node":
-                    this.id = getAttributeByBigDecimal(reader, "id");
+                    this.id = getAttributeByBigInteger(reader, "id");
                     this.lat = getAttributeByBigDecimal(reader, "lat");
                     this.lon = getAttributeByBigDecimal(reader, "lon");
+                    break;
+                case "way":
+                    
                     break;
                 case "tag":
                     String k = reader.getAttributeValue(null, "k");
                     String v = reader.getAttributeValue(null, "v");
 
                     parseTag(k, v);
+                    break;
+                case "nd":
+                    Long ref = getAttributeByBigInteger(reader, "ref");
+                    wayBuilder.ref(ref);
                     break;
                 default:
                     break;
@@ -176,7 +198,7 @@ public class XMLReader {
         }
     
     /**
-     * Builder
+     * Builder for adress
      */
     public static class AdressBuilder {
         public String street, house, postcode, city, municipality;
@@ -221,7 +243,27 @@ public class XMLReader {
             }
         }
     }
+    public static class WayBuilder {
+        ArrayList<Long> refNodes = new ArrayList<Long>();
+        Long id;
+        private boolean isEmpty = true;
 
+        public boolean isEmpty(){
+            return isEmpty;
+        }
+
+        public WayBuilder id(Long _id){
+            id = _id;
+            return this;
+        }
+        
+        public WayBuilder ref(Long ref){
+            refNodes.add(ref);
+            isEmpty = false;
+            return this;
+        }
+
+    }
 }
 
 

@@ -21,4 +21,8 @@ public class TagAdress extends HashMap<Adress, String> {
             }
         });
     }
+
+    public Long getID() {
+        return Long.parseUnsignedLong(this.get(Adress.ID));
+    }
 }
