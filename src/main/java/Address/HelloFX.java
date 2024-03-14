@@ -1,3 +1,6 @@
+package Address;
+
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -13,12 +16,19 @@ import javafx.stage.Stage;
 
 public class HelloFX extends Application {
 
-    @Override
-    public void start(Stage stage) {
+    ArrayList<String> cityNames, streetNames, postCodes;
+    TextField input;
+    TextArea output;
+    BorderPane pane;
+    Scene scene;
 
-        ArrayList<String> cityNames = new ArrayList<>();
-        ArrayList<String> streetNames = new ArrayList<>();
-        ArrayList<String> postCodes = new ArrayList<>();
+
+    public void readFiles(){
+
+
+        cityNames = new ArrayList<>();
+        streetNames = new ArrayList<>();
+        postCodes = new ArrayList<>();
 
         try{
 
@@ -41,18 +51,45 @@ public class HelloFX extends Application {
         } catch(IOException e){
             System.out.println("FILE NOT FOUND");
         }
+    }
 
 
-        var input = new TextField();
-        var output = new TextArea();
-        var pane = new BorderPane();
+
+    @Override
+    public void start(Stage stage) {
+
+        readFiles();
+       
+        input = new TextField();
+        output = new TextArea();
+        pane = new BorderPane();
 
         pane.setTop(input);
         pane.setCenter(output);
 
         //Instantiates Address
         input.setOnAction(e->{
-            Address a = Address.parse(input.getText());
+
+            searchForAdress(input.getText());
+                        
+        });
+        startScene(stage);
+    }
+
+    public void startScene(Stage stage){
+
+
+        scene = new Scene(pane);
+
+        stage.setTitle("Address Parsing");
+        stage.setScene(scene);
+        stage.show();
+
+    }
+
+
+    public void searchForAdress(String input){
+        Address a = Address.parse(input);
             output.setText(a.toString());
 
             long time = System.currentTimeMillis();
@@ -61,18 +98,8 @@ public class HelloFX extends Application {
                 System.out.println("CITY FOUND: " + a.city);
             } else{
 
-                String topString = null;
+                String topString = findSimilar(cityNames, a.city);
 
-                int maxSim = Integer.MAX_VALUE;
-                int current;
-
-                for (String cityName : cityNames){
-                    current = Commons.StringUtility.getLevenshteinDistance(cityName, a.city);
-                    if (current < maxSim){
-                        maxSim = current;
-                        topString = cityName;
-                    }
-                }
                 if (topString != null){
 
                     System.out.println("Mente du: " + topString + "?");
@@ -84,38 +111,30 @@ public class HelloFX extends Application {
                 System.out.println("STREET FOUND: " + a.street);
             } else{
 
-                String topString = null;
+                String topString = findSimilar(streetNames, a.street);
 
-                int maxSim = Integer.MAX_VALUE;
-                int current;
-
-                for (String streetName : streetNames){
-                    current = Commons.StringUtility.getLevenshteinDistance(streetName, a.street);
-                    if (current < maxSim){
-                        maxSim = current;
-                        topString = streetName;
-                        if (maxSim <= 1){
-                            break;
-                        }
-                    }
-                }
                 if (topString != null){
-
                     System.out.println("Mente du: " + topString + "?");
-
                 } else{System.out.println("This City: " + a.street + " does not exist");}
 
             } 
-
             System.out.println("Time: " + (System.currentTimeMillis() - time));
-            
-        });
+    }
 
-        var scene = new Scene(pane);
+    public String findSimilar(ArrayList<String> list, String s){
+        String topString = null;
 
-        stage.setTitle("Address Parsing");
-        stage.setScene(scene);
-        stage.show();
+        int maxSim = Integer.MAX_VALUE;
+        int current;
+
+        for (String cityName : cityNames){
+            current = Commons.StringUtility.getLevenshteinDistance(cityName, s);
+            if (current < maxSim){
+                maxSim = current;
+                topString = cityName;
+            }
+        }
+        return topString;
     }
 
     public static void main(String[] args) {

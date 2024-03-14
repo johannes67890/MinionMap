@@ -1,7 +1,16 @@
+package Address;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
+/**
+ * Object class representing addresses
+ * 
+ * <ul>
+ * <li> Is built from userInput </li>
+ * <li> Gets modified in order to suit af general format</li>
+ * <li>
+ * </ul>
+ */
 public class Address {
     public String street, house, floor, side, postcode, city;
 
@@ -26,11 +35,24 @@ public class Address {
     private final static Pattern PATTERN = Pattern.compile(REGEX);
 
 
-    //"(?<street>[A-Za-zØÆÅåæø ]+)? ?(?<house>[0-9]{1,3}[A-Za-z]{0,30})? ?(?<floor> st| [0-9]{1,3})? ?(?<side>tv|th|mf)?\\p? ?(?<postcode>[0-9]{4})? ?(?<city>[A-Za-ØÆÅåøæ ]+)?"
+    // "(?<street>[A-Za-zØÆÅåæø ]+)? ?(?<house>[0-9]{1,3}[A-Za-z]{0,30})? ?(?<floor> st| [0-9]{1,3})? ?(?<side>tv|th|mf)?\\p? ?(?<postcode>[0-9]{4})? ?(?<city>[A-Za-ØÆÅåøæ ]+)?"
 
-    //^(?<street>[A-Za-zØÆÅåæø ]+)? ?(?<house>[0-9]{1,3}[A-Za-z]{0,30})? ?(?<floor> st| [0-9]{1,3})? ?(?<side>tv|th|mf)?\\.? ?(?<postcode>[0-9]{4})? ?(?<city>[A-Za-ØÆÅåøæ ]+)?$
+    // ^(?<street>[A-Za-zØÆÅåæø ]+)? ?(?<house>[0-9]{1,3}[A-Za-z]{0,30})? ?(?<floor> st| [0-9]{1,3})? ?(?<side>tv|th|mf)?\\.? ?(?<postcode>[0-9]{4})? ?(?<city>[A-Za-ØÆÅåøæ ]+)?$
 
-    //(?=(?<street>[.A-Za-zØÆÅåæø ]+)) ?(?=(?<house>[0-9]{1,3}[A-Za-z]{0,2}))? ?(?=(?<floor>st|[0-9]{1,3}[.]{1}))? ?(?=(?<side>tv|th|mf))?\.? ?(?=(?<postcode>[0-9]{4}))? ?(?=(?<city>[A-Za-ØÆÅåøæ ]+))?
+    // (?=(?<street>[.A-Za-zØÆÅåæø ]+)) ?(?=(?<house>[0-9]{1,3}[A-Za-z]{0,2}))? ?(?=(?<floor>st|[0-9]{1,3}[.]{1}))? ?(?=(?<side>tv|th|mf))?\.? ?(?=(?<postcode>[0-9]{4}))? ?(?=(?<city>[A-Za-ØÆÅåøæ ]+))?
+
+
+    /**
+     * 
+     * Translates String input into an address.
+     * 
+     * <ul>
+     * <li> Does not require info for all fields (floor, street, etc.)</li>
+     * <li> Modifies input for a more fitting format</li>
+     * <li> Indirectly instantiates a new Address via the {@link Builder builder's } {@link Builder#build() build method}
+     * </ul>
+     * @param input any text from user input
+     */
 
     public static Address parse(String input) {
         Builder builder = new Builder();
@@ -81,8 +103,6 @@ public class Address {
         return builder.build();
     }
 
-
-
     public static class Builder {
         private String street, house, floor, side, postcode, city;
 
@@ -115,6 +135,12 @@ public class Address {
             city = _city;
             return this;
         }
+
+
+        /**
+         * 
+         * @return an instance of an address
+         */
 
         public Address build() {
             return new Address(street, house, floor, side, postcode, city);

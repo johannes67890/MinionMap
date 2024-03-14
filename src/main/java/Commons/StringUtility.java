@@ -12,15 +12,14 @@ public final class StringUtility {
      * 
      * Calculates how much input to make two string identical, based on Levenshtein's distance calculation.
      * 
-     * @param s
-     * @param t
-     * @return
+     * @param s The first string, and initially the smallest
+     * @param t The second string, and initially the biggest
+     * @return an integer, that counts how much input is needed to make the two strings identical
      */
     public static int getLevenshteinDistance(String s, String t){
 
 
         if (s == null || t == null){
-            System.out.println("EROOROOROROROR");
             throw new IllegalArgumentException("Strings must not be null");
         }
 
