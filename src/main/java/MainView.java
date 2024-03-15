@@ -29,12 +29,13 @@ public class MainView {
     public static Canvas canvas = new Canvas(sizeX, sizeY);
     static GraphicsContext gc = canvas.getGraphicsContext2D();
     static Scene lastScene;
+    static Rectangle2D screenBounds;
 
 
     public MainView(Stage stage){
 
         MainView.stage = stage;
-
+        screenBounds = Screen.getPrimary().getVisualBounds();
         MainView.stage.setMinWidth(sizeX);
         MainView.stage.setMinHeight(sizeY);
         MainView.stage.setResizable(true);
@@ -224,6 +225,7 @@ public class MainView {
         VBox burgerMenu = burgerMenuInstantiation(); // This is the menu that sits on the left side of the screen when menu button is pressed
         StackPane mainPane = new StackPane(); // This is the stackpane where the burgermenu and map is overlayed on top of eachother
         BorderPane bp = new BorderPane(); // This is the main part of the scene where the map is drawn and the top menu bar is
+        BorderPane unitScale = zoomLevelInstantiation(); // This is the zoom level that shows the user what the distance is
 
         // Setting up the borderpane by adding topbar to the top of the pane and mapCanvas to the center
         bp.setTop(topBar);
@@ -235,9 +237,10 @@ public class MainView {
         // I dont know why it needs the padding, but if it isnt there the bp is going out of the window at the top
         bp.setPadding(new Insets(55,-5,0,-5));
 
-        mainPane.getChildren().addAll(bp, burgerMenu);
+        mainPane.getChildren().addAll(bp, burgerMenu, unitScale);
         burgerMenu.setVisible(false);
         mainPane.setAlignment(burgerMenu, Pos.CENTER_LEFT);
+        mainPane.setAlignment(unitScale, Pos.BOTTOM_RIGHT);
 
         mapCanvas.heightProperty().bind(mainPane.heightProperty());
         mapCanvas.widthProperty().bind(mainPane.widthProperty());
@@ -256,6 +259,26 @@ public class MainView {
 
     }
 
+    public static BorderPane zoomLevelInstantiation(){
+
+        Text unitText = new Text("500m");
+        unitText.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, screenBounds.getHeight() * 0.01f));;
+        ImageView unitScalerImage = new ImageView("file:src/main/resources/visuals/UnitRuler.png");
+        unitScalerImage.setFitHeight(screenBounds.getHeight() * 0.02f);
+        unitScalerImage.setFitWidth(screenBounds.getWidth() * 0.02f);
+
+        BorderPane outputPane = new BorderPane();
+        outputPane.setMaxWidth(screenBounds.getWidth() * 0.05f);
+        outputPane.setMaxHeight(screenBounds.getHeight() * 0.04f);
+        outputPane.setTop(unitText);
+        outputPane.setCenter(unitScalerImage);
+        
+        outputPane.setAlignment(unitText, Pos.CENTER);
+        outputPane.setAlignment(unitScalerImage, Pos.CENTER);
+
+        return outputPane;
+    }
+
     public static VBox burgerMenuInstantiation(){
 
         // Main object that is going to be returned
@@ -265,7 +288,7 @@ public class MainView {
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
 
         // The objects within the menu
-        Label testText = new Label("Hej Kong Marius");
+        Label testText = new Label("Test");
         ImageView menuButtonImage = new ImageView("file:src/main/resources/visuals/hamburber.png");
         Button menuButton = new Button("", menuButtonImage);
         Button backButton = new Button("Upload new file");

@@ -31,7 +31,7 @@ public class ResizableCanvas extends Canvas {
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
 
         double width = getWidth();
-        double height = getHeight() - (screenBounds.getHeight() * 0.06f);
+        double height = getHeight() - (screenBounds.getHeight() * 0.05f);
 
         GraphicsContext gc = getGraphicsContext2D();
         gc.clearRect(0, 0, width, height);
