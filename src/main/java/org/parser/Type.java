@@ -3,6 +3,23 @@ package org.parser;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
+/**
+ * Enum for the different types of tags.  
+ * <p>
+ * The different types of tags are of a hierarchy from 0 to 9, where 9 is the most important and 0 is the least important.
+ * The hierarchy is used for optimization of the map, with priority rendering.
+ * </p>
+ * <p>
+ * A enum field contains the following:
+ * <ul>
+ * <li>key ({@link String}) - The key of the tag</li>
+ * <li>value ({@link Array} of {@link String}) - The value of the tag</li>    
+ * <li>hierarchy ({@link Integer}) - The hierarchy of the tag</li>
+ * <li>color ({@link Color}) - The color of the tag</li>
+ * <li>width ({@link Double}) - The width of the tag</li>
+ * </ul>
+ * </p>
+ */
 public enum Type {
     // Natural, Landuse and main infrastructure (Hierarchy 9)
     COASTLINE("natural", new String[]{"coastline"}, 9, Color.BLACK, 0),
@@ -43,15 +60,6 @@ public enum Type {
     UNKNOWN("", new String[]{""}, 0, Color.BLACK, 0);
 
 
-    
-    public String getKey() {
-        return key;
-    }
-
-    public String[] getValue() {
-        return value;
-    }
-
     private final String key; // key of the tag
     private final String[] value; // value of the tag
     private final int hierarchy; // hierarchy of the tag - How important is it to display
@@ -65,7 +73,14 @@ public enum Type {
         this.color = color;
         this.width = width;
     }
+    
+    public String getKey() {
+        return key;
+    }
 
+    public String[] getValue() {
+        return value;
+    }
 
     public static Type[] getTypes(){
         return Type.values();

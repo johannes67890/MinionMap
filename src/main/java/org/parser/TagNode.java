@@ -4,6 +4,13 @@ import java.util.HashMap;
 enum Node {
     ID, LAT, LON;
 }
+/**
+ * Class for storing a {@link HashMap} of a single node.
+ * Contains the following tags:
+ * <p>
+ * {@link Node#ID}, {@link Node#LAT}, {@link Node#LON}
+ * </p>
+*/
 public class TagNode extends HashMap<Node,Number> {
     public TagNode(XMLReader.Builder builder) {
         super(new HashMap<Node, Number>(){

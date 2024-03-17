@@ -9,16 +9,34 @@ import java.math.BigDecimal;
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 
+/**
+ * Reader for a OSM XML file.
+ * <p>
+ * Uses the {@link XMLStreamReader} to read the file and parse the data into the different classes: {@link TagNode}, {@link TagNode} , {@link TagAddress} and {@link TagWay}.
+ * </p>
+ * 
+ */
 public class XMLReader {
     private TagBound bound;
     private ArrayList<TagNode> nodes = new ArrayList<TagNode>();
-    private ArrayList<TagAdress> adresses = new ArrayList<TagAdress>();
+    private ArrayList<TagAddress> addresses = new ArrayList<TagAddress>();
     private ArrayList<TagWay> ways = new ArrayList<TagWay>();
 
-  
+    /**
+     * Get a attrubute from the {@link XMLStreamReader} as a {@link BigDecimal}.
+     * @param event - The {@link XMLStreamReader} to get the attribute from.
+     * @param name - The name of the attribute to get. ({@link String})
+     * @return The attribute as a {@link BigDecimal}.
+     */
     public static BigDecimal getAttributeByBigDecimal(XMLStreamReader event, String name) {
         return new BigDecimal(event.getAttributeValue(null, name));
     }
+    /**
+     * Get a attrubute from the {@link XMLStreamReader} as a {@link Long}.
+     * @param event - The {@link XMLStreamReader} to get the attribute from.
+     * @param name - The name of the attribute to get. ({@link String})
+     * @return The attribute as a {@link Long}.
+     */
     public static Long getAttributeByLong(XMLStreamReader event, String name) {
         return Long.parseUnsignedLong(event.getAttributeValue(null, name));
     }
@@ -45,8 +63,8 @@ public class XMLReader {
                         element = reader.getLocalName().intern();
                         switch (element) {
                             case "node":
-                                if(!tempBuilder.getAdressBuilder().isEmpty()){
-                                    adresses.add(new TagAdress(tempBuilder));
+                                if(!tempBuilder.getAddressBuilder().isEmpty()){
+                                    addresses.add(new TagAddress(tempBuilder));
                                 } else {
                                     nodes.add(new TagNode(tempBuilder));
                                 }
@@ -73,17 +91,24 @@ public class XMLReader {
         });
         // new XMLParser(this);
     }
+
+    /**
+     * Builder for a single XML element.
+     * <p>
+     * The builder contains a {@link AdressBuilder} and a {@link WayBuilder} to construct a {@link TagAddress} or a {@link TagWay}.
+     * </p>
+     */
     public class Builder {
-        private AdressBuilder adressBuilder = new AdressBuilder();
+        private AddressBuilder addressBuilder = new AddressBuilder();
         private WayBuilder wayBuilder = new WayBuilder();
 
-        private String name;
+        private String name; // name from a <tag> in a parrent element
         private Type type;
         private Long id;
         private BigDecimal lat, lon;
 
         public boolean isEmpty(){
-            return this.getAdressBuilder().isEmpty() || this.getWayBuilder().isEmpty() && this.id == null && this.lat == null && this.lon == null;
+            return this.getAddressBuilder().isEmpty() || this.getWayBuilder().isEmpty() && this.id == null && this.lat == null && this.lon == null;
         }
 
         public Long getID(){
@@ -95,8 +120,8 @@ public class XMLReader {
         public BigDecimal getLon(){
             return this.lon;
         }
-        public AdressBuilder getAdressBuilder(){
-            return this.adressBuilder;
+        public AddressBuilder getAddressBuilder(){
+            return this.addressBuilder;
         }
         public WayBuilder getWayBuilder(){
             return this.wayBuilder;
@@ -108,6 +133,11 @@ public class XMLReader {
             return this.type;
         }
 
+        /**
+         * Parse the XML element and add the data to the builder(s).
+         * @param element - The name of the element to parse.
+         * @param reader - The {@link XMLStreamReader} to get the data from.
+         */
         private void parse(String element, XMLStreamReader reader){
             switch (element) {
                 case "node":
@@ -134,6 +164,11 @@ public class XMLReader {
             }
         }
 
+        /**
+         * Parse a tag and add the data to the builder.
+         * @param k - The key of the tag.
+         * @param v - The value of the tag.
+         */
         private void parseTag(String k, String v){
             if(k.equals("name")){
                 this.name = v;
@@ -154,19 +189,19 @@ public class XMLReader {
             if(k.contains("addr:")){
                 switch (k) {
                     case "addr:city":
-                    adressBuilder.city(v);
+                    addressBuilder.city(v);
                         break;
                     case "addr:street":
-                    adressBuilder.street(v);
+                    addressBuilder.street(v);
                         break;
                     case "addr:housenumber":
-                    adressBuilder.house(v);
+                    addressBuilder.house(v);
                         break;
                     case "addr:postcode":
-                    adressBuilder.postcode(v);
+                    addressBuilder.postcode(v);
                         break;
                     case "addr:municipality":
-                    adressBuilder.municipality(v);
+                    addressBuilder.municipality(v);
                         break;
                     default:
                         break;
@@ -175,9 +210,12 @@ public class XMLReader {
         }
     
     /**
-     * Builder for adress
+     * Builder for a single address.
+     * <p>
+     * Constructs a instance of the builder, that later can be used to construct a {@link TagAddress}.
+     * </p>
      */
-    public static class AdressBuilder {
+    public static class AddressBuilder {
         public String street, house, postcode, city, municipality;
         private boolean isEmpty = true;
 
@@ -185,42 +223,47 @@ public class XMLReader {
             return isEmpty;
         }
 
-        public AdressBuilder street(String _street) {
+        public AddressBuilder street(String _street) {
             street = _street;
             isEmpty = false;
             return this;
         }
 
-        public AdressBuilder house(String _house) {
+        public AddressBuilder house(String _house) {
             house = _house;
             return this;
         }
 
-        public AdressBuilder floor(String _floor) {
+        public AddressBuilder floor(String _floor) {
             return this;
         }
 
-        public AdressBuilder side(String _side) {
+        public AddressBuilder side(String _side) {
             return this;
         }
 
-        public AdressBuilder postcode(String _postcode) {
+        public AddressBuilder postcode(String _postcode) {
             postcode = _postcode;
             return this;
         }
 
-        public AdressBuilder city(String _city) {
+        public AddressBuilder city(String _city) {
             city = _city;
             return this;
         }
 
-        public AdressBuilder municipality(String _municipality) {
+        public AddressBuilder municipality(String _municipality) {
             municipality = _municipality;
             return this;
             }
         }
     }
-   
+   /**
+    * Builder for a single way.
+    * <p>
+    * Constructs a instance of the builder, that later can be used to construct a {@link TagWay}.
+    * </p>
+    */
     public class WayBuilder {
         private ArrayList<Long> refNodes = new ArrayList<Long>();
         private boolean isEmpty = true;
