@@ -12,8 +12,12 @@ public enum Type {
     
     // Landuse (Hierarchy: 8)
     SECONDARY_ROAD("highway", new String[]{"secondary"}, 8, Color.BLACK, 0),
-    RAILWAY("railway",new String[]{"rail","light_rail","subway"}, 8, Color.BLACK, 0),
+    RAILWAY("railway",new String[]{"rail","light_rail","subway", "abandoned"}, 8, Color.BLACK, 0),
     FARMFIELD("landuse", new String[]{"farmland"}, 8, Color.BLACK, 0),
+    LANDUSE("landuse", new String[]{"commercial","retail","construction","brownfield","greenfield","allotments","basin",
+    "cemetery","depot","garages","grass","greenhouse_horticulture","industrial","landfill","meadow","military","orchard","plant_nursery",
+    "port","quarry","railway","recreation_ground","religious","reservoir","residential","retail","salt_pond","village_green","vineyard",
+    "winter_sports","farmyard","forest","farm", ""}, 8, Color.BLACK, 0),
 
     // Urban and natural (Hierarchy: 7)
     BUILDING("building",new String[]{""},7, Color.BLACK, 0),

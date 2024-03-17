@@ -2,11 +2,9 @@ package org.parser;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLInputFactory;
 import java.io.FileInputStream;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
@@ -15,65 +13,16 @@ public class XMLReader {
     private TagBound bound;
     private ArrayList<TagNode> nodes = new ArrayList<TagNode>();
     private ArrayList<TagAdress> adresses = new ArrayList<TagAdress>();
-   // private ArrayList<TagWay> ways = new ArrayList<TagWay>();
+    private ArrayList<TagWay> ways = new ArrayList<TagWay>();
 
   
     public static BigDecimal getAttributeByBigDecimal(XMLStreamReader event, String name) {
         return new BigDecimal(event.getAttributeValue(null, name));
     }
-    public static Long getAttributeByBigInteger(XMLStreamReader event, String name) {
+    public static Long getAttributeByLong(XMLStreamReader event, String name) {
         return Long.parseUnsignedLong(event.getAttributeValue(null, name));
     }
-    // @Override
-    // public String toString() {
-    //     return this.tag.toString();
-    // }
 
-    // /**
-    //  * The the current tag. Returns null if the tag is empty.
-    //  * 
-    //  * @return The tag of type HashMap<K,V>, where the types are of {@link ParseTagResult}.
-    //  */
-    // public HashMap<K, V> getTag() {
-    //     return !this.tag.isEmpty() ? tag : null;
-    // }
-
-    // public Long getID() {
-    //     return (Long) this.getTag().get(Node.ID);
-    // }
-
-    // public BigDecimal getLat() {
-    //     return (BigDecimal) this.getTag().get(Node.LAT);
-    // }
-
-    // public BigDecimal getLon() {
-    //     return (BigDecimal) this.getTag().get(Node.LON);
-    // }
-
-    // public Class<?> getType() {
-    //     return this.tag.getClass();
-    // } 
-
-    // // Method to set the tag.
-    // public void setTag(HashMap<K,V> tag) {
-    //     this.tag = tag;
-    // }
-
-    // public boolean isBoundsType() {
-    //     return this.getClass().equals(TagBound.class);
-    // }
-
-    // public boolean isNodeType() {
-    //     return this.getClass().equals(TagNode.class);
-    // }
-
-    // public boolean isAdressType() {
-    //     return this.getClass().equals(TagAdress.class);
-    // }
-
-    // static private String getTagName(XMLStreamReader event) {
-    //     return event.getLocalName().intern();
-    // }
     private Builder tempBuilder = new Builder();
 
     public XMLReader(FileDistributer filename) {
@@ -104,9 +53,8 @@ public class XMLReader {
                                 tempBuilder = new Builder(); // reset the builder
                                 break;
                             case "way":
-
+                                ways.add(new TagWay(tempBuilder));
                                 tempBuilder = new Builder(); // reset the builder
-
                             default:
                                 break;
                         }
@@ -118,19 +66,24 @@ public class XMLReader {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("Nodes: " + nodes.size());
-        System.out.println("Adresses: " + adresses.size());
-        System.out.println("Bounds: " + bound.toString());
+        ways.forEach((way) -> {
+            if (way.getType() == null) {
+                System.out.println("Type is null: " + way);       
+            }
+        });
         // new XMLParser(this);
     }
     public class Builder {
         private AdressBuilder adressBuilder = new AdressBuilder();
         private WayBuilder wayBuilder = new WayBuilder();
+
+        private String name;
+        private Type type;
         private Long id;
         private BigDecimal lat, lon;
 
         public boolean isEmpty(){
-            return this.getAdressBuilder().isEmpty() && this.id == null && this.lat == null && this.lon == null;
+            return this.getAdressBuilder().isEmpty() || this.getWayBuilder().isEmpty() && this.id == null && this.lat == null && this.lon == null;
         }
 
         public Long getID(){
@@ -145,16 +98,25 @@ public class XMLReader {
         public AdressBuilder getAdressBuilder(){
             return this.adressBuilder;
         }
+        public WayBuilder getWayBuilder(){
+            return this.wayBuilder;
+        }
+        public String getName(){
+            return this.name;
+        }
+        public Type getType(){
+            return this.type;
+        }
 
         private void parse(String element, XMLStreamReader reader){
             switch (element) {
                 case "node":
-                    this.id = getAttributeByBigInteger(reader, "id");
+                    this.id = getAttributeByLong(reader, "id");
                     this.lat = getAttributeByBigDecimal(reader, "lat");
                     this.lon = getAttributeByBigDecimal(reader, "lon");
                     break;
                 case "way":
-                    
+                    this.id = getAttributeByLong(reader, "id");                    
                     break;
                 case "tag":
                     String k = reader.getAttributeValue(null, "k");
@@ -163,8 +125,9 @@ public class XMLReader {
                     parseTag(k, v);
                     break;
                 case "nd":
-                    Long ref = getAttributeByBigInteger(reader, "ref");
-                    wayBuilder.ref(ref);
+                    // TODO: figure out if to add the ref to the way or add the node to the way?
+                    Long ref = getAttributeByLong(reader, "ref");
+                    wayBuilder.addNode(ref);
                     break;
                 default:
                     break;
@@ -172,6 +135,20 @@ public class XMLReader {
         }
 
         private void parseTag(String k, String v){
+            if(k.equals("name")){
+                this.name = v;
+            }
+
+            for (Type currType : Type.getTypes()){
+                if (k.equals(currType.getKey())){
+                    for (String currVal : currType.getValue()) {
+                        if (v.equals(currVal) || currVal.equals("")) {
+                            this.type = currType;
+                            break;
+                        }
+                    }
+                }
+            }
 
             // if the tag is a address tag
             if(k.contains("addr:")){
@@ -243,26 +220,25 @@ public class XMLReader {
             }
         }
     }
-    public static class WayBuilder {
-        ArrayList<Long> refNodes = new ArrayList<Long>();
-        Long id;
+   
+    public class WayBuilder {
+        private ArrayList<Long> refNodes = new ArrayList<Long>();
         private boolean isEmpty = true;
 
-        public boolean isEmpty(){
+        public boolean isEmpty() {
             return isEmpty;
         }
 
-        public WayBuilder id(Long _id){
-            id = _id;
-            return this;
-        }
-        
-        public WayBuilder ref(Long ref){
+        private void addNode(Long ref) {
+            if (isEmpty) {
+                isEmpty = false;
+            }
             refNodes.add(ref);
-            isEmpty = false;
-            return this;
         }
 
+        public ArrayList<Long> getRefNodes() {
+            return refNodes;
+        }
     }
 }
 

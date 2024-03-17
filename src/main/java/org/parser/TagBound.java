@@ -20,20 +20,19 @@ public class TagBound extends HashMap<Bounds, BigDecimal>{
         });
     }
 
+    public BigDecimal getMinLat() {
+        return this.get(Bounds.MINLAT);
+    }
 
-    // public BigDecimal getMinLat() {
-    //     return this.getTag().get(Bounds.MINLAT);
-    // }
+    public BigDecimal getMaxLat() {
+        return this.get(Bounds.MAXLAT);
+    }
 
-    // public BigDecimal getMaxLat() {
-    //     return this.getTag().get(Bounds.MAXLAT);
-    // }
+    public BigDecimal getMinLon() {
+        return this.get(Bounds.MINLON);
+    }
 
-    // public BigDecimal getMinLon() {
-    //     return this.getTag().get(Bounds.MINLON);
-    // }
-
-    // public BigDecimal getMaxLon() {
-    //     return this.getTag().get(Bounds.MAXLON);
-    // }
+    public BigDecimal getMaxLon() {
+        return this.get(Bounds.MAXLON);
+    }
 }
