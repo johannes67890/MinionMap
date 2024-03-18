@@ -1,3 +1,4 @@
+package GUI;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 import javafx.stage.*;

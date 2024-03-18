@@ -6,18 +6,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import Address.Address;
-import Address.HelloFX;
+import Address.AddressSearchPage;
 
 public class AddressSeachTest {
 
 
-    HelloFX helloFX;
+    AddressSearchPage addressSearch;
     Address a;
 
 
     @BeforeEach
     void setUp() {
-        helloFX = new HelloFX();
+        addressSearch = new AddressSearchPage();
     }
 
     @Test
@@ -33,13 +33,13 @@ public class AddressSeachTest {
     @Test
     void FindAddress(){
 
-        helloFX.readFiles();
+        addressSearch.readFiles();
         String address = "stenvænget 3400 hillerød";
         a = Address.parse(address);
 
-        assertTrue(helloFX.getCities().contains(a.city));
-        assertTrue(helloFX.getStreets().contains(a.street));
-        assertTrue(helloFX.getPostCodes().contains(a.postcode));
+        assertTrue(addressSearch.getCities().contains(a.city));
+        assertTrue(addressSearch.getStreets().contains(a.street));
+        assertTrue(addressSearch.getPostCodes().contains(a.postcode));
 
     }
 

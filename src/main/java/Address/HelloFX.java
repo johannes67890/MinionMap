@@ -1,12 +1,14 @@
 package Address;
 
 
+
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import GUI.MainView;
 
 
 public class HelloFX extends Application {
@@ -19,8 +21,9 @@ public class HelloFX extends Application {
     @Override
     public void start(Stage stage) {
 
-        
+        MainView mainView = new MainView(stage);
 
+        stage.show();
 
     }
 
