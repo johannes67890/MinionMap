@@ -4,7 +4,7 @@
 package org.example;
 
 import org.parser.FileDistributer;
-import org.parser.XMLParser;
+//import org.parser.XMLParser;
 import org.parser.XMLReader;
 import org.parser.XMLWriter;
 

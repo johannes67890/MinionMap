@@ -21,4 +21,7 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 }
 
-mainClassName = 'HelloFX'
+mainClassName = "Address.HelloFX"
+
+
+
