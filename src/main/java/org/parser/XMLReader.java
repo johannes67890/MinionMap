@@ -283,6 +283,18 @@ public class XMLReader {
             return refNodes;
         }
     }
+
+    public ArrayList<TagNode> getNodes(){
+        return nodes;
+    }
+
+    public ArrayList<TagWay> getWays(){
+        return ways;
+    }
+
+    public ArrayList<TagAddress> getAddresses(){
+        return addresses;
+    }
 }
 
 
