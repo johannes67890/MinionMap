@@ -22,6 +22,7 @@ public class ResizableCanvas extends Canvas {
         double height = getHeight() - (screenBounds.getHeight() * 0.05f);
 
         GraphicsContext gc = getGraphicsContext2D();
+        DrawingMap.DrawMap(gc);
         gc.clearRect(0, 0, width, height);
 
         gc.setStroke(Color.RED);
