@@ -28,6 +28,17 @@ public class TagBound extends HashMap<Bounds, BigDecimal>{
         });
     }
 
+    public TagBound(BigDecimal maxLat, BigDecimal minLat, BigDecimal maxLon, BigDecimal minLon) {
+        super(new HashMap<Bounds, BigDecimal>(){
+            {
+                put(Bounds.MINLAT, minLat);
+                put(Bounds.MAXLAT, maxLat);
+                put(Bounds.MINLON, minLon);
+                put(Bounds.MAXLON, maxLon);
+            }
+        });
+    }
+
     /**
      * Get the minimum latitude of the bounds.
      * @return The minimum latitude of the bounds.

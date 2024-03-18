@@ -3,11 +3,11 @@ import javax.xml.stream.*;
 import java.io.*;
 import java.util.*;
 
-public class OSMWriter {
+public class XMLWriter {
     private XMLStreamReader reader;
     private XMLStreamWriter writer;
 
-    public OSMWriter(String inputFile, String outputFile) {
+    public XMLWriter(String inputFile, String outputFile) {
         try {
             this.reader = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(inputFile));
             this.writer = XMLOutputFactory.newInstance().createXMLStreamWriter(new FileWriter(outputFile));

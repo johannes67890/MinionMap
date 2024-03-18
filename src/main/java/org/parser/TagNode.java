@@ -1,4 +1,5 @@
 package org.parser;
+import java.math.BigDecimal;
 import java.util.HashMap;
 
 enum Node {
@@ -21,4 +22,20 @@ public class TagNode extends HashMap<Node,Number> {
             }
         });
     }
+    public TagNode(BigDecimal lat, BigDecimal lon) {
+        super(new HashMap<Node, Number>(){
+            {
+                put(Node.LAT, lat);
+                put(Node.LON, lon);
+            }
+        });
+    }
+
+    public BigDecimal getLat() {
+        return (BigDecimal) this.get(Node.LAT);
+    }
+    public BigDecimal getLon() {
+        return (BigDecimal) this.get(Node.LON);
+    }
+
 }

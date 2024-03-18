@@ -5,11 +5,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.parser.FileDistributer;
 import org.parser.FileParser;
+
 import java.util.HashMap;
-import org.parser.OSMReader;
+import org.parser.XMLReader;
 import org.parser.TagBound;
 import org.parser.TagNode;
 import org.parser.FileParser.CompasPoints;
@@ -18,12 +20,12 @@ import java.math.BigDecimal;
 public class FileParserTest {
     private FileDistributer testFile = FileDistributer.input;
     private FileParser parser;
-    private OSMReader reader;
+    private XMLReader reader;
 
     @BeforeEach
     public void setUp() {
         assertDoesNotThrow(() -> {
-            this.reader = new OSMReader(this.testFile);
+            this.reader = new XMLReader(this.testFile);
         });
         this.parser = new FileParser(this.reader);
     }
@@ -31,10 +33,11 @@ public class FileParserTest {
     @Test
     public void testCenterPoint() {
         TagBound bound = this.reader.getBound();
-        TagNode expectedCenterPoint = new TagNode(new HashMap<Tags.Node, Number>() {{
-            put(Tags.Node.LAT, new BigDecimal("55.6572100"));
-            put(Tags.Node.LON, new BigDecimal("12.4705650"));
-        }});
+
+        
+
+        TagNode expectedCenterPoint = new TagNode(new BigDecimal("55.6572100"), new BigDecimal("12.4705650"));
+        
 
         TagNode centerPoint = parser.centerPoint(bound);
 
@@ -66,10 +69,7 @@ public class FileParserTest {
 
     @Test
     public void testIsInBounds(){
-        TagNode node = new TagNode(new HashMap<Tags.Node, Number>() {{
-            put(Tags.Node.LAT, new BigDecimal("55.6581162"));
-            put(Tags.Node.LON, new BigDecimal("12.4681259"));
-        }});
+        TagNode node = new TagNode (new BigDecimal("55.6581162"),new BigDecimal("12.4681259"));
 
         assertTrue(parser.isInBounds(node, this.reader.getBound()));
     }
@@ -79,22 +79,23 @@ public class FileParserTest {
     public void testSplitArea() {
     
         // Q1 - top left area
-        TagBound expectedQ1 = new TagBound(new HashMap<Tags.Bounds, BigDecimal>() {{
-            put(Tags.Bounds.MINLAT, new BigDecimal("55.6581600"));
-            put(Tags.Bounds.MAXLAT, new BigDecimal("55.6572100"));
-            put(Tags.Bounds.MINLON, new BigDecimal("12.4677300"));
-            put(Tags.Bounds.MAXLON, new BigDecimal("12.4705650"));
-        }});
+        // TagBound expectedQ1 = new TagBound(new HashMap<TagBounds, BigDecimal>() {{
+        //     put(Tags.Bounds.MINLAT, new BigDecimal("55.6581600"));
+        //     put(Tags.Bounds.MAXLAT, new BigDecimal("55.6572100"));
+        //     put(Tags.Bounds.MINLON, new BigDecimal("12.4677300"));
+        //     put(Tags.Bounds.MAXLON, new BigDecimal("12.4705650"));
+        // }});
+        
 
         
         
         // Q2 - top right area
-        TagBound expectedQ2 = new TagBound(new HashMap<Tags.Bounds, BigDecimal>() {{
-            put(Tags.Bounds.MINLAT, new BigDecimal("55.6572100"));
-            put(Tags.Bounds.MAXLAT, new BigDecimal("55.6581600"));
-            put(Tags.Bounds.MINLON, new BigDecimal("12.4705650"));
-            put(Tags.Bounds.MAXLON, new BigDecimal("12.4734000"));
-        }});
+        // TagBound expectedQ2 = new TagBound(new HashMap<Tags.Bounds, BigDecimal>() {{
+        //     put(Tags.Bounds.MINLAT, new BigDecimal("55.6572100"));
+        //     put(Tags.Bounds.MAXLAT, new BigDecimal("55.6581600"));
+        //     put(Tags.Bounds.MINLON, new BigDecimal("12.4705650"));
+        //     put(Tags.Bounds.MAXLON, new BigDecimal("12.4734000"));
+        // }});
 
         // Q3 - bottom left area
         // Q4 - bottom right area

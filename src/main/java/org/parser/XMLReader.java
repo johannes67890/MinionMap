@@ -22,6 +22,24 @@ public class XMLReader {
     private ArrayList<TagAddress> addresses = new ArrayList<TagAddress>();
     private ArrayList<TagWay> ways = new ArrayList<TagWay>();
 
+
+    public TagBound getBound() {
+        return bound;
+    }
+
+    public ArrayList<TagNode> getNodes() {
+        return nodes;
+    }
+
+    public ArrayList<TagAddress> getAddresses() {
+        return addresses;
+    }
+
+    public ArrayList<TagWay> getWays() {
+        return ways;
+    }
+    
+
     /**
      * Get a attrubute from the {@link XMLStreamReader} as a {@link BigDecimal}.
      * @param event - The {@link XMLStreamReader} to get the attribute from.
