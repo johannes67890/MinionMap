@@ -169,16 +169,6 @@ public class MainView {
         gc.stroke();
         gc.closePath();
 
-        
-        
-        //Button 0,0
-
-        //Bjælke ned fra knap samme farve som #button
-
-        //Searchbar textfield ish, bare print 
-
-
-
         stage.setTitle("Danmarks Kortet Uden malmø");
         stage.setScene(scene);
         stage.show();
@@ -263,9 +253,9 @@ public class MainView {
 
         Text unitText = new Text("500m");
         unitText.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, screenBounds.getHeight() * 0.01f));;
-        ImageView unitScalerImage = new ImageView("file:src/main/resources/visuals/UnitRuler.png");
+        ImageView unitScalerImage = new ImageView("file:src/main/resources/visuals/UnitRuler2.png");
         unitScalerImage.setFitHeight(screenBounds.getHeight() * 0.02f);
-        unitScalerImage.setFitWidth(screenBounds.getWidth() * 0.02f);
+        unitScalerImage.setFitWidth(screenBounds.getWidth() * 0.04f);
 
         BorderPane outputPane = new BorderPane();
         outputPane.setMaxWidth(screenBounds.getWidth() * 0.05f);
