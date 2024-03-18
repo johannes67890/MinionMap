@@ -1,6 +1,7 @@
 package GUI;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import org.parser.FileDistributer;
+import org.parser.XMLReader;
+
 import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -23,12 +24,13 @@ public class ResizableCanvas extends Canvas {
         double height = getHeight() - (screenBounds.getHeight() * 0.05f);
 
         GraphicsContext gc = getGraphicsContext2D();
-        //DrawingMap.DrawMap(gc);
-        gc.clearRect(0, 0, width, height);
+        XMLReader xmlReader = new XMLReader(FileDistributer.input);
+        DrawingMap.DrawMap(gc, this, xmlReader);
+        //gc.clearRect(0, 0, width, height);
 
-        gc.setStroke(Color.RED);
+        /*gc.setStroke(Color.RED);
         gc.strokeLine(0, 0, width, height);
-        gc.strokeLine(0, height, width, 0);
+        gc.strokeLine(0, height, width, 0);*/
     }
 
     // The only reason that the canvas can resize with the window, besides the listeners

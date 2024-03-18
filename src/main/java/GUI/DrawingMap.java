@@ -1,21 +1,24 @@
 package GUI;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import org.parser.TagBound;
+import org.parser.TagNode;
+import org.parser.TagWay;
+import org.parser.XMLReader;
+
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 
-import java.util.*;
-
-import javax.swing.text.html.HTML.Tag;
-
-import org.parser.*;
-
 public class DrawingMap {
 
-    public static void DrawMap(ResizableCanvas canvas, XMLReader reader){
+    public static void DrawMap(GraphicsContext gc, ResizableCanvas canvas, XMLReader reader){
 
-        GraphicsContext gc = canvas.getGraphicsContext2D();
+        //GraphicsContext gc = canvas.getGraphicsContext2D();
         ArrayList<TagNode> nodes = reader.getNodes();
         ArrayList<TagWay> ways = reader.getWays();
+        TagBound bound = reader.getBound();
 
         Iterator<TagWay> it = ways.iterator();
         gc.setTransform(new Affine());
@@ -23,14 +26,24 @@ public class DrawingMap {
         gc.fillRect(0,0,canvas.getWidth(), canvas.getHeight());
         while (it.hasNext()){
 
-            Long[] line = it.next().getNodes();
+            ArrayList<Long> line =  it.next().getNodes();
 
+            System.out.println("HELLO " + line.size());
 
             gc.beginPath();
-            gc.moveTo();
-            gc.lineTo();
+
+            gc.moveTo(line.get(0), line.get(1));
+
+
+            for(int i = 2 ; i < line.size(); i+=2){
+
+                gc.lineTo(line.get(i), line.get(i));
+                System.out.println(line.get(i));
+
+            }
+
             gc.stroke();
-            gc.closePath();
+
         }
 
     }

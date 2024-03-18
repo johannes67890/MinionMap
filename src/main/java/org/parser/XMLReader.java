@@ -1,13 +1,12 @@
 package org.parser;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLInputFactory;
+import static javax.xml.stream.XMLStreamConstants.*;
+
 import java.io.FileInputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
-import java.math.BigDecimal;
-
-import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
-import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
 
 /**
  * Reader for a OSM XML file.
@@ -71,6 +70,7 @@ public class XMLReader {
                                 tempBuilder = new Builder(); // reset the builder
                                 break;
                             case "way":
+                                
                                 ways.add(new TagWay(tempBuilder));
                                 tempBuilder = new Builder(); // reset the builder
                             default:
@@ -86,7 +86,7 @@ public class XMLReader {
         }
         ways.forEach((way) -> {
             if (way.getType() == null) {
-                System.out.println("Type is null: " + way);       
+                //System.out.println("Type is null: " + way);       
             }
         });
         // new XMLParser(this);
@@ -294,6 +294,10 @@ public class XMLReader {
 
     public ArrayList<TagAddress> getAddresses(){
         return addresses;
+    }
+
+    public TagBound getBound(){
+        return bound;
     }
 }
 
