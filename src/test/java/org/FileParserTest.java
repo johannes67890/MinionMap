@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,7 @@ public class FileParserTest {
     private FileDistributer testFile = FileDistributer.input;
     private FileParser parser;
     private XMLReader reader;
-
+    
     @BeforeEach
     public void setUp() {
         assertDoesNotThrow(() -> {
@@ -29,6 +30,7 @@ public class FileParserTest {
         });
         this.parser = new FileParser(this.reader);
     }
+
 
     @Test
     public void testCenterPoint() {

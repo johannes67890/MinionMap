@@ -102,12 +102,8 @@ public class XMLReader {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        ways.forEach((way) -> {
-            if (way.getType() == null) {
-                System.out.println("Type is null: " + way);       
-            }
-        });
-        // new XMLParser(this);
+        System.out.println("Nodes: " + nodes.size());
+        new FileParser(this);
     }
 
     /**

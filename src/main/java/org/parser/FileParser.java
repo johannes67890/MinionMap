@@ -6,8 +6,8 @@ import java.util.HashMap;
 public class FileParser {
 
     public FileParser(XMLReader reader) {
-        //Chunck chunk = new Chunck(reader.getBound(), centerPoint(reader.getBound()));
-
+        Chunck chunk = new Chunck(reader.getBound(), centerPoint(reader.getBound()));
+        
     }   
 
     /**
@@ -77,7 +77,7 @@ public class FileParser {
             // East: lat = maxLat - (centerLat - minLat), lon = maxLon
             map.put(Direction.EAST, new TagNode(center.getLat(), bound.getMaxLon()));
             // West: lat = maxLat - (centerLat - minLat), lon = minLon
-            map.put(Direction.WEST, new TagNode(center.getLat(), bound.getMaxLon()));
+            map.put(Direction.WEST, new TagNode(center.getLat(), bound.getMinLon()));
 
             return map;
         }
