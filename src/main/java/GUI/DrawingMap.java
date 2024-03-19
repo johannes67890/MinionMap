@@ -13,6 +13,9 @@ import javafx.scene.transform.Affine;
 
 public class DrawingMap {
 
+
+    static Affine transform = new Affine();
+
     public static void DrawMap(GraphicsContext gc, ResizableCanvas canvas, XMLReader reader){
 
         //GraphicsContext gc = canvas.getGraphicsContext2D();
@@ -21,7 +24,7 @@ public class DrawingMap {
         TagBound bound = reader.getBound();
 
         Iterator<TagWay> it = ways.iterator();
-        gc.setTransform(new Affine());
+        gc.setTransform(transform);
         gc.setFill(Color.WHITE);
         gc.fillRect(0,0,canvas.getWidth(), canvas.getHeight());
         while (it.hasNext()){
