@@ -10,14 +10,13 @@ import javafx.stage.Screen;
 
 public class ResizableCanvas extends Canvas {
  
+    private MainView mainView;
 
-    XMLReader xmlReader;
-
-    public ResizableCanvas() {
+    public ResizableCanvas(MainView mainView) {
+        this.mainView = mainView;
         // Redraw canvas when size changes.
         widthProperty().addListener(evt -> draw());
         heightProperty().addListener(evt -> draw());
-        xmlReader = new XMLReader(FileDistributer.input);
         
     }
 
@@ -29,7 +28,7 @@ public class ResizableCanvas extends Canvas {
 
         GraphicsContext gc = getGraphicsContext2D();
         
-        DrawingMap.DrawMap(gc, this, xmlReader);
+        mainView.draw();
         //gc.clearRect(0, 0, width, height);
 
         /*gc.setStroke(Color.RED);

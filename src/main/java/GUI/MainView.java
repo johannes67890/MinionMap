@@ -11,6 +11,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 
+import org.parser.FileDistributer;
+import org.parser.XMLReader;
 
 import javafx.event.*;
 
@@ -28,9 +30,11 @@ public class MainView {
     static int sizeX = 800;
     static int sizeY = 600;
     public static ResizableCanvas canvas;
-    static GraphicsContext gc = canvas.getGraphicsContext2D();
+    static GraphicsContext gc;
     static Scene lastScene;
     static Rectangle2D screenBounds;
+    public XMLReader xmlReader;
+    public DrawingMap drawView;
 
 
     public MainView(Stage stage){
@@ -40,12 +44,23 @@ public class MainView {
         MainView.stage.setMinWidth(sizeX);
         MainView.stage.setMinHeight(sizeY);
         MainView.stage.setResizable(true);
-        
+        xmlReader = new XMLReader(FileDistributer.input);
+        drawView = new DrawingMap(this, xmlReader);
+
+
         dragAndDropStage(stage);
     }
 
+    public void draw(){
+        drawView.DrawMap(gc, canvas);
+    }
 
-    public static void dragAndDropStage(Stage stage){
+    public DrawingMap getDrawingMap(){
+        return drawView;
+    }
+
+
+    public void dragAndDropStage(Stage stage){
 
         Label title = new Label("Welcome to our Map of Denmark!");
         title.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 40));
@@ -118,7 +133,7 @@ public class MainView {
 
     }
 
-    public static void mapStage(Stage stage){
+    public void mapStage(Stage stage){
 
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
 
@@ -175,7 +190,7 @@ public class MainView {
         stage.show();
     }
 
-    public static void mapStageNew(Stage stage){
+    public void mapStageNew(Stage stage){
 
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
 
@@ -212,7 +227,8 @@ public class MainView {
         topBar.setStyle("-fx-background-color: #adadad");
 
         // Instantiate the main components of the stage
-        canvas = new ResizableCanvas(); // This is a custom canvas that can resize and is used to draw the map
+        canvas = new ResizableCanvas(this); // This is a custom canvas that can resize and is used to draw the map
+        gc = canvas.getGraphicsContext2D();
         VBox burgerMenu = burgerMenuInstantiation(); // This is the menu that sits on the left side of the screen when menu button is pressed
         StackPane mainPane = new StackPane(); // This is the stackpane where the burgermenu and map is overlayed on top of eachother
         BorderPane bp = new BorderPane(); // This is the main part of the scene where the map is drawn and the top menu bar is
@@ -250,7 +266,7 @@ public class MainView {
 
     }
 
-    public static BorderPane zoomLevelInstantiation(){
+    public BorderPane zoomLevelInstantiation(){
 
         Text unitText = new Text("500m");
         unitText.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, screenBounds.getHeight() * 0.01f));;
@@ -270,7 +286,7 @@ public class MainView {
         return outputPane;
     }
 
-    public static VBox burgerMenuInstantiation(){
+    public VBox burgerMenuInstantiation(){
 
         // Main object that is going to be returned
         VBox burgerMenu = new VBox(10);
@@ -313,7 +329,7 @@ public class MainView {
     }
 
     // A function for redrawing the stage when changing scenes
-    public static void redraw(){
+    public void redraw(){
 
         if (selectedStage == StageSelect.MainMenu){
             dragAndDropStage(stage);
