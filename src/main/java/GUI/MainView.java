@@ -1,20 +1,35 @@
 package GUI;
-import javafx.scene.paint.Color;
-import javafx.scene.transform.Affine;
-import javafx.stage.*;
-import javafx.geometry.*;
-import javafx.scene.Scene;
-import javafx.scene.text.*;
-import javafx.scene.canvas.*;
-import javafx.scene.control.*;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.*;
-import javafx.scene.layout.*;
-
 import org.parser.FileDistributer;
 import org.parser.XMLReader;
 
-import javafx.event.*;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.Scene;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+import javafx.scene.transform.Affine;
+import javafx.stage.Screen;
+import javafx.stage.Stage;
 
 public class MainView {
 
@@ -52,6 +67,8 @@ public class MainView {
     }
 
     public void draw(){
+        gc.setFill(Color.WHITE);
+        gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
         drawView.DrawMap(gc, canvas);
     }
 
@@ -188,6 +205,7 @@ public class MainView {
         stage.setTitle("Danmarks Kortet Uden malmø");
         stage.setScene(scene);
         stage.show();
+
     }
 
     public void mapStageNew(Stage stage){
@@ -256,6 +274,8 @@ public class MainView {
         stage.setTitle("Map of Denmark");
         stage.setScene(scene);
         stage.show();
+        Controller controller = new Controller(this);
+
 
         // An eventhandler for the burgermenu button. Maybe this should be moved to the controller class
         menuButton.setOnAction(new EventHandler<ActionEvent>() {

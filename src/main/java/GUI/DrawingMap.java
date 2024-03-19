@@ -43,7 +43,7 @@ public class DrawingMap {
 
             ArrayList<Long> line =  it.next().getNodes();
 
-            System.out.println("HELLO " + line.size());
+            //System.out.println("HELLO " + line.size());
 
             gc.beginPath();
 
@@ -53,7 +53,7 @@ public class DrawingMap {
             for(int i = 2 ; i < line.size(); i+=2){
 
                 gc.lineTo(line.get(i), line.get(i));
-                System.out.println(line.get(i));
+                //System.out.println(line.get(i));
 
             }
 
@@ -61,22 +61,25 @@ public class DrawingMap {
 
         }
 
+        gc.strokeLine(0, 0, 100, 100);
+        gc.strokeLine(0, canvas.getHeight(), canvas.getWidth(), 0);
+
     }
 
     void zoom(double factor, double dx, double dy){
         transform.prependTranslation(-dx, -dy);
         transform.prependScale(factor, factor);
         transform.prependTranslation(dx,dy);
+        //pan(dx, dy);
         mainView.draw();
-        // hejsa
+        System.out.println("ZOOMING");
     }
 
 
-    public static void pan(double dx, double dy) {
+    public void pan(double dx, double dy) {
 
         transform.prependTranslation(dx, dy);
-
-
+        mainView.draw();
     }
 
 
