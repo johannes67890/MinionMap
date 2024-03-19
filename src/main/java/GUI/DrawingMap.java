@@ -39,7 +39,8 @@ public class DrawingMap {
         gc.setTransform(transform);
         gc.setFill(Color.WHITE);
         gc.fillRect(0,0,canvas.getWidth(), canvas.getHeight());
-        while (it.hasNext()){
+        
+        while (it.hasNext()) {
 
             ArrayList<Long> line =  it.next().getNodes();
 
@@ -52,15 +53,16 @@ public class DrawingMap {
 
             for(int i = 2 ; i < line.size(); i+=2){
 
-                gc.lineTo(line.get(i), line.get(i));
-                //System.out.println(line.get(i));
+                gc.lineTo(line.get(i-1), line.get(i));
+                System.out.println(line.get(i));
 
             }
 
+            
             gc.stroke();
-
+                
         }
-
+        
         gc.strokeLine(0, 0, 100, 100);
         gc.strokeLine(0, canvas.getHeight(), canvas.getWidth(), 0);
 

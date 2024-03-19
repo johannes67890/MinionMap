@@ -32,11 +32,5 @@ public class Controller {
             lastX = e.getX();
             lastY = e.getY();
         });
-
-
-
-       
-       
-
     }
 }
