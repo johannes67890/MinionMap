@@ -27,7 +27,7 @@ public class MainView {
     static StageSelect selectedStage = StageSelect.MapView;
     static int sizeX = 800;
     static int sizeY = 600;
-    public static Canvas canvas = new Canvas(sizeX, sizeY);
+    public static ResizableCanvas canvas;
     static GraphicsContext gc = canvas.getGraphicsContext2D();
     static Scene lastScene;
     static Rectangle2D screenBounds;
@@ -212,7 +212,7 @@ public class MainView {
         topBar.setStyle("-fx-background-color: #adadad");
 
         // Instantiate the main components of the stage
-        ResizableCanvas mapCanvas = new ResizableCanvas(); // This is a custom canvas that can resize and is used to draw the map
+        canvas = new ResizableCanvas(); // This is a custom canvas that can resize and is used to draw the map
         VBox burgerMenu = burgerMenuInstantiation(); // This is the menu that sits on the left side of the screen when menu button is pressed
         StackPane mainPane = new StackPane(); // This is the stackpane where the burgermenu and map is overlayed on top of eachother
         BorderPane bp = new BorderPane(); // This is the main part of the scene where the map is drawn and the top menu bar is
@@ -220,7 +220,7 @@ public class MainView {
 
         // Setting up the borderpane by adding topbar to the top of the pane and mapCanvas to the center
         bp.setTop(topBar);
-        bp.setCenter(mapCanvas);
+        bp.setCenter(canvas);
 
         // Setting up additional settings for the borderpane
         bp.setMargin(topBar, new Insets(5));
@@ -233,8 +233,8 @@ public class MainView {
         mainPane.setAlignment(burgerMenu, Pos.CENTER_LEFT);
         mainPane.setAlignment(unitScale, Pos.BOTTOM_RIGHT);
 
-        mapCanvas.heightProperty().bind(mainPane.heightProperty());
-        mapCanvas.widthProperty().bind(mainPane.widthProperty());
+        canvas.heightProperty().bind(mainPane.heightProperty());
+        canvas.widthProperty().bind(mainPane.widthProperty());
         Scene scene = new Scene(mainPane);
 
         stage.setTitle("Map of Denmark");
@@ -321,4 +321,6 @@ public class MainView {
             mapStageNew(stage);
         }
     }
+
+    
 }
