@@ -68,6 +68,7 @@ public class DrawingMap {
         transform.prependScale(factor, factor);
         transform.prependTranslation(dx,dy);
         mainView.draw();
+        // hejsa
     }
 
 
