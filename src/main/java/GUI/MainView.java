@@ -11,6 +11,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 
+import javax.swing.event.HyperlinkEvent;
 
 import javafx.event.*;
 
@@ -55,8 +56,11 @@ public class MainView {
         description.setTextAlignment(TextAlignment.CENTER);
         
         Text text = new Text("No File Selected");
+        Hyperlink link = new Hyperlink("Select File");
+        TextFlow textflow = new TextFlow(text, link);
+        textflow.setTextAlignment(TextAlignment.CENTER);
 
-        HBox contentPane = new HBox(text);
+        HBox contentPane = new HBox(textflow);
         contentPane.setAlignment(Pos.CENTER);
         contentPane.setMinSize(sizeX / 5, sizeY / 5);
         contentPane.setMaxWidth(sizeX / 3);
@@ -68,6 +72,25 @@ public class MainView {
         outerBox.setSpacing(10);
         outerBox.setAlignment(Pos.CENTER);
         outerBox.getChildren().addAll(title, description, contentPane, submitButton);
+
+        link.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.setTitle("Open Ressource File");
+                fileChooser.getExtensionFilters().addAll(
+                        new FileChooser.ExtensionFilter("OSM Files", "*.osm"),
+                        new FileChooser.ExtensionFilter("ZIP", "*.zip")
+                        );
+                fileChooser.setInitialDirectory(new java.io.File("C:\\Users\\"));
+                java.io.File file = fileChooser.showOpenDialog(stage);
+
+                if (file != null) {
+                    text.setText(file.toString());
+                    link.setText("Klik her for at vælge en anden fil");
+                }
+            }
+        });
 
         contentPane.setOnDragOver(new EventHandler<DragEvent>() {
 
@@ -90,6 +113,7 @@ public class MainView {
                 boolean success = false;
                 if (db.hasFiles()) {
                     text.setText(db.getFiles().toString());
+                    link.setText("");
                     success = true;
                 }
 
