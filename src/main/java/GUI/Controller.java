@@ -1,6 +1,4 @@
 package GUI;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 
 public class Controller {
     double lastX;
@@ -10,13 +8,18 @@ public class Controller {
     
     public Controller(MainView mainView){
 
-        
+        if (mainView.canvas != null){
+            mainView.canvas.setOnScroll(event -> {
 
-        mainView.canvas.setOnScroll(event -> {
+                mainView.getDrawingMap().zoom(Math.pow(zoomMultiplier,event.getDeltaY()), event.getX(), event.getY());
+                
+            });
 
-            mainView.getDrawingMap().zoom(Math.pow(zoomMultiplier,event.getDeltaY()), event.getX(), event.getY());
-            
-        });
+        }
+
+
+       
+       
 
     }
 }

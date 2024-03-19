@@ -74,7 +74,7 @@ public class DrawingMap {
 
     public static void pan(double dx, double dy) {
 
-        transform.prependTranslation();
+        transform.prependTranslation(dx, dy);
 
 
     }

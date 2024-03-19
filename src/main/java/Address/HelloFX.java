@@ -2,15 +2,14 @@ package Address;
 
 
 
+import GUI.Controller;
+import GUI.MainView;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import GUI.Controller;
-import GUI.DrawingMap;
-import GUI.MainView;
 
 
 public class HelloFX extends Application {
