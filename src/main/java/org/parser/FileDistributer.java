@@ -9,7 +9,10 @@ public enum FileDistributer {
 
     // Test files
     test_input("test_input.xml"),
-    test_output("test_output.xml");
+    test_output("test_output.xml"),
+
+    // Views
+    main("view/main.fxml");
 
     private String filePath;
 
@@ -26,7 +29,6 @@ public enum FileDistributer {
             e.printStackTrace();
         }
     }
-
     public String getFilePath() {
         return filePath.toString();
     }

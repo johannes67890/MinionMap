@@ -1,45 +1,28 @@
 package Address;
-
-
-
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import GUI.MainView;
 
+import java.net.URL;
 
-public class HelloFX extends Application {
+import org.parser.FileDistributer;
 
-    TextField input;
-    TextArea output;
-    BorderPane pane;
-    Scene scene;
-
-    @Override
-    public void start(Stage stage) {
-
-        MainView mainView = new MainView(stage);
-
-        stage.show();
-
-    }
-
-    public void startScene(Stage stage){
-
-
-        scene = new Scene(pane);
-
-        stage.setTitle("Address Parsing");
-        stage.setScene(scene);
-        stage.show();
-
-    }
+public class HelloFX extends Application{
 
     public static void main(String[] args) {
-        launch();
+        launch(args);
     }
 
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(new URL("file:" + FileDistributer.main.getFilePath()));
+        VBox vbox = loader.<VBox>load();
+
+        Scene scene = new Scene(vbox);
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
 }
