@@ -10,21 +10,25 @@ import javafx.stage.Screen;
 
 public class ResizableCanvas extends Canvas {
  
+
+    XMLReader xmlReader;
+
     public ResizableCanvas() {
         // Redraw canvas when size changes.
         widthProperty().addListener(evt -> draw());
         heightProperty().addListener(evt -> draw());
+        xmlReader = new XMLReader(FileDistributer.input);
         
     }
 
-    private void draw() {
+    public void draw() {
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
 
         double width = getWidth();
         double height = getHeight() - (screenBounds.getHeight() * 0.05f);
 
         GraphicsContext gc = getGraphicsContext2D();
-        XMLReader xmlReader = new XMLReader(FileDistributer.input);
+        
         DrawingMap.DrawMap(gc, this, xmlReader);
         //gc.clearRect(0, 0, width, height);
 

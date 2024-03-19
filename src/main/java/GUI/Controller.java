@@ -6,9 +6,16 @@ public class Controller {
     double lastX;
     double lastY;
     
-    public Controller(MainView view){
+    public Controller(DrawingMap drawView, MainView mainView){
 
         
+
+        mainView.canvas.setOnScroll(event -> {
+
+            drawView.zoom(Math.pow(scrollMultiplier,event.getDeltaY()), event.getX(), event.getY());
+            mainView.canvas.draw();
+            
+        });
 
     }
 }

@@ -8,6 +8,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import GUI.DrawingMap;
 import GUI.MainView;
 
 
@@ -22,6 +23,8 @@ public class HelloFX extends Application {
     public void start(Stage stage) {
 
         MainView mainView = new MainView(stage);
+        DrawingMap dm = new DrawingMap();
+        Controller controller = new Contrller()
 
         stage.show();
 

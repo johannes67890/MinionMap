@@ -15,9 +15,11 @@ public class DrawingMap {
 
 
     static Affine transform = new Affine();
+    public static ResizableCanvas canvas;
 
     public static void DrawMap(GraphicsContext gc, ResizableCanvas canvas, XMLReader reader){
 
+        
         //GraphicsContext gc = canvas.getGraphicsContext2D();
         ArrayList<TagNode> nodes = reader.getNodes();
         ArrayList<TagWay> ways = reader.getWays();
