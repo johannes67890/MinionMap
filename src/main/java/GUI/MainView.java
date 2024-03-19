@@ -11,7 +11,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 
+import java.io.File;
+import java.io.IOException;
+
 import javax.swing.event.HyperlinkEvent;
+
+import org.filehandling.zipHandler;
 
 import javafx.event.*;
 
@@ -47,14 +52,16 @@ public class MainView {
 
 
     public static void dragAndDropStage(Stage stage){
-
+        
         Label title = new Label("Welcome to our Map of Denmark!");
+        //Label title = new Label(finalPath);
         title.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 40));
         Label description = new Label("Drag and drop a .osm file here (If no file is dropped when submitting then it loads default map)");
         description.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 20));
         description.setWrapText(true);
         description.setTextAlignment(TextAlignment.CENTER);
         
+
         Text text = new Text("No File Selected");
         Hyperlink link = new Hyperlink("Select File");
         TextFlow textflow = new TextFlow(text, link);
@@ -88,6 +95,14 @@ public class MainView {
                 if (file != null) {
                     text.setText(file.toString());
                     link.setText("Klik her for at vælge en anden fil");
+                    if(file.toString().contains(".zip")){
+                        zipHandler zip = new zipHandler();
+                        try {
+                            zip.unzip(file.toString());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
             }
         });

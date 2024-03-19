@@ -8,6 +8,9 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+
+import java.io.File;
+
 import GUI.MainView;
 
 
@@ -40,6 +43,17 @@ public class HelloFX extends Application {
 
     public static void main(String[] args) {
         launch();
+    }
+
+    @Override
+    public void stop(){
+        String destDir = System.getProperty("user.dir").toString() + "\\src\\main\\resources\\osmFiles\\";
+        File file = new File(destDir);
+        if(file.isDirectory()){
+            for(File f : file.listFiles()){
+                f.delete();
+            }
+        }
     }
 
 }
