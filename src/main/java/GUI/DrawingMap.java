@@ -16,8 +16,18 @@ public class DrawingMap {
 
     static Affine transform = new Affine();
     public static ResizableCanvas canvas;
+    private XMLReader reader;
+    private MainView mainView;
 
-    public static void DrawMap(GraphicsContext gc, ResizableCanvas canvas, XMLReader reader){
+
+    public DrawingMap(MainView mainView, XMLReader reader){
+
+        this.mainView = mainView;
+        this.reader = reader;
+
+    }
+
+    public void DrawMap(GraphicsContext gc, ResizableCanvas canvas){
 
         
         //GraphicsContext gc = canvas.getGraphicsContext2D();
@@ -51,6 +61,13 @@ public class DrawingMap {
 
         }
 
+    }
+
+    void zoom(double factor, double dx, double dy){
+        transform.prependTranslation(-dx, -dy);
+        transform.prependScale(factor, factor);
+        transform.prependTranslation(dx,dy);
+        mainView.draw();
     }
 
 

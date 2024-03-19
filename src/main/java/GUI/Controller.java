@@ -5,15 +5,16 @@ import javafx.beans.value.ObservableValue;
 public class Controller {
     double lastX;
     double lastY;
+
+    double zoomMultiplier = 1.05f;
     
-    public Controller(DrawingMap drawView, MainView mainView){
+    public Controller(MainView mainView){
 
         
 
         mainView.canvas.setOnScroll(event -> {
 
-            drawView.zoom(Math.pow(scrollMultiplier,event.getDeltaY()), event.getX(), event.getY());
-            mainView.canvas.draw();
+            mainView.getDrawingMap().zoom(Math.pow(zoomMultiplier,event.getDeltaY()), event.getX(), event.getY());
             
         });
 
