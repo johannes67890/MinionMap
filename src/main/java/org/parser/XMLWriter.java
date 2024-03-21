@@ -1,20 +1,24 @@
 package org.parser;
 import javax.xml.stream.*;
 
-import org.parser.FileParser.Chunck;
-
 import java.io.*;
 import java.util.*;
 
 
 public class XMLWriter {
     public XMLWriter(){
-
+        
     }
 
     public XMLWriter(TagBound bounds) {
         FileParser fileParser = new FileParser(bounds);
-        initChunkFiles(fileParser);
+        try {
+            initChunkFiles(fileParser);
+        } catch (XMLStreamException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public XMLWriter(TagAddress inputFile, String outputFile) {
@@ -68,37 +72,42 @@ public class XMLWriter {
     //     } catch (Exception e) {
     //         e.printStackTrace();
     // }}
-
-
-    public void initChunkFiles(FileParser fileParser){
+    
+    public void initChunkFiles(FileParser fileParser) throws XMLStreamException, IOException{
+        String directoryPath = "src/main/resources/chunks/";
+        
+        
         for (int i = 0; i < 4; i++) {
             // Create a new file for each chunk
-            try {
-                XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(new FileWriter("chunk" + i + ".xml"));
+         
+                // Create the directory if it doesn't exist
+                File directory = new File(directoryPath);
+                if (!directory.exists()) {
+                    directory.mkdirs(); // mkdirs() creates parent directories if they don't exist
+                }
+                XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(new FileWriter(directoryPath + i + ".xml"));
+                
                 writer.writeStartDocument();
                 writer.writeStartElement("osm");
                 // writer.writeAttribute("version", "0.6");
+
+                final int index = i; // Declare a final variable to use in the lambda expression
+
+                createXMLElement(writer, "bounds", new HashMap<String, String>() {
+                    {
+                        put("minlat", fileParser.getChunck().getQuadrant(index).getMinLat().toString());
+                        put("minlon", fileParser.getChunck().getQuadrant(index).getMinLon().toString());
+                        put("maxlat", fileParser.getChunck().getQuadrant(index).getMaxLat().toString());
+                        put("maxlon", fileParser.getChunck().getQuadrant(index).getMaxLon().toString());
+                    }
+                });
                 
-                    createXMLElement(writer, "bounds", new HashMap<String, String>(){
-                        {
-                            put("minlat", fileParser.getChunck().getQuadrant(i).getMinLat().toString());
-                            put("minlon", fileParser.getChunck().getQuadrant(i).getMinLon().toString());
-                            put("maxlat", fileParser.getChunck().getQuadrant(i).getMaxLat().toString());
-                            put("maxlon", fileParser.getChunck().getQuadrant(i).getMaxLon().toString());
-                        }
-                    });
-                
-                writer.writeEndDocument(); 
+                writer.writeEndDocument();
                 
                 // Writing the content on XML file and 
                 // close xmlStreamWriter using close() method 
                 writer.flush(); 
                 writer.close();
-                
-            } catch (Exception e) {
-                // TODO: handle exception
-            }
-
         }
     }
 
@@ -110,22 +119,4 @@ public class XMLWriter {
         }
         wrinter.writeEndElement();
     }
-
-    // private void deleteAtrribute(String attribute) throws XMLStreamException {
-    //     writer.writeStartElement(reader.getLocalName()); 
-    //     for (int i = 0; i < reader.getAttributeCount(); i++) {
-    //         if (!attribute.equals(reader.getAttributeLocalName(i))) { // Skip the attribute to be deleted
-    //             writer.writeAttribute(reader.getAttributeLocalName(i), reader.getAttributeValue(i)); // Write other attributes
-    //         }
-    //     }
-    // }
-
-    // private void deleteAtrribute(String[] attribute) throws XMLStreamException {
-    //     writer.writeStartElement(reader.getLocalName()); 
-    //     for (int i = 0; i < reader.getAttributeCount(); i++) {
-    //         if(!Arrays.asList(attribute).contains(reader.getAttributeLocalName(i))) {
-    //             writer.writeAttribute(reader.getAttributeLocalName(i), reader.getAttributeValue(i));
-    //         }
-    //     }
-    // }
 }
