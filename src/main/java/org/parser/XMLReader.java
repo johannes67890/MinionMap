@@ -60,12 +60,12 @@ public class XMLReader {
     }
 
     private Builder tempBuilder = new Builder();
-
+    
     public XMLReader(FileDistributer filename) {
         try {
             XMLInputFactory factory = XMLInputFactory.newInstance();
             XMLStreamReader reader = factory.createXMLStreamReader(new FileInputStream(filename.getFilePath()));
-            
+    
             while (reader.hasNext()) {
                 reader.next();
                 switch (reader.getEventType()) {
@@ -84,6 +84,7 @@ public class XMLReader {
                                 if(!tempBuilder.getAddressBuilder().isEmpty()){
                                     addresses.add(new TagAddress(tempBuilder));
                                 } else {
+                                                                      
                                     nodes.add(new TagNode(tempBuilder));
                                 }
                                 tempBuilder = new Builder(); // reset the builder
@@ -102,8 +103,8 @@ public class XMLReader {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("Nodes: " + nodes.size());
-        new FileParser(this);
+        new XMLWriter(this.bound);
+
     }
 
     /**

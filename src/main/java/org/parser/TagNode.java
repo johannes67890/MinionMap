@@ -12,7 +12,7 @@ enum Node {
  * {@link Node#ID}, {@link Node#LAT}, {@link Node#LON}
  * </p>
 */
-public class TagNode extends HashMap<Node,Number> {
+public class TagNode extends Tag<Node> {
     public TagNode(XMLReader.Builder builder) {
         super(new HashMap<Node, Number>(){
             {

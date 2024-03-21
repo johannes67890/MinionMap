@@ -13,9 +13,9 @@ enum Address{
  * {@link Address#ID}, {@link Address#LAT}, {@link Address#LON}, {@link Address#STREET}, {@link Address#HOUSENUMBER}, {@link Address#POSTCODE}, {@link Address#MUNICIPALITY}
  * </p>
 */
-public class TagAddress extends HashMap<Address, String> {
+public class TagAddress extends Tag<Address> {
     TagAddress(XMLReader.Builder builder){
-        super(new HashMap<Address, String>(){
+        super(new HashMap<Address, Object>(){
             {
                 put(Address.ID, builder.getID().toString());
                 put(Address.LAT, builder.getLat().toString());

@@ -1,14 +1,16 @@
 package org.parser;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class FileParser {
     private Chunck chunck;
 
-    public FileParser(XMLReader reader) {
-        this.chunck = new Chunck(reader.getBound(), centerPoint(reader.getBound()));
-    }   
+    public FileParser(TagBound bound) {
+        TagNode center = centerPoint(bound);
+        this.chunck = new Chunck(bound, center);
+    }
 
     public Chunck getChunck(){
         return this.chunck;
@@ -112,8 +114,6 @@ public class FileParser {
         private TagBound bound;
         private TagNode center;
         // private TagNode center;
-        private TagNode[] nodes;
-        private TagAddress[] adresses;
 
         public Chunck(TagBound bound, TagNode center) {
             this.bound = bound;
@@ -124,6 +124,10 @@ public class FileParser {
 
         public HashMap<Quadrant, TagBound> getChuncks(){
             return this.chunks;
+        }
+
+        public TagBound getQuadrant(int index){
+            return this.chunks.get(Quadrant.values()[index]);
         }
 
         public TagBound getQuadrantOne(){
