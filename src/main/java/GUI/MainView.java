@@ -1,6 +1,7 @@
 package GUI;
 import org.parser.FileDistributer;
 import org.parser.XMLReader;
+import Address.AddressSearchPage;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -150,64 +151,6 @@ public class MainView {
 
     }
 
-    public void mapStage(Stage stage){
-
-        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-
-        GridPane mainGrid = new GridPane();
-        GridPane rightGrid = new GridPane();
-        
-        Scene scene = new Scene(mainGrid, sizeY,sizeX);
-
-        ImageView menuButtonImage = new ImageView("file:src/main/resources/visuals/hamburber.png");
-        menuButtonImage.setFitHeight(screenBounds.getHeight() * 0.03f);
-        menuButtonImage.setPreserveRatio(true);
-
-        ImageView searchButtonImage = new ImageView("file:src/main/resources/visuals/oompaloop.png");
-        searchButtonImage.setFitHeight(screenBounds.getHeight() * 0.02f);
-        searchButtonImage.setPreserveRatio(true);
-
-        Button menuButton = new Button("", menuButtonImage);
-        Button searchButton = new Button("Search", searchButtonImage);
-        TextField searchBar = new TextField();
-        HBox topBar = new HBox(10);
-
-        
-        topBar.getChildren().addAll(menuButton, searchBar, searchButton);
-        topBar.setPrefSize(scene.getWidth(), screenBounds.getHeight() * 0.05f);
-        topBar.setMinHeight(screenBounds.getHeight() * 0.05f);
-        topBar.setMaxHeight(screenBounds.getHeight() * 0.05f);
-        topBar.setPrefWidth(scene.getWidth());
-        topBar.setStyle("-fx-background-color: #8fc9c7;");
-        topBar.setAlignment(Pos.CENTER);
-
-        
-        searchBar.setMaxWidth(scene.getWidth() * 0.8f);
-        searchBar.setMinWidth(scene.getWidth() * 0.8f);
-
-        mainGrid.add(rightGrid, 1,0);
-        
-        rightGrid.setPrefSize(scene.getWidth(), scene.getHeight());
-        rightGrid.add(topBar, 0,0);
-        rightGrid.add(canvas, 0,1);
-        rightGrid.setVgap(10);
-
-        gc.setTransform(new Affine());
-        gc.setFill(Color.WHITE);
-        gc.fillRect(0, 0, sizeX, sizeY);
-
-        gc.beginPath();
-        gc.moveTo(0, 0);
-        gc.lineTo(sizeY, sizeX);
-        gc.stroke();
-        gc.closePath();
-
-        stage.setTitle("Danmarks Kortet Uden malmø");
-        stage.setScene(scene);
-        stage.show();
-
-    }
-
     public void mapStageNew(Stage stage){
 
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
@@ -281,6 +224,20 @@ public class MainView {
         menuButton.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent e){
                 burgerMenu.setVisible(true);
+            }
+        });
+
+
+        // An eventhandler for the search button and search bar. See search() method for more information
+        searchButton.setOnAction(new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent e){
+                search(searchBar);
+            }
+        });
+
+        searchBar.setOnAction(new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent e){
+                search(searchBar);
             }
         });
 
@@ -358,5 +315,16 @@ public class MainView {
         }
     }
 
+    // A function for searching for an address. Called when the search button is pressed 
+    // or when the enter key is pressed in the search bar.
+    // The function makes a new AddressSearchPage object which takes the addresses from the XMLReader
+    // and then uses the searchForAdress method to search for the address
+    // See AddressSearchPage for more information
+
+    public void search(TextField searchBar){
+        AddressSearchPage search = new AddressSearchPage(xmlReader.getAddresses());
+        String text = searchBar.getText();
+        search.searchForAdress(text);
+    }
     
 }
