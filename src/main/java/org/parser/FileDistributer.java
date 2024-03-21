@@ -9,6 +9,7 @@ public enum FileDistributer {
 
     // Test files
     test_input("test_input.xml"),
+    test_input_bornholm("bornholm.xml"),
     test_output("test_output.xml");
 
     private String filePath;

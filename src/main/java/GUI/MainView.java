@@ -4,32 +4,16 @@ import org.parser.XMLReader;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.geometry.Rectangle2D;
+import javafx.geometry.*;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.input.*;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
-import javafx.scene.transform.Affine;
-import javafx.stage.Screen;
-import javafx.stage.Stage;
+import javafx.scene.text.*;
+import javafx.stage.*;
 
 public class MainView {
 
@@ -50,6 +34,7 @@ public class MainView {
     static Rectangle2D screenBounds;
     public XMLReader xmlReader;
     public DrawingMap drawView;
+    private Text zoomLevelText;
 
 
     public MainView(Stage stage){
@@ -69,6 +54,7 @@ public class MainView {
     public void draw(){
         gc.setFill(Color.WHITE);
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        zoomLevelText.setText("" + Math.round(drawView.getZoomLevelMeters()));;
         drawView.DrawMap(gc, canvas);
     }
 
@@ -148,64 +134,6 @@ public class MainView {
                 redraw();
             }
         });
-
-    }
-
-    public void mapStage(Stage stage){
-
-        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-
-        GridPane mainGrid = new GridPane();
-        GridPane rightGrid = new GridPane();
-        
-        Scene scene = new Scene(mainGrid, sizeY,sizeX);
-
-        ImageView menuButtonImage = new ImageView("file:src/main/resources/visuals/hamburber.png");
-        menuButtonImage.setFitHeight(screenBounds.getHeight() * 0.03f);
-        menuButtonImage.setPreserveRatio(true);
-
-        ImageView searchButtonImage = new ImageView("file:src/main/resources/visuals/oompaloop.png");
-        searchButtonImage.setFitHeight(screenBounds.getHeight() * 0.02f);
-        searchButtonImage.setPreserveRatio(true);
-
-        Button menuButton = new Button("", menuButtonImage);
-        Button searchButton = new Button("Search", searchButtonImage);
-        TextField searchBar = new TextField();
-        HBox topBar = new HBox(10);
-
-        
-        topBar.getChildren().addAll(menuButton, searchBar, searchButton);
-        topBar.setPrefSize(scene.getWidth(), screenBounds.getHeight() * 0.05f);
-        topBar.setMinHeight(screenBounds.getHeight() * 0.05f);
-        topBar.setMaxHeight(screenBounds.getHeight() * 0.05f);
-        topBar.setPrefWidth(scene.getWidth());
-        topBar.setStyle("-fx-background-color: #8fc9c7;");
-        topBar.setAlignment(Pos.CENTER);
-
-        
-        searchBar.setMaxWidth(scene.getWidth() * 0.8f);
-        searchBar.setMinWidth(scene.getWidth() * 0.8f);
-
-        mainGrid.add(rightGrid, 1,0);
-        
-        rightGrid.setPrefSize(scene.getWidth(), scene.getHeight());
-        rightGrid.add(topBar, 0,0);
-        rightGrid.add(canvas, 0,1);
-        rightGrid.setVgap(10);
-
-        gc.setTransform(new Affine());
-        gc.setFill(Color.WHITE);
-        gc.fillRect(0, 0, sizeX, sizeY);
-
-        gc.beginPath();
-        gc.moveTo(0, 0);
-        gc.lineTo(sizeY, sizeX);
-        gc.stroke();
-        gc.closePath();
-
-        stage.setTitle("Danmarks Kortet Uden malmø");
-        stage.setScene(scene);
-        stage.show();
 
     }
 
@@ -290,19 +218,19 @@ public class MainView {
 
     public BorderPane zoomLevelInstantiation(){
 
-        Text unitText = new Text("500m");
-        unitText.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, screenBounds.getHeight() * 0.01f));;
+        zoomLevelText = new Text("500m");
+        zoomLevelText.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, screenBounds.getHeight() * 0.01f));;
         ImageView unitScalerImage = new ImageView("file:src/main/resources/visuals/UnitRuler2.png");
         unitScalerImage.setFitHeight(screenBounds.getHeight() * 0.02f);
         unitScalerImage.setFitWidth(screenBounds.getWidth() * 0.04f);
 
         BorderPane outputPane = new BorderPane();
-        outputPane.setMaxWidth(screenBounds.getWidth() * 0.05f);
+        outputPane.setMaxWidth(screenBounds.getWidth() * 0.04f);
         outputPane.setMaxHeight(screenBounds.getHeight() * 0.04f);
-        outputPane.setTop(unitText);
+        outputPane.setTop(zoomLevelText);
         outputPane.setCenter(unitScalerImage);
         
-        outputPane.setAlignment(unitText, Pos.CENTER);
+        outputPane.setAlignment(zoomLevelText, Pos.CENTER);
         outputPane.setAlignment(unitScalerImage, Pos.CENTER);
 
         return outputPane;
