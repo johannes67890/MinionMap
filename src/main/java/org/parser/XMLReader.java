@@ -4,6 +4,7 @@ import static javax.xml.stream.XMLStreamConstants.*;
 import java.io.FileInputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
@@ -17,7 +18,7 @@ import javax.xml.stream.XMLStreamReader;
  */
 public class XMLReader {
     private TagBound bound;
-    private ArrayList<TagNode> nodes = new ArrayList<TagNode>();
+    private HashMap<Long, TagNode> nodes = new HashMap<Long, TagNode>();
     private ArrayList<TagAddress> addresses = new ArrayList<TagAddress>();
     private ArrayList<TagWay> ways = new ArrayList<TagWay>();
 
@@ -65,12 +66,12 @@ public class XMLReader {
                                 if(!tempBuilder.getAddressBuilder().isEmpty()){
                                     addresses.add(new TagAddress(tempBuilder));
                                 } else {
-                                    nodes.add(new TagNode(tempBuilder));
+                                    TagNode node = new TagNode(tempBuilder);
+                                    nodes.put(node.getRef(), node);
                                 }
                                 tempBuilder = new Builder(); // reset the builder
                                 break;
                             case "way":
-                                
                                 ways.add(new TagWay(tempBuilder));
                                 tempBuilder = new Builder(); // reset the builder
                             default:
@@ -285,6 +286,15 @@ public class XMLReader {
     }
 
     public ArrayList<TagNode> getNodes(){
+
+        ArrayList<TagNode> nodesList = new ArrayList<>();
+
+        for(TagNode node : nodes.values()){
+            nodesList.add(node);
+        }
+        return nodesList;
+    }
+    public HashMap<Long, TagNode> getNodesMap(){
         return nodes;
     }
 

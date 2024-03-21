@@ -8,7 +8,7 @@ public class Controller {
     
     public Controller(MainView mainView){
 
-        System.out.println("CONTROLLER MADE");
+        //System.out.println("CONTROLLER MADE");
 
         mainView.canvas.setOnMousePressed(e -> {
             lastX = e.getX();
@@ -17,7 +17,7 @@ public class Controller {
         
         mainView.canvas.setOnScroll(event -> {
 
-            System.out.println("ZOOMING IN CONTROLLER");
+            //System.out.println("ZOOMING IN CONTROLLER");
 
             mainView.getDrawingMap().zoom(Math.pow(zoomMultiplier,event.getDeltaY()), event.getX(), event.getY());
             

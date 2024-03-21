@@ -72,6 +72,7 @@ public class MainView {
         drawView.DrawMap(gc, canvas);
     }
 
+
     public DrawingMap getDrawingMap(){
         return drawView;
     }
@@ -274,6 +275,7 @@ public class MainView {
         stage.setTitle("Map of Denmark");
         stage.setScene(scene);
         stage.show();
+        drawView.initialize(canvas);
         Controller controller = new Controller(this);
 
 
@@ -355,6 +357,7 @@ public class MainView {
             dragAndDropStage(stage);
         }else if (selectedStage == StageSelect.MapView){
             mapStageNew(stage);
+            
         }
     }
 
