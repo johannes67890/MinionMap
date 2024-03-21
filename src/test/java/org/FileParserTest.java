@@ -22,7 +22,7 @@ public class FileParserTest {
     private FileDistributer testFile = FileDistributer.input;
     private FileParser parser;
     private XMLReader reader;
-    
+
     @BeforeEach
     public void setUp() {
         assertDoesNotThrow(() -> {
@@ -36,11 +36,8 @@ public class FileParserTest {
     public void testCenterPoint() {
         TagBound bound = this.reader.getBound();
 
-        
-
         TagNode expectedCenterPoint = new TagNode(new BigDecimal("55.6572100"), new BigDecimal("12.4705650"));
-        
-
+    
         TagNode centerPoint = parser.centerPoint(bound);
 
         assertEquals(centerPoint.getLat(), expectedCenterPoint.getLat());
@@ -71,9 +68,9 @@ public class FileParserTest {
 
     @Test
     public void testIsInBounds(){
-        TagNode node = new TagNode (new BigDecimal("55.6581162"),new BigDecimal("12.4681259"));
+        TagNode node = new TagNode(new BigDecimal("55.6581162"),new BigDecimal("12.4681259"));
 
-        assertTrue(parser.isInBounds(node, this.reader.getBound()));
+        assertTrue(parser.isInBounds(node, parser.getChunck().getQuadrantOne()));
     }
 
     // TODO:

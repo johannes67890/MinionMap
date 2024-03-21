@@ -4,11 +4,15 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 
 public class FileParser {
+    private Chunck chunck;
 
     public FileParser(XMLReader reader) {
-        Chunck chunk = new Chunck(reader.getBound(), centerPoint(reader.getBound()));
-        
+        this.chunck = new Chunck(reader.getBound(), centerPoint(reader.getBound()));
     }   
+
+    public Chunck getChunck(){
+        return this.chunck;
+    }
 
     /**
      * Get the center point of the area from a bounds tag. The center point is calculated as the average of the min and max latitude and longitude.
@@ -35,16 +39,10 @@ public class FileParser {
      * Method to check if a node is within the bounds of a given area.
      */
     public boolean isInBounds(TagNode node, TagBound bound) {
-        return node.getLat().compareTo(bound.getMinLat()) >= 0 && node.getLat().compareTo(bound.getMaxLat()) <= 0
-            && node.getLon().compareTo(bound.getMinLon()) >= 0 && node.getLon().compareTo(bound.getMaxLon()) <= 0;
+        return node.getLat().compareTo(bound.getMinLat()) == -1 && node.getLat().compareTo(bound.getMaxLat()) == 1
+            && node.getLon().compareTo(bound.getMinLon()) == 1 && node.getLon().compareTo(bound.getMaxLon()) == -1;
     }
-    /*
-     * Method to check if a node is within the bounds of a given area.
-     */
-    // private boolean isInBounds(TagAdress node, TagBound bound) {
-    //     return node.getLat().compareTo(bound.getMinLat()) >= 0 && node.getLat().compareTo(bound.getMaxLat()) <= 0
-    //         && node.getLon().compareTo(bound.getMinLon()) >= 0 && node.getLon().compareTo(bound.getMaxLon()) <= 0;
-    // }
+
 
     /**
      * 
@@ -105,7 +103,7 @@ public class FileParser {
      * 
      * 
      */
-    private class Chunck {
+    public class Chunck {
         private enum Quadrant {
             Q1, Q2, Q3, Q4
         }
