@@ -1,6 +1,9 @@
 package org.parser;
 
 import java.util.HashMap;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 enum Way {
     ID, REFS, NAME, TYPE
@@ -24,6 +27,36 @@ public class TagWay extends HashMap<Way, Object>{
             }
         });
     }
+
+    public void createXMLElement(XMLStreamWriter wrinter) throws XMLStreamException{
+        wrinter.writeStartElement("bounds");
+     
+        for (Way key : this.keySet()) {
+            switch (key) {
+                case ID:
+                    wrinter.writeAttribute("id", this.get(Way.ID).toString());
+                    break;
+                case REFS:
+                    Long[] refs = (Long[]) this.get(Way.REFS);
+                    for (Long ref : refs) {
+                        wrinter.writeStartElement("nd");
+                        wrinter.writeAttribute("ref", ref.toString());
+                        wrinter.writeEndElement();
+                    }
+                    break;
+                case NAME:
+                    wrinter.writeAttribute("name", this.get(Way.NAME).toString());
+                    break;
+                case TYPE:
+                    wrinter.writeAttribute("type", this.get(Way.TYPE).toString());
+                    break;
+                default:
+                    break;
+            }
+        }
+        wrinter.writeEndElement();
+    }
+
     /**
      * Get the id of the way.
      * @return The id of the way.

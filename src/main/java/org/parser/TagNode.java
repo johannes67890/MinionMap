@@ -1,7 +1,9 @@
 package org.parser;
 import java.math.BigDecimal;
 import java.util.HashMap;
-
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 enum Node {
     ID, LAT, LON;
 }
@@ -30,6 +32,15 @@ public class TagNode extends Tag<Node> {
             }
         });
     }
+
+    public void createXMLElement(XMLStreamWriter wrinter) throws XMLStreamException{
+        wrinter.writeStartElement("node");
+            wrinter.writeAttribute("id", this.get(Node.ID).toString());
+            wrinter.writeAttribute("lat", this.get(Node.LAT).toString());
+            wrinter.writeAttribute("lon", this.get(Node.LON).toString());
+        wrinter.writeEndElement();
+    }
+
 
     public BigDecimal getLat() {
         return (BigDecimal) this.get(Node.LAT);

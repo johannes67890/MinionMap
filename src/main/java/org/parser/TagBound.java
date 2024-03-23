@@ -2,8 +2,11 @@ package org.parser;
 
 import java.math.BigDecimal;
 
-import java.util.HashMap;
+import java.util.*;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
 
 enum Bounds {
     MINLAT, MAXLAT, MINLON, MAXLON
@@ -37,6 +40,16 @@ public class TagBound extends Tag<Bounds>{
                 put(Bounds.MAXLON, maxLon);
             }
         });
+    }
+
+    public void createXMLElement(XMLStreamWriter wrinter) throws XMLStreamException{
+        wrinter.writeStartElement("bounds");
+        // Iterate through the attributes and writ
+            wrinter.writeAttribute("maxlat", this.get(Bounds.MAXLAT).toString());
+            wrinter.writeAttribute("minlat", this.get(Bounds.MINLAT).toString());
+            wrinter.writeAttribute("maxlon", this.get(Bounds.MAXLON).toString());
+            wrinter.writeAttribute("minlon", this.get(Bounds.MINLON).toString());
+        wrinter.writeEndElement();
     }
 
     /**
