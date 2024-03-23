@@ -5,10 +5,12 @@ import java.io.*;
 import java.util.*;
 
 
-public class XMLWriter {
-    public XMLWriter(){
-        
-    }
+class XMLWriter {
+    private ChunkFiles chunkFiles = new ChunkFiles();
+    private String directoryPath = "src/main/resources/chunks/";
+    private int chunkId = 0;
+
+    public XMLWriter(){}
 
     public XMLWriter(TagBound bounds) {
         FileParser fileParser = new FileParser(bounds);
@@ -16,107 +18,91 @@ public class XMLWriter {
             initChunkFiles(fileParser);
         } catch (XMLStreamException e) {
             e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
+        System.out.println(chunkFiles.toString());
     }
 
-    public XMLWriter(TagAddress inputFile, String outputFile) {
-
-
-        // try {
-        //     this.writer = XMLOutputFactory.newInstance().createXMLStreamWriter(new FileWriter(outputFile));
-        // } catch (Exception e) {
-        //     e.printStackTrace();
-        // }
-        // writeXML();
-    }
-
-
-    
-    // TODO: Rewrite so no endtag is written like: <tag></tag>... Change to <tag/>
-    // Writes the XML file and returns the content
-    // public void writeXML() {
-    //     try {
-    //         while (reader.hasNext()) {
-    //             int event = reader.next();
-
-    //             switch (event) {
-    //                 case XMLStreamConstants.START_ELEMENT:
-    //                     // Check if it's the element you want to modify
-    //                     if ("node".equals(reader.getLocalName())) {
-    //                         // Modify the attribute value
-    //                         String[] attributes = {"version", "timestamp", "uid", "user", "changeset"}; // Attributes to be deleted
-    //                         deleteAtrribute(attributes);
-    //                     } else {
-    //                         writer.writeStartElement(reader.getLocalName());
-    //                         // Copy existing attributes
-    //                         for (int i = 0; i < reader.getAttributeCount(); i++) {
-    //                             writer.writeAttribute(reader.getAttributeLocalName(i), reader.getAttributeValue(i));
-    //                         }
-    //                     }
-    //                     break;
-    //                 case XMLStreamConstants.CHARACTERS:
-    //                     writer.writeCharacters(reader.getText());
-    //                     break;
-    //                 case XMLStreamConstants.END_ELEMENT:
-    //                     writer.writeEndElement();
-    //                     break;
-    //             }
-    //         }
-
-    //         // Close streams
-    //         reader.close();
-    //         writer.close();
-
-    //     } catch (Exception e) {
-    //         e.printStackTrace();
-    // }}
-    
-    public void initChunkFiles(FileParser fileParser) throws XMLStreamException, IOException{
-        String directoryPath = "src/main/resources/chunks/";
-        
+    public void initChunkFiles(FileParser fileParser) throws XMLStreamException{   
+        String localChunkPath = directoryPath + this.chunkId + ".xml";
         
         for (int i = 0; i < 4; i++) {
             // Create a new file for each chunk
-         
-                // Create the directory if it doesn't exist
-                File directory = new File(directoryPath);
-                if (!directory.exists()) {
-                    directory.mkdirs(); // mkdirs() creates parent directories if they don't exist
-                }
-                XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(new FileWriter(directoryPath + i + ".xml"));
-                
-                writer.writeStartDocument();
+            final int index = i; // Declare a final variable to use in the lambda expression
+
+            // Create the directory if it doesn't exist
+            File directory = new File(directoryPath);
+            if (!directory.exists()) {
+                directory.mkdirs(); // mkdirs() creates parent directories if they don't exist
+            }
+            XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(createChunkFile());
+            writer.writeStartDocument();
                 writer.writeStartElement("osm");
-                // writer.writeAttribute("version", "0.6");
+                writer.writeAttribute("version", "0.6");
+                writer.writeAttribute("ChunkId", Integer.toString(this.chunkId));
 
-                final int index = i; // Declare a final variable to use in the lambda expression
+                fileParser.getChunck().getQuadrant(index).createXMLElement(writer);
 
-                createXMLElement(writer, "bounds", new HashMap<String, String>() {
-                    {
-                        put("minlat", fileParser.getChunck().getQuadrant(index).getMinLat().toString());
-                        put("minlon", fileParser.getChunck().getQuadrant(index).getMinLon().toString());
-                        put("maxlat", fileParser.getChunck().getQuadrant(index).getMaxLat().toString());
-                        put("maxlon", fileParser.getChunck().getQuadrant(index).getMaxLon().toString());
-                    }
-                });
-                
-                writer.writeEndDocument();
-                
-                // Writing the content on XML file and 
-                // close xmlStreamWriter using close() method 
-                writer.flush(); 
-                writer.close();
+            writer.writeEndDocument();
+            writer.flush(); 
+            writer.close();
+            chunkFiles.appendChunkFile(fileParser.getChunck().getQuadrant(index), localChunkPath);
+            this.chunkId++; // Increment the chunkId for the next chunkFile. So each chunkFile has a unique id
         }
     }
 
-    private void createXMLElement(XMLStreamWriter wrinter, String element, HashMap<String, String> attributes) throws XMLStreamException{
-        wrinter.writeStartElement(element);
-        // Iterate through the attributes and write them to the XML file
-        for (Map.Entry<String, String> entry : attributes.entrySet()) {
-            wrinter.writeAttribute(entry.getKey(), entry.getValue());
+
+    private FileWriter createChunkFile(){
+        FileWriter w = null;
+        try {
+            w = new FileWriter(directoryPath + (this.chunkId) + ".xml");
+        } catch (IOException e) {
+            System.out.println("An error occurred while creating the file. Is the id unique and the directory path correct? ");
+            System.out.println(e.getMessage());
         }
-        wrinter.writeEndElement();
+        return w;
+    }
+
+    // public void writeTagNode(TagNode node, XMLStreamWriter writer) throws XMLStreamException{
+    //     BigDecimal lat = node.getLat();
+    //     BigDecimal lon = node.getLon();
+
+    //     createXMLElement(writer, "node", new HashMap<String, String>() {
+    //         {
+    //             put("id", node.getId().toString());
+    //             put("lat", node.getLat().toString());
+    //             put("lon", node.getLon().toString());
+    //         }
+    //     });
+    // }
+
+    /**
+     * A class to control the chunk files' paths and the bounds of the chunks
+     * 
+     * <p>
+     *  This class does not have any relation to the content within the chunk files.
+     * </p>
+     * 
+     */
+    private class ChunkFiles {
+        private HashMap<TagBound, String> chunkFiles = new HashMap<TagBound, String>();
+
+        public void appendChunkFile(TagBound bound, String path){
+            this.chunkFiles.put(bound, path);
+        }
+
+        public String getChunkFilePath(TagBound bound){
+            return this.chunkFiles.get(bound);
+        }
+
+        public HashMap<TagBound, String> getChunkFiles(){
+            return this.chunkFiles;
+        }
+
+        @Override
+        public String toString(){
+            return this.chunkFiles.toString();
+        }
+
+
     }
 }

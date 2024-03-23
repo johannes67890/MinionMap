@@ -1,5 +1,8 @@
 package org.parser;
 import javax.xml.stream.XMLStreamReader;
+
+import org.parser.FileParser.Chunck;
+
 import javax.xml.stream.XMLInputFactory;
 import java.io.FileInputStream;
 import java.util.ArrayList;
@@ -17,6 +20,7 @@ import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
  * 
  */
 public class XMLReader {
+    private int id;
     private TagBound bound;
     private ArrayList<TagNode> nodes = new ArrayList<TagNode>();
     private ArrayList<TagAddress> addresses = new ArrayList<TagAddress>();
@@ -39,6 +43,9 @@ public class XMLReader {
         return ways;
     }
     
+    public int getId() {
+        return id;
+    }
 
     /**
      * Get a attrubute from the {@link XMLStreamReader} as a {@link BigDecimal}.
@@ -65,13 +72,14 @@ public class XMLReader {
         try {
             XMLInputFactory factory = XMLInputFactory.newInstance();
             XMLStreamReader reader = factory.createXMLStreamReader(new FileInputStream(filename.getFilePath()));
-    
+            XMLWriter writer;
             while (reader.hasNext()) {
                 reader.next();
                 switch (reader.getEventType()) {
                     case START_ELEMENT:
                         String element = reader.getLocalName().intern();
                         if(element.equals("bounds")) {
+                            writer = new XMLWriter(new TagBound(reader));
                             this.bound = new TagBound(reader);
                         }else {
                             tempBuilder.parse(element, reader);
@@ -82,6 +90,7 @@ public class XMLReader {
                         switch (element) {
                             case "node":
                                 if(!tempBuilder.getAddressBuilder().isEmpty()){
+                                    
                                     addresses.add(new TagAddress(tempBuilder));
                                 } else {
                                                                       
@@ -92,6 +101,9 @@ public class XMLReader {
                             case "way":
                                 ways.add(new TagWay(tempBuilder));
                                 tempBuilder = new Builder(); // reset the builder
+                            // case "osm":
+                            //     this.id = Integer.parseInt(reader.getAttributeValue(null, "ChunkId"));
+                            //     break;
                             default:
                                 break;
                         }
@@ -103,8 +115,6 @@ public class XMLReader {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        new XMLWriter(this.bound);
-
     }
 
     /**

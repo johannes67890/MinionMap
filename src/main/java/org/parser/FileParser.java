@@ -8,8 +8,7 @@ public class FileParser {
     private Chunck chunck;
 
     public FileParser(TagBound bound) {
-        TagNode center = centerPoint(bound);
-        this.chunck = new Chunck(bound, center);
+        this.chunck = new Chunck(bound);
     }
 
     public Chunck getChunck(){
@@ -23,8 +22,6 @@ public class FileParser {
      * @return A Tag object containing the center point, based on the {@link Tags.Node} enum. ID is not used.
      */
     public TagNode centerPoint(TagBound tag) {
-        // if(!tag.isBounds()) throw new IllegalArgumentException("The tag is not a bounds tag.");
-
         BigDecimal x1 = tag.getMinLat();
         BigDecimal x2 = tag.getMaxLat();
         BigDecimal y1 = tag.getMinLon(); 
@@ -49,7 +46,7 @@ public class FileParser {
     /**
      * 
      */
-    public static class CompasPoints {
+    private class CompasPoints {
         private enum Direction {
             NORTH, SOUTH, EAST, WEST
         }
@@ -70,9 +67,9 @@ public class FileParser {
         public HashMap<Direction, TagNode> calculateCompasPoints(TagNode center, TagBound bound) {
            HashMap<Direction, TagNode> map = new HashMap<Direction, TagNode>();
     
-           // North: lat = maxLat, lon = maxLon - (centerLon - minLon)
-           map.put(Direction.NORTH, new TagNode(bound.getMaxLat(), center.getLon()));
-           // South: lat = minLat, lon = maxLon - (centerLon - minLon)
+            // North: lat = maxLat, lon = maxLon - (centerLon - minLon)
+            map.put(Direction.NORTH, new TagNode(bound.getMaxLat(), center.getLon()));
+            // South: lat = minLat, lon = maxLon - (centerLon - minLon)
             map.put(Direction.SOUTH, new TagNode(bound.getMinLat(), center.getLon()));
             // East: lat = maxLat - (centerLat - minLat), lon = maxLon
             map.put(Direction.EAST, new TagNode(center.getLat(), bound.getMaxLon()));
@@ -102,28 +99,21 @@ public class FileParser {
     
     /**
      * A chunk is a smaller area of the bounds.
-     * 
-     * 
+
      */
     public class Chunck {
-        private enum Quadrant {
+        private TagBound bound;
+        private TagNode center;
+        private HashMap<Quadrant, TagBound> chunks;
+
+        enum Quadrant {
             Q1, Q2, Q3, Q4
         }
 
-        protected HashMap<Quadrant, TagBound> chunks;
-        private TagBound bound;
-        private TagNode center;
-        // private TagNode center;
-
-        public Chunck(TagBound bound, TagNode center) {
+        public Chunck(TagBound bound) {
             this.bound = bound;
-            this.center = center;
-            
-            this.chunks = this.constuctQuadrants();
-        }
-
-        public HashMap<Quadrant, TagBound> getChuncks(){
-            return this.chunks;
+            this.center = FileParser.this.centerPoint(bound);
+            this.chunks = constuctQuadrants();
         }
 
         public TagBound getQuadrant(int index){
