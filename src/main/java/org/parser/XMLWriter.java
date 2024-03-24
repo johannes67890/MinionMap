@@ -9,7 +9,8 @@ class XMLWriter {
     private ChunkFiles chunkFiles = new ChunkFiles();
     private String directoryPath = "src/main/resources/chunks/";
     private int chunkId = 0;
-
+    private List<XMLStreamWriter> writers = new ArrayList<XMLStreamWriter>();
+    
     public XMLWriter(){}
 
     public XMLWriter(TagBound bounds) {
@@ -34,22 +35,53 @@ class XMLWriter {
             if (!directory.exists()) {
                 directory.mkdirs(); // mkdirs() creates parent directories if they don't exist
             }
-            XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(createChunkFile());
+            XMLStreamWriter writer = writers.get(index);
+            writer = XMLOutputFactory.newInstance().createXMLStreamWriter(createChunkFile());
             writer.writeStartDocument();
                 writer.writeStartElement("osm");
                 writer.writeAttribute("version", "0.6");
                 writer.writeAttribute("ChunkId", Integer.toString(this.chunkId));
 
                 fileParser.getChunck().getQuadrant(index).createXMLElement(writer);
-
             writer.writeEndDocument();
-            writer.flush(); 
-            writer.close();
             chunkFiles.appendChunkFile(fileParser.getChunck().getQuadrant(index), localChunkPath);
             this.chunkId++; // Increment the chunkId for the next chunkFile. So each chunkFile has a unique id
         }
     }
 
+    public void writeTagNode(TagNode node, TagBound bound) throws XMLStreamException{
+        XMLStreamWriter writer = getStreamWriter(bound);
+    
+        node.createXMLElement(writer);
+    }
+    
+    private XMLStreamWriter getStreamWriter(int index){
+        return this.writers.get(index);
+    }
+    /**
+     * Get the XMLStreamWriter for the a specific bound. The useage of this method is to write to a specific chunk file.
+     * @param bound - The bound to get the writer for
+     * @return XMLStreamWriter - The writer for the bound
+     */
+    private XMLStreamWriter getStreamWriter(TagBound bound){
+        int chunkId = chunkFiles.getChunkId(bound);
+
+        return getStreamWriter(chunkId);
+    }
+
+    public void closeWrtier(XMLStreamWriter writer) throws XMLStreamException{
+        writer.writeEndDocument();
+        writer.flush();
+        writer.close();
+    }
+
+    public void closeAllWriters() throws XMLStreamException{
+        for (XMLStreamWriter xmlStreamWriter : writers) {
+            xmlStreamWriter.writeEndDocument();
+            xmlStreamWriter.flush();
+            xmlStreamWriter.close();
+        }
+    }
 
     private FileWriter createChunkFile(){
         FileWriter w = null;
@@ -94,6 +126,19 @@ class XMLWriter {
             return this.chunkFiles.get(bound);
         }
 
+        public TagBound getBound(String path){
+            for (Map.Entry<TagBound, String> entry : this.chunkFiles.entrySet()) {
+                if (entry.getValue().equals(path)) {
+                    return entry.getKey();
+                }
+            }
+            return null;
+        }
+
+        public int getChunkId(TagBound bound){
+            return Integer.parseInt(this.chunkFiles.get(bound).split(".")[0]);
+        }
+
         public HashMap<TagBound, String> getChunkFiles(){
             return this.chunkFiles;
         }
@@ -102,7 +147,5 @@ class XMLWriter {
         public String toString(){
             return this.chunkFiles.toString();
         }
-
-
     }
 }

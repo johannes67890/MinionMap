@@ -42,6 +42,10 @@ public class TagNode extends Tag<Node> {
     }
 
 
+    public long getId() {
+        return (long) this.get(Node.ID);
+    }
+
     public BigDecimal getLat() {
         return (BigDecimal) this.get(Node.LAT);
     }
