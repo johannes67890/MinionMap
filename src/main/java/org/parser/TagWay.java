@@ -1,5 +1,6 @@
 package org.parser;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 enum Way {
@@ -42,8 +43,8 @@ public class TagWay extends HashMap<Way, Object>{
      * Get the refrerence nodes of the way.
      * @return Long[] of the reference nodes of the way.
      */
-    public Long[] getNodes() {
-        return (Long[]) this.get(Way.REFS);
+    public ArrayList<Long> getNodes() {
+        return (ArrayList<Long>) this.get(Way.REFS);
     }
 
     // public Long[] getTags() {
@@ -51,11 +52,11 @@ public class TagWay extends HashMap<Way, Object>{
     // }
         
     public boolean isEmpty() {
-        return getNodes().length == 0;
+        return getNodes().size() == 0;
     }
 
     public int size() {
-        return getNodes().length;
+        return getNodes().size();
     }
 
 

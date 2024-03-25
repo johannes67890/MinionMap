@@ -24,7 +24,40 @@ public class TagAddress extends HashMap<Address, String> {
                 put(Address.HOUSENUMBER, builder.getAddressBuilder().house);
                 put(Address.POSTCODE, builder.getAddressBuilder().postcode);
                 put(Address.MUNICIPALITY, builder.getAddressBuilder().municipality);
+                put(Address.CITY, builder.getAddressBuilder().city);
             }
         });
+    }
+
+    public String getStreet() {
+        return this.get(Address.STREET);
+    }
+
+    public String getHouseNumber() {
+        return this.get(Address.HOUSENUMBER);
+    }
+
+    public String getPostcode() {
+        return this.get(Address.POSTCODE);
+    }
+
+    public String getMunicipality() {
+        return this.get(Address.MUNICIPALITY);
+    }
+
+    public String getCity() {
+        return this.get(Address.CITY);
+    }
+
+    public String getID() {
+        return this.get(Address.ID);
+    }
+
+    public String getLat() {
+        return this.get(Address.LAT);
+    }
+
+    public String getLon() {
+        return this.get(Address.LON);
     }
 }
