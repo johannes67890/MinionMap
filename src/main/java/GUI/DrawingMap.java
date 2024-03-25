@@ -98,9 +98,11 @@ public class DrawingMap {
 
             gc.beginPath();
             gc.moveTo(nodesMap.get(nodesRef.get(0)).getLonDouble(), nodesMap.get(nodesRef.get(0)).getLatDouble());
+            //gc.moveTo(nodesMap.get(nodesRef.get(0)).getLatDouble(), nodesMap.get(nodesRef.get(0)).getLonDouble());
             for (Long ref : nodesRef){
                 
                 gc.lineTo(nodesMap.get(ref).getLonDouble(), nodesMap.get(ref).getLatDouble());
+                //gc.lineTo(nodesMap.get(ref).getLatDouble(), nodesMap.get(ref).getLonDouble());
             }
 
             gc.stroke();

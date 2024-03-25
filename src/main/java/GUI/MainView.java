@@ -1,4 +1,6 @@
 package GUI;
+import java.io.File;
+
 import org.parser.FileDistributer;
 import org.parser.XMLReader;
 
@@ -35,6 +37,7 @@ public class MainView {
     public XMLReader xmlReader;
     public DrawingMap drawView;
     private Text zoomLevelText;
+    private File inputFile;
 
 
     public MainView(Stage stage){
@@ -44,9 +47,6 @@ public class MainView {
         MainView.stage.setMinWidth(sizeX);
         MainView.stage.setMinHeight(sizeY);
         MainView.stage.setResizable(true);
-        xmlReader = new XMLReader(FileDistributer.input.getFilePath());
-        drawView = new DrawingMap(this, xmlReader);
-
 
         dragAndDropStage(stage);
     }
@@ -54,7 +54,7 @@ public class MainView {
     public void draw(){
         gc.setFill(Color.WHITE);
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        zoomLevelText.setText("" + Math.round(drawView.getZoomLevelMeters()));;
+        zoomLevelText.setText("" + Math.round(drawView.getZoomLevelMeters()) + "m");;
         drawView.DrawMap(gc, canvas);
     }
 
@@ -108,6 +108,7 @@ public class MainView {
                 Dragboard db = event.getDragboard();
                 boolean success = false;
                 if (db.hasFiles()) {
+                    inputFile = db.getFiles().get(0);
                     text.setText(db.getFiles().toString());
                     success = true;
                 }
@@ -131,6 +132,12 @@ public class MainView {
         submitButton.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent e){
                 selectedStage = StageSelect.MapView;
+                if (inputFile != null){
+                    xmlReader = new XMLReader(inputFile.getAbsolutePath());
+                }else{
+                    xmlReader = new XMLReader(FileDistributer.input.getFilePath());
+                }
+                drawView = new DrawingMap(MainView.this, xmlReader);
                 redraw();
             }
         });
