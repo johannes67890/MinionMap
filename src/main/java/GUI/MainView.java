@@ -44,7 +44,7 @@ public class MainView {
         MainView.stage.setMinWidth(sizeX);
         MainView.stage.setMinHeight(sizeY);
         MainView.stage.setResizable(true);
-        xmlReader = new XMLReader(FileDistributer.input);
+        xmlReader = new XMLReader(FileDistributer.input.getFilePath());
         drawView = new DrawingMap(this, xmlReader);
 
 

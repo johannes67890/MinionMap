@@ -43,10 +43,10 @@ public class XMLReader {
 
     private Builder tempBuilder = new Builder();
 
-    public XMLReader(FileDistributer filename) {
+    public XMLReader(String filepath) {
         try {
             XMLInputFactory factory = XMLInputFactory.newInstance();
-            XMLStreamReader reader = factory.createXMLStreamReader(new FileInputStream(filename.getFilePath()));
+            XMLStreamReader reader = factory.createXMLStreamReader(new FileInputStream(filepath));
             
             while (reader.hasNext()) {
                 reader.next();
