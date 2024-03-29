@@ -2,6 +2,7 @@ package org;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.AfterEach;
@@ -10,25 +11,34 @@ import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.parser.FileDistributer;
 import org.parser.FileParser;
+import org.parser.Tag;
 
 import java.util.HashMap;
 import org.parser.XMLReader;
 import org.parser.TagBound;
 import org.parser.TagNode;
+import org.parser.FileParser.Chunck;
 import org.parser.FileParser.CompasPoints;
 
 import java.math.BigDecimal;
 public class FileParserTest {
+    
     private FileDistributer testFile = FileDistributer.input;
-    private FileParser parser;
+    private FileParser FileParser;
     private XMLReader reader;
+
+    private Chunck chunck;
+    private TagNode centerPoint;
 
     @BeforeEach
     public void setUp() {
         assertDoesNotThrow(() -> {
             this.reader = new XMLReader(this.testFile);
         });
-        this.parser = new FileParser(this.reader);
+        this.FileParser = new FileParser(this.reader.getBound());
+        this.chunck = this.FileParser.getChunck();
+        this.centerPoint = this.FileParser.centerPoint(this.reader.getBound());
+
     }
 
 
@@ -38,7 +48,7 @@ public class FileParserTest {
 
         TagNode expectedCenterPoint = new TagNode(new BigDecimal("55.6572100"), new BigDecimal("12.4705650"));
     
-        TagNode centerPoint = parser.centerPoint(bound);
+        TagNode centerPoint = FileParser.centerPoint(bound);
 
         assertEquals(centerPoint.getLat(), expectedCenterPoint.getLat());
         assertEquals(centerPoint.getLon(), expectedCenterPoint.getLon());
@@ -48,7 +58,7 @@ public class FileParserTest {
     @Test
     public void TestCenterPointsOfBound(){
         TagBound bound = this.reader.getBound();
-        TagNode centerPoint = parser.centerPoint(bound);
+        TagNode centerPoint = FileParser.centerPoint(bound);
         
         CompasPoints points = new CompasPoints(centerPoint, bound);
         
@@ -70,34 +80,58 @@ public class FileParserTest {
     public void testIsInBounds(){
         TagNode node = new TagNode(new BigDecimal("55.6581162"),new BigDecimal("12.4681259"));
 
-        assertTrue(parser.isInBounds(node, parser.getChunck().getQuadrantOne()));
+        assertTrue(TagNode.isInBounds(node, FileParser.getChunck().getQuadrantOne()));
+        assertFalse(TagNode.isInBounds(node, FileParser.getChunck().getQuadrantTwo()));
+        assertFalse(TagNode.isInBounds(node, FileParser.getChunck().getQuadrantThree()));
+        assertFalse(TagNode.isInBounds(node, FileParser.getChunck().getQuadrantFour()));
     }
 
-    // TODO:
-    @Test
-    public void testSplitArea() {
     
-        // Q1 - top left area
-        // TagBound expectedQ1 = new TagBound(new HashMap<TagBounds, BigDecimal>() {{
-        //     put(Tags.Bounds.MINLAT, new BigDecimal("55.6581600"));
-        //     put(Tags.Bounds.MAXLAT, new BigDecimal("55.6572100"));
-        //     put(Tags.Bounds.MINLON, new BigDecimal("12.4677300"));
-        //     put(Tags.Bounds.MAXLON, new BigDecimal("12.4705650"));
-        // }});
-        
+    @Test
+    public void testSplitArea() {     
 
+        TagBound expectedQ1 = new TagBound(
+        new BigDecimal("55.6581600"), // MaxLat
+        new BigDecimal("55.6572100"), // MinLat
+        new BigDecimal("12.4705650"), // MaxLon
+        new BigDecimal("12.4677300")  // MinLon
+        );
         
+        TagBound expectedQ2 = new TagBound(
+        new BigDecimal("55.6581600"), // MaxLat
+        new BigDecimal("55.6572100"), // MinLat
+        new BigDecimal("12.4734000"), // MaxLon 
+        new BigDecimal("12.4705650")  // MinLon
+        );
         
-        // Q2 - top right area
-        // TagBound expectedQ2 = new TagBound(new HashMap<Tags.Bounds, BigDecimal>() {{
-        //     put(Tags.Bounds.MINLAT, new BigDecimal("55.6572100"));
-        //     put(Tags.Bounds.MAXLAT, new BigDecimal("55.6581600"));
-        //     put(Tags.Bounds.MINLON, new BigDecimal("12.4705650"));
-        //     put(Tags.Bounds.MAXLON, new BigDecimal("12.4734000"));
-        // }});
+        TagBound expectedQ3 = new TagBound(
+        new BigDecimal("55.6572100"), // MaxLat
+        new BigDecimal("55.6562600"), // MinLat
+        new BigDecimal("12.4705650"), // MaxLon
+        new BigDecimal("12.4677300")  // MinLon
+        );
 
-        // Q3 - bottom left area
-        // Q4 - bottom right area
+        TagBound expectedQ4 = new TagBound(
+        new BigDecimal("55.6572100"), // MaxLat
+        new BigDecimal("55.6562600"), // MinLat
+        new BigDecimal("12.4734000"), // MaxLon
+        new BigDecimal("12.4705650")  // MinLon
+        );
 
+
+        assertEquals(expectedQ1, this.chunck.getQuadrantOne());
+        assertEquals(expectedQ2, this.chunck.getQuadrantTwo());
+        assertEquals(expectedQ3, this.chunck.getQuadrantThree());
+        assertEquals(expectedQ4, this.chunck.getQuadrantFour());
+        
+        for (int i = 0; i < 4; i++) {
+            BigDecimal minLat = this.chunck.getQuadrant(i).getMinLat();
+            BigDecimal maxLat = this.chunck.getQuadrant(i).getMaxLat();
+            BigDecimal minLon = this.chunck.getQuadrant(i).getMinLon();
+            BigDecimal maxLon = this.chunck.getQuadrant(i).getMaxLon();
+
+            assertTrue(maxLat.compareTo(minLat) == 1);
+            assertTrue(maxLon.compareTo(minLon) == 1);   
+        }
     }
 }

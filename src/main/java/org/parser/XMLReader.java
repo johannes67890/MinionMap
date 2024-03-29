@@ -66,20 +66,20 @@ public class XMLReader {
         return Long.parseUnsignedLong(event.getAttributeValue(null, name));
     }
 
+
     private Builder tempBuilder = new Builder();
     
     public XMLReader(FileDistributer filename) {
         try {
             XMLInputFactory factory = XMLInputFactory.newInstance();
             XMLStreamReader reader = factory.createXMLStreamReader(new FileInputStream(filename.getFilePath()));
-            XMLWriter writer = null;
             while (reader.hasNext()) {
                 reader.next();
                 switch (reader.getEventType()) {
                     case START_ELEMENT:
                         String element = reader.getLocalName().intern();
                         if(element.equals("bounds")) {
-                            writer = new XMLWriter(new TagBound(reader));
+                            new XMLWriter(new TagBound(reader));
                             this.bound = new TagBound(reader);
                         }else {
                             tempBuilder.parse(element, reader);
@@ -90,14 +90,16 @@ public class XMLReader {
                         switch (element) {
                             case "node":
                                 if(!tempBuilder.getAddressBuilder().isEmpty()){
+                                    XMLWriter.writeTag(new TagAddress(tempBuilder));
                                     addresses.add(new TagAddress(tempBuilder));
                                 } else {  
-                                    writer.writeTagNode(new TagNode(tempBuilder), bound);         
+                                    XMLWriter.writeTag(new TagNode(tempBuilder));         
                                     nodes.add(new TagNode(tempBuilder));
                                 }
                                 tempBuilder = new Builder(); // reset the builder
                                 break;
                             case "way":
+                            // XMLWriter.writeTag(new TagWay(tempBuilder));
                                 ways.add(new TagWay(tempBuilder));
                                 tempBuilder = new Builder(); // reset the builder
                             // case "osm":
@@ -110,8 +112,10 @@ public class XMLReader {
                     default:
                         break;
                     }
-            }
-            writer.closeAllWriters();
+            }    
+            XMLWriter.closeAllWriters();
+            
+            System.out.println("nodes in total: " + nodes.size());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -172,6 +176,7 @@ public class XMLReader {
                     break;
                 case "way":
                     this.id = getAttributeByLong(reader, "id");                    
+                    this.wayBuilder.setParentNode(this.id);
                     break;
                 case "tag":
                     String k = reader.getAttributeValue(null, "k");
@@ -180,9 +185,13 @@ public class XMLReader {
                     parseTag(k, v);
                     break;
                 case "nd":
-                    // TODO: figure out if to add the ref to the way or add the node to the way?
                     Long ref = getAttributeByLong(reader, "ref");
-                    wayBuilder.addNode(ref);
+                    for (TagNode node : getNodes()) {
+                        if(node.getId() == ref){
+                            wayBuilder.addNode(node);
+                            return;
+                        }
+                    }
                     break;
                 default:
                     break;
@@ -290,21 +299,31 @@ public class XMLReader {
     * </p>
     */
     public class WayBuilder {
-        private ArrayList<Long> refNodes = new ArrayList<Long>();
+        private long parentId;
+        private ArrayList<TagNode> refNodes = new ArrayList<TagNode>();
         private boolean isEmpty = true;
 
         public boolean isEmpty() {
             return isEmpty;
         }
 
-        private void addNode(Long ref) {
+        public void setParentNode(long _parentId) {
+            parentId = _parentId;
+        }
+
+        // TODO:
+        private void addNode(TagNode ref) {
             if (isEmpty) {
                 isEmpty = false;
             }
             refNodes.add(ref);
         }
 
-        public ArrayList<Long> getRefNodes() {
+        public long getParentNode() {
+            return parentId;
+        }
+
+        public ArrayList<TagNode> getRefNodes() {
             return refNodes;
         }
     }

@@ -9,8 +9,11 @@ class XMLWriter {
     private ChunkFiles chunkFiles = new ChunkFiles();
     private String directoryPath = "src/main/resources/chunks/";
     private int chunkId = 0;
-    private List<XMLStreamWriter> writers = new ArrayList<XMLStreamWriter>();
+    private static HashMap<TagBound, XMLStreamWriter> writers = new HashMap<TagBound, XMLStreamWriter>();
     
+
+    static int c=0;
+
     public XMLWriter(){}
 
     public XMLWriter(TagBound bounds) {
@@ -20,7 +23,6 @@ class XMLWriter {
         } catch (XMLStreamException e) {
             e.printStackTrace();
         }
-        System.out.println(chunkFiles.toString());
     }
 
     public void initChunkFiles(FileParser fileParser) throws XMLStreamException{   
@@ -35,51 +37,81 @@ class XMLWriter {
             if (!directory.exists()) {
                 directory.mkdirs(); // mkdirs() creates parent directories if they don't exist
             }
-            XMLStreamWriter writer = writers.get(index);
-            writer = XMLOutputFactory.newInstance().createXMLStreamWriter(createChunkFile());
+
+            TagBound ChunkBound = fileParser.getChunck().getQuadrant(index);
+
+            XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(createChunkFile());
             writer.writeStartDocument();
                 writer.writeStartElement("osm");
                 writer.writeAttribute("version", "0.6");
                 writer.writeAttribute("ChunkId", Integer.toString(this.chunkId));
+                ChunkBound.createXMLElement(writer);
+                writer.writeCharacters("\n"); // Add a newline character
 
-                fileParser.getChunck().getQuadrant(index).createXMLElement(writer);
-            writer.writeEndDocument();
-            chunkFiles.appendChunkFile(fileParser.getChunck().getQuadrant(index), localChunkPath);
+            chunkFiles.appendChunkFile(ChunkBound, localChunkPath);
+            writers.put(ChunkBound, writer);
+
             this.chunkId++; // Increment the chunkId for the next chunkFile. So each chunkFile has a unique id
         }
     }
 
-    public void writeTagNode(TagNode node, TagBound bound) throws XMLStreamException{
-        XMLStreamWriter writer = getStreamWriter(bound);
-    
-        node.createXMLElement(writer);
+  
+
+    public static void writeTag(TagNode node) throws XMLStreamException{
+        HashMap<TagBound, XMLStreamWriter> writers = XMLWriter.writers;
+        if(node.getId() == 1445595096){
+            System.out.println("node not written" + node.toString() + " " + c);
+        }
+        for (TagBound b : writers.keySet()) {
+            if (Tag.isInBounds(node, b)){
+                XMLStreamWriter writer = getStreamWriter(b);
+                node.createXMLElement(writer);
+                return;
+            }
+        }
+        c++;
     }
-    
-    private XMLStreamWriter getStreamWriter(int index){
-        return this.writers.get(index);
+    public static void writeTag(TagAddress address) throws XMLStreamException{
+        for (TagBound b : writers.keySet()) {
+            if (Tag.isInBounds(address, b)){
+                XMLStreamWriter writer = getStreamWriter(b);
+                address.createXMLElement(writer);
+                writer.writeCharacters("\n"); // Add a newline character
+            }
+        }
     }
+
+    public static void writeTag(TagWay way) throws XMLStreamException{
+        for (TagBound b : writers.keySet()) {
+            for (TagNode refNode : way.getRefs()) {
+                if (Tag.isInBounds(refNode, b)){
+                    XMLStreamWriter writer = getStreamWriter(b);
+                    way.createXMLElement(writer);
+                    writer.writeCharacters("\n"); // Add a newline character
+                }
+            }
+        }
+    }
+
+
     /**
      * Get the XMLStreamWriter for the a specific bound. The useage of this method is to write to a specific chunk file.
      * @param bound - The bound to get the writer for
      * @return XMLStreamWriter - The writer for the bound
      */
-    private XMLStreamWriter getStreamWriter(TagBound bound){
-        int chunkId = chunkFiles.getChunkId(bound);
-
-        return getStreamWriter(chunkId);
+    private static XMLStreamWriter getStreamWriter(TagBound bound) {
+        return writers.get(bound);
     }
 
-    public void closeWrtier(XMLStreamWriter writer) throws XMLStreamException{
+    public static void closeWrtier(XMLStreamWriter writer) throws XMLStreamException{
         writer.writeEndDocument();
         writer.flush();
         writer.close();
     }
 
-    public void closeAllWriters() throws XMLStreamException{
-        for (XMLStreamWriter xmlStreamWriter : writers) {
-            xmlStreamWriter.writeEndDocument();
-            xmlStreamWriter.flush();
-            xmlStreamWriter.close();
+    public static void closeAllWriters() throws XMLStreamException{
+        for (XMLStreamWriter writer : writers.values()) {
+            closeWrtier(writer);
         }
     }
 
@@ -93,19 +125,6 @@ class XMLWriter {
         }
         return w;
     }
-
-    // public void writeTagNode(TagNode node, XMLStreamWriter writer) throws XMLStreamException{
-    //     BigDecimal lat = node.getLat();
-    //     BigDecimal lon = node.getLon();
-
-    //     createXMLElement(writer, "node", new HashMap<String, String>() {
-    //         {
-    //             put("id", node.getId().toString());
-    //             put("lat", node.getLat().toString());
-    //             put("lon", node.getLon().toString());
-    //         }
-    //     });
-    // }
 
     /**
      * A class to control the chunk files' paths and the bounds of the chunks

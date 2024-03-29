@@ -4,6 +4,7 @@ import java.util.HashMap;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import java.math.BigDecimal;
 
 enum Address{
     ID, LAT, LON, CITY, STREET, HOUSENUMBER, POSTCODE, MUNICIPALITY;
@@ -32,8 +33,7 @@ public class TagAddress extends Tag<Address> {
     }
 
     public void createXMLElement(XMLStreamWriter wrinter) throws XMLStreamException{
-        wrinter.writeStartElement("bounds");
-        // Iterate through the attributes and write
+        wrinter.writeStartElement("address");
             wrinter.writeAttribute("id", this.get(Address.ID).toString());
             wrinter.writeAttribute("lat", this.get(Address.LAT).toString());
             wrinter.writeAttribute("lon", this.get(Address.LON).toString());
@@ -44,4 +44,16 @@ public class TagAddress extends Tag<Address> {
         wrinter.writeEndElement();
     }
     
+    public long getId() {
+        return Long.parseLong(this.get(Address.ID).toString());
+    }
+
+    public BigDecimal getLat() {
+        return new BigDecimal(this.get(Address.LAT).toString());
+    }
+
+    public BigDecimal getLon() {
+        return new BigDecimal(this.get(Address.LON).toString());
+    }
+
 }

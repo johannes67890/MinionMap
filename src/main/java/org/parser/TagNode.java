@@ -14,7 +14,7 @@ enum Node {
  * {@link Node#ID}, {@link Node#LAT}, {@link Node#LON}
  * </p>
 */
-public class TagNode extends Tag<Node> {
+public class TagNode extends Tag<Node>{
     public TagNode(XMLReader.Builder builder) {
         super(new HashMap<Node, Number>(){
             {
@@ -39,8 +39,17 @@ public class TagNode extends Tag<Node> {
             wrinter.writeAttribute("lat", this.get(Node.LAT).toString());
             wrinter.writeAttribute("lon", this.get(Node.LON).toString());
         wrinter.writeEndElement();
+        wrinter.writeCharacters("\n"); // Add a newline character   
     }
 
+    public void createXMLRefElement(XMLStreamWriter wrinter) throws XMLStreamException{
+        wrinter.writeStartElement("nd");
+            wrinter.writeAttribute("id", this.get(Node.ID).toString());
+            wrinter.writeAttribute("lat", this.get(Node.LAT).toString());
+            wrinter.writeAttribute("lon", this.get(Node.LON).toString());
+        wrinter.writeEndElement();
+        
+    }
 
     public long getId() {
         return (long) this.get(Node.ID);
@@ -52,5 +61,6 @@ public class TagNode extends Tag<Node> {
     public BigDecimal getLon() {
         return (BigDecimal) this.get(Node.LON);
     }
+
 
 }

@@ -19,7 +19,7 @@ enum Bounds {
  * {@link Bounds#MINLAT}, {@link Bounds#MAXLAT}, {@link Bounds#MINLON}, {@link Bounds#MAXLON}
  * </p>
 */
-public class TagBound extends Tag<Bounds>{
+public class TagBound extends Tag<Bounds> implements Comparable<TagBound>{
     public TagBound(XMLStreamReader reader) {
         super(new HashMap<Bounds, BigDecimal>(){
             {
@@ -79,5 +79,21 @@ public class TagBound extends Tag<Bounds>{
      */
     public BigDecimal getMaxLon() {
         return new BigDecimal(this.get(Bounds.MAXLON).toString());
+    }
+
+    
+
+    @Override
+    public int compareTo(TagBound o) {
+        if (this.getMaxLat().compareTo(o.getMaxLat()) == 0) {
+            if (this.getMinLat().compareTo(o.getMinLat()) == 0) {
+                if (this.getMaxLon().compareTo(o.getMaxLon()) == 0) {
+                    return this.getMinLon().compareTo(o.getMinLon());
+                }
+                return this.getMaxLon().compareTo(o.getMaxLon());
+            }
+            return this.getMinLat().compareTo(o.getMinLat());
+        }
+        return this.getMaxLat().compareTo(o.getMaxLat());
     }
 }

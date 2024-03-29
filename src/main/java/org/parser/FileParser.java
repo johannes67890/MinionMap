@@ -34,19 +34,12 @@ public class FileParser {
         TagNode center = new TagNode(centerX, centerY);
         return center;
     }
-    /*
-     * Method to check if a node is within the bounds of a given area.
-     */
-    public boolean isInBounds(TagNode node, TagBound bound) {
-        return node.getLat().compareTo(bound.getMinLat()) == -1 && node.getLat().compareTo(bound.getMaxLat()) == 1
-            && node.getLon().compareTo(bound.getMinLon()) == 1 && node.getLon().compareTo(bound.getMaxLon()) == -1;
-    }
 
 
     /**
      * 
      */
-    private class CompasPoints {
+    public static class CompasPoints {
         private enum Direction {
             NORTH, SOUTH, EAST, WEST
         }
@@ -138,15 +131,15 @@ public class FileParser {
          * @param bound - The bound to split
          * @return An {@param HashMap<>} of four new bounds, each representing a {@link Quadrant} of the given bound.
         */
-        private HashMap<Quadrant, TagBound> constuctQuadrants(){
+        public HashMap<Quadrant, TagBound> constuctQuadrants(){
             HashMap<Quadrant, TagBound> quadrants = new HashMap<Quadrant, TagBound>();
 
             CompasPoints compas = new CompasPoints(center, bound);
 
             // Q1/North-West
             quadrants.put(Quadrant.Q1, new TagBound(
-                compas.getWest().getLat(),
                 bound.getMaxLat(),
+                compas.getWest().getLat(),
                 center.getLon(),
                 compas.getWest().getLon()
             ));

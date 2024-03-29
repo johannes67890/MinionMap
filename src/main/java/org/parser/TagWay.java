@@ -1,9 +1,9 @@
 package org.parser;
 
 import java.util.HashMap;
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import java.util.ArrayList;
 
 enum Way {
     ID, REFS, NAME, TYPE
@@ -29,31 +29,36 @@ public class TagWay extends HashMap<Way, Object>{
     }
 
     public void createXMLElement(XMLStreamWriter wrinter) throws XMLStreamException{
-        wrinter.writeStartElement("bounds");
-     
+        wrinter.writeStartElement("way");
+        
         for (Way key : this.keySet()) {
             switch (key) {
                 case ID:
-                    wrinter.writeAttribute("id", this.get(Way.ID).toString());
-                    break;
+                wrinter.writeAttribute("id", this.get(Way.ID).toString());
+                break;
                 case REFS:
-                    Long[] refs = (Long[]) this.get(Way.REFS);
-                    for (Long ref : refs) {
-                        wrinter.writeStartElement("nd");
-                        wrinter.writeAttribute("ref", ref.toString());
-                        wrinter.writeEndElement();
+                ArrayList<TagNode> refs = this.getRefs();
+                for (TagNode ref : refs) {
+                    wrinter.writeCharacters("\n"); // Add a newline character
+                    wrinter.writeCharacters("\t");
+                    ref.createXMLRefElement(wrinter);
                     }
                     break;
                 case NAME:
-                    wrinter.writeAttribute("name", this.get(Way.NAME).toString());
+                    if(this.get(Way.NAME) != null){
+                        wrinter.writeAttribute("name", this.get(Way.NAME).toString());
+                    }
                     break;
                 case TYPE:
-                    wrinter.writeAttribute("type", this.get(Way.TYPE).toString());
+                    if(this.get(Way.TYPE) != null){
+                        wrinter.writeAttribute("type", this.get(Way.TYPE).toString());
+                    }
                     break;
                 default:
                     break;
             }
         }
+        wrinter.writeCharacters("\n");
         wrinter.writeEndElement();
     }
 
@@ -75,20 +80,16 @@ public class TagWay extends HashMap<Way, Object>{
      * Get the refrerence nodes of the way.
      * @return Long[] of the reference nodes of the way.
      */
-    public Long[] getNodes() {
-        return (Long[]) this.get(Way.REFS);
+    public ArrayList<TagNode> getRefs() {
+        return (ArrayList<TagNode>) this.get(Way.REFS);
     }
-
-    // public Long[] getTags() {
-    //     return tags;
-    // }
         
     public boolean isEmpty() {
-        return getNodes().length == 0;
+        return getRefs().size() == 0;
     }
 
     public int size() {
-        return getNodes().length;
+        return getRefs().size();
     }
 
 
