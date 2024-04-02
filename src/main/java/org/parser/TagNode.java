@@ -35,11 +35,11 @@ public class TagNode extends HashMap<Node,Number> {
         return (BigDecimal) this.get(Node.LON);
     }
     public Double getLatDouble(){
-        return (double) this.get(Node.LAT).doubleValue();
+        return (double) -this.get(Node.LAT).doubleValue();
     }
 
     public Double getLonDouble(){
-        return (double) this.get(Node.LON).doubleValue();
+        return (double) 0.56 * this.get(Node.LON).doubleValue();
     }
 
 

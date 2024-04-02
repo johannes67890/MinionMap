@@ -1,6 +1,13 @@
 package GUI;
-import java.util.*;
-import org.parser.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+
+import org.parser.TagBound;
+import org.parser.TagNode;
+import org.parser.TagWay;
+import org.parser.XMLReader;
 
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
@@ -42,7 +49,7 @@ public class DrawingMap {
         zoomScalerToMeter = haversineDist(new Point2D(0, 0), new Point2D(temp,0));
 
         //pan(-0.56*minlon, maxlat);
-        pan(-minlon, -minlat);
+        pan(-0.56*minlon, maxlat);
         zoom(canvas.getWidth() / (maxlon - minlon), 0, 0);
 
         DrawMap(canvas.getGraphicsContext2D(), canvas);
@@ -79,7 +86,13 @@ public class DrawingMap {
 
     public void DrawMap(GraphicsContext gc, ResizableCanvas canvas){
 
-        
+
+        gc.setTransform(new Affine());
+        gc.setFill(Color.WHITE);
+        gc.fillRect(0,0,canvas.getWidth(), canvas.getHeight());
+
+
+        gc.setTransform(transform);
         //GraphicsContext gc = canvas.getGraphicsContext2D();
         List<TagNode> nodes = reader.getNodes();
         HashMap<Long, TagNode> nodesMap = reader.getNodesMap();
@@ -87,10 +100,9 @@ public class DrawingMap {
         TagBound bound = reader.getBound();
 
         Iterator<TagWay> it = ways.iterator();
-        gc.setTransform(transform);
-        gc.setFill(Color.WHITE);
+        
         gc.setLineWidth(1/Math.sqrt(transform.determinant()));
-        gc.fillRect(0,0,canvas.getWidth(), canvas.getHeight());
+        System.out.println("CANVAS HEIGHT: " + canvas.getHeight());
 
         while (it.hasNext()) {
 
