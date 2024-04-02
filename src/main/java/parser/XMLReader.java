@@ -202,6 +202,10 @@ public class XMLReader {
                         break;
                 }
             }
+            else{
+                wayBuilder.addtagKs(k);
+                wayBuilder.addtagVs(v);
+            }
         }
     
     /**
@@ -262,6 +266,8 @@ public class XMLReader {
     public class WayBuilder {
         private ArrayList<Long> refNodes = new ArrayList<Long>();
         private boolean isEmpty = true;
+        private ArrayList<String> tagKs = new ArrayList<>();
+        private ArrayList<String> tagVs = new ArrayList<>();
 
         public boolean isEmpty() {
             return isEmpty;
@@ -274,8 +280,28 @@ public class XMLReader {
             refNodes.add(ref);
         }
 
+
+        private void addtagKs(String s) {
+            tagKs.add(s);
+
+        }
+
+        private void addtagVs(String s) {
+            tagVs.add(s);
+
+        }
+
         public ArrayList<Long> getRefNodes() {
             return refNodes;
+        }
+
+        public ArrayList<String> getTagKeys(){
+            return tagKs;
+
+        }
+        public ArrayList<String> getTagValues(){
+            return tagVs;
+
         }
     }
 
