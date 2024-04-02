@@ -1,19 +1,25 @@
-package Address;
+package gui;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import javafx.scene.control.TextArea;
+import parser.TagAddress;
+import parser.XMLReader;
+import parser.TagAddress.SearchAddress;
 
-public class AddressSearchPage {
-
+public class Search {
 
     ArrayList<String> cityNames, streetNames, postCodes;
+    ArrayList<TagAddress> addresses;
+    XMLReader reader;
+
+    public Search(ArrayList<TagAddress> addresses){
+        this.addresses = addresses;
+        readFiles();
+    }
 
     /**
-     * Reads files used later in {@link HelloFX its class}
+     * Reads files used later in {@link Main its class}
      */
     public void readFiles(){
 
@@ -24,7 +30,14 @@ public class AddressSearchPage {
         String current;
         String[] splitCurrent;
 
-        try{
+        //Adding addresses from XMLReader into the lists
+        for (int i = 0; i < addresses.size(); i++){
+            cityNames.add(addresses.get(i).getCity());
+            streetNames.add(addresses.get(i).getStreet());
+            postCodes.add(addresses.get(i).getPostcode());
+        }
+        
+        /*try{
 
             BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/citynames.txt"));
             while (reader.ready()) {
@@ -47,7 +60,7 @@ public class AddressSearchPage {
         
         } catch(IOException e){
             System.out.println("FILE NOT FOUND");
-        }
+        }*/
     }
 
 
@@ -59,7 +72,7 @@ public class AddressSearchPage {
      * @param input String that will be contructed into an address.
      */
     public void searchForAdress(String input, TextArea output){
-        Address a = Address.parse(input);
+        SearchAddress a = new SearchAddress(input);
             output.setText(a.toString());
 
             long time = System.currentTimeMillis();
@@ -109,7 +122,7 @@ public class AddressSearchPage {
         int current;
 
         for (String cityName : cityNames){
-            current = Commons.StringUtility.getLevenshteinDistance(cityName, s);
+            current = util.StringUtility.getLevenshteinDistance(cityName, s);
             if (current < maxSim){
                 maxSim = current;
                 topString = cityName;

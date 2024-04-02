@@ -1,12 +1,19 @@
-package GUI;
-import javafx.scene.paint.Color;
-import javafx.scene.transform.Affine;
-import javafx.stage.*;
-import javafx.geometry.*;
+package gui;
+import java.io.File;
+
+import gui.Search;
+
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
-import javafx.scene.text.*;
-import javafx.scene.canvas.*;
-import javafx.scene.control.*;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
@@ -19,6 +26,25 @@ import javax.swing.event.HyperlinkEvent;
 import org.filehandling.zipHandler;
 
 import javafx.event.*;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+import javafx.scene.text.TextFlow;
+import javafx.stage.FileChooser;
+import javafx.stage.Screen;
+import javafx.stage.Stage;
+import parser.XMLReader;
+import util.FileDistributer;
 
 public class MainView {
 
@@ -33,10 +59,14 @@ public class MainView {
     static StageSelect selectedStage = StageSelect.MapView;
     static int sizeX = 800;
     static int sizeY = 600;
-    public static Canvas canvas = new Canvas(sizeX, sizeY);
-    static GraphicsContext gc = canvas.getGraphicsContext2D();
+    public static ResizableCanvas canvas;
+    static GraphicsContext gc;
     static Scene lastScene;
     static Rectangle2D screenBounds;
+    public XMLReader xmlReader;
+    public DrawingMap drawView;
+    private Text zoomLevelText;
+    private File inputFile;
 
 
     public MainView(Stage stage){
@@ -46,13 +76,20 @@ public class MainView {
         MainView.stage.setMinWidth(sizeX);
         MainView.stage.setMinHeight(sizeY);
         MainView.stage.setResizable(true);
-        
+
         dragAndDropStage(stage);
     }
 
+    public void draw(){
+        gc.setFill(Color.WHITE);
+        gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        zoomLevelText.setText("" + Math.round(drawView.getZoomLevelMeters()) + "m");;
+        drawView.DrawMap(gc, canvas);
+    }
 
-    public static void dragAndDropStage(Stage stage){
-        
+
+    public void dragAndDropStage(Stage stage){
+
         Label title = new Label("Welcome to our Map of Denmark!");
         //Label title = new Label(finalPath);
         title.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 40));
@@ -108,6 +145,7 @@ public class MainView {
                 Dragboard db = event.getDragboard();
                 boolean success = false;
                 if (db.hasFiles()) {
+                    inputFile = db.getFiles().get(0);
                     text.setText(db.getFiles().toString());
                     link.setText("");
                     success = true;
@@ -132,70 +170,19 @@ public class MainView {
         submitButton.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent e){
                 selectedStage = StageSelect.MapView;
+                if (inputFile != null){
+                    xmlReader = new XMLReader(inputFile.getAbsolutePath());
+                }else{
+                    xmlReader = new XMLReader(FileDistributer.input.getFilePath());
+                }
+                drawView = new DrawingMap(MainView.this, xmlReader);
                 redraw();
             }
         });
 
     }
 
-    public static void mapStage(Stage stage){
-
-        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-
-        GridPane mainGrid = new GridPane();
-        GridPane rightGrid = new GridPane();
-        
-        Scene scene = new Scene(mainGrid, sizeY,sizeX);
-
-        ImageView menuButtonImage = new ImageView("file:src/main/resources/visuals/hamburber.png");
-        menuButtonImage.setFitHeight(screenBounds.getHeight() * 0.03f);
-        menuButtonImage.setPreserveRatio(true);
-
-        ImageView searchButtonImage = new ImageView("file:src/main/resources/visuals/oompaloop.png");
-        searchButtonImage.setFitHeight(screenBounds.getHeight() * 0.02f);
-        searchButtonImage.setPreserveRatio(true);
-
-        Button menuButton = new Button("", menuButtonImage);
-        Button searchButton = new Button("Search", searchButtonImage);
-        TextField searchBar = new TextField();
-        HBox topBar = new HBox(10);
-
-        
-        topBar.getChildren().addAll(menuButton, searchBar, searchButton);
-        topBar.setPrefSize(scene.getWidth(), screenBounds.getHeight() * 0.05f);
-        topBar.setMinHeight(screenBounds.getHeight() * 0.05f);
-        topBar.setMaxHeight(screenBounds.getHeight() * 0.05f);
-        topBar.setPrefWidth(scene.getWidth());
-        topBar.setStyle("-fx-background-color: #8fc9c7;");
-        topBar.setAlignment(Pos.CENTER);
-
-        
-        searchBar.setMaxWidth(scene.getWidth() * 0.8f);
-        searchBar.setMinWidth(scene.getWidth() * 0.8f);
-
-        mainGrid.add(rightGrid, 1,0);
-        
-        rightGrid.setPrefSize(scene.getWidth(), scene.getHeight());
-        rightGrid.add(topBar, 0,0);
-        rightGrid.add(canvas, 0,1);
-        rightGrid.setVgap(10);
-
-        gc.setTransform(new Affine());
-        gc.setFill(Color.WHITE);
-        gc.fillRect(0, 0, sizeX, sizeY);
-
-        gc.beginPath();
-        gc.moveTo(0, 0);
-        gc.lineTo(sizeY, sizeX);
-        gc.stroke();
-        gc.closePath();
-
-        stage.setTitle("Danmarks Kortet Uden malmø");
-        stage.setScene(scene);
-        stage.show();
-    }
-
-    public static void mapStageNew(Stage stage){
+    public void mapStageNew(Stage stage){
 
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
 
@@ -232,7 +219,8 @@ public class MainView {
         topBar.setStyle("-fx-background-color: #adadad");
 
         // Instantiate the main components of the stage
-        ResizableCanvas mapCanvas = new ResizableCanvas(); // This is a custom canvas that can resize and is used to draw the map
+        canvas = new ResizableCanvas(this); // This is a custom canvas that can resize and is used to draw the map
+        gc = canvas.getGraphicsContext2D();
         VBox burgerMenu = burgerMenuInstantiation(); // This is the menu that sits on the left side of the screen when menu button is pressed
         StackPane mainPane = new StackPane(); // This is the stackpane where the burgermenu and map is overlayed on top of eachother
         BorderPane bp = new BorderPane(); // This is the main part of the scene where the map is drawn and the top menu bar is
@@ -240,7 +228,7 @@ public class MainView {
 
         // Setting up the borderpane by adding topbar to the top of the pane and mapCanvas to the center
         bp.setTop(topBar);
-        bp.setCenter(mapCanvas);
+        bp.setCenter(canvas);
 
         // Setting up additional settings for the borderpane
         bp.setMargin(topBar, new Insets(5));
@@ -253,13 +241,16 @@ public class MainView {
         mainPane.setAlignment(burgerMenu, Pos.CENTER_LEFT);
         mainPane.setAlignment(unitScale, Pos.BOTTOM_RIGHT);
 
-        mapCanvas.heightProperty().bind(mainPane.heightProperty());
-        mapCanvas.widthProperty().bind(mainPane.widthProperty());
+        canvas.heightProperty().bind(mainPane.heightProperty());
+        canvas.widthProperty().bind(mainPane.widthProperty());
         Scene scene = new Scene(mainPane);
 
         stage.setTitle("Map of Denmark");
         stage.setScene(scene);
         stage.show();
+        drawView.initialize(canvas);
+        Controller controller = new Controller(this);
+
 
         // An eventhandler for the burgermenu button. Maybe this should be moved to the controller class
         menuButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -268,29 +259,45 @@ public class MainView {
             }
         });
 
+
+        // An eventhandler for the search button and search bar. See search() method for more information
+        searchButton.setOnAction(new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent e){
+                // TODO: Unfinished
+                //search(searchBar);
+            }
+        });
+
+        searchBar.setOnAction(new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent e){
+                // TODO: Unfinished
+                //search(searchBar);
+            }
+        });
+
     }
 
-    public static BorderPane zoomLevelInstantiation(){
+    public BorderPane zoomLevelInstantiation(){
 
-        Text unitText = new Text("500m");
-        unitText.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, screenBounds.getHeight() * 0.01f));;
+        zoomLevelText = new Text("500m");
+        zoomLevelText.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, screenBounds.getHeight() * 0.01f));;
         ImageView unitScalerImage = new ImageView("file:src/main/resources/visuals/UnitRuler2.png");
         unitScalerImage.setFitHeight(screenBounds.getHeight() * 0.02f);
         unitScalerImage.setFitWidth(screenBounds.getWidth() * 0.04f);
 
         BorderPane outputPane = new BorderPane();
-        outputPane.setMaxWidth(screenBounds.getWidth() * 0.05f);
+        outputPane.setMaxWidth(screenBounds.getWidth() * 0.04f);
         outputPane.setMaxHeight(screenBounds.getHeight() * 0.04f);
-        outputPane.setTop(unitText);
+        outputPane.setTop(zoomLevelText);
         outputPane.setCenter(unitScalerImage);
         
-        outputPane.setAlignment(unitText, Pos.CENTER);
+        outputPane.setAlignment(zoomLevelText, Pos.CENTER);
         outputPane.setAlignment(unitScalerImage, Pos.CENTER);
 
         return outputPane;
     }
 
-    public static VBox burgerMenuInstantiation(){
+    public VBox burgerMenuInstantiation(){
 
         // Main object that is going to be returned
         VBox burgerMenu = new VBox(10);
@@ -360,12 +367,27 @@ public class MainView {
     }
 
     // A function for redrawing the stage when changing scenes
-    public static void redraw(){
+    public void redraw(){
 
         if (selectedStage == StageSelect.MainMenu){
             dragAndDropStage(stage);
         }else if (selectedStage == StageSelect.MapView){
             mapStageNew(stage);
+            
         }
     }
+
+    // A function for searching for an address. Called when the search button is pressed 
+    // or when the enter key is pressed in the search bar.
+    // The function makes a new AddressSearchPage object which takes the addresses from the XMLReader
+    // and then uses the searchForAdress method to search for the address
+    // See AddressSearchPage for more information
+
+    // public void search(TextField searchBar){
+    //     // TODO: Unfinished
+    //     Search search = new Search(xmlReader.getAddresses());
+    //     String text = searchBar.getText();
+    //     search.searchForAdress(text);
+    // }
+    
 }

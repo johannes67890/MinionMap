@@ -1,14 +1,35 @@
-package GUI;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+package gui;
 
 public class Controller {
     double lastX;
     double lastY;
+
+    double zoomMultiplier = 1.01f;
     
-    public Controller(MainView view){
+    public Controller(MainView mainView){
 
+        //System.out.println("CONTROLLER MADE");
+
+
+        mainView.canvas.setOnMousePressed(e -> {
+            lastX = e.getX();
+            lastY = e.getY();
+        });
         
+        mainView.canvas.setOnScroll(event -> {
 
+            mainView.getDrawingMap().zoom(Math.pow(zoomMultiplier,event.getDeltaY()), event.getX(), event.getY());
+            
+        });
+
+        mainView.canvas.setOnMouseDragged(e -> {
+
+            double dx = e.getX() - lastX;
+            double dy = e.getY() - lastY;
+            mainView.getDrawingMap().pan(dx, dy);
+
+            lastX = e.getX();
+            lastY = e.getY();
+        });
     }
 }

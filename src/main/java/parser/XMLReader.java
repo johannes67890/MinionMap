@@ -1,9 +1,10 @@
-package org.parser;
+package parser;
 import static javax.xml.stream.XMLStreamConstants.*;
 
 import java.io.FileInputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
@@ -17,7 +18,7 @@ import javax.xml.stream.XMLStreamReader;
  */
 public class XMLReader {
     private TagBound bound;
-    private ArrayList<TagNode> nodes = new ArrayList<TagNode>();
+    private HashMap<Long, TagNode> nodes = new HashMap<Long, TagNode>();
     private ArrayList<TagAddress> addresses = new ArrayList<TagAddress>();
     private ArrayList<TagWay> ways = new ArrayList<TagWay>();
 
@@ -42,10 +43,10 @@ public class XMLReader {
 
     private Builder tempBuilder = new Builder();
 
-    public XMLReader(FileDistributer filename) {
+    public XMLReader(String filepath) {
         try {
             XMLInputFactory factory = XMLInputFactory.newInstance();
-            XMLStreamReader reader = factory.createXMLStreamReader(new FileInputStream(filename.getFilePath()));
+            XMLStreamReader reader = factory.createXMLStreamReader(new FileInputStream(filepath));
             
             while (reader.hasNext()) {
                 reader.next();
@@ -65,12 +66,12 @@ public class XMLReader {
                                 if(!tempBuilder.getAddressBuilder().isEmpty()){
                                     addresses.add(new TagAddress(tempBuilder));
                                 } else {
-                                    nodes.add(new TagNode(tempBuilder));
+                                    TagNode node = new TagNode(tempBuilder);
+                                    nodes.put(node.getId(), node);
                                 }
                                 tempBuilder = new Builder(); // reset the builder
                                 break;
                             case "way":
-                                
                                 ways.add(new TagWay(tempBuilder));
                                 tempBuilder = new Builder(); // reset the builder
                             default:
@@ -84,12 +85,6 @@ public class XMLReader {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        ways.forEach((way) -> {
-            if (way.getType() == null) {
-                //System.out.println("Type is null: " + way);       
-            }
-        });
-        // new XMLParser(this);
     }
 
     /**
@@ -285,6 +280,15 @@ public class XMLReader {
     }
 
     public ArrayList<TagNode> getNodes(){
+
+        ArrayList<TagNode> nodesList = new ArrayList<>();
+
+        for(TagNode node : nodes.values()){
+            nodesList.add(node);
+        }
+        return nodesList;
+    }
+    public HashMap<Long, TagNode> getNodesMap(){
         return nodes;
     }
 

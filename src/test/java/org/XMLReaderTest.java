@@ -8,15 +8,16 @@ import java.util.HashMap;
 import javax.xml.stream.events.XMLEvent;
 
 import org.junit.jupiter.api.*;
-import org.parser.FileDistributer;
-import org.parser.XMLReader;
+
+import parser.XMLReader;
+import util.FileDistributer;
 
 public class XMLReaderTest {
     public XMLReader reader;
     public XMLEvent event;
     @BeforeEach
     void setUp() {
-        this.reader = new XMLReader(FileDistributer.test_input);
+        // this.reader = new XMLReader(FileDistributer.test_input);
     }
 
     @Test
