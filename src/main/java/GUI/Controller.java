@@ -1,4 +1,4 @@
-package gui;
+package GUI;
 
 public class Controller {
     double lastX;

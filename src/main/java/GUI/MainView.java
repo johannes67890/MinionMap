@@ -1,7 +1,7 @@
-package gui;
+package GUI;
 import java.io.File;
 
-import gui.Search;
+import GUI.Search;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;

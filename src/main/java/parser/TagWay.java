@@ -3,8 +3,6 @@ package parser;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import javafx.scene.paint.Color;
-
 enum Way {
     ID, REFS, NAME, TYPE, TAGKEYS, TAGVALUES
 }
@@ -19,6 +17,7 @@ enum Way {
 public class TagWay extends HashMap<Way, Object>{
 
 
+    boolean isLine = false;
 
     public TagWay(XMLReader.Builder builder) {
         super(new HashMap<Way, Object>(){
@@ -54,7 +53,7 @@ public class TagWay extends HashMap<Way, Object>{
     public ArrayList<Long> getNodes() {
         return (ArrayList<Long>) this.get(Way.REFS);
     }
-
+/*
     public ArrayList<String> getKeys() {
         return (ArrayList<String>) this.get(Way.TAGKEYS);
     }
@@ -62,7 +61,7 @@ public class TagWay extends HashMap<Way, Object>{
     public ArrayList<String> getValues() {
         return (ArrayList<String>) this.get(Way.TAGVALUES);
     }
-
+*/
     // public Long[] getTags() {
     //     return tags;
     // }
@@ -75,12 +74,15 @@ public class TagWay extends HashMap<Way, Object>{
         return getNodes().size();
     }
 
+    public boolean isLine(){
+        return isLine;
+    }
 
+    
+
+/*
     public Color tagToColor(){
-
-
-        boolean isLine = false;
-        ArrayList<String> tagKs = this.getKeys();
+        ArrayList<String> tagKs = this.getType();
         ArrayList<String> tagVs = this.getValues();
 
         for (int index = 0; index < tagKs.size(); index++){
@@ -145,10 +147,15 @@ public class TagWay extends HashMap<Way, Object>{
 
 
         }
-        System.out.println("NO COLOR FOUND");
+        System.out.println("NO COLOR FOUND FOR WAY");
+        for (String tagK : tagKs){
+            System.out.println(tagK);
+        }
         return null;
             
     }
+
+    */
 
 
 }

@@ -1,4 +1,4 @@
-package gui;
+package GUI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -99,17 +99,36 @@ public class DrawingMap {
         
         gc.setLineWidth(1/Math.sqrt(transform.determinant()));
         System.out.println("CANVAS HEIGHT: " + canvas.getHeight());
+        Color c;
 
         while (it.hasNext()) {
 
-            ArrayList<Long> nodesRef =  it.next().getNodes();
+
+            TagWay tagWay = it.next();
+
+            ArrayList<Long> nodesRef =  tagWay.getNodes();
+
+            //c = tagWay.tagToColor();
+            int counter = 0;
+            double[] xPoints = new double[nodesRef.size()];
+            double[] yPoints = new double[nodesRef.size()];
 
             gc.beginPath();
             gc.moveTo(nodesMap.get(nodesRef.get(0)).getLonDouble(), nodesMap.get(nodesRef.get(0)).getLatDouble());
             for (Long ref : nodesRef){
                 
                 gc.lineTo(nodesMap.get(ref).getLonDouble(), nodesMap.get(ref).getLatDouble());
+                xPoints[counter] = nodesMap.get(ref).getLonDouble();
+                yPoints[counter] = nodesMap.get(ref).getLatDouble();
+                counter++;
+                
             }
+
+            /* 
+            if (!tagWay.isLine()){
+                gc.setFill(c);
+                gc.fillPolygon(xPoints, yPoints, xPoints.length);
+            }*/
 
             gc.stroke();
     
