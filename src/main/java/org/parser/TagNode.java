@@ -13,6 +13,28 @@ enum Node {
  * </p>
 */
 public class TagNode extends HashMap<Node,Number> {
+
+    public TagNode(long id, BigDecimal lat, BigDecimal lon) {
+        super(new HashMap<Node, Number>(){
+                {
+                    put(Node.ID, id);
+                    put(Node.LAT, lat);
+                    put(Node.LON, lon);
+                }
+            }
+        );
+    }
+    public TagNode(long id, double lat, double lon) {
+        super(new HashMap<Node, Number>(){
+                {
+                    put(Node.ID, id);
+                    put(Node.LAT, lat);
+                    put(Node.LON, lon);
+                }
+            }
+        );
+    }
+
     public TagNode(XMLReader.Builder builder) {
         super(new HashMap<Node, Number>(){
             {
@@ -23,7 +45,7 @@ public class TagNode extends HashMap<Node,Number> {
         });
     }
 
-    public Long getRef(){
+    public Long getId(){
         return (Long) this.get(Node.ID);
     }
 
