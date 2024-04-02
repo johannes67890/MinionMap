@@ -1,4 +1,4 @@
-package GUI;
+package gui;
 
 public class Controller {
     double lastX;
@@ -8,13 +8,16 @@ public class Controller {
     
     public Controller(MainView mainView){
 
+        //System.out.println("CONTROLLER MADE");
+
+
         mainView.canvas.setOnMousePressed(e -> {
             lastX = e.getX();
             lastY = e.getY();
         });
         
         mainView.canvas.setOnScroll(event -> {
-            
+
             mainView.getDrawingMap().zoom(Math.pow(zoomMultiplier,event.getDeltaY()), event.getX(), event.getY());
             
         });

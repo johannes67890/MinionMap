@@ -1,7 +1,7 @@
-package GUI;
-import org.parser.FileDistributer;
-import org.parser.XMLReader;
-import Address.AddressSearchPage;
+package gui;
+import java.io.File;
+
+import gui.Search;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -11,14 +11,23 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.*;
+import javafx.scene.layout.*;
+
+import java.io.File;
+import java.io.IOException;
+
+import javax.swing.event.HyperlinkEvent;
+
+import javafx.event.*;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -28,9 +37,13 @@ import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-import javafx.scene.transform.Affine;
+import javafx.scene.text.TextFlow;
+import javafx.stage.FileChooser;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import parser.XMLReader;
+import util.FileDistributer;
+import util.ZipHandler;
 
 public class MainView {
 
@@ -51,6 +64,8 @@ public class MainView {
     static Rectangle2D screenBounds;
     public XMLReader xmlReader;
     public DrawingMap drawView;
+    private Text zoomLevelText;
+    private File inputFile;
 
 
     public MainView(Stage stage){
@@ -60,9 +75,6 @@ public class MainView {
         MainView.stage.setMinWidth(sizeX);
         MainView.stage.setMinHeight(sizeY);
         MainView.stage.setResizable(true);
-        xmlReader = new XMLReader(FileDistributer.input);
-        drawView = new DrawingMap(this, xmlReader);
-
 
         dragAndDropStage(stage);
     }
@@ -70,26 +82,29 @@ public class MainView {
     public void draw(){
         gc.setFill(Color.WHITE);
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        zoomLevelText.setText("" + Math.round(drawView.getZoomLevelMeters()) + "m");;
         drawView.DrawMap(gc, canvas);
     }
 
-    public DrawingMap getDrawingMap(){
-        return drawView;
-    }
 
 
     public void dragAndDropStage(Stage stage){
 
         Label title = new Label("Welcome to our Map of Denmark!");
+        //Label title = new Label(finalPath);
         title.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 40));
         Label description = new Label("Drag and drop a .osm file here (If no file is dropped when submitting then it loads default map)");
         description.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 20));
         description.setWrapText(true);
         description.setTextAlignment(TextAlignment.CENTER);
         
-        Text text = new Text("No File Selected");
 
-        HBox contentPane = new HBox(text);
+        Text text = new Text("No File Selected");
+        Hyperlink link = new Hyperlink("Select File");
+        TextFlow textflow = new TextFlow(text, link);
+        textflow.setTextAlignment(TextAlignment.CENTER);
+
+        HBox contentPane = new HBox(textflow);
         contentPane.setAlignment(Pos.CENTER);
         contentPane.setMinSize(sizeX / 5, sizeY / 5);
         contentPane.setMaxWidth(sizeX / 3);
@@ -101,6 +116,14 @@ public class MainView {
         outerBox.setSpacing(10);
         outerBox.setAlignment(Pos.CENTER);
         outerBox.getChildren().addAll(title, description, contentPane, submitButton);
+
+        link.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                text.setText(pathFindFile());
+                link.setText("Klik her for at vælge en anden fil");
+            }
+        });
 
         contentPane.setOnDragOver(new EventHandler<DragEvent>() {
 
@@ -122,7 +145,9 @@ public class MainView {
                 Dragboard db = event.getDragboard();
                 boolean success = false;
                 if (db.hasFiles()) {
+                    inputFile = db.getFiles().get(0);
                     text.setText(db.getFiles().toString());
+                    link.setText("");
                     success = true;
                 }
 
@@ -145,6 +170,12 @@ public class MainView {
         submitButton.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent e){
                 selectedStage = StageSelect.MapView;
+                if (inputFile != null){
+                    xmlReader = new XMLReader(inputFile.getAbsolutePath());
+                }else{
+                    xmlReader = new XMLReader(FileDistributer.input.getFilePath());
+                }
+                drawView = new DrawingMap(MainView.this, xmlReader);
                 redraw();
             }
         });
@@ -217,6 +248,7 @@ public class MainView {
         stage.setTitle("Map of Denmark");
         stage.setScene(scene);
         stage.show();
+        drawView.initialize(canvas);
         Controller controller = new Controller(this);
 
 
@@ -231,13 +263,15 @@ public class MainView {
         // An eventhandler for the search button and search bar. See search() method for more information
         searchButton.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent e){
-                search(searchBar);
+                // TODO: Unfinished
+                //search(searchBar);
             }
         });
 
         searchBar.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent e){
-                search(searchBar);
+                // TODO: Unfinished
+                //search(searchBar);
             }
         });
 
@@ -245,19 +279,19 @@ public class MainView {
 
     public BorderPane zoomLevelInstantiation(){
 
-        Text unitText = new Text("500m");
-        unitText.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, screenBounds.getHeight() * 0.01f));;
+        zoomLevelText = new Text("500m");
+        zoomLevelText.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, screenBounds.getHeight() * 0.01f));;
         ImageView unitScalerImage = new ImageView("file:src/main/resources/visuals/UnitRuler2.png");
         unitScalerImage.setFitHeight(screenBounds.getHeight() * 0.02f);
         unitScalerImage.setFitWidth(screenBounds.getWidth() * 0.04f);
 
         BorderPane outputPane = new BorderPane();
-        outputPane.setMaxWidth(screenBounds.getWidth() * 0.05f);
+        outputPane.setMaxWidth(screenBounds.getWidth() * 0.04f);
         outputPane.setMaxHeight(screenBounds.getHeight() * 0.04f);
-        outputPane.setTop(unitText);
+        outputPane.setTop(zoomLevelText);
         outputPane.setCenter(unitScalerImage);
         
-        outputPane.setAlignment(unitText, Pos.CENTER);
+        outputPane.setAlignment(zoomLevelText, Pos.CENTER);
         outputPane.setAlignment(unitScalerImage, Pos.CENTER);
 
         return outputPane;
@@ -305,6 +339,34 @@ public class MainView {
 
     }
 
+
+    /**
+     * Function for finding a file path for chosen file
+     * via a filechooser dialog window and unzipping to a give directory if the file is a zip file
+     * @return String path to the file chosen
+     */
+    public static String pathFindFile(){
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open Ressource File");
+        fileChooser.getExtensionFilters().addAll(
+            new FileChooser.ExtensionFilter("OSM Files", "*.osm"),
+            new FileChooser.ExtensionFilter("ZIP", "*.zip")
+            );
+            fileChooser.setInitialDirectory(new java.io.File("C:\\Users\\"));
+            java.io.File file = fileChooser.showOpenDialog(stage);
+            if (file != null) {
+            if(file.toString().contains(".zip")) {
+            ZipHandler zip = new ZipHandler();
+                try {
+                    zip.unzip(file.toString());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return file.toString();
+    }
+
     // A function for redrawing the stage when changing scenes
     public void redraw(){
 
@@ -312,7 +374,12 @@ public class MainView {
             dragAndDropStage(stage);
         }else if (selectedStage == StageSelect.MapView){
             mapStageNew(stage);
+            
         }
+    }
+
+    public DrawingMap getDrawingMap() {
+        return drawView;
     }
 
     // A function for searching for an address. Called when the search button is pressed 
@@ -321,10 +388,11 @@ public class MainView {
     // and then uses the searchForAdress method to search for the address
     // See AddressSearchPage for more information
 
-    public void search(TextField searchBar){
-        AddressSearchPage search = new AddressSearchPage(xmlReader.getAddresses());
-        String text = searchBar.getText();
-        search.searchForAdress(text);
-    }
+    // public void search(TextField searchBar){
+    //     // TODO: Unfinished
+    //     Search search = new Search(xmlReader.getAddresses());
+    //     String text = searchBar.getText();
+    //     search.searchForAdress(text);
+    // }
     
 }

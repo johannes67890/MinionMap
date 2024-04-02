@@ -1,4 +1,4 @@
-package org.parser;
+package util;
 
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -10,6 +10,8 @@ public enum FileDistributer {
     // Test files
     test_input("test_input.xml"),
     test_output("test_output.xml");
+
+    
 
     private String filePath;
 
