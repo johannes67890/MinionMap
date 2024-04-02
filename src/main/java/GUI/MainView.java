@@ -23,8 +23,6 @@ import java.io.IOException;
 
 import javax.swing.event.HyperlinkEvent;
 
-import org.filehandling.zipHandler;
-
 import javafx.event.*;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
@@ -45,6 +43,7 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import parser.XMLReader;
 import util.FileDistributer;
+import util.ZipHandler;
 
 public class MainView {
 
@@ -86,6 +85,7 @@ public class MainView {
         zoomLevelText.setText("" + Math.round(drawView.getZoomLevelMeters()) + "m");;
         drawView.DrawMap(gc, canvas);
     }
+
 
 
     public void dragAndDropStage(Stage stage){
@@ -339,6 +339,7 @@ public class MainView {
 
     }
 
+
     /**
      * Function for finding a file path for chosen file
      * via a filechooser dialog window and unzipping to a give directory if the file is a zip file
@@ -355,7 +356,7 @@ public class MainView {
             java.io.File file = fileChooser.showOpenDialog(stage);
             if (file != null) {
             if(file.toString().contains(".zip")) {
-            zipHandler zip = new zipHandler();
+            ZipHandler zip = new ZipHandler();
                 try {
                     zip.unzip(file.toString());
                 } catch (IOException e) {
@@ -375,6 +376,10 @@ public class MainView {
             mapStageNew(stage);
             
         }
+    }
+
+    public DrawingMap getDrawingMap() {
+        return drawView;
     }
 
     // A function for searching for an address. Called when the search button is pressed 

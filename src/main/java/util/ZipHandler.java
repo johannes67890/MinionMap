@@ -1,4 +1,4 @@
-package org.filehandling;
+package util;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -9,7 +9,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 
-public class zipHandler {
+public class ZipHandler {
 
     //buffer size for reading and writing in mb
     private static final int BUFFER_SIZE = 4096;

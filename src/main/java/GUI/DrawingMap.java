@@ -20,13 +20,9 @@ public class DrawingMap {
     private final double zoomLevelMin = 40, zoomLevelMax = 300000; // These variables changes how much you can zoom in and out. Min is far out and max is closest in
     private double zoomScalerToMeter; // This is the world meters of how long the scaler in the bottom right corner is. Divide it with the zoomLevel
 
-
     public DrawingMap(MainView mainView, XMLReader reader){
-
         this.mainView = mainView;
-        this.reader = reader;
-
-        
+        this.reader = reader;        
     }
 
     public void initialize(ResizableCanvas canvas){
