@@ -99,7 +99,7 @@ public class XMLReader {
                                 tempBuilder = new Builder(); // reset the builder
                                 break;
                             case "way":
-                            // XMLWriter.writeTag(new TagWay(tempBuilder));
+                                XMLWriter.writeTag(new TagWay(tempBuilder));
                                 ways.add(new TagWay(tempBuilder));
                                 tempBuilder = new Builder(); // reset the builder
                             // case "osm":

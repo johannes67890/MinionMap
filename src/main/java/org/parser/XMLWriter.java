@@ -10,9 +10,8 @@ class XMLWriter {
     private String directoryPath = "src/main/resources/chunks/";
     private int chunkId = 0;
     private static HashMap<TagBound, XMLStreamWriter> writers = new HashMap<TagBound, XMLStreamWriter>();
-    
 
-    static int c=0;
+    static int c = 0;
 
     public XMLWriter(){}
 
@@ -31,7 +30,6 @@ class XMLWriter {
         for (int i = 0; i < 4; i++) {
             // Create a new file for each chunk
             final int index = i; // Declare a final variable to use in the lambda expression
-
             // Create the directory if it doesn't exist
             File directory = new File(directoryPath);
             if (!directory.exists()) {
@@ -49,19 +47,25 @@ class XMLWriter {
                 writer.writeCharacters("\n"); // Add a newline character
 
             chunkFiles.appendChunkFile(ChunkBound, localChunkPath);
-            writers.put(ChunkBound, writer);
+            writers.put(ChunkBound, writer); // Add the writer to the writers HashMap 
 
             this.chunkId++; // Increment the chunkId for the next chunkFile. So each chunkFile has a unique id
         }
     }
-
+    private FileWriter createChunkFile(){
+        FileWriter w = null;
+        try {
+            w = new FileWriter(directoryPath + (this.chunkId) + ".xml");
+        } catch (IOException e) {
+            System.out.println("An error occurred while creating the file. Is the id unique and the directory path correct? ");
+            System.out.println(e.getMessage());
+        }
+        return w;
+    }
   
 
     public static void writeTag(TagNode node) throws XMLStreamException{
         HashMap<TagBound, XMLStreamWriter> writers = XMLWriter.writers;
-        if(node.getId() == 1445595096){
-            System.out.println("node not written" + node.toString() + " " + c);
-        }
         for (TagBound b : writers.keySet()) {
             if (Tag.isInBounds(node, b)){
                 XMLStreamWriter writer = getStreamWriter(b);
@@ -69,7 +73,6 @@ class XMLWriter {
                 return;
             }
         }
-        c++;
     }
     public static void writeTag(TagAddress address) throws XMLStreamException{
         for (TagBound b : writers.keySet()) {
@@ -77,21 +80,25 @@ class XMLWriter {
                 XMLStreamWriter writer = getStreamWriter(b);
                 address.createXMLElement(writer);
                 writer.writeCharacters("\n"); // Add a newline character
+                return;
             }
         }
     }
 
-    public static void writeTag(TagWay way) throws XMLStreamException{
-        for (TagBound b : writers.keySet()) {
-            for (TagNode refNode : way.getRefs()) {
-                if (Tag.isInBounds(refNode, b)){
-                    XMLStreamWriter writer = getStreamWriter(b);
+    public static void writeTag(TagWay way) throws XMLStreamException {
+        // TODO: Make thread safe - use ReentrantLock or synchronized block?
+        synchronized (XMLWriter.class) {
+            for (TagBound bound : writers.keySet()) {
+                if (Tag.isInBounds(way.getRefs().get(0), bound)) {
+                    XMLStreamWriter writer = getStreamWriter(bound);
                     way.createXMLElement(writer);
-                    writer.writeCharacters("\n"); // Add a newline character
+                    return;
                 }
             }
         }
     }
+
+    
 
 
     /**
@@ -115,16 +122,6 @@ class XMLWriter {
         }
     }
 
-    private FileWriter createChunkFile(){
-        FileWriter w = null;
-        try {
-            w = new FileWriter(directoryPath + (this.chunkId) + ".xml");
-        } catch (IOException e) {
-            System.out.println("An error occurred while creating the file. Is the id unique and the directory path correct? ");
-            System.out.println(e.getMessage());
-        }
-        return w;
-    }
 
     /**
      * A class to control the chunk files' paths and the bounds of the chunks
@@ -168,3 +165,11 @@ class XMLWriter {
         }
     }
 }
+
+/**
+ * 
+Hello I currently have a program where I read and parse XML data from OpenStreetMap. I try to write the parsed XML data into new XML files of smaller chunks.
+
+But I have a problem with tread 
+ * 
+ */
