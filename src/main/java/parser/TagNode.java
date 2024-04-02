@@ -1,4 +1,4 @@
-package org.parser;
+package parser;
 import java.math.BigDecimal;
 import java.util.HashMap;
 
@@ -47,10 +47,6 @@ public class TagNode extends HashMap<Node,Number> {
 
     public Long getId(){
         return (Long) this.get(Node.ID);
-    }
-
-    public long getId() {
-        return (long) this.get(Node.ID);
     }
     
     public BigDecimal getLat(){

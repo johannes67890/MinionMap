@@ -1,4 +1,4 @@
-package org.parser;
+package util;
 
 import java.net.URISyntaxException;
 import java.net.URL;

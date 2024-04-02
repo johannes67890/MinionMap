@@ -4,9 +4,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.parser.TagAddress.SearchAddress;
 
 import gui.Search;
+import parser.TagAddress.SearchAddress;
 
 public class AddressSeachTest {
 
@@ -17,7 +17,7 @@ public class AddressSeachTest {
 
     @BeforeEach
     void setUp() {
-        addressSearch = new Search();
+        // addressSearch = new Search();
     }
 
     @Test

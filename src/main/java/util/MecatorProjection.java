@@ -1,8 +1,8 @@
-package Commons;
+package util;
 
 import java.lang.Math;
 
-import org.parser.TagNode;
+import parser.TagNode;
 public class MecatorProjection {
   
         private static final double RADIUS = 6378137.0; /* in meters on the equator */

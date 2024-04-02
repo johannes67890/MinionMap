@@ -1,8 +1,6 @@
 package gui;
 import java.io.File;
 
-import org.parser.FileDistributer;
-import org.parser.XMLReader;
 import gui.Search;
 
 import javafx.event.ActionEvent;
@@ -31,6 +29,8 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import parser.XMLReader;
+import util.FileDistributer;
 
 public class MainView {
 

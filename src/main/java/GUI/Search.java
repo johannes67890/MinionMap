@@ -2,11 +2,10 @@ package gui;
 
 import java.util.ArrayList;
 
-import org.parser.TagAddress.SearchAddress;
-import org.parser.TagAddress;
-import org.parser.XMLReader;
-
 import javafx.scene.control.TextArea;
+import parser.TagAddress;
+import parser.XMLReader;
+import parser.TagAddress.SearchAddress;
 
 public class Search {
 

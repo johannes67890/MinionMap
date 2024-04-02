@@ -1,4 +1,4 @@
-package org.parser;
+package parser;
 
 import java.util.HashMap;
 import java.util.regex.Matcher;

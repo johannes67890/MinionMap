@@ -1,13 +1,12 @@
 package gui;
 import java.util.*;
-import org.parser.*;
-
 
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 import javafx.stage.Screen;
+import parser.*;
 
 
 public class DrawingMap {

@@ -1,4 +1,4 @@
-package org.parser;
+package parser;
 import static javax.xml.stream.XMLStreamConstants.*;
 
 import java.io.FileInputStream;
@@ -67,7 +67,7 @@ public class XMLReader {
                                     addresses.add(new TagAddress(tempBuilder));
                                 } else {
                                     TagNode node = new TagNode(tempBuilder);
-                                    nodes.put(node.getRef(), node);
+                                    nodes.put(node.getId(), node);
                                 }
                                 tempBuilder = new Builder(); // reset the builder
                                 break;
