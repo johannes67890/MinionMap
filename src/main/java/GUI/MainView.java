@@ -83,27 +83,8 @@ public class MainView {
         link.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                FileChooser fileChooser = new FileChooser();
-                fileChooser.setTitle("Open Ressource File");
-                fileChooser.getExtensionFilters().addAll(
-                        new FileChooser.ExtensionFilter("OSM Files", "*.osm"),
-                        new FileChooser.ExtensionFilter("ZIP", "*.zip")
-                        );
-                fileChooser.setInitialDirectory(new java.io.File("C:\\Users\\"));
-                java.io.File file = fileChooser.showOpenDialog(stage);
-
-                if (file != null) {
-                    text.setText(file.toString());
-                    link.setText("Klik her for at vælge en anden fil");
-                    if(file.toString().contains(".zip")) {
-                        zipHandler zip = new zipHandler();
-                        try {
-                            zip.unzip(file.toString());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
+                text.setText(pathFindFile());
+                link.setText("Klik her for at vælge en anden fil");
             }
         });
 
@@ -349,6 +330,33 @@ public class MainView {
 
         return burgerMenu;
 
+    }
+
+    /**
+     * Function for finding a file path for chosen file
+     * via a filechooser dialog window and unzipping to a give directory if the file is a zip file
+     * @return String path to the file chosen
+     */
+    public static String pathFindFile(){
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open Ressource File");
+        fileChooser.getExtensionFilters().addAll(
+            new FileChooser.ExtensionFilter("OSM Files", "*.osm"),
+            new FileChooser.ExtensionFilter("ZIP", "*.zip")
+            );
+            fileChooser.setInitialDirectory(new java.io.File("C:\\Users\\"));
+            java.io.File file = fileChooser.showOpenDialog(stage);
+            if (file != null) {
+            if(file.toString().contains(".zip")) {
+            zipHandler zip = new zipHandler();
+                try {
+                    zip.unzip(file.toString());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return file.toString();
     }
 
     // A function for redrawing the stage when changing scenes
