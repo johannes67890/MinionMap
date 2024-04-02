@@ -10,12 +10,14 @@ public class Controller {
 
         //System.out.println("CONTROLLER MADE");
 
+
         mainView.canvas.setOnMousePressed(e -> {
             lastX = e.getX();
             lastY = e.getY();
         });
         
         mainView.canvas.setOnScroll(event -> {
+
 
             //System.out.println("ZOOMING IN CONTROLLER");
 

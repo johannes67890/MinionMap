@@ -27,6 +27,10 @@ public class TagNode extends HashMap<Node,Number> {
         return (Long) this.get(Node.ID);
     }
 
+    public long getId() {
+        return (long) this.get(Node.ID);
+    }
+    
     public BigDecimal getLat(){
         return (BigDecimal) this.get(Node.LAT);
     }

@@ -3,6 +3,7 @@ import java.io.File;
 
 import org.parser.FileDistributer;
 import org.parser.XMLReader;
+import Address.AddressSearchPage;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -235,6 +236,20 @@ public class MainView {
             }
         });
 
+
+        // An eventhandler for the search button and search bar. See search() method for more information
+        searchButton.setOnAction(new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent e){
+                search(searchBar);
+            }
+        });
+
+        searchBar.setOnAction(new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent e){
+                search(searchBar);
+            }
+        });
+
     }
 
     public BorderPane zoomLevelInstantiation(){
@@ -310,5 +325,16 @@ public class MainView {
         }
     }
 
+    // A function for searching for an address. Called when the search button is pressed 
+    // or when the enter key is pressed in the search bar.
+    // The function makes a new AddressSearchPage object which takes the addresses from the XMLReader
+    // and then uses the searchForAdress method to search for the address
+    // See AddressSearchPage for more information
+
+    public void search(TextField searchBar){
+        AddressSearchPage search = new AddressSearchPage(xmlReader.getAddresses());
+        String text = searchBar.getText();
+        search.searchForAdress(text);
+    }
     
 }
