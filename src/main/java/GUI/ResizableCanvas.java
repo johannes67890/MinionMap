@@ -1,11 +1,7 @@
-package GUI;
-import org.parser.FileDistributer;
-import org.parser.XMLReader;
-
+package gui;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 
 public class ResizableCanvas extends Canvas {
@@ -27,8 +23,9 @@ public class ResizableCanvas extends Canvas {
         double height = getHeight() - (screenBounds.getHeight() * 0.05f);
 
         GraphicsContext gc = getGraphicsContext2D();
-        
         mainView.draw();
+        
+        //mainView.firstDraw();
         //gc.clearRect(0, 0, width, height);
 
         /*gc.setStroke(Color.RED);

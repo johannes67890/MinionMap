@@ -11,6 +11,8 @@ public enum FileDistributer {
     test_input("test_input.xml"),
     test_output("test_output.xml");
 
+    
+
     private String filePath;
 
     FileDistributer(String fileName) {

@@ -4,38 +4,38 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.parser.TagAddress.SearchAddress;
 
-import Address.Address;
-import Address.AddressSearchPage;
+import gui.Search;
 
 public class AddressSeachTest {
 
 
-    AddressSearchPage addressSearch;
-    Address a;
+    Search addressSearch;
+    SearchAddress a;
 
 
     @BeforeEach
     void setUp() {
-        addressSearch = new AddressSearchPage();
+        addressSearch = new Search();
     }
 
     @Test
     void CapitalFirstLetter() {
         
-        String address = "stenvænget";
-        a = Address.parse(address);
-        Boolean b = a.equals(address);
+        String expectedAddress = "stenvænget";
+        a = new SearchAddress(expectedAddress);
+        
         assertEquals(a.street, "Stenvænget");
-
+        
     }
 
     @Test
     void FindAddress(){
 
         addressSearch.readFiles();
-        String address = "stenvænget 3400 hillerød";
-        a = Address.parse(address);
+        String expectedAddress = "stenvænget 3400 hillerød";
+        a = new SearchAddress(expectedAddress);
 
         assertTrue(addressSearch.getCities().contains(a.city));
         assertTrue(addressSearch.getStreets().contains(a.street));
