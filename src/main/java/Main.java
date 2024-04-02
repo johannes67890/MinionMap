@@ -1,9 +1,9 @@
-package Address;
 
 
 
-import GUI.Controller;
-import GUI.MainView;
+
+import gui.Controller;
+import gui.MainView;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
@@ -12,7 +12,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 
-public class HelloFX extends Application {
+public class Main extends Application {
 
     TextField input;
     TextArea output;

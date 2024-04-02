@@ -1,4 +1,4 @@
-package GUI;
+package gui;
 import java.io.File;
 
 import org.parser.FileDistributer;

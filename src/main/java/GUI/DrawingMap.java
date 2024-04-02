@@ -1,12 +1,14 @@
-package GUI;
+package gui;
 import java.util.*;
 import org.parser.*;
+
 
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 import javafx.stage.Screen;
+
 
 public class DrawingMap {
 
@@ -98,11 +100,9 @@ public class DrawingMap {
 
             gc.beginPath();
             gc.moveTo(nodesMap.get(nodesRef.get(0)).getLonDouble(), nodesMap.get(nodesRef.get(0)).getLatDouble());
-            //gc.moveTo(nodesMap.get(nodesRef.get(0)).getLatDouble(), nodesMap.get(nodesRef.get(0)).getLonDouble());
             for (Long ref : nodesRef){
                 
                 gc.lineTo(nodesMap.get(ref).getLonDouble(), nodesMap.get(ref).getLatDouble());
-                //gc.lineTo(nodesMap.get(ref).getLatDouble(), nodesMap.get(ref).getLonDouble());
             }
 
             gc.stroke();

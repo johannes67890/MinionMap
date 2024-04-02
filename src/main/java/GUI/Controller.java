@@ -1,4 +1,4 @@
-package GUI;
+package gui;
 
 public class Controller {
     double lastX;
@@ -16,8 +16,6 @@ public class Controller {
         });
         
         mainView.canvas.setOnScroll(event -> {
-
-            //System.out.println("ZOOMING IN CONTROLLER");
 
             mainView.getDrawingMap().zoom(Math.pow(zoomMultiplier,event.getDeltaY()), event.getX(), event.getY());
             
