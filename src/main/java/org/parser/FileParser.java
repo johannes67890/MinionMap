@@ -1,7 +1,6 @@
 package org.parser;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class FileParser {

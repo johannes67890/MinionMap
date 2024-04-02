@@ -1,10 +1,12 @@
 package org.parser;
 import javax.xml.stream.XMLStreamReader;
 
-import org.parser.FileParser.Chunck;
 
 import javax.xml.stream.XMLInputFactory;
+
 import java.io.FileInputStream;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import java.math.BigDecimal;
@@ -19,7 +21,7 @@ import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
  * </p>
  * 
  */
-public class XMLReader {
+public class XMLReader implements Serializable {
     private int id;
     private TagBound bound;
     private ArrayList<TagNode> nodes = new ArrayList<TagNode>();
@@ -113,8 +115,11 @@ public class XMLReader {
                         break;
                     }
             }    
+          
             XMLWriter.closeAllWriters();
             
+            
+
             System.out.println("nodes in total: " + nodes.size());
         } catch (Exception e) {
             e.printStackTrace();

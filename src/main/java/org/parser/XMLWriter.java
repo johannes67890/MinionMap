@@ -1,6 +1,7 @@
 package org.parser;
 import javax.xml.stream.*;
 
+import java.beans.XMLEncoder;
 import java.io.*;
 import java.util.*;
 
@@ -11,20 +12,20 @@ class XMLWriter {
     private int chunkId = 0;
     private static HashMap<TagBound, XMLStreamWriter> writers = new HashMap<TagBound, XMLStreamWriter>();
 
-    static int c = 0;
-
     public XMLWriter(){}
 
     public XMLWriter(TagBound bounds) {
+
         FileParser fileParser = new FileParser(bounds);
+        
         try {
             initChunkFiles(fileParser);
-        } catch (XMLStreamException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void initChunkFiles(FileParser fileParser) throws XMLStreamException{   
+    public synchronized void initChunkFiles(FileParser fileParser) throws XMLStreamException{   
         String localChunkPath = directoryPath + this.chunkId + ".xml";
         
         for (int i = 0; i < 4; i++) {
@@ -35,7 +36,7 @@ class XMLWriter {
             if (!directory.exists()) {
                 directory.mkdirs(); // mkdirs() creates parent directories if they don't exist
             }
-
+            
             TagBound ChunkBound = fileParser.getChunck().getQuadrant(index);
 
             XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(createChunkFile());
@@ -64,7 +65,7 @@ class XMLWriter {
     }
   
 
-    public static void writeTag(TagNode node) throws XMLStreamException{
+    public synchronized static void writeTag(TagNode node) throws XMLStreamException{
         HashMap<TagBound, XMLStreamWriter> writers = XMLWriter.writers;
         for (TagBound b : writers.keySet()) {
             if (Tag.isInBounds(node, b)){
@@ -74,7 +75,7 @@ class XMLWriter {
             }
         }
     }
-    public static void writeTag(TagAddress address) throws XMLStreamException{
+    public  synchronized static void writeTag(TagAddress address) throws XMLStreamException{
         for (TagBound b : writers.keySet()) {
             if (Tag.isInBounds(address, b)){
                 XMLStreamWriter writer = getStreamWriter(b);
@@ -85,21 +86,38 @@ class XMLWriter {
         }
     }
 
-    public static void writeTag(TagWay way) throws XMLStreamException {
-        // TODO: Make thread safe - use ReentrantLock or synchronized block?
-        synchronized (XMLWriter.class) {
-            for (TagBound bound : writers.keySet()) {
-                if (Tag.isInBounds(way.getRefs().get(0), bound)) {
-                    XMLStreamWriter writer = getStreamWriter(bound);
+    public synchronized static void writeTag(TagWay way) throws XMLStreamException {
+        for (TagBound b : writers.keySet()) {
+            if (Tag.isInBounds(way.getRefs().get(0), b)){
+                XMLStreamWriter writer = getStreamWriter(b);
+                try {
                     way.createXMLElement(writer);
-                    return;
+                    writer.writeCharacters("\n"); // Add a newline character
+                    
+                } catch (XMLStreamException e) {
+                    // Handle the exception here
+                    System.err.println("An error occurred while creating the XML element: " + e.getMessage());
                 }
+                return;
             }
         }
     }
+    private static void toBinaryFile(String path, Object data) {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("data.bin"))) {
+            out.writeObject(data);
+        } catch (IOException e) {
+            System.err.println("An error occurred while writing to the binary file: " + e.getMessage());
+        }
+    }
 
-    
-
+    private static Object fromBinaryFile(String path) {
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream("data.bin"))) {
+            return in.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("An error occurred while reading from the binary file: " + e.getMessage());
+        }
+        return null;
+    }
 
     /**
      * Get the XMLStreamWriter for the a specific bound. The useage of this method is to write to a specific chunk file.
@@ -165,11 +183,3 @@ class XMLWriter {
         }
     }
 }
-
-/**
- * 
-Hello I currently have a program where I read and parse XML data from OpenStreetMap. I try to write the parsed XML data into new XML files of smaller chunks.
-
-But I have a problem with tread 
- * 
- */

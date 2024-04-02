@@ -1,8 +1,12 @@
 package org.parser;
 
 import java.util.HashMap;
+
+import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+
+import java.io.StringWriter;
 import java.util.ArrayList;
 
 enum Way {
@@ -28,38 +32,25 @@ public class TagWay extends HashMap<Way, Object>{
         });
     }
 
-    public void createXMLElement(XMLStreamWriter wrinter) throws XMLStreamException{
-        wrinter.writeStartElement("way");
-        
-        for (Way key : this.keySet()) {
-            switch (key) {
-                case ID:
-                wrinter.writeAttribute("id", this.get(Way.ID).toString());
-                break;
-                case REFS:
-                ArrayList<TagNode> refs = this.getRefs();
-                for (TagNode ref : refs) {
-                    wrinter.writeCharacters("\n"); // Add a newline character
-                    wrinter.writeCharacters("\t");
-                    ref.createXMLRefElement(wrinter);
-                    }
-                    break;
-                case NAME:
-                    if(this.get(Way.NAME) != null){
-                        wrinter.writeAttribute("name", this.get(Way.NAME).toString());
-                    }
-                    break;
-                case TYPE:
-                    if(this.get(Way.TYPE) != null){
-                        wrinter.writeAttribute("type", this.get(Way.TYPE).toString());
-                    }
-                    break;
-                default:
-                    break;
-            }
+    public synchronized void createXMLElement(XMLStreamWriter writer) throws XMLStreamException {
+
+        writer.writeStartElement("way");
+        writer.writeAttribute("id", this.getId().toString());
+        if(this.get(Way.NAME) != null){
+            writer.writeAttribute("name", this.get(Way.NAME).toString());
         }
-        wrinter.writeCharacters("\n");
-        wrinter.writeEndElement();
+        if(this.get(Way.TYPE) != null){
+            writer.writeAttribute("type", this.get(Way.TYPE).toString());
+        }
+        ArrayList<TagNode> refs = this.getRefs();
+        for (TagNode ref : refs) {
+            writer.writeCharacters("\n"); // Add a newline character
+            writer.writeCharacters("\t");
+            ref.createXMLRefElement(writer);
+        }
+        writer.writeCharacters("\n");
+        writer.writeEndElement();
+
     }
 
     /**
