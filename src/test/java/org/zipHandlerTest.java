@@ -6,7 +6,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import org.filehandling.zipHandler;
+import util.ZipHandler;
 
 import java.io.File;
 
@@ -28,7 +28,7 @@ public class zipHandlerTest {
     
     @Test
     public void testUnzip() {
-        zipHandler zipHandler = new zipHandler();
+        ZipHandler zipHandler = new ZipHandler();
         String testZipPath = System.getProperty("user.dir").toString() + "\\src\\test\\java\\org\\test_resources\\map.zip";
 
         try{
