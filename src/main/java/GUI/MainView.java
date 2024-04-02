@@ -11,9 +11,21 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.*;
+import javafx.scene.layout.*;
+
+import java.io.File;
+import java.io.IOException;
+
+import javax.swing.event.HyperlinkEvent;
+
+import org.filehandling.zipHandler;
+
+import javafx.event.*;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
@@ -27,6 +39,8 @@ import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import javafx.scene.text.TextFlow;
+import javafx.stage.FileChooser;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import parser.XMLReader;
@@ -74,23 +88,23 @@ public class MainView {
     }
 
 
-    public DrawingMap getDrawingMap(){
-        return drawView;
-    }
-
-
     public void dragAndDropStage(Stage stage){
 
         Label title = new Label("Welcome to our Map of Denmark!");
+        //Label title = new Label(finalPath);
         title.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 40));
         Label description = new Label("Drag and drop a .osm file here (If no file is dropped when submitting then it loads default map)");
         description.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 20));
         description.setWrapText(true);
         description.setTextAlignment(TextAlignment.CENTER);
         
-        Text text = new Text("No File Selected");
 
-        HBox contentPane = new HBox(text);
+        Text text = new Text("No File Selected");
+        Hyperlink link = new Hyperlink("Select File");
+        TextFlow textflow = new TextFlow(text, link);
+        textflow.setTextAlignment(TextAlignment.CENTER);
+
+        HBox contentPane = new HBox(textflow);
         contentPane.setAlignment(Pos.CENTER);
         contentPane.setMinSize(sizeX / 5, sizeY / 5);
         contentPane.setMaxWidth(sizeX / 3);
@@ -102,6 +116,14 @@ public class MainView {
         outerBox.setSpacing(10);
         outerBox.setAlignment(Pos.CENTER);
         outerBox.getChildren().addAll(title, description, contentPane, submitButton);
+
+        link.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                text.setText(pathFindFile());
+                link.setText("Klik her for at vælge en anden fil");
+            }
+        });
 
         contentPane.setOnDragOver(new EventHandler<DragEvent>() {
 
@@ -125,6 +147,7 @@ public class MainView {
                 if (db.hasFiles()) {
                     inputFile = db.getFiles().get(0);
                     text.setText(db.getFiles().toString());
+                    link.setText("");
                     success = true;
                 }
 
@@ -314,6 +337,33 @@ public class MainView {
 
         return burgerMenu;
 
+    }
+
+    /**
+     * Function for finding a file path for chosen file
+     * via a filechooser dialog window and unzipping to a give directory if the file is a zip file
+     * @return String path to the file chosen
+     */
+    public static String pathFindFile(){
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open Ressource File");
+        fileChooser.getExtensionFilters().addAll(
+            new FileChooser.ExtensionFilter("OSM Files", "*.osm"),
+            new FileChooser.ExtensionFilter("ZIP", "*.zip")
+            );
+            fileChooser.setInitialDirectory(new java.io.File("C:\\Users\\"));
+            java.io.File file = fileChooser.showOpenDialog(stage);
+            if (file != null) {
+            if(file.toString().contains(".zip")) {
+            zipHandler zip = new zipHandler();
+                try {
+                    zip.unzip(file.toString());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return file.toString();
     }
 
     // A function for redrawing the stage when changing scenes
