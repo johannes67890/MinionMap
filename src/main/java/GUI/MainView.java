@@ -3,7 +3,7 @@ import java.io.File;
 
 import org.parser.FileDistributer;
 import org.parser.XMLReader;
-import Address.AddressSearchPage;
+import gui.Search;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -240,13 +240,15 @@ public class MainView {
         // An eventhandler for the search button and search bar. See search() method for more information
         searchButton.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent e){
-                search(searchBar);
+                // TODO: Unfinished
+                //search(searchBar);
             }
         });
 
         searchBar.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent e){
-                search(searchBar);
+                // TODO: Unfinished
+                //search(searchBar);
             }
         });
 
@@ -331,10 +333,11 @@ public class MainView {
     // and then uses the searchForAdress method to search for the address
     // See AddressSearchPage for more information
 
-    public void search(TextField searchBar){
-        AddressSearchPage search = new AddressSearchPage(xmlReader.getAddresses());
-        String text = searchBar.getText();
-        search.searchForAdress(text);
-    }
+    // public void search(TextField searchBar){
+    //     // TODO: Unfinished
+    //     Search search = new Search(xmlReader.getAddresses());
+    //     String text = searchBar.getText();
+    //     search.searchForAdress(text);
+    // }
     
 }
