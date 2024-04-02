@@ -95,7 +95,7 @@ public class MainView {
                 if (file != null) {
                     text.setText(file.toString());
                     link.setText("Klik her for at vælge en anden fil");
-                    if(file.toString().contains(".zip")){
+                    if(file.toString().contains(".zip")) {
                         zipHandler zip = new zipHandler();
                         try {
                             zip.unzip(file.toString());
