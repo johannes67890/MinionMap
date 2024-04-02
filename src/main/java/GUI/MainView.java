@@ -3,19 +3,34 @@ import java.io.File;
 
 import org.parser.FileDistributer;
 import org.parser.XMLReader;
+import Address.AddressSearchPage;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.*;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.*;
-import javafx.scene.layout.*;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.text.*;
-import javafx.stage.*;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+import javafx.stage.Screen;
+import javafx.stage.Stage;
 
 public class MainView {
 
@@ -221,6 +236,20 @@ public class MainView {
             }
         });
 
+
+        // An eventhandler for the search button and search bar. See search() method for more information
+        searchButton.setOnAction(new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent e){
+                search(searchBar);
+            }
+        });
+
+        searchBar.setOnAction(new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent e){
+                search(searchBar);
+            }
+        });
+
     }
 
     public BorderPane zoomLevelInstantiation(){
@@ -296,5 +325,16 @@ public class MainView {
         }
     }
 
+    // A function for searching for an address. Called when the search button is pressed 
+    // or when the enter key is pressed in the search bar.
+    // The function makes a new AddressSearchPage object which takes the addresses from the XMLReader
+    // and then uses the searchForAdress method to search for the address
+    // See AddressSearchPage for more information
+
+    public void search(TextField searchBar){
+        AddressSearchPage search = new AddressSearchPage(xmlReader.getAddresses());
+        String text = searchBar.getText();
+        search.searchForAdress(text);
+    }
     
 }

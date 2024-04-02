@@ -1,17 +1,23 @@
 package gui;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import org.parser.TagAddress.SearchAddress;
+import org.parser.TagAddress;
+import org.parser.XMLReader;
 
 import javafx.scene.control.TextArea;
 
 public class Search {
 
     ArrayList<String> cityNames, streetNames, postCodes;
+    ArrayList<TagAddress> addresses;
+    XMLReader reader;
+
+    public Search(ArrayList<TagAddress> addresses){
+        this.addresses = addresses;
+        readFiles();
+    }
 
     /**
      * Reads files used later in {@link Main its class}
@@ -25,7 +31,14 @@ public class Search {
         String current;
         String[] splitCurrent;
 
-        try{
+        //Adding addresses from XMLReader into the lists
+        for (int i = 0; i < addresses.size(); i++){
+            cityNames.add(addresses.get(i).getCity());
+            streetNames.add(addresses.get(i).getStreet());
+            postCodes.add(addresses.get(i).getPostcode());
+        }
+        
+        /*try{
 
             BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/citynames.txt"));
             while (reader.ready()) {
@@ -48,7 +61,7 @@ public class Search {
         
         } catch(IOException e){
             System.out.println("FILE NOT FOUND");
-        }
+        }*/
     }
 
 
