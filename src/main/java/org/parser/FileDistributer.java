@@ -6,11 +6,11 @@ import java.net.URL;
 public enum FileDistributer {
     input("input.xml"),
     output("output.xml"),
+    bolm("bolm.xml"),
 
     // Test files
     test_input("test_input.xml"),
     test_output("test_output.xml");
-
     private String filePath;
 
     FileDistributer(String fileName) {

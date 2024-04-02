@@ -1,7 +1,6 @@
 package org.parser;
 import javax.xml.stream.*;
 
-import java.beans.XMLEncoder;
 import java.io.*;
 import java.util.*;
 
@@ -25,7 +24,7 @@ class XMLWriter {
         }
     }
 
-    public synchronized void initChunkFiles(FileParser fileParser) throws XMLStreamException{   
+    public void initChunkFiles(FileParser fileParser) throws XMLStreamException{   
         String localChunkPath = directoryPath + this.chunkId + ".xml";
         
         for (int i = 0; i < 4; i++) {
@@ -65,17 +64,19 @@ class XMLWriter {
     }
   
 
-    public synchronized static void writeTag(TagNode node) throws XMLStreamException{
+    public  static void writeTag(TagNode node) throws XMLStreamException{
         HashMap<TagBound, XMLStreamWriter> writers = XMLWriter.writers;
         for (TagBound b : writers.keySet()) {
             if (Tag.isInBounds(node, b)){
                 XMLStreamWriter writer = getStreamWriter(b);
+                
                 node.createXMLElement(writer);
                 return;
             }
         }
     }
-    public  synchronized static void writeTag(TagAddress address) throws XMLStreamException{
+    
+    public  static void writeTag(TagAddress address) throws XMLStreamException{
         for (TagBound b : writers.keySet()) {
             if (Tag.isInBounds(address, b)){
                 XMLStreamWriter writer = getStreamWriter(b);
@@ -86,7 +87,7 @@ class XMLWriter {
         }
     }
 
-    public synchronized static void writeTag(TagWay way) throws XMLStreamException {
+    public static void writeTag(TagWay way) throws XMLStreamException {
         for (TagBound b : writers.keySet()) {
             if (Tag.isInBounds(way.getRefs().get(0), b)){
                 XMLStreamWriter writer = getStreamWriter(b);
@@ -102,22 +103,60 @@ class XMLWriter {
             }
         }
     }
-    private static void toBinaryFile(String path, Object data) {
-        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("data.bin"))) {
-            out.writeObject(data);
-        } catch (IOException e) {
-            System.err.println("An error occurred while writing to the binary file: " + e.getMessage());
+    public static void writeToBinary (String filename, Object obj, boolean append){
+        File file = new File (filename);
+        ObjectOutputStream out = null;
+
+        try{
+            if (!file.exists () || !append) out = new ObjectOutputStream (new FileOutputStream (filename));
+            else out = new AppendableObjectOutputStream (new FileOutputStream (filename, append));
+            out.writeObject(obj);
+            out.flush ();
+        }catch (Exception e){
+            e.printStackTrace ();
+        }finally{
+            try{
+                if (out != null) out.close ();
+            }catch (Exception e){
+                e.printStackTrace ();
+            }
         }
     }
 
-    private static Object fromBinaryFile(String path) {
-        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream("data.bin"))) {
-            return in.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            System.err.println("An error occurred while reading from the binary file: " + e.getMessage());
+    public static void readFromBinaryFile (String filename){
+        File file = new File (filename);
+
+        if (file.exists ()){
+            ObjectInputStream ois = null;
+            try{
+                ois = new ObjectInputStream (new FileInputStream (filename));
+                while (true){
+                    Object s = ois.readObject ();
+                    System.out.println (s);
+                }
+            }catch (EOFException e){
+
+            }catch (Exception e){
+                e.printStackTrace ();
+            }finally{
+                try{
+                    if (ois != null) ois.close();
+                }catch (IOException e){
+                    e.printStackTrace ();
+                }
+            }
         }
-        return null;
     }
+
+    private static class AppendableObjectOutputStream extends ObjectOutputStream {
+          public AppendableObjectOutputStream(OutputStream out) throws IOException {
+            super(out);
+          }
+
+          @Override
+          protected void writeStreamHeader() throws IOException {}
+    }
+
 
     /**
      * Get the XMLStreamWriter for the a specific bound. The useage of this method is to write to a specific chunk file.

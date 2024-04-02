@@ -73,9 +73,16 @@ public class XMLReader implements Serializable {
     
     public XMLReader(FileDistributer filename) {
         try {
+            long start = System.currentTimeMillis();
             XMLInputFactory factory = XMLInputFactory.newInstance();
             XMLStreamReader reader = factory.createXMLStreamReader(new FileInputStream(filename.getFilePath()));
             while (reader.hasNext()) {
+                // if(System.currentTimeMillis() - start >= 4500){
+                //     System.out.println("nodes in total: " + nodes.size());
+                //     System.out.println("nodes in total: " + nodes.get(nodes.size()-1).getId());
+                //     return;
+                // }
+
                 reader.next();
                 switch (reader.getEventType()) {
                     case START_ELEMENT:
@@ -83,7 +90,7 @@ public class XMLReader implements Serializable {
                         if(element.equals("bounds")) {
                             new XMLWriter(new TagBound(reader));
                             this.bound = new TagBound(reader);
-                        }else {
+                        } else {
                             tempBuilder.parse(element, reader);
                         };
                         break;
@@ -92,16 +99,16 @@ public class XMLReader implements Serializable {
                         switch (element) {
                             case "node":
                                 if(!tempBuilder.getAddressBuilder().isEmpty()){
-                                    XMLWriter.writeTag(new TagAddress(tempBuilder));
+                                    XMLWriter.writeToBinary("t.bin", new TagAddress(tempBuilder), true);
                                     addresses.add(new TagAddress(tempBuilder));
-                                } else {  
-                                    XMLWriter.writeTag(new TagNode(tempBuilder));         
+                                } else {
                                     nodes.add(new TagNode(tempBuilder));
+                                    XMLWriter.writeToBinary("t.bin", new TagNode(tempBuilder), true);
                                 }
                                 tempBuilder = new Builder(); // reset the builder
                                 break;
                             case "way":
-                                XMLWriter.writeTag(new TagWay(tempBuilder));
+                                XMLWriter.writeToBinary("t.bin", new TagWay(tempBuilder), true);
                                 ways.add(new TagWay(tempBuilder));
                                 tempBuilder = new Builder(); // reset the builder
                             // case "osm":
@@ -115,9 +122,11 @@ public class XMLReader implements Serializable {
                         break;
                     }
             }    
-          
+            //XMLWriter.readFromBinaryFile("t.bin");
             XMLWriter.closeAllWriters();
-            
+
+
+
             
 
             System.out.println("nodes in total: " + nodes.size());

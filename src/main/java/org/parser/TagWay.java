@@ -32,7 +32,7 @@ public class TagWay extends HashMap<Way, Object>{
         });
     }
 
-    public synchronized void createXMLElement(XMLStreamWriter writer) throws XMLStreamException {
+    public void createXMLElement(XMLStreamWriter writer) throws XMLStreamException {
 
         writer.writeStartElement("way");
         writer.writeAttribute("id", this.getId().toString());
