@@ -1,5 +1,4 @@
 package org.parser;
-
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
@@ -23,12 +22,13 @@ import javafx.scene.paint.Paint;
 public enum Type {
     // Natural, Landuse and main infrastructure (Hierarchy 9)
     COASTLINE("natural", new String[]{"coastline"}, 9, Color.BLACK, 0),
-    PRIMARY_ROAD("highway", new String[]{"primary"}, 9, Color.BLACK, 0),
+    MOTORWAY("highway", new String[]{"motorway", "motorway_link"}, 9, Color.BLACK, 0),
+    PRIMARY_ROAD("highway", new String[]{"primary", "service", "track"}, 9, Color.BLACK, 0),
     RESIDENTIAL("landuse", new String[]{"residential", "industrial"}, 9, Color.BLACK, 0),
-    
     
     // Landuse (Hierarchy: 8)
     SECONDARY_ROAD("highway", new String[]{"secondary"}, 8, Color.BLACK, 0),
+    RESIDENTIAL_ROAD("highway", new String[]{"residential"}, 8, Color.BLACK, 0),
     RAILWAY("railway",new String[]{"rail","light_rail","subway", "abandoned"}, 8, Color.BLACK, 0),
     FARMFIELD("landuse", new String[]{"farmland"}, 8, Color.BLACK, 0),
     LANDUSE("landuse", new String[]{"commercial","retail","construction","brownfield","greenfield","allotments","basin",
@@ -53,8 +53,9 @@ public enum Type {
     WATER("natural",new String[]{"water"}, 5, Color.BLACK, 0),
     WETLAND("natural",new String[]{"wetland"}, 5, Color.BLACK, 0),
     // Other roads (Hierarchy: 4)
-    OTHER_ROAD("highway",new String[]{"residential", "unclassified", "track", "footway", "cycleway", "path", 
-    "service", "motorway_link", "steps", "living_street", "mini_roundabout", "pedestrian"}, 4, Color.BLACK, 0),
+    PEDESTRIAN_ROAD("highway",new String[]{"pedestrian", "footway", "cycleway", "steps", "living_street"}, 4, Color.BLACK, 0),
+    OTHER_ROAD("highway",new String[]{"unclassified", "path", 
+    "motorway_link", "mini_roundabout", "pedestrian"}, 4, Color.BLACK, 0),
 
     // Unknown (Hierarchy: 0)
     UNKNOWN("", new String[]{""}, 0, Color.BLACK, 0);
