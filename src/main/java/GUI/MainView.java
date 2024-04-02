@@ -1,4 +1,6 @@
 package GUI;
+import java.io.File;
+
 import org.parser.FileDistributer;
 import org.parser.XMLReader;
 import Address.AddressSearchPage;
@@ -18,7 +20,6 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -28,7 +29,6 @@ import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-import javafx.scene.transform.Affine;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
@@ -51,6 +51,8 @@ public class MainView {
     static Rectangle2D screenBounds;
     public XMLReader xmlReader;
     public DrawingMap drawView;
+    private Text zoomLevelText;
+    private File inputFile;
 
 
     public MainView(Stage stage){
@@ -60,9 +62,6 @@ public class MainView {
         MainView.stage.setMinWidth(sizeX);
         MainView.stage.setMinHeight(sizeY);
         MainView.stage.setResizable(true);
-        xmlReader = new XMLReader(FileDistributer.input);
-        drawView = new DrawingMap(this, xmlReader);
-
 
         dragAndDropStage(stage);
     }
@@ -70,8 +69,10 @@ public class MainView {
     public void draw(){
         gc.setFill(Color.WHITE);
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        zoomLevelText.setText("" + Math.round(drawView.getZoomLevelMeters()) + "m");;
         drawView.DrawMap(gc, canvas);
     }
+
 
     public DrawingMap getDrawingMap(){
         return drawView;
@@ -122,6 +123,7 @@ public class MainView {
                 Dragboard db = event.getDragboard();
                 boolean success = false;
                 if (db.hasFiles()) {
+                    inputFile = db.getFiles().get(0);
                     text.setText(db.getFiles().toString());
                     success = true;
                 }
@@ -145,6 +147,12 @@ public class MainView {
         submitButton.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent e){
                 selectedStage = StageSelect.MapView;
+                if (inputFile != null){
+                    xmlReader = new XMLReader(inputFile.getAbsolutePath());
+                }else{
+                    xmlReader = new XMLReader(FileDistributer.input.getFilePath());
+                }
+                drawView = new DrawingMap(MainView.this, xmlReader);
                 redraw();
             }
         });
@@ -217,6 +225,7 @@ public class MainView {
         stage.setTitle("Map of Denmark");
         stage.setScene(scene);
         stage.show();
+        drawView.initialize(canvas);
         Controller controller = new Controller(this);
 
 
@@ -245,19 +254,19 @@ public class MainView {
 
     public BorderPane zoomLevelInstantiation(){
 
-        Text unitText = new Text("500m");
-        unitText.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, screenBounds.getHeight() * 0.01f));;
+        zoomLevelText = new Text("500m");
+        zoomLevelText.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, screenBounds.getHeight() * 0.01f));;
         ImageView unitScalerImage = new ImageView("file:src/main/resources/visuals/UnitRuler2.png");
         unitScalerImage.setFitHeight(screenBounds.getHeight() * 0.02f);
         unitScalerImage.setFitWidth(screenBounds.getWidth() * 0.04f);
 
         BorderPane outputPane = new BorderPane();
-        outputPane.setMaxWidth(screenBounds.getWidth() * 0.05f);
+        outputPane.setMaxWidth(screenBounds.getWidth() * 0.04f);
         outputPane.setMaxHeight(screenBounds.getHeight() * 0.04f);
-        outputPane.setTop(unitText);
+        outputPane.setTop(zoomLevelText);
         outputPane.setCenter(unitScalerImage);
         
-        outputPane.setAlignment(unitText, Pos.CENTER);
+        outputPane.setAlignment(zoomLevelText, Pos.CENTER);
         outputPane.setAlignment(unitScalerImage, Pos.CENTER);
 
         return outputPane;
@@ -312,6 +321,7 @@ public class MainView {
             dragAndDropStage(stage);
         }else if (selectedStage == StageSelect.MapView){
             mapStageNew(stage);
+            
         }
     }
 
