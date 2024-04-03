@@ -13,6 +13,7 @@ import parser.TagBound;
 import parser.TagNode;
 import parser.TagWay;
 import parser.XMLReader;
+import util.MathUtil;
 import util.MaxPQ;
 import util.MinPQ;
 
@@ -26,7 +27,7 @@ public class DrawingMap {
     private MainView mainView;
     private double zoomLevel = 1;
     private int hierarchyLevel = 0;
-    private final double zoomLevelMin = 40, zoomLevelMax = 300000; // These variables changes how much you can zoom in and out. Min is far out and max is closest in
+    private final double zoomLevelMin = 40, zoomLevelMax = 3000000; // These variables changes how much you can zoom in and out. Min is far out and max is closest in
     private double zoomScalerToMeter; // This is the world meters of how long the scaler in the bottom right corner is. Divide it with the zoomLevel
 
     public DrawingMap(MainView mainView, XMLReader reader){
@@ -126,12 +127,20 @@ public class DrawingMap {
 
         //Iterator<TagWay> it = ways.iterator();
         
-        gc.setLineWidth(1/Math.sqrt(transform.determinant()));
+
+        double defaultLineWidth = 1/Math.sqrt(transform.determinant());
+
         Color c;
         
         while (!sortedWaysToDraw.isEmpty()) {
 
+            gc.setLineWidth(defaultLineWidth);
+            //System.out.println("DEFAULT LINE WIDTH: " + defaultLineWidth);
+            gc.setStroke(Color.BLACK); 
+
             //System.out.println("HELLO");
+
+      
 
             TagWay tagWay = sortedWaysToDraw.delMin();
 
@@ -141,6 +150,15 @@ public class DrawingMap {
             int counter = 0;
             double[] xPoints = new double[nodesRef.size()];
             double[] yPoints = new double[nodesRef.size()];
+
+            if(tagWay.getType().getIsLine()){
+                double min = tagWay.getType().getMinWidth() * 0.00001;
+                double max = tagWay.getType().getMaxWidth() * 0.00001;
+                double lineWidth = MathUtil.clamp(defaultLineWidth * tagWay.getType().getWidth(), min, max);
+                gc.setLineWidth(lineWidth);
+                //System.out.println("CALCULATED LINEWIDTH: " + lineWidth);
+                gc.setStroke(tagWay.getType().getPaint()); 
+            }
 
             gc.beginPath();
             gc.moveTo(nodesMap.get(nodesRef.get(0)).getLonDouble(), nodesMap.get(nodesRef.get(0)).getLatDouble());
