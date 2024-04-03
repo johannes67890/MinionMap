@@ -13,6 +13,8 @@ import parser.TagBound;
 import parser.TagNode;
 import parser.TagWay;
 import parser.XMLReader;
+import util.MaxPQ;
+import util.MinPQ;
 
 
 public class DrawingMap {
@@ -23,6 +25,7 @@ public class DrawingMap {
     private XMLReader reader;
     private MainView mainView;
     private double zoomLevel = 1;
+    private int hierarchyLevel = 0;
     private final double zoomLevelMin = 40, zoomLevelMax = 300000; // These variables changes how much you can zoom in and out. Min is far out and max is closest in
     private double zoomScalerToMeter; // This is the world meters of how long the scaler in the bottom right corner is. Divide it with the zoomLevel
 
@@ -93,22 +96,48 @@ public class DrawingMap {
         List<TagNode> nodes = reader.getNodes();
         HashMap<Long, TagNode> nodesMap = reader.getNodesMap();
         ArrayList<TagWay> ways = reader.getWays();
+        ArrayList<TagWay> waysToDrawWithType = new ArrayList<>();
+        ArrayList<TagWay> waysToDrawWithoutType = new ArrayList<>();
+
+        for (TagWay way : ways){
+            if (way.getType() != null){
+                if (way.getType().getThisHierarchy() >= hierarchyLevel){
+                    waysToDrawWithType.add(way);
+                }
+            } else{
+                waysToDrawWithoutType.add(way);
+
+            }
+            
+        }
+        MinPQ<TagWay> sortedWaysToDraw = new MinPQ<>(waysToDrawWithType.size());
+        
+        for (TagWay way : waysToDrawWithType){
+            sortedWaysToDraw.insert(way);
+        }
+
+        /*while (!sortedWaysToDraw.isEmpty()) {
+
+            System.out.println(sortedWaysToDraw.delMin().getType().getLayer());
+            
+        }*/
+
         TagBound bound = reader.getBound();
 
-        Iterator<TagWay> it = ways.iterator();
+        //Iterator<TagWay> it = ways.iterator();
         
         gc.setLineWidth(1/Math.sqrt(transform.determinant()));
-        System.out.println("CANVAS HEIGHT: " + canvas.getHeight());
         Color c;
+        
+        while (!sortedWaysToDraw.isEmpty()) {
 
-        while (it.hasNext()) {
+            //System.out.println("HELLO");
 
-
-            TagWay tagWay = it.next();
+            TagWay tagWay = sortedWaysToDraw.delMin();
 
             ArrayList<Long> nodesRef =  tagWay.getNodes();
 
-            //c = tagWay.tagToColor();
+            c = tagWay.getType().getColor();
             int counter = 0;
             double[] xPoints = new double[nodesRef.size()];
             double[] yPoints = new double[nodesRef.size()];
@@ -124,11 +153,11 @@ public class DrawingMap {
                 
             }
 
-            /* 
-            if (!tagWay.isLine()){
+            
+            if (!tagWay.getType().getIsLine()){
                 gc.setFill(c);
                 gc.fillPolygon(xPoints, yPoints, xPoints.length);
-            }*/
+            }
 
             gc.stroke();
     
