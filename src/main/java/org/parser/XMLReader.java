@@ -99,16 +99,14 @@ public class XMLReader implements Serializable {
                         switch (element) {
                             case "node":
                                 if(!tempBuilder.getAddressBuilder().isEmpty()){
-                                    XMLWriter.writeToBinary("t.bin", new TagAddress(tempBuilder), true);
                                     addresses.add(new TagAddress(tempBuilder));
                                 } else {
+                                    XMLWriter.writeToBinary(new TagNode(tempBuilder), true);
                                     nodes.add(new TagNode(tempBuilder));
-                                    XMLWriter.writeToBinary("t.bin", new TagNode(tempBuilder), true);
                                 }
                                 tempBuilder = new Builder(); // reset the builder
                                 break;
                             case "way":
-                                XMLWriter.writeToBinary("t.bin", new TagWay(tempBuilder), true);
                                 ways.add(new TagWay(tempBuilder));
                                 tempBuilder = new Builder(); // reset the builder
                             // case "osm":
@@ -123,8 +121,8 @@ public class XMLReader implements Serializable {
                     }
             }    
             //XMLWriter.readFromBinaryFile("t.bin");
-            XMLWriter.closeAllWriters();
-
+            //XMLWriter.closeAllWriters();
+            XMLWriter.readNodeFromBinaryFile("src/main/resources/chunks/chunk_0.bin");
 
 
             

@@ -14,6 +14,15 @@ public class Tag<E extends Enum<E>> extends HashMap<E, Object> {
         this.put(key, value);
     }
 
+    // TODO: Make generic version
+    //  /*
+    //  * Method to check if a node is within the bounds of a given area.
+    //  */
+    // public static boolean isInBounds(Tag node, TagBound bound) {
+    //     return node.getLat().compareTo(bound.getMinLat()) == 1 && node.getLat().compareTo(bound.getMaxLat()) == -1
+    //         && node.getLon().compareTo(bound.getMinLon()) == 1 && node.getLon().compareTo(bound.getMaxLon()) == -1;
+    // }
+
     /*
      * Method to check if a node is within the bounds of a given area.
      */
