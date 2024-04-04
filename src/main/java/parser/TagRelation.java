@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 
 enum Relation {
-    ID, INNER, OUTER, WAYS, RELATIONS, NODES, TYPE, NAME
+    ID, INNER, OUTER, WAYS, RELATIONS, NODES, TYPE, TYPEVALUE, NAME
 }
 
 public class TagRelation extends HashMap<Relation, Object>{
@@ -32,6 +32,7 @@ public class TagRelation extends HashMap<Relation, Object>{
                 put(Relation.WAYS, builder.getRelationBuilder().getRelation().getWays());
                 put(Relation.RELATIONS, builder.getRelationBuilder().getRelation().getRelations());
                 put(Relation.NODES, builder.getRelationBuilder().getRelation().getNodes());
+                put(Relation.TYPEVALUE, builder.getTypeValue());
                 put(Relation.TYPE, builder.getType());
                 put(Relation.NAME, builder.getName());
             }
@@ -43,6 +44,7 @@ public class TagRelation extends HashMap<Relation, Object>{
     public void addWay(TagWay way){ ways.add(way); };
     public void addInner(TagWay way){ inner.add(way); };
     public void addOuter(TagWay way){ outer.add(way); };
+    public void setTypeValue(Type type){ put(Relation.TYPEVALUE, type); };
     
     public ArrayList<TagNode> getNodes(){ return nodes; };
     public ArrayList<TagRelation> getRelations(){ return relations; };

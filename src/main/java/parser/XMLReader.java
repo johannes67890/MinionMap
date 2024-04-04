@@ -54,6 +54,20 @@ public class XMLReader {
         return nodes.get(id);
     }
 
+    /**
+     * Returns and removes a node from XMLReader node List.
+     * @param id - The id of the node to migrate.
+     * @return The node from the id.
+     */
+    public TagNode migrateNode(Long id){
+        TagNode node = getNodeById(id);
+        if(node != null){
+            nodes.remove(id);
+        }
+        return node;
+    }
+
+
     public TagWay getWayById(Long id){
         return ways.get(id);
     }
@@ -176,6 +190,7 @@ public class XMLReader {
 
         private String name; // name from a <tag> in a parrent element
         private Type type;
+        private String TypeValue;
         private Long id;
         private BigDecimal lat, lon;
 
@@ -209,6 +224,9 @@ public class XMLReader {
         }
         public Type getType(){
             return this.type;
+        }
+        public String getTypeValue(){
+            return this.TypeValue;
         }
 
         /**
@@ -245,6 +263,8 @@ public class XMLReader {
             }
         }
 
+        
+
         /**
          * Parse a tag and add the data to the builder.
          * @param k - The key of the tag.
@@ -252,7 +272,7 @@ public class XMLReader {
          */
         private void parseTag(String k, String v){
             if(k.equals("name")){
-                this.name = v;
+                this.name = v; // set the name of the node
             }
 
             for (Type currType : Type.getTypes()){
@@ -265,7 +285,7 @@ public class XMLReader {
                                 case RESTRICTION:
                                 case MULTIPOLYGON:
                                     this.type = currType;
-                                    relationBuilder.parseType(v);
+                                    this.TypeValue = v;
                                     break;
                                 default:
                                 this.type = currType;
@@ -298,6 +318,9 @@ public class XMLReader {
                         break;
                 }
             }
+        }
+        public void parseType(){
+
         }
     
     /**
@@ -355,8 +378,8 @@ public class XMLReader {
     * Constructs a instance of the builder, that later can be used to construct a {@link TagWay}.
     * </p>
     */
-    public static class WayBuilder {
-        private ArrayList<Long> refNodes = new ArrayList<Long>();
+    public class WayBuilder {
+        private ArrayList<TagNode> refNodes = new ArrayList<TagNode>();
         private boolean isEmpty = true;
 
         public boolean isEmpty() {
@@ -367,10 +390,10 @@ public class XMLReader {
             if (isEmpty) {
                 isEmpty = false;
             }
-            refNodes.add(ref);
+            refNodes.add(migrateNode(ref));
         }
 
-        public ArrayList<Long> getRefNodes() {
+        public ArrayList<TagNode> getRefNodes() {
             return refNodes;
         }
     }
@@ -388,24 +411,17 @@ public class XMLReader {
             return isEmpty;
         }
 
-        public void setTypeValue(String typeValue) {
-            relation.put(Relation.TYPEVALUE, typeValue);
-        }
-
         public TagRelation getRelation() {
             return relation;
         }
-        
-
-        private void parseType(String restriction){
-            relation.put(Relation.TYPEVALUE, restriction);
-        }
-
 
         public void parseMember(XMLStreamReader reader) {
             switch (reader.getAttributeValue(null, "type")) {
                 case "node":
-                    relation.addNode(getNodeById(getAttributeByLong(reader, "ref")));
+                    TagNode node = getNodeById(getAttributeByLong(reader, "ref"));
+                    if(node != null){
+                        relation.addNode(node);
+                    }
                     break;
                 case "way":
                     long ref = getAttributeByLong(reader, "ref");
