@@ -29,6 +29,10 @@
             <Insets left="100.0" right="100.0" />
          </VBox.margin>
       </HBox>
-      <Button fx:id="submitButton" mnemonicParsing="false" text="Execute Order 66" />
+      <Button fx:id="openFileFinderButton" mnemonicParsing="false" text="Open Filefinder" />
+      <Button fx:id="submitButton" mnemonicParsing="false" text="Launch Map">
+         <font>
+            <Font size="14.0" />
+         </font></Button>
    </children>
 </VBox>

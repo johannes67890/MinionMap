@@ -1,6 +1,12 @@
 package GUI;
+import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import org.parser.FileDistributer;
+import org.parser.XMLReader;
+
+import java.util.ArrayList;
 
 import GUI.MainView.StageSelect;
 import javafx.event.ActionEvent;
@@ -10,14 +16,23 @@ import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 
 public class StartScreenController implements Initializable, ControllerInterface{
 
     @FXML private Button submitButton;
+    @FXML private Button openFileFinderButton;
     @FXML private HBox contentPane;
     @FXML private Text contentPaneText;
 
     private static MainView mainView;
+    private File droppedFile;
+    private ArrayList<String> listOfAcceptedTypes = new ArrayList<>(){{
+        add("*.osm");
+        add("*.zip");
+        add("*.xml");
+    }};
 
     public void start(MainView mw){
         mainView = mw;
@@ -26,7 +41,26 @@ public class StartScreenController implements Initializable, ControllerInterface
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
+        openFileFinderButton.setOnAction((ActionEvent e) -> {
+            
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("osm,xml,zip", listOfAcceptedTypes)
+            );
+            File file = fileChooser.showOpenDialog(mainView.stage);
+            if (file != null) {
+                droppedFile = file;
+                contentPaneText.setText(droppedFile.getAbsolutePath());
+            }
+            
+        });
+
         submitButton.setOnAction((ActionEvent e) -> {
+            if (droppedFile != null){
+                mainView.loadXMLReader(droppedFile.getAbsolutePath());
+            }else{
+                mainView.loadXMLReader(FileDistributer.input.getFilePath());
+            }
             mainView.drawScene(StageSelect.MapView);
         });
 
@@ -51,6 +85,7 @@ public class StartScreenController implements Initializable, ControllerInterface
                 boolean success = false;
                 if (db.hasFiles()) {
                     contentPaneText.setText(db.getFiles().toString());
+                    droppedFile = db.getFiles().get(0);
                     success = true;
                 }
 

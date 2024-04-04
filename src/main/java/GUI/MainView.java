@@ -15,6 +15,7 @@ import javafx.scene.layout.*;
 import java.net.URL;
 
 import org.parser.FileDistributer;
+import org.parser.XMLReader;
 
 import javafx.event.*;
 import javafx.fxml.FXMLLoader;
@@ -36,6 +37,8 @@ public class MainView {
     static GraphicsContext gc = canvas.getGraphicsContext2D();
     static Scene lastScene;
     static Rectangle2D screenBounds;
+    private static XMLReader xmlReader;
+    private DrawingMap drawView;
 
 
     public MainView(Stage stage){
@@ -71,6 +74,12 @@ public class MainView {
         }catch (Exception e){
             System.out.println(e.getMessage());
         }
+    }
+
+    public void loadXMLReader(String filePath){
+        xmlReader = new XMLReader(filePath);
+        drawView = new DrawingMap();
+        
     }
 
 
