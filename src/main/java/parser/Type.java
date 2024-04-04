@@ -28,21 +28,25 @@ public enum Type {
     // Natural, Landuse and main infrastructure (Hierarchy 9)
     COASTLINE("natural", new String[]{"coastline"}, 9, 9, Color.PLUM, 5, true, 2, 100),
     PRIMARY_ROAD("highway", new String[]{"primary"}, 9, 9, Color.PEACHPUFF, 5,  true, 6, 100),
-    RESIDENTIAL("landuse", new String[]{"residential", "industrial"}, 9, 7, Color.PEACHPUFF, 0, false),
+    RESIDENTIAL("landuse", new String[]{"residential", "industrial"}, 9, 7, Color.PEACHPUFF, Color.PEACHPUFF.darker(), 1, false),
+    FARMFIELD("landuse", new String[]{"farmland"}, 9, 7, Color.KHAKI, Color.KHAKI.darker(), 5, false),
+    BEACH("natural",new String[]{"beach"}, 9, 7, Color.LIGHTYELLOW, Color.LIGHTYELLOW.darker(), 5, false),
+    FOREST("landuse",new String[]{"forest","meadow","grass"}, 9, 7, Color.GREEN, Color.GREEN.darker(), 5, false),
+
     
     
     // Landuse (Hierarchy: 8)
     SECONDARY_ROAD("highway", new String[]{"secondary"}, 8, 9, Color.LIGHTYELLOW, 5, true, 6, 150),
     RAILWAY("railway",new String[]{"rail","light_rail","subway", "abandoned"}, 8, 9, Color.DARKGRAY, 2, true, 4, 1000),
-    FARMFIELD("landuse", new String[]{"farmland"}, 8, 7, Color.KHAKI, 0, false),
     LANDUSE("landuse", new String[]{"commercial","construction","brownfield","greenfield","allotments","basin",
     "cemetery","depot","garages","greenhouse_horticulture","landfill","military","orchard","plant_nursery",
     "port","quarry","railway","recreation_ground","religious","reservoir","retail","salt_pond","village_green","vineyard",
-    "winter_sports","farmyard","farm", ""}, 8, 7, Color.BLANCHEDALMOND, 0, false),
+    "winter_sports","farmyard","farm", ""}, 9, 7, Color.BLANCHEDALMOND, Color.BLANCHEDALMOND.darker(), 5, false),
 
     // Urban and natural (Hierarchy: 7)
-    BUILDING("building",new String[]{"", "yes"},7, 8, Color.BURLYWOOD, 0, false),
-    LEISURE("leisure",new String[]{"park"},7, 8, Color.LIGHTGREEN, 0, false),
+    BUILDING("building",new String[]{"", "yes"},7, 8, Color.BURLYWOOD, Color.BURLYWOOD.darker(), 5, false),
+    AEROWAY("aeroway", new String[]{"aerodome", "apron", "hangar", "helipad", "heliport", "spaceport", "terminal"}, 7, 8, Color.LIGHTGRAY, Color.LIGHTGRAY.darker(), 5, false),
+    LEISURE("leisure",new String[]{"park"},7, 8, Color.LIGHTGREEN, Color.LIGHTGREEN.darker(), 5, false),
     WATERWAY("waterway",new String[]{""},7, 8, Color.LIGHTBLUE, 3, true, 2, 25),
 
     // Man made objects (Hierarchy: 6)
@@ -51,12 +55,14 @@ public enum Type {
     PIER("man_made", new String[]{"pier"},6, 9, Color.WHITE, 5, true, 5, 10),
 
     // Natural (Hierarchy: 5)
-    BEACH("natural",new String[]{"beach"}, 5, 7, Color.LIGHTYELLOW, 0, false),
-    FOREST("landuse",new String[]{"forest","meadow","grass"}, 5, 7, Color.GREEN, 0, false),
-    NATURALS("natural",new String[]{"scrub","grassland","heath", "wood"}, 5, 7, Color.GREENYELLOW, 0, false),
-    WATER("natural",new String[]{"water"}, 5, 8, Color.LIGHTBLUE, 0, false),
-    WETLAND("natural",new String[]{"wetland"}, 5, 8, Color.DARKKHAKI, 0, false),
+    
+    NATURALS("natural",new String[]{"scrub","grassland","heath", "wood"}, 5, 7, Color.GREENYELLOW, Color.GREENYELLOW.darker(), 5, false),
+    WATER("natural",new String[]{"water"}, 5, 8, Color.LIGHTBLUE, Color.LIGHTBLUE.darker(), 5, false),
+    WETLAND("natural",new String[]{"wetland"}, 5, 8, Color.DARKKHAKI, Color.DARKKHAKI, 5, false),
     // Other roads (Hierarchy: 4)
+    AERIALWAY("aerialway", new String[]{"cable_car", "gondola", "mixed_lift", "chair_lift", "drag_lift", "t-bar", "j-bar", "platter", "rope_tow", "magic_carpet", "zip_line", "goods", "pylon"}, 
+    4, 9, Color.LIGHTGRAY, 2, true, 4, 10),
+    AERIALWAYSTATION("aerialway", new String[]{"station"},4, 8, Color.GRAY, Color.GRAY.darker(), 5, false),
     OTHER_ROAD("highway",new String[]{"residential", "unclassified", "track", "footway", "cycleway", "path", 
     "service", "motorway_link", "steps", "living_street", "mini_roundabout", "pedestrian"}, 4, 9, Color.LIGHTGRAY, 5, true, 2, 7),
 
@@ -69,21 +75,23 @@ public enum Type {
     private final int hierarchy; // hierarchy of the tag - How important is it to display
     private final int layer; // The layer of where the object should be drawn
     private final Color color;
+    private final Color polyLineColor;
     private final double width;
     private final boolean isLine;
     private final double minWidth;
     private final double maxWidth;
 
-    Type(String key, String[] value, int hierarchy, int layer, Color color, double width, boolean isLine) {
+    Type(String key, String[] value, int hierarchy, int layer, Color color, Color polyLineColor, double width, boolean isLine) {
         this.key = key;
         this.value = value;
         this.hierarchy = hierarchy;
         this.layer = layer;
         this.color = color;
-        this.width = width;
+        this.polyLineColor = polyLineColor;
+        this.width = 0.2;
         this.isLine = isLine;
-        this.minWidth = 1;
-        this.maxWidth = 1;
+        this.minWidth = 0.5;
+        this.maxWidth = 50;
     }
 
     Type(String key, String[] value, int hierarchy, int layer, Color color, double width, boolean isLine, double minWidth, double maxWidth) {
@@ -96,6 +104,7 @@ public enum Type {
         this.isLine = isLine;
         this.minWidth = minWidth;
         this.maxWidth = maxWidth;
+        this.polyLineColor = Color.BLACK;
 
     }
     
@@ -166,6 +175,9 @@ public enum Type {
     }
     public Color getColor(){
         return color;
+    }
+    public Color getPolyLineColor(){
+        return polyLineColor;
     }
     public boolean getIsLine(){
         return isLine;

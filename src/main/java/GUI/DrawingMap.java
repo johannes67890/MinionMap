@@ -26,9 +26,10 @@ public class DrawingMap {
     private XMLReader reader;
     private MainView mainView;
     private double zoomLevel = 1;
-    private int hierarchyLevel = 0;
+    private int hierarchyLevel = 9;
     private final double zoomLevelMin = 40, zoomLevelMax = 3000000; // These variables changes how much you can zoom in and out. Min is far out and max is closest in
     private double zoomScalerToMeter; // This is the world meters of how long the scaler in the bottom right corner is. Divide it with the zoomLevel
+    private int[] zoomScales = {1000000, 500000, 250000, 125000, 67500, 33750, 16875, 8437, 4218, 2109};
 
     public DrawingMap(MainView mainView, XMLReader reader){
         this.mainView = mainView;
@@ -151,13 +152,18 @@ public class DrawingMap {
             double[] xPoints = new double[nodesRef.size()];
             double[] yPoints = new double[nodesRef.size()];
 
+            double min = tagWay.getType().getMinWidth() * 0.00001;
+            double max = tagWay.getType().getMaxWidth() * 0.00001;
+            double lineWidth = MathUtil.clamp(defaultLineWidth * tagWay.getType().getWidth(), min, max);
+            gc.setLineWidth(lineWidth);
+
+
             if(tagWay.getType().getIsLine()){
-                double min = tagWay.getType().getMinWidth() * 0.00001;
-                double max = tagWay.getType().getMaxWidth() * 0.00001;
-                double lineWidth = MathUtil.clamp(defaultLineWidth * tagWay.getType().getWidth(), min, max);
-                gc.setLineWidth(lineWidth);
+               
                 //System.out.println("CALCULATED LINEWIDTH: " + lineWidth);
-                gc.setStroke(tagWay.getType().getPaint()); 
+                gc.setStroke(tagWay.getType().getColor()); 
+            } else{
+                gc.setStroke(tagWay.getType().getPolyLineColor()); 
             }
 
             gc.beginPath();
@@ -196,6 +202,17 @@ public class DrawingMap {
         double zoomLevelNext = zoomLevel * factor;
         if (zoomLevelNext < zoomLevelMax && zoomLevelNext > zoomLevelMin){
             zoomLevel = zoomLevelNext;
+
+
+            for (int i = 0; i < zoomScales.length ; i++){
+                if (zoomLevel > zoomScales[i]){
+
+                    hierarchyLevel = i;
+                    System.out.println(hierarchyLevel);
+                    break;
+                }
+            }
+            
 
             pan(-dx, -dy);
             transform.prependScale(factor, factor);
