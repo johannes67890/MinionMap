@@ -9,8 +9,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
 public class Controller implements Initializable, ControllerInterface{
-    double lastX;
-    double lastY;
+    
     @FXML private Button menuButton1;
     @FXML private Button menuButton2;
     @FXML private Button searchButton;
