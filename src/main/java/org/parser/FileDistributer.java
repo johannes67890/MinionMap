@@ -12,7 +12,8 @@ public enum FileDistributer {
     test_output("test_output.xml"),
 
     // Views
-    main("view/main.fxml");
+    main("view/main.fxml"),
+    start_screen("view/start.fxml");
 
     private String filePath;
 

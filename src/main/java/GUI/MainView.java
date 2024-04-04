@@ -3,6 +3,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 import javafx.stage.*;
 import javafx.geometry.*;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.text.*;
 import javafx.scene.canvas.*;
@@ -11,8 +12,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 
+import java.net.URL;
+
+import org.parser.FileDistributer;
 
 import javafx.event.*;
+import javafx.fxml.FXMLLoader;
 
 public class MainView {
 
@@ -24,7 +29,7 @@ public class MainView {
     }
 
     public static Stage stage;
-    static StageSelect selectedStage = StageSelect.MapView;
+    static StageSelect selectedStage = StageSelect.MainMenu;
     static int sizeX = 800;
     static int sizeY = 600;
     public static Canvas canvas = new Canvas(sizeX, sizeY);
@@ -40,8 +45,32 @@ public class MainView {
         MainView.stage.setMinWidth(sizeX);
         MainView.stage.setMinHeight(sizeY);
         MainView.stage.setResizable(true);
-        
-        dragAndDropStage(stage);
+
+        drawScene(StageSelect.MainMenu);
+    }
+
+    public void drawScene(StageSelect selected){
+        selectedStage = selected;
+        VBox root;
+        FXMLLoader loader;
+        try{
+            if (selectedStage == StageSelect.MainMenu){
+                loader = new FXMLLoader(new URL("file:" + FileDistributer.start_screen.getFilePath()));
+                root = loader.load();
+            }else { // else its mapView
+                loader = new FXMLLoader(new URL("file:" + FileDistributer.main.getFilePath()));
+                root = loader.load();
+            }
+
+            ControllerInterface controller = (ControllerInterface) loader.getController();
+            controller.start(this); // To initialize the controller with a reference to this object
+
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
     }
 
 
@@ -111,8 +140,7 @@ public class MainView {
 
         submitButton.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent e){
-                selectedStage = StageSelect.MapView;
-                redraw();
+                redraw(StageSelect.MapView);
             }
         });
 
@@ -303,8 +331,7 @@ public class MainView {
 
         backButton.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent e){
-                selectedStage = StageSelect.MainMenu;
-                redraw();
+                redraw(StageSelect.MainMenu);
             }
         });
 
@@ -313,8 +340,8 @@ public class MainView {
     }
 
     // A function for redrawing the stage when changing scenes
-    public static void redraw(){
-
+    public static void redraw(StageSelect selected){
+        selectedStage = selected;
         if (selectedStage == StageSelect.MainMenu){
             dragAndDropStage(stage);
         }else if (selectedStage == StageSelect.MapView){
