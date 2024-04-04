@@ -77,7 +77,7 @@ public class MainView {
     }
 
     public void loadXMLReader(String filePath){
-        xmlReader = new XMLReader(filePath);
+        //xmlReader = new XMLReader(filePath);
         drawView = new DrawingMap();
         
     }
