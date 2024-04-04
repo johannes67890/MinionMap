@@ -29,9 +29,9 @@ public enum Type {
     COASTLINE("natural", new String[]{"coastline"}, 9, 9, Color.PLUM, 5, true, 2, 100),
     PRIMARY_ROAD("highway", new String[]{"primary"}, 9, 9, Color.PEACHPUFF, 5,  true, 6, 100),
     RESIDENTIAL("landuse", new String[]{"residential", "industrial"}, 9, 7, Color.PEACHPUFF, Color.PEACHPUFF.darker(), 1, false),
-    FARMFIELD("landuse", new String[]{"farmland"}, 9, 7, Color.KHAKI, Color.KHAKI.darker(), 5, false),
+    FARMFIELD("landuse", new String[]{"farmland"}, 9, 7, Color.KHAKI.brighter(), Color.KHAKI.darker(), 5, false),
     BEACH("natural",new String[]{"beach"}, 9, 7, Color.LIGHTYELLOW, Color.LIGHTYELLOW.darker(), 5, false),
-    FOREST("landuse",new String[]{"forest","meadow","grass"}, 9, 7, Color.GREEN, Color.GREEN.darker(), 5, false),
+    FOREST("landuse",new String[]{"forest","meadow","grass"}, 9, 7, Color.GREEN.brighter().desaturate(), Color.GREEN.darker(), 5, false),
 
     
     
@@ -39,11 +39,12 @@ public enum Type {
     SECONDARY_ROAD("highway", new String[]{"secondary"}, 8, 9, Color.LIGHTYELLOW, 5, true, 6, 150),
     RAILWAY("railway",new String[]{"rail","light_rail","subway", "abandoned"}, 8, 9, Color.DARKGRAY, 2, true, 4, 1000),
     LANDUSE("landuse", new String[]{"commercial","construction","brownfield","greenfield","allotments","basin",
-    "cemetery","depot","garages","greenhouse_horticulture","landfill","military","orchard","plant_nursery",
+    "cemetery","depot","garages","greenhouse_horticulture","landfill","orchard","plant_nursery",
     "port","quarry","railway","recreation_ground","religious","reservoir","retail","salt_pond","village_green","vineyard",
-    "winter_sports","farmyard","farm", ""}, 9, 7, Color.BLANCHEDALMOND, Color.BLANCHEDALMOND.darker(), 5, false),
+    "winter_sports","farmyard","farm"}, 8, 7, Color.BLANCHEDALMOND, Color.BLANCHEDALMOND.darker(), 5, false),
 
     // Urban and natural (Hierarchy: 7)
+    MILITARY("landuse", new String[]{"military"}, 7, 9, Color.SALMON.interpolate(Color.WHITE, 0.5), Color.SALMON.interpolate(Color.WHITE, 0.5).darker(), 5, false),
     BUILDING("building",new String[]{"", "yes"},7, 8, Color.BURLYWOOD, Color.BURLYWOOD.darker(), 5, false),
     AEROWAY("aeroway", new String[]{"aerodome", "apron", "hangar", "helipad", "heliport", "spaceport", "terminal"}, 7, 8, Color.LIGHTGRAY, Color.LIGHTGRAY.darker(), 5, false),
     LEISURE("leisure",new String[]{"park"},7, 8, Color.LIGHTGREEN, Color.LIGHTGREEN.darker(), 5, false),
