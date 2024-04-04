@@ -17,6 +17,8 @@ public class Controller implements Initializable, ControllerInterface{
     @FXML private TextField searchBarStart;
     @FXML private TextField searchBarDestination;
     @FXML private Button mainMenuButton;
+    @FXML private HBox mainUIHBox;
+    @FXML private BorderPane mainBorderPane;
 
     private boolean isMenuOpen = false;
     private static MainView mainView;
@@ -25,12 +27,22 @@ public class Controller implements Initializable, ControllerInterface{
     double lastY;
 
     double zoomMultiplier = 1.01f;
-    
-    public Controller(MainView mainView){
 
-        //System.out.println("CONTROLLER MADE");
+    public void start(MainView mw){ // this is only ran after the stage is shown
+        mainView = mw;
 
+        ResizableCanvas c = new ResizableCanvas(mainView);
+        Pane p = new Pane(c);
+        mainBorderPane.setCenter(p);
+        mainView.setCanvas(c);
+        c.widthProperty().bind(p.widthProperty());
+        c.heightProperty().bind(p.heightProperty());
 
+        mainView.loadDrawingMap();
+        panZoomInitialize();
+    }
+
+    private void panZoomInitialize(){ 
         mainView.canvas.setOnMousePressed(e -> {
             lastX = e.getX();
             lastY = e.getY();
@@ -53,13 +65,8 @@ public class Controller implements Initializable, ControllerInterface{
         });
     }
 
-
-    public void start(MainView mw){
-        mainView = mw;
-    }
-
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    public void initialize(URL location, ResourceBundle resources) { // This runs when the fxml is loaded and the canvas is injected (before stage is shown)
 
         mainMenuButton.setOnAction((ActionEvent e) -> {
             mainView.drawScene(StageSelect.MainMenu);

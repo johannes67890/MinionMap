@@ -2,44 +2,16 @@ package gui;
 import java.io.File;
 
 import gui.Search;
-
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.*;
-import javafx.scene.layout.*;
-
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-
-import javax.swing.event.HyperlinkEvent;
-
-import javafx.event.*;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
-import javafx.scene.text.TextFlow;
 import javafx.stage.FileChooser;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -60,13 +32,12 @@ public class MainView {
     static StageSelect selectedStage = StageSelect.MainMenu;
     static int sizeX = 800;
     static int sizeY = 600;
-    public static ResizableCanvas canvas;
+    public ResizableCanvas canvas;
     static GraphicsContext gc;
     static Scene lastScene;
     static Rectangle2D screenBounds;
     public XMLReader xmlReader;
     public DrawingMap drawView;
-    private Text zoomLevelText;
     private File inputFile;
 
 
@@ -81,6 +52,10 @@ public class MainView {
         drawScene(StageSelect.MainMenu);
     }
 
+    public void setCanvas(ResizableCanvas canvas){
+        this.canvas = canvas;
+    }
+
     public void drawScene(StageSelect selected){
         selectedStage = selected;
         VBox root;
@@ -92,31 +67,38 @@ public class MainView {
             }else { // else its mapView
                 loader = new FXMLLoader(new URL("file:" + FileDistributer.main.getFilePath()));
                 root = loader.load();
-
             }
 
             ControllerInterface controller = (ControllerInterface) loader.getController();
             controller.start(this); // To initialize the controller with a reference to this object
-
             Scene scene = new Scene(root);
             stage.setScene(scene);
             stage.show();
         }catch (Exception e){
             System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+
+        if (selectedStage == StageSelect.MapView){
+            drawView.initialize(canvas);
         }
     }
 
     public void loadXMLReader(String filePath){
-        //xmlReader = new XMLReader(filePath);
-        //drawView = new DrawingMap();
-        
+        xmlReader = new XMLReader(filePath);
+    }
+
+    public void loadDrawingMap(){
+        drawView = new DrawingMap(this, xmlReader);
     }
 
     public void draw(){
-        gc.setFill(Color.WHITE);
+        gc = canvas.getGraphicsContext2D();
+        gc.setFill(Color.RED);
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        zoomLevelText.setText("" + Math.round(drawView.getZoomLevelMeters()) + "m");;
+        //zoomLevelText.setText("" + Math.round(drawView.getZoomLevelMeters()) + "m");;
         drawView.DrawMap(gc, canvas);
+        
     }
 
 
