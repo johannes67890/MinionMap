@@ -255,34 +255,26 @@ public class XMLReader {
                 this.name = v;
             }
 
-            // TODO: add the type to the builder
-            // if(!this.getRelationBuilder().isEmpty()){
-            //     for (Type currType : Type.getTypes()){
-            //         if (k.equals(currType.getKey())){
-            //             for (String currVal : currType.getValue()) {
-            //                 if (v.equals(currVal) || currVal.equals("")) {
-            //                     this.type = currType;
-            //                     break;
-            //                 }
-            //             }
-            //         }
-            //     }
-            // }
-
             for (Type currType : Type.getTypes()){
                 if (k.equals(currType.getKey())){
                     for (String currVal : currType.getValue()) {
                         if (v.equals(currVal) || currVal.equals("")) {
-                            this.type = currType;
-                            break;
+                            switch (currType) {
+                                case BOUNDARY:
+                                case ROUTE:
+                                case RESTRICTION:
+                                case MULTIPOLYGON:
+                                    this.type = currType;
+                                    relationBuilder.parseType(v);
+                                    break;
+                                default:
+                                this.type = currType;
+                                break;
+                            }
                         }
                     }
                 }
             }
-
-          
-
-
 
             // if the tag is a address tag
             if(k.contains("addr:")){
@@ -363,7 +355,7 @@ public class XMLReader {
     * Constructs a instance of the builder, that later can be used to construct a {@link TagWay}.
     * </p>
     */
-    public class WayBuilder {
+    public static class WayBuilder {
         private ArrayList<Long> refNodes = new ArrayList<Long>();
         private boolean isEmpty = true;
 
@@ -396,11 +388,19 @@ public class XMLReader {
             return isEmpty;
         }
 
+        public void setTypeValue(String typeValue) {
+            relation.put(Relation.TYPEVALUE, typeValue);
+        }
 
         public TagRelation getRelation() {
             return relation;
         }
-       
+        
+
+        private void parseType(String restriction){
+            relation.put(Relation.TYPEVALUE, restriction);
+        }
+
 
         public void parseMember(XMLStreamReader reader) {
             switch (reader.getAttributeValue(null, "type")) {
