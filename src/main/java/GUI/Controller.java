@@ -5,10 +5,13 @@ public class Controller {
     double lastY;
 
     double zoomMultiplier = 1.01f;
+
+    long timer = 0;
     
     public Controller(MainView mainView){
 
         //System.out.println("CONTROLLER MADE");
+
 
 
         mainView.canvas.setOnMousePressed(e -> {
@@ -18,7 +21,11 @@ public class Controller {
         
         mainView.canvas.setOnScroll(event -> {
 
-            mainView.getDrawingMap().zoom(Math.pow(zoomMultiplier,event.getDeltaY()), event.getX(), event.getY());
+            if (System.currentTimeMillis() - timer > 500){
+                mainView.getDrawingMap().zoom(Math.pow(zoomMultiplier,event.getDeltaY()), event.getX(), event.getY());
+                timer = System.currentTimeMillis();
+            }
+            
             
         });
 

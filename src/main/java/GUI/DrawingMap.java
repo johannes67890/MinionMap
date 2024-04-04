@@ -87,6 +87,7 @@ public class DrawingMap {
     }
 
     public void DrawMap(GraphicsContext gc, ResizableCanvas canvas){
+        long preTime = System.currentTimeMillis();
 
 
         gc.setTransform(new Affine());
@@ -133,6 +134,8 @@ public class DrawingMap {
         double defaultLineWidth = 1/Math.sqrt(transform.determinant());
 
         Color c;
+
+
         
         while (!sortedWaysToDraw.isEmpty()) {
 
@@ -169,7 +172,9 @@ public class DrawingMap {
 
             gc.beginPath();
             gc.moveTo(nodesMap.get(nodesRef.get(0)).getLonDouble(), nodesMap.get(nodesRef.get(0)).getLatDouble());
-            for (Long ref : nodesRef){
+            for (int i = 0; i < nodesRef.size() ; i++){
+
+                Long ref = nodesRef.get(i);
                 
                 gc.lineTo(nodesMap.get(ref).getLonDouble(), nodesMap.get(ref).getLatDouble());
                 xPoints[counter] = nodesMap.get(ref).getLonDouble();
@@ -178,17 +183,25 @@ public class DrawingMap {
                 
             }
 
+            //gc.lineTo(nodesMap.get(nodesRef.get(0)).getLonDouble(), nodesMap.get(nodesRef.get(0)).getLatDouble());
+
             
             if (!tagWay.getType().getIsLine()){
                 gc.setFill(c);
-                gc.fillPolygon(xPoints, yPoints, xPoints.length);
+                gc.fillPolygon(xPoints, yPoints, counter);
             }
 
             gc.stroke();
+
     
         }
 
+        System.out.println("AFTER RENDERING: " + (System.currentTimeMillis() - preTime));
+
+
     }
+
+
 
     // Returns the distance for the ruler in the bottom right corner
     public double getZoomLevelMeters(){
@@ -209,16 +222,17 @@ public class DrawingMap {
                 if (zoomLevel > zoomScales[i]){
 
                     hierarchyLevel = i;
-                    System.out.println(hierarchyLevel);
+                    //System.out.println(hierarchyLevel);
                     break;
                 }
             }
             
 
+            System.out.println("PANNING FIRST ");
             pan(-dx, -dy);
             transform.prependScale(factor, factor);
             pan(dx, dy);
-            mainView.draw(); 
+            //mainView.draw(); 
         }
           
     }
