@@ -1,31 +1,31 @@
-package GUI;
-import org.parser.FileDistributer;
-import org.parser.XMLReader;
-
+package gui;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 
 public class ResizableCanvas extends Canvas {
  
-    public ResizableCanvas() {
+    private MainView mainView;
+
+    public ResizableCanvas(MainView mainView) {
+        this.mainView = mainView;
         // Redraw canvas when size changes.
         widthProperty().addListener(evt -> draw());
         heightProperty().addListener(evt -> draw());
         
     }
 
-    private void draw() {
+    public void draw() {
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
 
         double width = getWidth();
         double height = getHeight() - (screenBounds.getHeight() * 0.05f);
 
         GraphicsContext gc = getGraphicsContext2D();
-        XMLReader xmlReader = new XMLReader(FileDistributer.input);
-        DrawingMap.DrawMap(gc, this, xmlReader);
+        mainView.draw();
+        
+        //mainView.firstDraw();
         //gc.clearRect(0, 0, width, height);
 
         /*gc.setStroke(Color.RED);

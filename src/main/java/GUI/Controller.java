@@ -21,6 +21,39 @@ public class Controller implements Initializable, ControllerInterface{
     private boolean isMenuOpen = false;
     private static MainView mainView;
 
+    double lastX;
+    double lastY;
+
+    double zoomMultiplier = 1.01f;
+    
+    public Controller(MainView mainView){
+
+        //System.out.println("CONTROLLER MADE");
+
+
+        mainView.canvas.setOnMousePressed(e -> {
+            lastX = e.getX();
+            lastY = e.getY();
+        });
+        
+        mainView.canvas.setOnScroll(event -> {
+
+            mainView.getDrawingMap().zoom(Math.pow(zoomMultiplier,event.getDeltaY()), event.getX(), event.getY());
+            
+        });
+
+        mainView.canvas.setOnMouseDragged(e -> {
+
+            double dx = e.getX() - lastX;
+            double dy = e.getY() - lastY;
+            mainView.getDrawingMap().pan(dx, dy);
+
+            lastX = e.getX();
+            lastY = e.getY();
+        });
+    }
+
+
     public void start(MainView mw){
         mainView = mw;
     }

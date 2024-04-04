@@ -1,4 +1,4 @@
-package org.parser;
+package util;
 
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -14,6 +14,8 @@ public enum FileDistributer {
     // Views
     main("view/main.fxml"),
     start_screen("view/start.fxml");
+
+    
 
     private String filePath;
 
