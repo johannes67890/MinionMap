@@ -1,8 +1,9 @@
-import GUI.Controller;
-import GUI.MainView;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import java.io.File;
+
+import gui.Controller;
+import gui.MainView;
 
 public class Main extends Application {
 

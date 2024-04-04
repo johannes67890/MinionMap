@@ -1,14 +1,15 @@
-package GUI;
+package gui;
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import org.parser.FileDistributer;
-import org.parser.XMLReader;
+import util.FileDistributer;
+import parser.XMLReader;
+
+import gui.MainView.StageSelect;
 
 import java.util.ArrayList;
 
-import GUI.MainView.StageSelect;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.*;

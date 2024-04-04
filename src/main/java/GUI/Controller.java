@@ -1,8 +1,8 @@
-package GUI;
+package gui;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import GUI.MainView.StageSelect;
+import gui.MainView.StageSelect;
 import javafx.event.ActionEvent;
 import javafx.fxml.*;
 import javafx.scene.control.*;
