@@ -59,7 +59,6 @@ public enum Type {
     // Unknown (Hierarchy: 0)
     UNKNOWN("", new String[]{""}, 0, Color.BLACK, 0);
 
-
     private final String key; // key of the tag
     private final String[] value; // value of the tag
     private final int hierarchy; // hierarchy of the tag - How important is it to display
@@ -115,4 +114,5 @@ public enum Type {
     public Paint getColor() {
         return color;
     }
+    
 }

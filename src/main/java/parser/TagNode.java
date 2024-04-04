@@ -38,7 +38,7 @@ public class TagNode extends HashMap<Node,Number> {
     public TagNode(XMLReader.Builder builder) {
         super(new HashMap<Node, Number>(){
             {
-                put(Node.ID, builder.getID());
+                put(Node.ID, builder.getId());
                 put(Node.LAT, builder.getLat());
                 put(Node.LON, builder.getLon());
             }

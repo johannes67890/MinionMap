@@ -19,8 +19,9 @@ import javax.xml.stream.XMLStreamReader;
 public class XMLReader {
     private TagBound bound;
     private HashMap<Long, TagNode> nodes = new HashMap<Long, TagNode>();
-    private ArrayList<TagAddress> addresses = new ArrayList<TagAddress>();
-    private ArrayList<TagWay> ways = new ArrayList<TagWay>();
+    private HashMap<Long, TagAddress> addresses = new HashMap<Long, TagAddress>();
+    private HashMap<Long, TagRelation> relations = new HashMap<Long, TagRelation>();
+    private HashMap<Long, TagWay> ways = new HashMap<Long, TagWay>();
 
     /**
      * Get a attrubute from the {@link XMLStreamReader} as a {@link BigDecimal}.
@@ -41,6 +42,75 @@ public class XMLReader {
         return Long.parseUnsignedLong(event.getAttributeValue(null, name));
     }
 
+    /**
+     * Get a node by its id.
+     * <p>
+     * Returns null if the node is not found.
+     * </p>
+     * @param id - The id of the node to get.
+     * @return The node with the id.
+     */
+    public TagNode getNodeById(Long id){
+        return nodes.get(id);
+    }
+
+    public TagWay getWayById(Long id){
+        return ways.get(id);
+    }
+
+    public TagAddress getAddressById(Long id){
+        return addresses.get(id);
+    }
+
+    public TagRelation getRelationById(Long id){
+        return relations.get(id);
+    }
+    
+    public HashMap<Long, TagNode> getNodesMap(){
+        return nodes;
+    }
+
+    public ArrayList<TagNode> getNodes(){
+        ArrayList<TagNode> nodesList = new ArrayList<>();
+        
+        for(TagNode node : nodes.values()){
+            nodesList.add(node);
+        }
+        return nodesList;
+    }
+
+    public ArrayList<TagWay> getWays(){
+        ArrayList<TagWay> waysList = new ArrayList<>();
+        
+        for(TagWay way : ways.values()){
+            waysList.add(way);
+        }
+        return waysList;
+    }
+
+    public ArrayList<TagAddress> getAddresses(){
+        ArrayList<TagAddress> addressesList = new ArrayList<>();
+        
+        for(TagAddress address : addresses.values()){
+            addressesList.add(address);
+        }
+        return addressesList;
+    }
+    
+    public ArrayList<TagRelation> getRelations(){
+        ArrayList<TagRelation> relations = new ArrayList<>();
+        
+        for(TagRelation relation : relations){
+            relations.add(relation);
+        }
+        return relations;
+    }
+
+
+    public TagBound getBound(){
+        return bound;
+    }
+
     private Builder tempBuilder = new Builder();
 
     public XMLReader(String filepath) {
@@ -58,22 +128,26 @@ public class XMLReader {
                         }else {
                             tempBuilder.parse(element, reader);
                         };
+                       
                         break;
                     case END_ELEMENT:
                         element = reader.getLocalName().intern();
                         switch (element) {
                             case "node":
                                 if(!tempBuilder.getAddressBuilder().isEmpty()){
-                                    addresses.add(new TagAddress(tempBuilder));
+                                    addresses.put(tempBuilder.getId(), new TagAddress(tempBuilder));
                                 } else {
-                                    TagNode node = new TagNode(tempBuilder);
-                                    nodes.put(node.getId(), node);
+                                    nodes.put(tempBuilder.getId(), new TagNode(tempBuilder));
                                 }
                                 tempBuilder = new Builder(); // reset the builder
                                 break;
                             case "way":
-                                ways.add(new TagWay(tempBuilder));
+                                ways.put(tempBuilder.getId(), new TagWay(tempBuilder));
                                 tempBuilder = new Builder(); // reset the builder
+                            case "relation":
+                                relations.put(tempBuilder.getId(), new TagRelation(tempBuilder));
+                                tempBuilder = new Builder(); // reset the builder
+                                break;
                             default:
                                 break;
                         }
@@ -82,6 +156,8 @@ public class XMLReader {
                         break;
                     }
             }
+            System.out.println(relations.get(10343794L).toString());
+            System.out.println("Relations " + relations.size());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -96,6 +172,7 @@ public class XMLReader {
     public class Builder {
         private AddressBuilder addressBuilder = new AddressBuilder();
         private WayBuilder wayBuilder = new WayBuilder();
+        private RelationBuilder relationBuilder = new RelationBuilder();
 
         private String name; // name from a <tag> in a parrent element
         private Type type;
@@ -103,10 +180,11 @@ public class XMLReader {
         private BigDecimal lat, lon;
 
         public boolean isEmpty(){
-            return this.getAddressBuilder().isEmpty() || this.getWayBuilder().isEmpty() && this.id == null && this.lat == null && this.lon == null;
+            return this.getAddressBuilder().isEmpty() || this.getWayBuilder().isEmpty() || this.getRelationBuilder().isEmpty()
+             && this.id == null && this.lat == null && this.lon == null;
         }
 
-        public Long getID(){
+        public Long getId(){
             return this.id;
         }
         public BigDecimal getLat(){
@@ -121,6 +199,11 @@ public class XMLReader {
         public WayBuilder getWayBuilder(){
             return this.wayBuilder;
         }
+
+        public RelationBuilder getRelationBuilder(){
+            return this.relationBuilder;
+        }
+
         public String getName(){
             return this.name;
         }
@@ -141,6 +224,7 @@ public class XMLReader {
                     this.lon = getAttributeByBigDecimal(reader, "lon");
                     break;
                 case "way":
+                case "relation":
                     this.id = getAttributeByLong(reader, "id");                    
                     break;
                 case "tag":
@@ -154,6 +238,8 @@ public class XMLReader {
                     Long ref = getAttributeByLong(reader, "ref");
                     wayBuilder.addNode(ref);
                     break;
+                case "member":
+                    relationBuilder.parseMember(reader);
                 default:
                     break;
             }
@@ -169,6 +255,20 @@ public class XMLReader {
                 this.name = v;
             }
 
+            // TODO: add the type to the builder
+            // if(!this.getRelationBuilder().isEmpty()){
+            //     for (Type currType : Type.getTypes()){
+            //         if (k.equals(currType.getKey())){
+            //             for (String currVal : currType.getValue()) {
+            //                 if (v.equals(currVal) || currVal.equals("")) {
+            //                     this.type = currType;
+            //                     break;
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }
+
             for (Type currType : Type.getTypes()){
                 if (k.equals(currType.getKey())){
                     for (String currVal : currType.getValue()) {
@@ -179,6 +279,10 @@ public class XMLReader {
                     }
                 }
             }
+
+          
+
+
 
             // if the tag is a address tag
             if(k.contains("addr:")){
@@ -279,29 +383,53 @@ public class XMLReader {
         }
     }
 
-    public ArrayList<TagNode> getNodes(){
+    public class RelationBuilder {
+        private boolean isEmpty;
+        public TagRelation relation;
 
-        ArrayList<TagNode> nodesList = new ArrayList<>();
-
-        for(TagNode node : nodes.values()){
-            nodesList.add(node);
+        RelationBuilder() {
+            this.relation = new TagRelation();
+            this.isEmpty = true;
         }
-        return nodesList;
-    }
-    public HashMap<Long, TagNode> getNodesMap(){
-        return nodes;
-    }
 
-    public ArrayList<TagWay> getWays(){
-        return ways;
-    }
+        public boolean isEmpty() {
+            return isEmpty;
+        }
 
-    public ArrayList<TagAddress> getAddresses(){
-        return addresses;
-    }
 
-    public TagBound getBound(){
-        return bound;
+        public TagRelation getRelation() {
+            return relation;
+        }
+       
+
+        public void parseMember(XMLStreamReader reader) {
+            switch (reader.getAttributeValue(null, "type")) {
+                case "node":
+                    relation.addNode(getNodeById(getAttributeByLong(reader, "ref")));
+                    break;
+                case "way":
+                    long ref = getAttributeByLong(reader, "ref");
+                    if(getWayById(ref) != null){
+                        switch (reader.getAttributeValue(null, "role")) {
+                            case "outer":
+                                relation.addOuter(getWayById(ref));
+                            case "inner":
+                                relation.addInner(getWayById(ref));
+                                break;
+                            default:
+                                relation.addWay(getWayById(ref));
+                                break;
+                        }
+                    }
+                    break;
+                case "relation":
+                    relation.addRelation(getRelationById(getAttributeByLong(reader, "ref")));
+                    break;
+                default:
+                    break;
+            }
+        }
+        
     }
 }
 

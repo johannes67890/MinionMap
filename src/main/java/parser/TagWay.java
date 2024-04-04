@@ -18,7 +18,7 @@ public class TagWay extends HashMap<Way, Object>{
     public TagWay(XMLReader.Builder builder) {
         super(new HashMap<Way, Object>(){
             {
-                put(Way.ID, builder.getID());
+                put(Way.ID, builder.getId());
                 put(Way.REFS, builder.getWayBuilder().getRefNodes());
                 put(Way.TYPE, builder.getType());
                 put(Way.NAME, builder.getName());
