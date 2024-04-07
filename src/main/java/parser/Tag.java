@@ -70,8 +70,9 @@ public abstract class Tag<E extends Enum<E>> extends HashMap<E, Object> {
      * @param bound - The {@link TagBound} to check if the tag is within.
      * @return True if the tag is within the {@link TagBound}, false otherwise.
      */
-    public static boolean isInBounds(Tag<?> node, TagBound bound) {
-        return Double.valueOf(node.getLat()).compareTo(bound.getMinLat()) == 1 && Double.valueOf(node.getLat()).compareTo(bound.getMaxLat()) == -1
-            && Double.valueOf(node.getLon()).compareTo(bound.getMinLon()) == 1 && Double.valueOf(node.getLon()).compareTo(bound.getMaxLon()) == -1;
+    public boolean isInBounds(TagBound bound) {
+        return Double.valueOf(this.getLat()).compareTo(bound.getMinLat()) == 1 && Double.valueOf(this.getLat()).compareTo(bound.getMaxLat()) == -1
+            && Double.valueOf(this.getLon()).compareTo(bound.getMinLon()) == 1 && Double.valueOf(this.getLon()).compareTo(bound.getMaxLon()) == -1;
     }
+
 }

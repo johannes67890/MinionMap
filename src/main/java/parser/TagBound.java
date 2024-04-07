@@ -15,6 +15,14 @@ enum Bounds {
  * </p>
 */
 public class TagBound extends Tag<Bounds> implements Comparable<TagBound>{
+
+    /**
+     * Create a new TagBound with the given values.
+     * @param minlat - The minimum latitude of the bounds.
+     * @param maxlat - The maximum latitude of the bounds.
+     * @param minlon - The minimum longitude of the bounds.
+     * @param maxlon - The maximum longitude of the bounds.
+     */
     public TagBound(XMLStreamReader reader) {
         super(new HashMap<Bounds, Object>(){
             {
@@ -22,6 +30,17 @@ public class TagBound extends Tag<Bounds> implements Comparable<TagBound>{
                 put(Bounds.MAXLAT, XMLBuilder.getAttributeByDouble(reader, "maxlat"));
                 put(Bounds.MINLON, XMLBuilder.getAttributeByDouble(reader, "minlon"));
                 put(Bounds.MAXLON, XMLBuilder.getAttributeByDouble(reader, "maxlon"));
+            }
+        });
+    }
+
+    public TagBound(double minlat, double maxlat, double minlon, double maxlon) {
+        super(new HashMap<Bounds, Object>(){
+            {
+                put(Bounds.MINLAT, minlat);
+                put(Bounds.MAXLAT, maxlat);
+                put(Bounds.MINLON, minlon);
+                put(Bounds.MAXLON, maxlon);
             }
         });
     }
