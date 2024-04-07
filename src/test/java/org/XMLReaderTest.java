@@ -28,6 +28,16 @@ public class XMLReaderTest {
     }
     
     @Test
+    void testCount(){
+        assertEquals(4, XMLReader.getBound().size());
+        assertEquals(391, XMLReader.getNodes().size());
+        assertEquals(21, XMLReader.getAddresses().size());
+        assertEquals(1, XMLReader.getRelations().size());
+        assertEquals(50, XMLReader.getWays().size());
+    }
+
+
+    @Test
     void testSetBounds() {
         // Bounds in file: <bounds minlat="55.4411300" minlon="12.1600100" maxlat="55.4421100" maxlon="12.1631900"/>
         
