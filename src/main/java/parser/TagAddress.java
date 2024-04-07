@@ -15,14 +15,14 @@ enum Address{
  * {@link Address#ID}, {@link Address#LAT}, {@link Address#LON}, {@link Address#STREET}, {@link Address#HOUSENUMBER}, {@link Address#POSTCODE}, {@link Address#MUNICIPALITY}
  * </p>
 */
-public class TagAddress extends HashMap<Address, String> {
-
+public class TagAddress extends Tag<Address> {
+    
     TagAddress(XMLReader.Builder builder){
-        super(new HashMap<Address, String>(){
+        super(new HashMap<Address, Object>(){
             {
                 put(Address.ID, builder.getId().toString());
-                put(Address.LAT, builder.getLat().toString());
-                put(Address.LON, builder.getLon().toString());
+                put(Address.LAT, Double.toString(builder.getLat()));
+                put(Address.LON, Double.toString(builder.getLon()));
                 put(Address.STREET, builder.getAddressBuilder().street);
                 put(Address.HOUSENUMBER, builder.getAddressBuilder().house);
                 put(Address.POSTCODE, builder.getAddressBuilder().postcode);
@@ -33,39 +33,38 @@ public class TagAddress extends HashMap<Address, String> {
     }
 
     public String getStreet() {
-        return this.get(Address.STREET);
+        return this.get(Address.STREET).toString();
     }
 
     public String getHouseNumber() {
-        return this.get(Address.HOUSENUMBER);
+        return this.get(Address.HOUSENUMBER).toString();
     }
 
     public String getPostcode() {
-        return this.get(Address.POSTCODE);
+        return this.get(Address.POSTCODE).toString();
     }
 
     public String getMunicipality() {
-        return this.get(Address.MUNICIPALITY);
+        return this.get(Address.MUNICIPALITY).toString();
     }
 
     public String getCity() {
-        return this.get(Address.CITY);
+        return this.get(Address.CITY).toString();
     }
 
-    public String getID() {
-        return this.get(Address.ID);
+    @Override
+    public long getId() {
+        return Long.parseLong(this.get(Address.ID).toString());
+    }
+    @Override
+    public double getLat() {
+        return Double.parseDouble(this.get(Address.LAT).toString());
+    }
+    @Override
+    public double getLon() {
+        return Double.parseDouble(this.get(Address.LON).toString());
     }
 
-    public String getLat() {
-        return this.get(Address.LAT);
-    }
-
-    public String getLon() {
-        return this.get(Address.LON);
-    }
-
-
-    
     public static class SearchAddress {
         public String street, house, floor, side, postcode, city;
 

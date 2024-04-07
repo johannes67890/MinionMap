@@ -31,10 +31,10 @@ public class DrawingMap {
 
         TagBound bound = reader.getBound();
 
-        double minlon = bound.getMinLon().doubleValue();
-        double maxlat = bound.getMaxLat().doubleValue();
-        double maxlon = bound.getMaxLon().doubleValue();
-        double minlat = bound.getMinLat().doubleValue();
+        double minlon = bound.getMaxLon();
+        double maxlat = bound.getMaxLat();
+        double maxlon = bound.getMaxLon();
+        double minlat = bound.getMinLat();
         double temp = Screen.getPrimary().getVisualBounds().getWidth() * 0.04;
         zoomScalerToMeter = haversineDist(new Point2D(0, 0), new Point2D(temp,0));
 
@@ -99,10 +99,10 @@ public class DrawingMap {
             ArrayList<Long> nodesRef =  it.next().getNodes();
 
             gc.beginPath();
-            gc.moveTo(nodesMap.get(nodesRef.get(0)).getLonDouble(), nodesMap.get(nodesRef.get(0)).getLatDouble());
+            gc.moveTo(nodesMap.get(nodesRef.get(0)).getLon(), nodesMap.get(nodesRef.get(0)).getLat());
             for (Long ref : nodesRef){
                 
-                gc.lineTo(nodesMap.get(ref).getLonDouble(), nodesMap.get(ref).getLatDouble());
+                gc.lineTo(nodesMap.get(ref).getLat(), nodesMap.get(ref).getLat());
             }
 
             gc.stroke();

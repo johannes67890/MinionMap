@@ -14,7 +14,7 @@ enum Way {
  * {@link Way#ID}, {@link Way#REFS}, {@link Way#NAME}, {@link Way#TYPE}
  * </p>
  */
-public class TagWay extends HashMap<Way, Object>{
+public class TagWay extends Tag<Way>{
     public TagWay(XMLReader.Builder builder) {
         super(new HashMap<Way, Object>(){
             {
@@ -29,8 +29,17 @@ public class TagWay extends HashMap<Way, Object>{
      * Get the id of the way.
      * @return The id of the way.
      */
-    public Long getId() {
-        return (Long) this.get(Way.ID);
+    @Override
+    public long getId(){
+        return Long.parseLong(this.get(Way.ID).toString());
+    }
+    @Override
+    public double getLat() {
+        throw new UnsupportedOperationException("TagWay does not have a latitude value.");
+    }
+    @Override
+    public double getLon() {
+        throw new UnsupportedOperationException("TagWay does not have a longitude value.");
     }
     /**
      * Get the type of the way.
@@ -46,10 +55,6 @@ public class TagWay extends HashMap<Way, Object>{
     public ArrayList<Long> getNodes() {
         return (ArrayList<Long>) this.get(Way.REFS);
     }
-
-    // public Long[] getTags() {
-    //     return tags;
-    // }
         
     public boolean isEmpty() {
         return getNodes().size() == 0;

@@ -1,8 +1,6 @@
 package gui;
 import java.io.File;
 
-import gui.Search;
-
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -16,14 +14,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
-import javafx.scene.layout.*;
 
-import java.io.File;
 import java.io.IOException;
 
-import javax.swing.event.HyperlinkEvent;
-
-import javafx.event.*;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;

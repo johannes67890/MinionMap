@@ -29,8 +29,8 @@ public class XMLReader {
      * @param name - The name of the attribute to get. ({@link String})
      * @return The attribute as a {@link BigDecimal}.
      */
-    public static BigDecimal getAttributeByBigDecimal(XMLStreamReader event, String name) {
-        return new BigDecimal(event.getAttributeValue(null, name));
+    public static double getAttributeByDouble(XMLStreamReader event, String name) {
+        return Double.parseDouble(event.getAttributeValue(null, name));
     }
     /**
      * Get a attrubute from the {@link XMLStreamReader} as a {@link Long}.
@@ -170,8 +170,11 @@ public class XMLReader {
                         break;
                     }
             }
-            System.out.println(relations.get(10343794L).toString());
-            System.out.println("Relations " + relations.size());
+            
+            for (TagNode n : nodes.values()) {
+                System.out.println(n);
+            }
+            reader.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -192,20 +195,19 @@ public class XMLReader {
         private Type type;
         private String TypeValue;
         private Long id;
-        private BigDecimal lat, lon;
+        private double lat, lon;
 
         public boolean isEmpty(){
-            return this.getAddressBuilder().isEmpty() || this.getWayBuilder().isEmpty() || this.getRelationBuilder().isEmpty()
-             && this.id == null && this.lat == null && this.lon == null;
+            return this.getAddressBuilder().isEmpty() || this.getWayBuilder().isEmpty() || this.getRelationBuilder().isEmpty();
         }
 
         public Long getId(){
             return this.id;
         }
-        public BigDecimal getLat(){
+        public double getLat(){
             return this.lat;
         }
-        public BigDecimal getLon(){
+        public double getLon(){
             return this.lon;
         }
         public AddressBuilder getAddressBuilder(){
@@ -238,8 +240,8 @@ public class XMLReader {
             switch (element) {
                 case "node":
                     this.id = getAttributeByLong(reader, "id");
-                    this.lat = getAttributeByBigDecimal(reader, "lat");
-                    this.lon = getAttributeByBigDecimal(reader, "lon");
+                    this.lat = getAttributeByDouble(reader, "lat");
+                    this.lon = getAttributeByDouble(reader, "lon");
                     break;
                 case "way":
                 case "relation":
@@ -252,7 +254,6 @@ public class XMLReader {
                     parseTag(k, v);
                     break;
                 case "nd":
-                    // TODO: figure out if to add the ref to the way or add the node to the way?
                     Long ref = getAttributeByLong(reader, "ref");
                     wayBuilder.addNode(ref);
                     break;
