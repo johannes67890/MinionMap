@@ -20,7 +20,7 @@ public class TagNode extends Tag<Node> {
         });
     }
 
-    public TagNode(XMLReader.Builder builder) {
+    public TagNode(XMLBuilder builder) {
         super(new HashMap<Node, Object>(){
             {
                 put(Node.ID, builder.getId());
@@ -42,4 +42,5 @@ public class TagNode extends Tag<Node> {
     public double getLon(){
         return Double.parseDouble(this.get(Node.LON).toString());
     }
+ 
 }

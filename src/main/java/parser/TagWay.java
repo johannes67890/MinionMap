@@ -15,7 +15,7 @@ enum Way {
  * </p>
  */
 public class TagWay extends Tag<Way>{
-    public TagWay(XMLReader.Builder builder) {
+    public TagWay(XMLBuilder builder) {
         super(new HashMap<Way, Object>(){
             {
                 put(Way.ID, builder.getId());
@@ -41,6 +41,7 @@ public class TagWay extends Tag<Way>{
     public double getLon() {
         throw new UnsupportedOperationException("TagWay does not have a longitude value.");
     }
+
     /**
      * Get the type of the way.
      * @return The {@link Type} of the way.
@@ -64,5 +65,42 @@ public class TagWay extends Tag<Way>{
         return getNodes().size();
     }
 
+    /**
+    * Builder for a single way.
+    * <p>
+    * Constructs a instance of the builder, that later can be used to construct a {@link TagWay}.
+    * </p>
+    */
+    public static class WayBuilder {
+        private ArrayList<TagNode> refNodes = new ArrayList<TagNode>();
+        private boolean isEmpty = true;
 
+        public boolean isEmpty() {
+            return isEmpty;
+        }
+
+        /**
+         * Returns and removes a node from XMLReader node List.
+         * @param id - The id of the node to migrate.
+         * @return The node from the id.
+         */
+        public TagNode migrateNode(Long id){
+            TagNode node = XMLReader.getNodeById(id);
+            if(node != null){
+                XMLReader.getNodeById(id).remove(id, node);
+            }
+            return node;
+        }
+
+        public void addNode(Long ref) {
+            if (isEmpty) {
+                isEmpty = false;
+            }
+            refNodes.add(migrateNode(ref));
+        }
+
+        public ArrayList<TagNode> getRefNodes() {
+            return refNodes;
+        }
+    }
 }

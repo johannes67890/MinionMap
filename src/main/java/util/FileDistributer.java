@@ -4,14 +4,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 public enum FileDistributer {
-    input("input.xml"),
-    output("output.xml"),
-
-    // Test files
-    test_input("test_input.xml"),
-    test_output("test_output.xml");
-
-    
+    input("input.xml");
 
     private String filePath;
 

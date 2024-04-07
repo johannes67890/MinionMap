@@ -5,7 +5,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 enum Address{
-    ID, LAT, LON, CITY, STREET, HOUSENUMBER, POSTCODE, MUNICIPALITY;
+    ID, LAT, LON, CITY, CONTRY, STREET, HOUSENUMBER, POSTCODE, MUNICIPALITY;
 }
 
 /**
@@ -17,7 +17,7 @@ enum Address{
 */
 public class TagAddress extends Tag<Address> {
     
-    TagAddress(XMLReader.Builder builder){
+    TagAddress(XMLBuilder builder){
         super(new HashMap<Address, Object>(){
             {
                 put(Address.ID, builder.getId().toString());
@@ -28,8 +28,22 @@ public class TagAddress extends Tag<Address> {
                 put(Address.POSTCODE, builder.getAddressBuilder().postcode);
                 put(Address.MUNICIPALITY, builder.getAddressBuilder().municipality);
                 put(Address.CITY, builder.getAddressBuilder().city);
+                put(Address.CONTRY, builder.getAddressBuilder().contry);
             }
         });
+    }
+
+    @Override
+    public long getId() {
+        return Long.parseLong(this.get(Address.ID).toString());
+    }
+    @Override
+    public double getLat() {
+        return Double.parseDouble(this.get(Address.LAT).toString());
+    }
+    @Override
+    public double getLon() {
+        return Double.parseDouble(this.get(Address.LON).toString());
     }
 
     public String getStreet() {
@@ -52,18 +66,64 @@ public class TagAddress extends Tag<Address> {
         return this.get(Address.CITY).toString();
     }
 
-    @Override
-    public long getId() {
-        return Long.parseLong(this.get(Address.ID).toString());
+    public String getContry() {
+        return this.get(Address.CONTRY).toString();
     }
-    @Override
-    public double getLat() {
-        return Double.parseDouble(this.get(Address.LAT).toString());
-    }
-    @Override
-    public double getLon() {
-        return Double.parseDouble(this.get(Address.LON).toString());
-    }
+
+    /**
+     * Builder for a single address.
+     * <p>
+     * Constructs a instance of the builder, that later can be used to construct a {@link TagAddress}.
+     * </p>
+     */
+    public static class AddressBuilder {
+        public String street, house, postcode, contry, city, municipality;
+        private boolean isEmpty = true;
+
+        public boolean isEmpty() {
+            return isEmpty;
+        }
+
+        public AddressBuilder street(String _street) {
+            street = _street;
+            isEmpty = false;
+            return this;
+        }
+
+        
+        public AddressBuilder house(String _house) {
+            house = _house;
+            return this;
+        }
+
+        public AddressBuilder floor(String _floor) {
+            return this;
+        }
+
+        public AddressBuilder side(String _side) {
+            return this;
+        }
+
+        public AddressBuilder postcode(String _postcode) {
+            postcode = _postcode;
+            return this;
+        }
+
+        public AddressBuilder contry(String _contry) {
+            contry = _contry;
+            return this;
+        }
+
+        public AddressBuilder city(String _city) {
+            city = _city;
+            return this;
+        }
+
+        public AddressBuilder municipality(String _municipality) {
+            municipality = _municipality;
+            return this;
+            }
+        }
 
     public static class SearchAddress {
         public String street, house, floor, side, postcode, city;

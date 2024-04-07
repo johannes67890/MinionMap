@@ -1,39 +1,60 @@
 package org;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.io.FileNotFoundException;
 
-import java.util.HashMap;
-
-import javax.xml.stream.events.XMLEvent;
 
 import org.junit.jupiter.api.*;
+import org.opentest4j.AssertionFailedError;
 
+import parser.TagAddress;
+import parser.TagBound;
 import parser.XMLReader;
-import util.FileDistributer;
 
 public class XMLReaderTest {
-    public XMLReader reader;
-    public XMLEvent event;
+    private XMLReader reader;
+
     @BeforeEach
-    void setUp() {
-        // this.reader = new XMLReader(FileDistributer.test_input);
+    void testXMLReaderStartup() {
+        this.reader = new XMLReader("src/test/java/org/ressources/map.osm");
+        assertNotNull(reader);
+        assertDoesNotThrow(() -> this.reader);
+    }
+    
+    @Test
+    void testSetBounds() {
+        // Bounds in file: <bounds minlat="55.4411300" minlon="12.1600100" maxlat="55.4421100" maxlon="12.1631900"/>
+        
+        assertInstanceOf(TagBound.class, XMLReader.getBound());
+        assertEquals(XMLReader.getBound().getMinLat(), 55.4411300d);
+        assertEquals(XMLReader.getBound().getMinLon(), 12.1600100d);
+        assertEquals(XMLReader.getBound().getMaxLat(), 55.4421100d);
+        assertEquals(XMLReader.getBound().getMaxLon(), 12.1631900d);
     }
 
     @Test
-    void testSetBounds() {
-        //TODO: 
-    }
+    void getTagByIdTest() {
+        // Address with id 340820448 in file:
+        assertNotNull(XMLReader.getAddressById(340820448l));
+        assertNull(XMLReader.getNodeById(340820448l));
+        assertNull(XMLReader.getWayById(340820448l));
+        assertNull(XMLReader.getRelationById(340820448l));
 
-    // TODO: improve this test
-    // @Test
-    // void testIsTag() {
-    //     if(event.isStartElement()){
-    //        String tag = event.asStartElement().getName().getLocalPart();
-    //        assertEquals(reader.isTag(event, tag), true);
-    //     }
-    // }
-    
+        // Tags
+        TagAddress address = XMLReader.getAddressById(340820448l);
+        assertEquals("Køge", address.getCity());
+        assertEquals("Køge", address.getMunicipality());
+        assertEquals("4600", address.getPostcode());
+        assertEquals("Bellmansvej", address.getStreet());
+        assertEquals("1", address.getHouseNumber());
+        assertEquals("DK", address.getContry());
+    }
 }
 
 

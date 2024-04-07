@@ -1,132 +1,126 @@
 package parser;
+
 import static javax.xml.stream.XMLStreamConstants.*;
 
 import java.io.FileInputStream;
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.HashMap;
-
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+
+import java.io.FileNotFoundException;
 
 /**
  * Reader for a OSM XML file.
  * <p>
  * Uses the {@link XMLStreamReader} to read the file and parse the data into the different classes: {@link TagNode}, {@link TagNode} , {@link TagAddress} and {@link TagWay}.
  * </p>
- * 
  */
 public class XMLReader {
-    private TagBound bound;
-    private HashMap<Long, TagNode> nodes = new HashMap<Long, TagNode>();
-    private HashMap<Long, TagAddress> addresses = new HashMap<Long, TagAddress>();
-    private HashMap<Long, TagRelation> relations = new HashMap<Long, TagRelation>();
-    private HashMap<Long, TagWay> ways = new HashMap<Long, TagWay>();
+    private static TagBound bound;
+    private static HashMap<Long, TagNode> nodes = new HashMap<Long, TagNode>();
+    private static HashMap<Long, TagAddress> addresses = new HashMap<Long, TagAddress>();
+    private static HashMap<Long, TagRelation> relations = new HashMap<Long, TagRelation>();
+    private static HashMap<Long, TagWay> ways = new HashMap<Long, TagWay>();
 
     /**
-     * Get a attrubute from the {@link XMLStreamReader} as a {@link BigDecimal}.
-     * @param event - The {@link XMLStreamReader} to get the attribute from.
-     * @param name - The name of the attribute to get. ({@link String})
-     * @return The attribute as a {@link BigDecimal}.
+     * Get the {@link TagBound} of the XML file.
+     * @return The {@link TagBound} of the XML file.
      */
-    public static double getAttributeByDouble(XMLStreamReader event, String name) {
-        return Double.parseDouble(event.getAttributeValue(null, name));
-    }
-    /**
-     * Get a attrubute from the {@link XMLStreamReader} as a {@link Long}.
-     * @param event - The {@link XMLStreamReader} to get the attribute from.
-     * @param name - The name of the attribute to get. ({@link String})
-     * @return The attribute as a {@link Long}.
-     */
-    public static Long getAttributeByLong(XMLStreamReader event, String name) {
-        return Long.parseUnsignedLong(event.getAttributeValue(null, name));
+    public static TagBound getBound(){
+        return bound;
     }
 
     /**
-     * Get a node by its id.
+     * Get a {@link TagNode} by its id.
      * <p>
      * Returns null if the node is not found.
      * </p>
-     * @param id - The id of the node to get.
-     * @return The node with the id.
+     * @param id - The {@link Node#ID} of the node to get.
+     * @return The {@link TagNode} with the id.
      */
-    public TagNode getNodeById(Long id){
+    public static TagNode getNodeById(Long id){
         return nodes.get(id);
     }
 
     /**
-     * Returns and removes a node from XMLReader node List.
-     * @param id - The id of the node to migrate.
-     * @return The node from the id.
+     * Get a {@link TagWay} by its id.
+     * <p>
+     * Returns null if the way is not found.
+     * </p>
+     * @param id - The {@link Way#ID} of the way to get.
+     * @return The {@link TagWay} with the id.
      */
-    public TagNode migrateNode(Long id){
-        TagNode node = getNodeById(id);
-        if(node != null){
-            nodes.remove(id);
-        }
-        return node;
-    }
-
-
-    public TagWay getWayById(Long id){
+    public static TagWay getWayById(Long id){
         return ways.get(id);
     }
 
-    public TagAddress getAddressById(Long id){
+    /**
+     * Get a {@link TagAddress} by its id.
+     * <p>
+     * Returns null if the address is not found.
+     * </p>
+     * @param id - The {@link Address#ID} of the address to get.
+     * @return The {@link TagAddress} with the id.
+     */
+    public static TagAddress getAddressById(Long id){
         return addresses.get(id);
     }
 
-    public TagRelation getRelationById(Long id){
+    /**
+     * Get a {@link TagRelation} by its id.
+     * <p>
+     * Returns null if the relation is not found.
+     * </p>
+     * @param id - The {@link Relation#ID} of the relation to get.
+     * @return The {@link TagRelation} with the id.
+     */
+    public static TagRelation getRelationById(Long id){
         return relations.get(id);
     }
-    
-    public HashMap<Long, TagNode> getNodesMap(){
+
+    /**
+     * Get all the {@link TagNode}s in the XML file.
+     * @return A {@link HashMap} of the as {@link Node#ID} to all the {@link TagNode}s in the XML file.
+     */
+    public static HashMap<Long, TagNode> getNodes(){
         return nodes;
     }
 
-    public ArrayList<TagNode> getNodes(){
-        ArrayList<TagNode> nodesList = new ArrayList<>();
-        
-        for(TagNode node : nodes.values()){
-            nodesList.add(node);
-        }
-        return nodesList;
+    /**
+     * Get all the {@link TagAddress}' in the XML file.
+     * @return A {@link HashMap} of the keys as {@link Address#ID} to all the {@link TagAddress}s in the XML file.
+     */
+    public static HashMap<Long, TagAddress> getAddresses(){
+        return addresses;
     }
 
-    public ArrayList<TagWay> getWays(){
-        ArrayList<TagWay> waysList = new ArrayList<>();
-        
-        for(TagWay way : ways.values()){
-            waysList.add(way);
-        }
-        return waysList;
-    }
-
-    public ArrayList<TagAddress> getAddresses(){
-        ArrayList<TagAddress> addressesList = new ArrayList<>();
-        
-        for(TagAddress address : addresses.values()){
-            addressesList.add(address);
-        }
-        return addressesList;
-    }
-    
-    public ArrayList<TagRelation> getRelations(){
-        ArrayList<TagRelation> relations = new ArrayList<>();
-        
-        for(TagRelation relation : relations){
-            relations.add(relation);
-        }
+    /**
+     * Get all the {@link TagRelation}s in the XML file.
+     * @return A {@link HashMap} of the keys as {@link Relation#ID} to all the {@link TagRelation}s in the XML file.
+     */
+    public static HashMap<Long, TagRelation> getRelations(){
         return relations;
     }
 
-
-    public TagBound getBound(){
-        return bound;
+    /**
+     * Get all the {@link TagWay}s in the XML file.
+     * @return A {@link HashMap} of the keys as {@link Way#ID} to all the {@link TagWay}s in the XML file.
+     */
+    public static HashMap<Long, TagWay> getWays(){
+        return ways;
     }
 
-    private Builder tempBuilder = new Builder();
-
+    private XMLBuilder tempBuilder = new XMLBuilder();
+    
+    /**
+     * Parses the XML File for a OSM file.
+     * <p>
+     * Uses the {@link XMLStreamReader} to read the file and parse the data into the different classes: {@link TagBound}, {@link TagNode}, {@link TagNode} , {@link TagAddress} and {@link TagWay}.
+     * </p>
+     * 
+     * @param filepath - The path to the XML file.
+     */
     public XMLReader(String filepath) {
         try {
             XMLInputFactory factory = XMLInputFactory.newInstance();
@@ -138,7 +132,7 @@ public class XMLReader {
                     case START_ELEMENT:
                         String element = reader.getLocalName().intern();
                         if(element.equals("bounds")) {
-                            this.bound = new TagBound(reader);
+                            bound = new TagBound(reader);
                         }else {
                             tempBuilder.parse(element, reader);
                         };
@@ -153,14 +147,14 @@ public class XMLReader {
                                 } else {
                                     nodes.put(tempBuilder.getId(), new TagNode(tempBuilder));
                                 }
-                                tempBuilder = new Builder(); // reset the builder
+                                tempBuilder = new XMLBuilder(); // Reset the builder
                                 break;
                             case "way":
                                 ways.put(tempBuilder.getId(), new TagWay(tempBuilder));
-                                tempBuilder = new Builder(); // reset the builder
+                                tempBuilder = new XMLBuilder();
                             case "relation":
                                 relations.put(tempBuilder.getId(), new TagRelation(tempBuilder));
-                                tempBuilder = new Builder(); // reset the builder
+                                tempBuilder = new XMLBuilder();
                                 break;
                             default:
                                 break;
@@ -170,284 +164,14 @@ public class XMLReader {
                         break;
                     }
             }
-            
-            for (TagNode n : nodes.values()) {
-                System.out.println(n);
-            }
             reader.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (XMLStreamException e) {
+            
+            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
-    /**
-     * Builder for a single XML element.
-     * <p>
-     * The builder contains a {@link AdressBuilder} and a {@link WayBuilder} to construct a {@link TagAddress} or a {@link TagWay}.
-     * </p>
-     */
-    public class Builder {
-        private AddressBuilder addressBuilder = new AddressBuilder();
-        private WayBuilder wayBuilder = new WayBuilder();
-        private RelationBuilder relationBuilder = new RelationBuilder();
-
-        private String name; // name from a <tag> in a parrent element
-        private Type type;
-        private String TypeValue;
-        private Long id;
-        private double lat, lon;
-
-        public boolean isEmpty(){
-            return this.getAddressBuilder().isEmpty() || this.getWayBuilder().isEmpty() || this.getRelationBuilder().isEmpty();
-        }
-
-        public Long getId(){
-            return this.id;
-        }
-        public double getLat(){
-            return this.lat;
-        }
-        public double getLon(){
-            return this.lon;
-        }
-        public AddressBuilder getAddressBuilder(){
-            return this.addressBuilder;
-        }
-        public WayBuilder getWayBuilder(){
-            return this.wayBuilder;
-        }
-
-        public RelationBuilder getRelationBuilder(){
-            return this.relationBuilder;
-        }
-
-        public String getName(){
-            return this.name;
-        }
-        public Type getType(){
-            return this.type;
-        }
-        public String getTypeValue(){
-            return this.TypeValue;
-        }
-
-        /**
-         * Parse the XML element and add the data to the builder(s).
-         * @param element - The name of the element to parse.
-         * @param reader - The {@link XMLStreamReader} to get the data from.
-         */
-        private void parse(String element, XMLStreamReader reader){
-            switch (element) {
-                case "node":
-                    this.id = getAttributeByLong(reader, "id");
-                    this.lat = getAttributeByDouble(reader, "lat");
-                    this.lon = getAttributeByDouble(reader, "lon");
-                    break;
-                case "way":
-                case "relation":
-                    this.id = getAttributeByLong(reader, "id");                    
-                    break;
-                case "tag":
-                    String k = reader.getAttributeValue(null, "k");
-                    String v = reader.getAttributeValue(null, "v");
-
-                    parseTag(k, v);
-                    break;
-                case "nd":
-                    Long ref = getAttributeByLong(reader, "ref");
-                    wayBuilder.addNode(ref);
-                    break;
-                case "member":
-                    relationBuilder.parseMember(reader);
-                default:
-                    break;
-            }
-        }
-
-        
-
-        /**
-         * Parse a tag and add the data to the builder.
-         * @param k - The key of the tag.
-         * @param v - The value of the tag.
-         */
-        private void parseTag(String k, String v){
-            if(k.equals("name")){
-                this.name = v; // set the name of the node
-            }
-
-            for (Type currType : Type.getTypes()){
-                if (k.equals(currType.getKey())){
-                    for (String currVal : currType.getValue()) {
-                        if (v.equals(currVal) || currVal.equals("")) {
-                            switch (currType) {
-                                case BOUNDARY:
-                                case ROUTE:
-                                case RESTRICTION:
-                                case MULTIPOLYGON:
-                                    this.type = currType;
-                                    this.TypeValue = v;
-                                    break;
-                                default:
-                                this.type = currType;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-
-            // if the tag is a address tag
-            if(k.contains("addr:")){
-                switch (k) {
-                    case "addr:city":
-                    addressBuilder.city(v);
-                        break;
-                    case "addr:street":
-                    addressBuilder.street(v);
-                        break;
-                    case "addr:housenumber":
-                    addressBuilder.house(v);
-                        break;
-                    case "addr:postcode":
-                    addressBuilder.postcode(v);
-                        break;
-                    case "addr:municipality":
-                    addressBuilder.municipality(v);
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
-        public void parseType(){
-
-        }
-    
-    /**
-     * Builder for a single address.
-     * <p>
-     * Constructs a instance of the builder, that later can be used to construct a {@link TagAddress}.
-     * </p>
-     */
-    public static class AddressBuilder {
-        public String street, house, postcode, city, municipality;
-        private boolean isEmpty = true;
-
-        public boolean isEmpty() {
-            return isEmpty;
-        }
-
-        public AddressBuilder street(String _street) {
-            street = _street;
-            isEmpty = false;
-            return this;
-        }
-
-        public AddressBuilder house(String _house) {
-            house = _house;
-            return this;
-        }
-
-        public AddressBuilder floor(String _floor) {
-            return this;
-        }
-
-        public AddressBuilder side(String _side) {
-            return this;
-        }
-
-        public AddressBuilder postcode(String _postcode) {
-            postcode = _postcode;
-            return this;
-        }
-
-        public AddressBuilder city(String _city) {
-            city = _city;
-            return this;
-        }
-
-        public AddressBuilder municipality(String _municipality) {
-            municipality = _municipality;
-            return this;
-            }
-        }
-    }
-   /**
-    * Builder for a single way.
-    * <p>
-    * Constructs a instance of the builder, that later can be used to construct a {@link TagWay}.
-    * </p>
-    */
-    public class WayBuilder {
-        private ArrayList<TagNode> refNodes = new ArrayList<TagNode>();
-        private boolean isEmpty = true;
-
-        public boolean isEmpty() {
-            return isEmpty;
-        }
-
-        private void addNode(Long ref) {
-            if (isEmpty) {
-                isEmpty = false;
-            }
-            refNodes.add(migrateNode(ref));
-        }
-
-        public ArrayList<TagNode> getRefNodes() {
-            return refNodes;
-        }
-    }
-
-    public class RelationBuilder {
-        private boolean isEmpty;
-        public TagRelation relation;
-
-        RelationBuilder() {
-            this.relation = new TagRelation();
-            this.isEmpty = true;
-        }
-
-        public boolean isEmpty() {
-            return isEmpty;
-        }
-
-        public TagRelation getRelation() {
-            return relation;
-        }
-
-        public void parseMember(XMLStreamReader reader) {
-            switch (reader.getAttributeValue(null, "type")) {
-                case "node":
-                    TagNode node = getNodeById(getAttributeByLong(reader, "ref"));
-                    if(node != null){
-                        relation.addNode(node);
-                    }
-                    break;
-                case "way":
-                    long ref = getAttributeByLong(reader, "ref");
-                    if(getWayById(ref) != null){
-                        switch (reader.getAttributeValue(null, "role")) {
-                            case "outer":
-                                relation.addOuter(getWayById(ref));
-                            case "inner":
-                                relation.addInner(getWayById(ref));
-                                break;
-                            default:
-                                relation.addWay(getWayById(ref));
-                                break;
-                        }
-                    }
-                    break;
-                case "relation":
-                    relation.addRelation(getRelationById(getAttributeByLong(reader, "ref")));
-                    break;
-                default:
-                    break;
-            }
-        }
-        
-    }
 }
-
-

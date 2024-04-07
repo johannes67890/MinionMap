@@ -3,6 +3,7 @@ package parser;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.xml.stream.XMLStreamReader;
 
 enum Relation {
     ID, INNER, OUTER, WAYS, RELATIONS, NODES, TYPE, TYPEVALUE, NAME
@@ -17,7 +18,7 @@ public class TagRelation extends Tag<Relation>{
 
     public TagRelation(){}
 
-    public TagRelation(XMLReader.Builder builder){
+    public TagRelation(XMLBuilder builder){
         super(new HashMap<Relation, Object>(){
             {
                 put(Relation.INNER, builder.getRelationBuilder().getRelation().getInner());
@@ -44,6 +45,7 @@ public class TagRelation extends Tag<Relation>{
     public double getLon() {
         throw new UnsupportedOperationException("TagRelation does not have a longitude value.");
     }
+
 
     public void addNode(TagNode node){ nodes.add(node); };
     public void addRelation(TagRelation relation){ relations.add(relation); };
@@ -77,4 +79,55 @@ public class TagRelation extends Tag<Relation>{
             }
         });
     }
+
+    public static class RelationBuilder {
+        private boolean isEmpty;
+        public TagRelation relation;
+
+        RelationBuilder() {
+            this.relation = new TagRelation();
+            this.isEmpty = true;
+        }
+
+        public boolean isEmpty() {
+            return isEmpty;
+        }
+
+        public TagRelation getRelation() {
+            return relation;
+        }
+
+        public void parseMember(XMLStreamReader reader) {
+            switch (reader.getAttributeValue(null, "type")) {
+                case "node":
+                    TagNode node = XMLReader.getNodeById(XMLBuilder.getAttributeByLong(reader, "ref"));
+                    if(node != null){
+                        relation.addNode(node);
+                    }
+                    break;
+                case "way":
+                    long ref = XMLBuilder.getAttributeByLong(reader, "ref");
+                    if(XMLReader.getWayById(ref) != null){
+                        switch (reader.getAttributeValue(null, "role")) {
+                            case "outer":
+                                relation.addOuter(XMLReader.getWayById(ref));
+                            case "inner":
+                                relation.addInner(XMLReader.getWayById(ref));
+                                break;
+                            default:
+                                relation.addWay(XMLReader.getWayById(ref));
+                                break;
+                        }
+                    }
+                    break;
+                case "relation":
+                    relation.addRelation(XMLReader.getRelationById(XMLBuilder.getAttributeByLong(reader, "ref")));
+                    break;
+                default:
+                    break;
+            }
+        }
+        
+    }
+
 }

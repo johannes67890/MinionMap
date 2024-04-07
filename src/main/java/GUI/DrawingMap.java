@@ -84,9 +84,9 @@ public class DrawingMap {
 
         gc.setTransform(transform);
         //GraphicsContext gc = canvas.getGraphicsContext2D();
-        List<TagNode> nodes = reader.getNodes();
-        HashMap<Long, TagNode> nodesMap = reader.getNodesMap();
-        ArrayList<TagWay> ways = reader.getWays();
+        List<TagNode> nodes = XMLReader.getNodes().values().stream().toList();
+        HashMap<Long, TagNode> nodesMap = XMLReader.getNodes();
+        List<TagWay> ways = XMLReader.getWays().values().stream().toList();
         TagBound bound = reader.getBound();
 
         Iterator<TagWay> it = ways.iterator();

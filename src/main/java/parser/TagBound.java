@@ -1,6 +1,5 @@
 package parser;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import javax.xml.stream.XMLStreamReader;
 
@@ -19,10 +18,10 @@ public class TagBound extends Tag<Bounds> implements Comparable<TagBound>{
     public TagBound(XMLStreamReader reader) {
         super(new HashMap<Bounds, Object>(){
             {
-                put(Bounds.MINLAT, XMLReader.getAttributeByDouble(reader, "minlat"));
-                put(Bounds.MAXLAT, XMLReader.getAttributeByDouble(reader, "maxlat"));
-                put(Bounds.MINLON, XMLReader.getAttributeByDouble(reader, "minlon"));
-                put(Bounds.MAXLON, XMLReader.getAttributeByDouble(reader, "maxlon"));
+                put(Bounds.MINLAT, XMLBuilder.getAttributeByDouble(reader, "minlat"));
+                put(Bounds.MAXLAT, XMLBuilder.getAttributeByDouble(reader, "maxlat"));
+                put(Bounds.MINLON, XMLBuilder.getAttributeByDouble(reader, "minlon"));
+                put(Bounds.MAXLON, XMLBuilder.getAttributeByDouble(reader, "maxlon"));
             }
         });
     }
@@ -95,4 +94,5 @@ public class TagBound extends Tag<Bounds> implements Comparable<TagBound>{
     public double getLon() {
         throw new UnsupportedOperationException("TagWay does not have a longitude value.");
     }
+ 
 }
