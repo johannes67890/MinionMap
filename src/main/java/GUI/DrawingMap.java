@@ -41,7 +41,6 @@ public class DrawingMap {
         //pan(-0.56*minlon, maxlat);
         pan(-0.56*minlon, maxlat);
         zoom(canvas.getWidth() / (maxlon - minlon), 0, 0);
-
         DrawMap(canvas.getGraphicsContext2D(), canvas);
     }
 
@@ -75,8 +74,7 @@ public class DrawingMap {
     }
 
     public void DrawMap(GraphicsContext gc, ResizableCanvas canvas){
-
-
+        gc = canvas.getGraphicsContext2D();
         gc.setTransform(new Affine());
         gc.setFill(Color.WHITE);
         gc.fillRect(0,0,canvas.getWidth(), canvas.getHeight());
@@ -92,7 +90,6 @@ public class DrawingMap {
         Iterator<TagWay> it = ways.iterator();
         
         gc.setLineWidth(1/Math.sqrt(transform.determinant()));
-        System.out.println("CANVAS HEIGHT: " + canvas.getHeight());
 
         while (it.hasNext()) {
 

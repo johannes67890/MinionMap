@@ -4,7 +4,12 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 public enum FileDistributer {
-    input("input.xml");
+    input("input.xml"),
+    // Views
+    main("view/main.fxml"),
+    start_screen("view/start.fxml");
+
+    
 
     private String filePath;
 
@@ -21,7 +26,6 @@ public enum FileDistributer {
             e.printStackTrace();
         }
     }
-
     public String getFilePath() {
         return filePath.toString();
     }
