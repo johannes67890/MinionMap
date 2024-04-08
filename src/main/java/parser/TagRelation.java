@@ -111,6 +111,7 @@ public class TagRelation extends Tag<Relation>{
                         switch (reader.getAttributeValue(null, "role")) {
                             case "outer":
                                 relation.addOuter(XMLReader.getWayById(ref));
+                                break;
                             case "inner":
                                 relation.addInner(XMLReader.getWayById(ref));
                                 break;

@@ -83,7 +83,6 @@ public class DrawingMap {
         gc.setTransform(transform);
         //GraphicsContext gc = canvas.getGraphicsContext2D();
         List<TagNode> nodes = XMLReader.getNodes().values().stream().toList();
-        HashMap<Long, TagNode> nodesMap = XMLReader.getNodes();
         List<TagWay> ways = XMLReader.getWays().values().stream().toList();
         TagBound bound = reader.getBound();
 
@@ -93,13 +92,12 @@ public class DrawingMap {
 
         while (it.hasNext()) {
 
-            ArrayList<Long> nodesRef =  it.next().getNodes();
+            ArrayList<TagNode> nodesRef =  it.next().getRefs();
 
             gc.beginPath();
-            gc.moveTo(nodesMap.get(nodesRef.get(0)).getLon(), nodesMap.get(nodesRef.get(0)).getLat());
-            for (Long ref : nodesRef){
-                
-                gc.lineTo(nodesMap.get(ref).getLat(), nodesMap.get(ref).getLat());
+            gc.moveTo(nodesRef.get(0).getLon(), nodesRef.get(0).getLat());
+            for (TagNode ref : nodesRef){
+                gc.lineTo(ref.getLat(), ref.getLat());
             }
 
             gc.stroke();
