@@ -22,6 +22,9 @@ public class TagWay extends Tag<Way>{
                 put(Way.REFS, builder.getWayBuilder().getRefNodes());
                 put(Way.TYPE, builder.getType());
                 put(Way.NAME, builder.getName());
+                // if(builder.getType().equals()){
+                //     put(Way.NAME, "No name");
+                // }
             }
         });
     }
@@ -53,16 +56,16 @@ public class TagWay extends Tag<Way>{
      * Get the refrerence nodes of the way.
      * @return Long[] of the reference nodes of the way.
      */
-    public ArrayList<Long> getNodes() {
-        return (ArrayList<Long>) this.get(Way.REFS);
+    public ArrayList<TagNode> getRefs() {
+        return (ArrayList<TagNode>) this.get(Way.REFS);
     }
         
     public boolean isEmpty() {
-        return getNodes().size() == 0;
+        return getRefs().size() == 0;
     }
 
     public int size() {
-        return getNodes().size();
+        return getRefs().size();
     }
 
     /**
@@ -74,9 +77,14 @@ public class TagWay extends Tag<Way>{
     public static class WayBuilder {
         private ArrayList<TagNode> refNodes = new ArrayList<TagNode>();
         private boolean isEmpty = true;
+        private int speedLimit;
 
         public boolean isEmpty() {
             return isEmpty;
+        }
+
+        public int getSpeedLimit() {
+            return speedLimit;
         }
 
         /**
@@ -90,6 +98,11 @@ public class TagWay extends Tag<Way>{
                 XMLReader.getNodeById(id).remove(id, node);
             }
             return node;
+        }
+
+        public void setSpeedLimit(int speedLimit) {
+            isEmpty = false;
+            this.speedLimit = speedLimit;
         }
 
         public void addNode(Long ref) {
