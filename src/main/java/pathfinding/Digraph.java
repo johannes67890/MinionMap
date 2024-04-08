@@ -2,6 +2,11 @@ package pathfinding;
 
 import java.util.NoSuchElementException;
 import java.util.Stack;
+import java.util.TreeMap;
+
+import parser.TagNode;
+
+import java.util.ArrayList;
 
 import pathfinding.Edge;
 
@@ -40,55 +45,24 @@ import pathfinding.Edge;
  *  @author Kevin Wayne
  */
 public class Digraph {
-
-    private final int V;
+    private int V;
     private int E;
-    private Bag<Edge>[] adj;
+    private TreeMap<TagNode, ArrayList<Edge>> adj;
 
     /**
-     * Initializes an empty edge-weighted graph with {@code V} vertices and 0 edges.
-     *
-     * @param  V the number of vertices
-     * @throws IllegalArgumentException if {@code V < 0}
+     * Initializes an empty edge-weighted graph with 0 edges.
      */
-    public Digraph(int V) {
-        if (V < 0) throw new IllegalArgumentException("Number of vertices must be non-negative");
-        this.V = V;
+    public Digraph() {
+        this.V = 0;
         this.E = 0;
-        adj = (Bag<Edge>[]) new Bag[V];
-        for (int v = 0; v < V; v++) {
-            adj[v] = new Bag<Edge>();
-        }
+        adj = new TreeMap<>(); 
     }
 
-
-
     /**
-     * Initializes a new edge-weighted graph that is a deep copy of {@code G}.
-     *
-     * @param G the edge-weighted graph to copy
-     */
-    public Digraph(Digraph G) {
-        this(G.V());
-        this.E = G.E();
-        for (int v = 0; v < G.V(); v++) {
-            // reverse so that adjacency list is in same order as original
-            Stack<Edge> reverse = new Stack<Edge>();
-            for (Edge e : G.adj[v]) {
-                reverse.push(e);
-            }
-            for (Edge e : reverse) {
-                adj[v].add(e);
-            }
-        }
-    }
-
-
-    /**
-     * Returns the number of vertices in this edge-weighted graph.
-     *
-     * @return the number of vertices in this edge-weighted graph
-     */
+    * Returns the number of vertices in this edge-weighted graph.
+    *
+    * @return the number of vertices in this edge-weighted graph
+    */
     public int V() {
         return V;
     }
@@ -100,13 +74,7 @@ public class Digraph {
      */
     public int E() {
         return E;
-    }
-
-    // throw an IllegalArgumentException unless {@code 0 <= v < V}
-    private void validateVertex(int v) {
-        if (v < 0 || v >= V)
-            throw new IllegalArgumentException("vertex " + v + " is not between 0 and " + (V-1));
-    }
+    }  
 
     /**
      * Adds the undirected edge {@code e} to this edge-weighted graph.
@@ -115,13 +83,25 @@ public class Digraph {
      * @throws IllegalArgumentException unless both endpoints are between {@code 0} and {@code V-1}
      */
     public void addEdge(Edge e) {
-        int v = e.either();
-        int w = e.other(v);
-        validateVertex(v);
-        validateVertex(w);
-        adj[v].add(e);
-        adj[w].add(e);
+        TagNode v = e.either();
+        TagNode w = e.other(v);
+
+        if(adj.containsKey(v)){
+            adj.get(v).add(e);
+        } else {
+            ArrayList<Edge> list = new ArrayList<>();
+            list.add(e);
+            adj.put(v, list);
+        }
+        if (adj.containsKey(w)) {
+            adj.get(w).add(e);
+        } else {
+            ArrayList<Edge> list = new ArrayList<>();
+            list.add(e);
+            adj.put(w, list);
+        }
         E++;
+        V = adj.size();
     }
 
     /**
@@ -131,9 +111,8 @@ public class Digraph {
      * @return the edges incident on vertex {@code v} as an Iterable
      * @throws IllegalArgumentException unless {@code 0 <= v < V}
      */
-    public Iterable<Edge> adj(int v) {
-        validateVertex(v);
-        return adj[v];
+    public Iterable<Edge> adj(TagNode v) {
+        return adj.get(v);
     }
 
     /**
@@ -143,9 +122,8 @@ public class Digraph {
      * @return the degree of vertex {@code v}
      * @throws IllegalArgumentException unless {@code 0 <= v < V}
      */
-    public int degree(int v) {
-        validateVertex(v);
-        return adj[v].size();
+    public int degree(TagNode v) {
+        return adj.get(v).size();
     }
 
     /**
@@ -156,21 +134,12 @@ public class Digraph {
      * @return all edges in this edge-weighted graph, as an iterable
      */
     public Iterable<Edge> edges() {
-        Bag<Edge> list = new Bag<Edge>();
-        for (int v = 0; v < V; v++) {
-            int selfLoops = 0;
-            for (Edge e : adj(v)) {
-                if (e.other(v) > v) {
-                    list.add(e);
-                }
-                // add only one copy of each self loop (self loops will be consecutive)
-                else if (e.other(v) == v) {
-                    if (selfLoops % 2 == 0) list.add(e);
-                    selfLoops++;
-                }
+        ArrayList<Edge> list = new ArrayList<>();
+        for (TagNode v : adj.keySet()) {
+            for (Edge e : adj.get(v)) {
+                list.add(e);
             }
         }
         return list;
     }
-
 }

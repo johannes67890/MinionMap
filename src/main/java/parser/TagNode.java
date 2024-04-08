@@ -12,7 +12,7 @@ enum Node {
  * {@link Node#ID}, {@link Node#LAT}, {@link Node#LON}
  * </p>
 */
-public class TagNode extends HashMap<Node,Number> {
+public class TagNode extends HashMap<Node,Number> implements Comparable<TagNode> {
 
     public TagNode(long id, BigDecimal lat, BigDecimal lon) {
         super(new HashMap<Node, Number>(){
@@ -64,5 +64,9 @@ public class TagNode extends HashMap<Node,Number> {
         return (double) 0.56 * this.get(Node.LON).doubleValue();
     }
 
+    @Override
+    public int compareTo(TagNode o) {
+        return this.getId().compareTo(o.getId());
+    }
 
 }

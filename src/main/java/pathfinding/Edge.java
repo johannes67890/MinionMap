@@ -1,5 +1,6 @@
 package pathfinding;
 
+import parser.TagNode;
 /**
  *  The {@code Edge} class represents a weighted edge in an
  *  {@link EdgeWeightedGraph}. Each edge consists of two integers
@@ -16,8 +17,8 @@ package pathfinding;
  */
 public class Edge implements Comparable<Edge> {
 
-    private final int v;
-    private final int w;
+    private final TagNode v;
+    private final TagNode w;
     private final double weight;
 
     /**
@@ -31,9 +32,7 @@ public class Edge implements Comparable<Edge> {
      *         is a negative integer
      * @throws IllegalArgumentException if {@code weight} is {@code NaN}
      */
-    public Edge(int v, int w, double weight) {
-        if (v < 0) throw new IllegalArgumentException("vertex index must be a non-negative integer");
-        if (w < 0) throw new IllegalArgumentException("vertex index must be a non-negative integer");
+    public Edge(TagNode v, TagNode w, double weight) {
         if (Double.isNaN(weight)) throw new IllegalArgumentException("Weight is NaN");
         this.v = v;
         this.w = w;
@@ -54,7 +53,7 @@ public class Edge implements Comparable<Edge> {
      *
      * @return either endpoint of this edge
      */
-    public int either() {
+    public TagNode either() {
         return v;
     }
 
@@ -66,7 +65,7 @@ public class Edge implements Comparable<Edge> {
      * @throws IllegalArgumentException if the vertex is not one of the
      *         endpoints of this edge
      */
-    public int other(int vertex) {
+    public TagNode other(TagNode vertex) {
         if      (vertex == v) return w;
         else if (vertex == w) return v;
         else throw new IllegalArgumentException("Illegal endpoint");
