@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 enum Way {
-    ID, REFS, NAME, TYPE, TAGKEYS, TAGVALUES
+    ID, REFS, NAME, TYPE, SPEEDLIMIT
 }
 
 /**
@@ -19,16 +19,14 @@ public class TagWay extends HashMap<Way, Object> implements Comparable<TagWay>{
 
     boolean isLine = false;
 
-    public TagWay(XMLReader.Builder builder) {
+    public TagWay(XMLBuilder builder) {
         super(new HashMap<Way, Object>(){
             {
                 put(Way.ID, builder.getId());
-                put(Way.REFS, builder.getWayBuilder().getRefNodes());
-                put(Way.TYPE, builder.getType());
                 put(Way.NAME, builder.getName());
-                put(Way.TAGKEYS, builder.getWayBuilder().getTagKeys());
-                put(Way.TAGVALUES, builder.getWayBuilder().getTagValues());
-                
+                put(Way.REFS, builder.getWayBuilder().getRefNodes());
+                put(Way.SPEEDLIMIT, builder.getWayBuilder().getSpeedLimit());
+                put(Way.TYPE, builder.getType());     
             }
         });
     }
@@ -36,15 +34,15 @@ public class TagWay extends HashMap<Way, Object> implements Comparable<TagWay>{
      * Get the id of the way.
      * @return The id of the way.
      */
-    @Override
-    public long getId(){
+
+     public long getId(){
         return Long.parseLong(this.get(Way.ID).toString());
     }
-    @Override
     public double getLat() {
         throw new UnsupportedOperationException("TagWay does not have a latitude value.");
     }
-    @Override
+
+
     public double getLon() {
         throw new UnsupportedOperationException("TagWay does not have a longitude value.");
     }
@@ -60,8 +58,8 @@ public class TagWay extends HashMap<Way, Object> implements Comparable<TagWay>{
      * Get the refrerence nodes of the way.
      * @return Long[] of the reference nodes of the way.
      */
-    public ArrayList<Long> getNodes() {
-        return (ArrayList<Long>) this.get(Way.REFS);
+    public ArrayList<TagNode> getNodes() {
+        return (ArrayList<TagNode>) this.get(Way.REFS);
     }
         
     public boolean isEmpty() {
@@ -104,9 +102,14 @@ public class TagWay extends HashMap<Way, Object> implements Comparable<TagWay>{
     public static class WayBuilder {
         private ArrayList<TagNode> refNodes = new ArrayList<TagNode>();
         private boolean isEmpty = true;
+        private int speedLimit;
 
         public boolean isEmpty() {
             return isEmpty;
+        }
+
+        public int getSpeedLimit() {
+            return speedLimit;
         }
 
         /**
@@ -120,6 +123,11 @@ public class TagWay extends HashMap<Way, Object> implements Comparable<TagWay>{
                 XMLReader.getNodeById(id).remove(id, node);
             }
             return node;
+        }
+
+        public void setSpeedLimit(int speedLimit) {
+            isEmpty = false;
+            this.speedLimit = speedLimit;
         }
 
         public void addNode(Long ref) {

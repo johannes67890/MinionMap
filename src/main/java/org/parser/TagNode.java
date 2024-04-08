@@ -2,6 +2,8 @@ package org.parser;
 import java.math.BigDecimal;
 import java.util.HashMap;
 
+import parser.XMLBuilder;
+
 enum Node {
     ID, LAT, LON;
 }
@@ -13,10 +15,10 @@ enum Node {
  * </p>
 */
 public class TagNode extends HashMap<Node,Number> {
-    public TagNode(XMLReader.Builder builder) {
+    public TagNode(XMLBuilder builder) {
         super(new HashMap<Node, Number>(){
             {
-                put(Node.ID, builder.getID());
+                put(Node.ID, builder.getId());
                 put(Node.LAT, builder.getLat());
                 put(Node.LON, builder.getLon());
             }

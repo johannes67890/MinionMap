@@ -36,11 +36,11 @@ public class TagNode extends Tag<Node> {
     }
     @Override
     public double getLat(){
-        return Double.parseDouble(this.get(Node.LAT).toString());
+        return -1.0 * Double.parseDouble(this.get(Node.LAT).toString());
     }
     @Override
     public double getLon(){
-        return Double.parseDouble(this.get(Node.LON).toString());
+        return 0.56 * Double.parseDouble(this.get(Node.LON).toString());
     }
  
 }

@@ -41,10 +41,12 @@ public class Controller implements Initializable, ControllerInterface{
         Pane p = new Pane(c);
         mainBorderPane.setCenter(p);
         mainView.setCanvas(c);
+        System.out.println("LOADING");
+        mainView.loadDrawingMap();
+
         c.widthProperty().bind(p.widthProperty());
         c.heightProperty().bind(p.heightProperty());
 
-        mainView.loadDrawingMap();
         panZoomInitialize();
     }
 
@@ -57,9 +59,11 @@ public class Controller implements Initializable, ControllerInterface{
         mainView.canvas.setOnScroll(event -> {
 
             if (System.currentTimeMillis() - timer > 500){
-                mainView.getDrawingMap().zoom(Math.pow(zoomMultiplier,event.getDeltaY()), event.getX(), event.getY());
                 timer = System.currentTimeMillis();
             }
+
+            mainView.getDrawingMap().zoom(Math.pow(zoomMultiplier,event.getDeltaY()), event.getX(), event.getY());
+
             
             
         });

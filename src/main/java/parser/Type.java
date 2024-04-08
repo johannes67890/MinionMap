@@ -1,5 +1,7 @@
 package parser;
 
+import java.sql.Array;
+
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
@@ -92,6 +94,19 @@ public enum Type {
     private final boolean isLine;
     private final double minWidth;
     private final double maxWidth;
+
+    Type(String key, String[] value, int hierarchy, Color color, double width) {
+        this.key = key;
+        this.value = value;
+        this.hierarchy = hierarchy;
+        this.color = color;
+        this.width = 0.2;
+        this.isLine = false;
+        this.minWidth = 0.5;
+        this.maxWidth = 50;
+        this.layer = 0;
+        this.polyLineColor = Color.BLACK;
+    }
 
     Type(String key, String[] value, int hierarchy, int layer, Color color, Color polyLineColor, double width, boolean isLine) {
         this.key = key;

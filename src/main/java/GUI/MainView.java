@@ -77,6 +77,7 @@ public class MainView {
         }
 
         if (selectedStage == StageSelect.MapView){
+            System.out.println("INITIALZING");
             drawView.initialize(canvas);
         }
     }
