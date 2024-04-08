@@ -5,7 +5,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 enum Address{
-    ID, LAT, LON, CITY, CONTRY, STREET, HOUSENUMBER, POSTCODE, MUNICIPALITY;
+    ID, LAT, LON, CITY, COUNTRY, STREET, HOUSENUMBER, POSTCODE, MUNICIPALITY;
 }
 
 /**
@@ -28,7 +28,7 @@ public class TagAddress extends Tag<Address> {
                 put(Address.POSTCODE, builder.getAddressBuilder().postcode);
                 put(Address.MUNICIPALITY, builder.getAddressBuilder().municipality);
                 put(Address.CITY, builder.getAddressBuilder().city);
-                put(Address.CONTRY, builder.getAddressBuilder().contry);
+                put(Address.COUNTRY, builder.getAddressBuilder().country);
             }
         });
     }
@@ -67,7 +67,7 @@ public class TagAddress extends Tag<Address> {
     }
 
     public String getContry() {
-        return this.get(Address.CONTRY).toString();
+        return this.get(Address.COUNTRY).toString();
     }
 
     /**
@@ -77,7 +77,7 @@ public class TagAddress extends Tag<Address> {
      * </p>
      */
     public static class AddressBuilder {
-        public String street, house, postcode, contry, city, municipality;
+        public String street, house, postcode, country, city, municipality;
         private boolean isEmpty = true;
 
         public boolean isEmpty() {
@@ -109,8 +109,8 @@ public class TagAddress extends Tag<Address> {
             return this;
         }
 
-        public AddressBuilder contry(String _contry) {
-            contry = _contry;
+        public AddressBuilder country(String _country) {
+            country = _country;
             return this;
         }
 
