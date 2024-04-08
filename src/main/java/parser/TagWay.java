@@ -22,7 +22,7 @@ public class TagWay extends HashMap<Way, Object> implements Comparable<TagWay>{
     public TagWay(XMLReader.Builder builder) {
         super(new HashMap<Way, Object>(){
             {
-                put(Way.ID, builder.getID());
+                put(Way.ID, builder.getId());
                 put(Way.REFS, builder.getWayBuilder().getRefNodes());
                 put(Way.TYPE, builder.getType());
                 put(Way.NAME, builder.getName());
@@ -36,9 +36,19 @@ public class TagWay extends HashMap<Way, Object> implements Comparable<TagWay>{
      * Get the id of the way.
      * @return The id of the way.
      */
-    public Long getId() {
-        return (Long) this.get(Way.ID);
+    @Override
+    public long getId(){
+        return Long.parseLong(this.get(Way.ID).toString());
     }
+    @Override
+    public double getLat() {
+        throw new UnsupportedOperationException("TagWay does not have a latitude value.");
+    }
+    @Override
+    public double getLon() {
+        throw new UnsupportedOperationException("TagWay does not have a longitude value.");
+    }
+
     /**
      * Get the type of the way.
      * @return The {@link Type} of the way.
@@ -85,5 +95,42 @@ public class TagWay extends HashMap<Way, Object> implements Comparable<TagWay>{
     
 
 
+    /**
+    * Builder for a single way.
+    * <p>
+    * Constructs a instance of the builder, that later can be used to construct a {@link TagWay}.
+    * </p>
+    */
+    public static class WayBuilder {
+        private ArrayList<TagNode> refNodes = new ArrayList<TagNode>();
+        private boolean isEmpty = true;
 
+        public boolean isEmpty() {
+            return isEmpty;
+        }
+
+        /**
+         * Returns and removes a node from XMLReader node List.
+         * @param id - The id of the node to migrate.
+         * @return The node from the id.
+         */
+        public TagNode migrateNode(Long id){
+            TagNode node = XMLReader.getNodeById(id);
+            if(node != null){
+                XMLReader.getNodeById(id).remove(id, node);
+            }
+            return node;
+        }
+
+        public void addNode(Long ref) {
+            if (isEmpty) {
+                isEmpty = false;
+            }
+            refNodes.add(migrateNode(ref));
+        }
+
+        public ArrayList<TagNode> getRefNodes() {
+            return refNodes;
+        }
+    }
 }

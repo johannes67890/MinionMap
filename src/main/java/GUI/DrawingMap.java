@@ -40,17 +40,16 @@ public class DrawingMap {
 
         TagBound bound = reader.getBound();
 
-        double minlon = bound.getMinLon().doubleValue();
-        double maxlat = bound.getMaxLat().doubleValue();
-        double maxlon = bound.getMaxLon().doubleValue();
-        double minlat = bound.getMinLat().doubleValue();
+        double minlon = bound.getMinLon();
+        double maxlat = bound.getMaxLat();
+        double maxlon = bound.getMaxLon();
+        double minlat = bound.getMinLat();
         double temp = Screen.getPrimary().getVisualBounds().getWidth() * 0.04;
         zoomScalerToMeter = haversineDist(new Point2D(0, 0), new Point2D(temp,0));
 
         //pan(-0.56*minlon, maxlat);
         pan(-0.56*minlon, maxlat);
         zoom(canvas.getWidth() / (maxlon - minlon), 0, 0);
-
         DrawMap(canvas.getGraphicsContext2D(), canvas);
     }
 
@@ -87,6 +86,7 @@ public class DrawingMap {
         long preTime = System.currentTimeMillis();
 
 
+        gc = canvas.getGraphicsContext2D();
         gc.setTransform(new Affine());
         gc.setFill(Color.WHITE);
         gc.fillRect(0,0,canvas.getWidth(), canvas.getHeight());
@@ -94,11 +94,11 @@ public class DrawingMap {
 
         gc.setTransform(transform);
         //GraphicsContext gc = canvas.getGraphicsContext2D();
-        List<TagNode> nodes = reader.getNodes();
-        HashMap<Long, TagNode> nodesMap = reader.getNodesMap();
-        ArrayList<TagWay> ways = reader.getWays();
         ArrayList<TagWay> waysToDrawWithType = new ArrayList<>();
         ArrayList<TagWay> waysToDrawWithoutType = new ArrayList<>();
+        List<TagNode> nodes = XMLReader.getNodes().values().stream().toList();
+        HashMap<Long, TagNode> nodesMap = XMLReader.getNodes();
+        List<TagWay> ways = XMLReader.getWays().values().stream().toList();
 
         for (TagWay way : ways){
             if (way.getType() != null){

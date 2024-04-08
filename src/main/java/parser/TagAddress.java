@@ -5,7 +5,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 enum Address{
-    ID, LAT, LON, CITY, STREET, HOUSENUMBER, POSTCODE, MUNICIPALITY;
+    ID, LAT, LON, CITY, CONTRY, STREET, HOUSENUMBER, POSTCODE, MUNICIPALITY;
 }
 
 /**
@@ -15,57 +15,116 @@ enum Address{
  * {@link Address#ID}, {@link Address#LAT}, {@link Address#LON}, {@link Address#STREET}, {@link Address#HOUSENUMBER}, {@link Address#POSTCODE}, {@link Address#MUNICIPALITY}
  * </p>
 */
-public class TagAddress extends HashMap<Address, String> {
-
-    TagAddress(XMLReader.Builder builder){
-        super(new HashMap<Address, String>(){
+public class TagAddress extends Tag<Address> {
+    
+    TagAddress(XMLBuilder builder){
+        super(new HashMap<Address, Object>(){
             {
-                put(Address.ID, builder.getID().toString());
-                put(Address.LAT, builder.getLat().toString());
-                put(Address.LON, builder.getLon().toString());
+                put(Address.ID, builder.getId().toString());
+                put(Address.LAT, Double.toString(builder.getLat()));
+                put(Address.LON, Double.toString(builder.getLon()));
                 put(Address.STREET, builder.getAddressBuilder().street);
                 put(Address.HOUSENUMBER, builder.getAddressBuilder().house);
                 put(Address.POSTCODE, builder.getAddressBuilder().postcode);
                 put(Address.MUNICIPALITY, builder.getAddressBuilder().municipality);
                 put(Address.CITY, builder.getAddressBuilder().city);
+                put(Address.CONTRY, builder.getAddressBuilder().contry);
             }
         });
     }
 
+    @Override
+    public long getId() {
+        return Long.parseLong(this.get(Address.ID).toString());
+    }
+    @Override
+    public double getLat() {
+        return Double.parseDouble(this.get(Address.LAT).toString());
+    }
+    @Override
+    public double getLon() {
+        return Double.parseDouble(this.get(Address.LON).toString());
+    }
+
     public String getStreet() {
-        return this.get(Address.STREET);
+        return this.get(Address.STREET).toString();
     }
 
     public String getHouseNumber() {
-        return this.get(Address.HOUSENUMBER);
+        return this.get(Address.HOUSENUMBER).toString();
     }
 
     public String getPostcode() {
-        return this.get(Address.POSTCODE);
+        return this.get(Address.POSTCODE).toString();
     }
 
     public String getMunicipality() {
-        return this.get(Address.MUNICIPALITY);
+        return this.get(Address.MUNICIPALITY).toString();
     }
 
     public String getCity() {
-        return this.get(Address.CITY);
+        return this.get(Address.CITY).toString();
     }
 
-    public String getID() {
-        return this.get(Address.ID);
+    public String getContry() {
+        return this.get(Address.CONTRY).toString();
     }
 
-    public String getLat() {
-        return this.get(Address.LAT);
-    }
+    /**
+     * Builder for a single address.
+     * <p>
+     * Constructs a instance of the builder, that later can be used to construct a {@link TagAddress}.
+     * </p>
+     */
+    public static class AddressBuilder {
+        public String street, house, postcode, contry, city, municipality;
+        private boolean isEmpty = true;
 
-    public String getLon() {
-        return this.get(Address.LON);
-    }
+        public boolean isEmpty() {
+            return isEmpty;
+        }
 
+        public AddressBuilder street(String _street) {
+            street = _street;
+            isEmpty = false;
+            return this;
+        }
 
-    
+        
+        public AddressBuilder house(String _house) {
+            house = _house;
+            return this;
+        }
+
+        public AddressBuilder floor(String _floor) {
+            return this;
+        }
+
+        public AddressBuilder side(String _side) {
+            return this;
+        }
+
+        public AddressBuilder postcode(String _postcode) {
+            postcode = _postcode;
+            return this;
+        }
+
+        public AddressBuilder contry(String _contry) {
+            contry = _contry;
+            return this;
+        }
+
+        public AddressBuilder city(String _city) {
+            city = _city;
+            return this;
+        }
+
+        public AddressBuilder municipality(String _municipality) {
+            municipality = _municipality;
+            return this;
+            }
+        }
+
     public static class SearchAddress {
         public String street, house, floor, side, postcode, city;
 
