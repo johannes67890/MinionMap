@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 enum Way {
-    ID, REFS, NAME, TYPE
+    ID, REFS, NAME, TYPE, SPEEDLIMIT
 }
 
 /**
@@ -19,12 +19,12 @@ public class TagWay extends Tag<Way>{
         super(new HashMap<Way, Object>(){
             {
                 put(Way.ID, builder.getId());
-                put(Way.REFS, builder.getWayBuilder().getRefNodes());
-                put(Way.TYPE, builder.getType());
                 put(Way.NAME, builder.getName());
-                // if(builder.getType().equals()){
-                //     put(Way.NAME, "No name");
-                // }
+                put(Way.REFS, builder.getWayBuilder().getRefNodes());
+                if(!builder.getType().equals(Type.BUILDING)){
+                put(Way.SPEEDLIMIT, builder.getWayBuilder().getSpeedLimit());
+                }
+                put(Way.TYPE, builder.getType());
             }
         });
     }
