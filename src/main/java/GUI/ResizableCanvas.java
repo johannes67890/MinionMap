@@ -1,4 +1,4 @@
-package GUI;
+package gui;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;

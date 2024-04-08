@@ -1,7 +1,6 @@
-package GUI;
+package gui;
 import java.io.File;
-
-import GUI.Search;
+import java.io.IOException;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -15,17 +14,9 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.*;
-import javafx.scene.layout.*;
-
-import java.io.File;
-import java.io.IOException;
-
-import javax.swing.event.HyperlinkEvent;
-
-import javafx.event.*;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -44,7 +35,6 @@ import javafx.stage.Stage;
 import parser.XMLReader;
 import util.FileDistributer;
 import util.ZipHandler;
-
 public class MainView {
 
     enum StageSelect {

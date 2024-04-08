@@ -2,8 +2,6 @@
 
 
 
-import GUI.Controller;
-import GUI.MainView;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
@@ -13,7 +11,8 @@ import javafx.stage.Stage;
 
 import java.io.File;
 
-import GUI.MainView;
+import gui.Controller;
+import gui.MainView;
 
 
 public class Main extends Application {
