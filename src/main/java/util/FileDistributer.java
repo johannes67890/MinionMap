@@ -5,12 +5,6 @@ import java.net.URL;
 
 public enum FileDistributer {
     input("input.xml"),
-    output("output.xml"),
-
-    // Test files
-    test_input("test_input.xml"),
-    test_output("test_output.xml"),
-
     // Views
     main("view/main.fxml"),
     start_screen("view/start.fxml");

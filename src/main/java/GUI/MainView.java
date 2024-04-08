@@ -1,14 +1,28 @@
 package gui;
 import java.io.File;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import gui.Search;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.*;
+
 import java.io.IOException;
 import java.net.URL;
+
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -141,7 +155,7 @@ public class MainView {
 
     public void search(TextField searchBar){
         // TODO: Unfinished
-        Search search = new Search(xmlReader.getAddresses());
+        //Search search = new Search(XMLReader.getAddresses());
         String text = searchBar.getText();
         //search.searchForAdress(text);
     }
