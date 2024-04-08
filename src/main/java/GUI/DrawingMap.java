@@ -1,12 +1,10 @@
 package GUI;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.effect.BlendMode;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 import javafx.stage.Screen;
@@ -15,8 +13,7 @@ import parser.TagNode;
 import parser.TagWay;
 import parser.XMLReader;
 import util.MathUtil;
-import util.MaxPQ;
-import util.MinPQ;
+import util.MinPQ;;
 
 
 public class DrawingMap {
