@@ -1,5 +1,7 @@
 package parser;
 
+import java.math.BigDecimal;
+
 import javax.xml.stream.XMLStreamReader;
 
 import parser.TagAddress.AddressBuilder;
@@ -150,7 +152,7 @@ public class XMLBuilder {
                     addressBuilder.city(v);
                         break;
                     case "addr:country":
-                    addressBuilder.contry(v);
+                    addressBuilder.country(v);
                         break;
                     case "addr:street":
                     addressBuilder.street(v);
