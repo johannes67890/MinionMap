@@ -5,41 +5,41 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import Address.Address;
-import Address.HelloFX;
+import gui.Search;
+import parser.TagAddress.SearchAddress;
 
 public class AddressSeachTest {
 
 
-    HelloFX helloFX;
-    Address a;
+    Search addressSearch;
+    SearchAddress a;
 
 
     @BeforeEach
     void setUp() {
-        helloFX = new HelloFX();
+        // addressSearch = new Search();
     }
 
     @Test
     void CapitalFirstLetter() {
         
-        String address = "stenvænget";
-        a = Address.parse(address);
-        Boolean b = a.equals(address);
+        String expectedAddress = "stenvænget";
+        a = new SearchAddress(expectedAddress);
+        
         assertEquals(a.street, "Stenvænget");
-
+        
     }
 
     @Test
     void FindAddress(){
 
-        helloFX.readFiles();
-        String address = "stenvænget 3400 hillerød";
-        a = Address.parse(address);
+        addressSearch.readFiles();
+        String expectedAddress = "stenvænget 3400 hillerød";
+        a = new SearchAddress(expectedAddress);
 
-        assertTrue(helloFX.getCities().contains(a.city));
-        assertTrue(helloFX.getStreets().contains(a.street));
-        assertTrue(helloFX.getPostCodes().contains(a.postcode));
+        assertTrue(addressSearch.getCities().contains(a.city));
+        assertTrue(addressSearch.getStreets().contains(a.street));
+        assertTrue(addressSearch.getPostCodes().contains(a.postcode));
 
     }
 

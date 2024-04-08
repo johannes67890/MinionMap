@@ -1,6 +1,5 @@
-package org.parser;
+package parser;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 
 public class FileParser {
@@ -21,14 +20,14 @@ public class FileParser {
      * @return A Tag object containing the center point, based on the {@link Tags.Node} enum. ID is not used.
      */
     public TagNode centerPoint(TagBound tag) {
-        BigDecimal x1 = tag.getMinLat();
-        BigDecimal x2 = tag.getMaxLat();
-        BigDecimal y1 = tag.getMinLon(); 
-        BigDecimal y2 = tag.getMaxLon();
+        double x1 = tag.getMinLat();
+        double x2 = tag.getMaxLat();
+        double y1 = tag.getMinLon(); 
+        double y2 = tag.getMaxLon();
     
         // Calculate the center of the area.
-        BigDecimal centerX = x1.add(x2.subtract(x1).divide(new BigDecimal(2)));
-        BigDecimal centerY = y1.add(y2.subtract(y1).divide(new BigDecimal(2)));
+        double centerX = x1 + (x2 - x1) / 2;
+        double centerY = y1 + (y2 - y1) / 2;
     
         TagNode center = new TagNode(centerX, centerY);
         return center;

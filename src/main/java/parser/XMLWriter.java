@@ -1,4 +1,4 @@
-package org.parser;
+package parser;
 import javax.xml.stream.*;
 
 import java.io.*;
