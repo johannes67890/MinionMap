@@ -70,17 +70,17 @@ class XMLWriter {
         }
     }
 
-    public static void writeToBinary(TagNode obj, boolean append){
+    public static void writeToBinary(TagNode node, boolean append){
         ObjectOutputStream out = null;
         
         for (TagBound bound : chunkFiles.getChunkFiles().keySet()) {
             String path = chunkFiles.getChunkFilePath(bound);
-                if (Tag.isInBounds(obj, bound)){
+                if (node.isInBounds(bound)){
                     File file = new File(path);
                     try{
                         if (!file.exists () || !append) out = new ObjectOutputStream(new FileOutputStream (path));
                         else out = new AppendableObjectOutputStream (new FileOutputStream (path, append));
-                        out.writeObject(obj);
+                        out.writeObject(node);
                         out.flush();
                     }catch (Exception e){
                         e.printStackTrace ();

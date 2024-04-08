@@ -26,9 +26,9 @@ public class FileParser {
         double y2 = tag.getMaxLon();
     
         // Calculate the center of the area.
-        double centerX = x1 + (x2 - x1) / 2;
-        double centerY = y1 + (y2 - y1) / 2;
-    
+        double centerX = Math.round((x1 + (x2 - x1) / 2) * 10000000d) / 10000000d;
+        double centerY =  Math.round((y1 + (y2 - y1) / 2) * 10000000d) / 10000000d;
+        
         TagNode center = new TagNode(centerX, centerY);
         return center;
     }
@@ -136,31 +136,31 @@ public class FileParser {
 
             // Q1/North-West
             quadrants.put(Quadrant.Q1, new TagBound(
-                bound.getMaxLat(),
                 compas.getWest().getLat(),
-                center.getLon(),
-                compas.getWest().getLon()
+                bound.getMaxLat(),
+                compas.getWest().getLon(),
+                center.getLon()
             ));
             // Q2/North-East
             quadrants.put(Quadrant.Q2, new TagBound(
-                compas.getNorth().getLat(),
                 center.getLat(),
-                bound.getMaxLon(),
-                center.getLon()
+                compas.getNorth().getLat(),
+                center.getLon(),
+                bound.getMaxLon()
             ));
             // Q4/South-West
             quadrants.put(Quadrant.Q3, new TagBound(
-                center.getLat(),
                 compas.getSouth().getLat(),
-                center.getLon(),
-                bound.getMinLon()
+                center.getLat(),
+                bound.getMinLon(),
+                center.getLon()
             ));
             // Q3/South-East
             quadrants.put(Quadrant.Q4, new TagBound(
-                center.getLat(),
                 compas.getSouth().getLat(),
-                bound.getMaxLon(),
-                center.getLon()
+                center.getLat(),
+                center.getLon(),
+                bound.getMaxLon()
             ));
             return quadrants;
         }

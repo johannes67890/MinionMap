@@ -20,6 +20,15 @@ public class TagNode extends Tag<Node> {
         });
     }
 
+    public TagNode(double lat, double lon) {
+        super(new HashMap<Node, Object>(){
+            {
+                put(Node.LAT, lat);
+                put(Node.LON, lon);
+            }
+        });
+    }
+
     public TagNode(XMLBuilder builder) {
         super(new HashMap<Node, Object>(){
             {
