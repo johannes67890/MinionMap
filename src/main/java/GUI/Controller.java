@@ -12,8 +12,6 @@ public class Controller {
 
         //System.out.println("CONTROLLER MADE");
 
-
-
         mainView.canvas.setOnMousePressed(e -> {
             lastX = e.getX();
             lastY = e.getY();
