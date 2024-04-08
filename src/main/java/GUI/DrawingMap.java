@@ -1,19 +1,13 @@
-package GUI;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-
-import org.parser.TagBound;
-import org.parser.TagNode;
-import org.parser.TagWay;
-import org.parser.XMLReader;
+package gui;
+import java.util.*;
 
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 import javafx.stage.Screen;
+import parser.*;
+
 
 public class DrawingMap {
 
@@ -26,13 +20,9 @@ public class DrawingMap {
     private final double zoomLevelMin = 40, zoomLevelMax = 300000; // These variables changes how much you can zoom in and out. Min is far out and max is closest in
     private double zoomScalerToMeter; // This is the world meters of how long the scaler in the bottom right corner is. Divide it with the zoomLevel
 
-
     public DrawingMap(MainView mainView, XMLReader reader){
-
         this.mainView = mainView;
-        this.reader = reader;
-
-        
+        this.reader = reader;        
     }
 
     public void initialize(ResizableCanvas canvas){
@@ -41,17 +31,16 @@ public class DrawingMap {
 
         TagBound bound = reader.getBound();
 
-        double minlon = bound.getMinLon().doubleValue();
-        double maxlat = bound.getMaxLat().doubleValue();
-        double maxlon = bound.getMaxLon().doubleValue();
-        double minlat = bound.getMinLat().doubleValue();
+        double minlon = bound.getMinLon();
+        double maxlat = bound.getMaxLat();
+        double maxlon = bound.getMaxLon();
+        double minlat = bound.getMinLat();
         double temp = Screen.getPrimary().getVisualBounds().getWidth() * 0.04;
         zoomScalerToMeter = haversineDist(new Point2D(0, 0), new Point2D(temp,0));
 
         //pan(-0.56*minlon, maxlat);
         pan(-0.56*minlon, maxlat);
         zoom(canvas.getWidth() / (maxlon - minlon), 0, 0);
-
         DrawMap(canvas.getGraphicsContext2D(), canvas);
     }
 
@@ -85,8 +74,7 @@ public class DrawingMap {
     }
 
     public void DrawMap(GraphicsContext gc, ResizableCanvas canvas){
-
-
+        gc = canvas.getGraphicsContext2D();
         gc.setTransform(new Affine());
         gc.setFill(Color.WHITE);
         gc.fillRect(0,0,canvas.getWidth(), canvas.getHeight());
@@ -94,27 +82,24 @@ public class DrawingMap {
 
         gc.setTransform(transform);
         //GraphicsContext gc = canvas.getGraphicsContext2D();
-        List<TagNode> nodes = reader.getNodes();
-        HashMap<Long, TagNode> nodesMap = reader.getNodesMap();
-        ArrayList<TagWay> ways = reader.getWays();
+        List<TagNode> nodes = XMLReader.getNodes().values().stream().toList();
+        HashMap<Long, TagNode> nodesMap = XMLReader.getNodes();
+        List<TagWay> ways = XMLReader.getWays().values().stream().toList();
         TagBound bound = reader.getBound();
 
         Iterator<TagWay> it = ways.iterator();
         
         gc.setLineWidth(1/Math.sqrt(transform.determinant()));
-        System.out.println("CANVAS HEIGHT: " + canvas.getHeight());
 
         while (it.hasNext()) {
 
             ArrayList<Long> nodesRef =  it.next().getNodes();
 
             gc.beginPath();
-            gc.moveTo(nodesMap.get(nodesRef.get(0)).getLonDouble(), nodesMap.get(nodesRef.get(0)).getLatDouble());
-            //gc.moveTo(nodesMap.get(nodesRef.get(0)).getLatDouble(), nodesMap.get(nodesRef.get(0)).getLonDouble());
+            gc.moveTo(nodesMap.get(nodesRef.get(0)).getLon(), nodesMap.get(nodesRef.get(0)).getLat());
             for (Long ref : nodesRef){
                 
-                gc.lineTo(nodesMap.get(ref).getLonDouble(), nodesMap.get(ref).getLatDouble());
-                //gc.lineTo(nodesMap.get(ref).getLatDouble(), nodesMap.get(ref).getLonDouble());
+                gc.lineTo(nodesMap.get(ref).getLat(), nodesMap.get(ref).getLat());
             }
 
             gc.stroke();

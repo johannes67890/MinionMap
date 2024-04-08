@@ -1,4 +1,4 @@
-package org.parser;
+package parser;
 
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -56,6 +56,11 @@ public enum Type {
     OTHER_ROAD("highway",new String[]{"residential", "unclassified", "track", "footway", "cycleway", "path", 
     "service", "motorway_link", "steps", "living_street", "mini_roundabout", "pedestrian"}, 4, Color.BLACK, 0),
 
+    // Relations (Hierarchy: 3)
+    MULTIPOLYGON("type", new String[]{"multipolygon"}, 3, Color.BLACK, 0),
+    RESTRICTION("type", new String[]{"restriction"}, 3, Color.BLACK, 0),
+    ROUTE("type", new String[]{"route"}, 3, Color.BLACK, 0),
+    BOUNDARY("type", new String[]{"boundary"}, 3, Color.BLACK, 0),
     // Unknown (Hierarchy: 0)
     UNKNOWN("", new String[]{""}, 0, Color.BLACK, 0);
 
@@ -115,4 +120,5 @@ public enum Type {
     public Paint getColor() {
         return color;
     }
+    
 }
