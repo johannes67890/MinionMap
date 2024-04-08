@@ -24,10 +24,8 @@ public class TagWay extends Tag<Way>{
                 put(Way.ID, builder.getId());
                 put(Way.NAME, builder.getName());
                 put(Way.REFS, builder.getWayBuilder().getRefNodes());
-                if(!builder.getType().equals(Type.BUILDING)){
                 put(Way.SPEEDLIMIT, builder.getWayBuilder().getSpeedLimit());
-                }
-                put(Way.TYPE, builder.getType());
+                put(Way.TYPE, builder.getType());     
             }
         });
     }

@@ -129,7 +129,6 @@ public class XMLBuilder {
                     for (String currVal : currType.getValue()) {
                         if (v.equals(currVal) || currVal.equals("")) {
                             switch (currType) { 
-
                                 // Way types
                                 case PRIMARY_ROAD:
                                 case SECONDARY_ROAD:
@@ -144,9 +143,10 @@ public class XMLBuilder {
                                     this.TypeValue = v;
                                     break;
                                 default:
+                                    this.type = Type.UNKNOWN;
                                 break;
                             }
-                            this.type = currType;
+                                this.type = currType;    
                         }
                     }
                 }

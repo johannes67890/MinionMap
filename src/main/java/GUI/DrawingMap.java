@@ -95,8 +95,8 @@ public class DrawingMap {
             ArrayList<TagNode> nodesRef =  it.next().getRefs();
 
             gc.beginPath();
+            gc.moveTo(nodesRef.get(0).getLon(), nodesRef.get(0).getLat());
             for (TagNode ref : nodesRef){
-                gc.moveTo(ref.getLon(), ref.getLat());
                 gc.lineTo(ref.getLat(), ref.getLat());
             }
 
