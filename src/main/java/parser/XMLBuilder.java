@@ -1,5 +1,7 @@
 package parser;
 
+import java.math.BigDecimal;
+
 import javax.xml.stream.XMLStreamReader;
 
 import parser.TagAddress.AddressBuilder;
