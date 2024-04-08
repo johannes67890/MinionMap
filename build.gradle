@@ -3,13 +3,16 @@ plugins {
   id 'org.openjfx.javafxplugin' version '0.1.0'
 }
 
+
+
 repositories {
     mavenCentral()
 }
 
 javafx {
     version = "21"
-    modules = [ 'javafx.controls' ]
+    modules = [ 'javafx.controls', 'javafx.fxml' ]
+
 }
 
 test {
@@ -21,7 +24,7 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 }
 
-mainClassName = "Address.HelloFX"
+mainClassName = "Main"
 
 
 

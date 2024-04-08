@@ -1,4 +1,5 @@
-package org.parser;
+package parser;
+
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
@@ -22,8 +23,8 @@ import javafx.scene.paint.Paint;
 public enum Type {
     // Natural, Landuse and main infrastructure (Hierarchy 9)
     COASTLINE("natural", new String[]{"coastline"}, 9, Color.BLACK, 0),
-    MOTORWAY("highway", new String[]{"motorway", "motorway_link"}, 9, Color.BLACK, 0),
-    PRIMARY_ROAD("highway", new String[]{"primary", "service", "track"}, 9, Color.BLACK, 0),
+    MOTORWAY("highway", new String[]{"motorway"}, 9, Color.BLACK, 0),
+    PRIMARY_ROAD("highway", new String[]{"primary"}, 9, Color.BLACK, 0),
     RESIDENTIAL("landuse", new String[]{"residential", "industrial"}, 9, Color.BLACK, 0),
     
     // Landuse (Hierarchy: 8)
@@ -43,7 +44,7 @@ public enum Type {
 
     // Man made objects (Hierarchy: 6)
     BRIDGE("man_made", new String[]{"bridge"},6, Color.BLACK, 0),
-    TERTIARY_ROAD("highway",new String[]{"tertiary", "tertiary_link"},6, Color.BLACK, 0),
+    TERTIARY_ROAD("highway",new String[]{"tertiary", "tertiary_link", "trunk", "trunk_link"},6, Color.BLACK, 0),
     PIER("man_made", new String[]{"pier"},6, Color.BLACK, 0),
 
     // Natural (Hierarchy: 5)
@@ -57,6 +58,11 @@ public enum Type {
     OTHER_ROAD("highway",new String[]{"unclassified", "path", 
     "motorway_link", "mini_roundabout", "pedestrian"}, 4, Color.BLACK, 0),
 
+    // Relations (Hierarchy: 3)
+    MULTIPOLYGON("type", new String[]{"multipolygon"}, 3, Color.BLACK, 0),
+    RESTRICTION("type", new String[]{"restriction"}, 3, Color.BLACK, 0),
+    ROUTE("type", new String[]{"route"}, 3, Color.BLACK, 0),
+    BOUNDARY("type", new String[]{"boundary"}, 3, Color.BLACK, 0),
     // Unknown (Hierarchy: 0)
     UNKNOWN("", new String[]{""}, 0, Color.BLACK, 0);
 
@@ -116,4 +122,5 @@ public enum Type {
     public Paint getColor() {
         return color;
     }
+    
 }

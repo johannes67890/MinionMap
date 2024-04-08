@@ -1,6 +1,5 @@
-package org.parser;
+package parser;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 
 public class FileParser {
@@ -21,15 +20,15 @@ public class FileParser {
      * @return A Tag object containing the center point, based on the {@link Tags.Node} enum. ID is not used.
      */
     public TagNode centerPoint(TagBound tag) {
-        BigDecimal x1 = tag.getMinLat();
-        BigDecimal x2 = tag.getMaxLat();
-        BigDecimal y1 = tag.getMinLon(); 
-        BigDecimal y2 = tag.getMaxLon();
+        double x1 = tag.getMinLat();
+        double x2 = tag.getMaxLat();
+        double y1 = tag.getMinLon(); 
+        double y2 = tag.getMaxLon();
     
         // Calculate the center of the area.
-        BigDecimal centerX = x1.add(x2.subtract(x1).divide(new BigDecimal(2)));
-        BigDecimal centerY = y1.add(y2.subtract(y1).divide(new BigDecimal(2)));
-    
+        double centerX = Math.round((x1 + (x2 - x1) / 2) * 10000000d) / 10000000d;
+        double centerY =  Math.round((y1 + (y2 - y1) / 2) * 10000000d) / 10000000d;
+        
         TagNode center = new TagNode(centerX, centerY);
         return center;
     }
@@ -137,31 +136,31 @@ public class FileParser {
 
             // Q1/North-West
             quadrants.put(Quadrant.Q1, new TagBound(
-                bound.getMaxLat(),
                 compas.getWest().getLat(),
-                center.getLon(),
-                compas.getWest().getLon()
+                bound.getMaxLat(),
+                compas.getWest().getLon(),
+                center.getLon()
             ));
             // Q2/North-East
             quadrants.put(Quadrant.Q2, new TagBound(
-                compas.getNorth().getLat(),
                 center.getLat(),
-                bound.getMaxLon(),
-                center.getLon()
+                compas.getNorth().getLat(),
+                center.getLon(),
+                bound.getMaxLon()
             ));
             // Q4/South-West
             quadrants.put(Quadrant.Q3, new TagBound(
-                center.getLat(),
                 compas.getSouth().getLat(),
-                center.getLon(),
-                bound.getMinLon()
+                center.getLat(),
+                bound.getMinLon(),
+                center.getLon()
             ));
             // Q3/South-East
             quadrants.put(Quadrant.Q4, new TagBound(
-                center.getLat(),
                 compas.getSouth().getLat(),
-                bound.getMaxLon(),
-                center.getLon()
+                center.getLat(),
+                center.getLon(),
+                bound.getMaxLon()
             ));
             return quadrants;
         }
