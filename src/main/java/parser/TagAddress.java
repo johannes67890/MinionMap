@@ -66,7 +66,7 @@ public class TagAddress extends Tag<Address> {
         return this.get(Address.CITY).toString();
     }
 
-    public String getContry() {
+    public String getCountry() {
         return this.get(Address.COUNTRY).toString();
     }
 
