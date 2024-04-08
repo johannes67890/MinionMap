@@ -31,7 +31,7 @@ public class DrawingMap {
 
         TagBound bound = reader.getBound();
 
-        double minlon = bound.getMaxLon();
+        double minlon = bound.getMinLon();
         double maxlat = bound.getMaxLat();
         double maxlon = bound.getMaxLon();
         double minlat = bound.getMinLat();
