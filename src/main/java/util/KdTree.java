@@ -1,9 +1,13 @@
 package util;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
 import edu.princeton.cs.algs4.Stack;
 import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdOut;
+import parser.TagNode;
 
 /*
  * Copyright (C) 2016 Michael <GrubenM@GMail.com>
@@ -42,6 +46,7 @@ import edu.princeton.cs.algs4.StdOut;
 public class KdTree {
     private Node root;
     private int size;
+    private HashMap<Point2D, TagNode> pointToNode;
     
     /**
      * Construct an empty set of points.
@@ -115,6 +120,15 @@ public class KdTree {
         
         // new double[] {x_min, y_min, x_max, y_max)
         root = insert(root, p, true, new double[] {0, 0, 1, 1});
+    }
+
+    public void insert(Point2D p, TagNode node) {
+        if (p == null) throw new java.lang.NullPointerException(
+                "called insert() with a null Point2D");
+        
+        // new double[] {x_min, y_min, x_max, y_max)
+        root = insert(root, p, true, new double[] {0, 0, 1, 1});
+        pointToNode.put(p, node);
     }
     
     private Node insert(Node n, Point2D p, boolean evenLevel, double[] coords) {
@@ -302,6 +316,45 @@ public class KdTree {
             }
         }
         return points;
+    }
+
+    public ArrayList<TagNode> rangeNode(RectHV rect) {
+        if (rect == null) throw new java.lang.NullPointerException(
+                "called range() with a null RectHV");
+        
+        Stack<Point2D> points = new Stack<>();
+        ArrayList<TagNode> returnList = new ArrayList<>();
+        
+        // Handle KdTree without a root node yet
+        if (root == null) return returnList;
+        
+        Stack<Node> nodes = new Stack<>();
+        nodes.push(root);
+        while (!nodes.isEmpty()) {
+            
+            // Examine the next Node
+            Node tmp = nodes.pop();
+            
+            // Add contained points to our points stack
+            if (rect.contains(tmp.p)){
+                points.push(tmp.p);
+                returnList.add(pointToNode.get(tmp.p));
+            }
+            /**
+             * Add Nodes containing promising rectangles to our nodes stack.
+             * 
+             * Note that, since we don't push Nodes onto the stack unless
+             * their rectangles intersect with the given RectHV, we achieve
+             * pruning as we traverse the BST.
+             */
+            if (tmp.lb != null && rect.intersects(tmp.lb.rect)) {
+                nodes.push(tmp.lb);
+            }
+            if (tmp.rt != null && rect.intersects(tmp.rt.rect)) {
+                nodes.push(tmp.rt);
+            }
+        }
+        return returnList;
     }
     
     /**
