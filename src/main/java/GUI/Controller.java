@@ -11,6 +11,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import parser.XMLReader;
 
 public class Controller implements Initializable, ControllerInterface{
     
@@ -26,6 +27,7 @@ public class Controller implements Initializable, ControllerInterface{
 
     private boolean isMenuOpen = false;
     private static MainView mainView;
+    Search s = new Search();
 
     double lastX;
     double lastY;
@@ -97,24 +99,27 @@ public class Controller implements Initializable, ControllerInterface{
 
         searchBarStart.setOnAction((ActionEvent e) -> {
             System.out.println("Searching for startpoint: " + searchBarStart.getText());
-            searchForAdress(searchBarStart.getText());
+            search(searchBarStart.getText());
         });
 
+        //Will be changed later
         searchBarDestination.setOnAction((ActionEvent e) -> {
             System.out.println("Searching for destination: " + searchBarDestination.getText());
-            searchForAdress(searchBarDestination.getText());
+            search(searchBarDestination.getText());
         });
 
         searchButton.setOnAction((ActionEvent e) -> {
             System.out.println("Searching for destination: " + searchBarDestination.getText());
-            searchForAdress(searchBarDestination.getText());
+            search(searchBarStart.getText());
         });
 
     }
 
 
-    private void searchForAdress(String address){
-
+    private void search(String address){
+        //Search s = new Search(XMLReader.getAddresses());
+        //System.out.println(s.toString());
+        s.searchForAddress(address);
     }
 
 }

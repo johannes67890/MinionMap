@@ -1,6 +1,7 @@
 package gui;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javafx.scene.control.TextArea;
 import parser.TagAddress;
@@ -9,12 +10,11 @@ import parser.XMLReader;
 
 public class Search {
 
-    ArrayList<String> cityNames, streetNames, postCodes;
-    ArrayList<TagAddress> addresses;
-    XMLReader reader;
+    private ArrayList<String> cityNames, streetNames, postCodes;
+    private HashMap<Long, TagAddress> addresses;
 
-    public Search(ArrayList<TagAddress> addresses){
-        this.addresses = addresses;
+    public Search(){
+        this.addresses = XMLReader.getAddresses();
         readFiles();
     }
 
@@ -23,18 +23,18 @@ public class Search {
      */
     public void readFiles(){
 
-
+        //TODO make these into a hashmap?
         cityNames = new ArrayList<>();
         streetNames = new ArrayList<>();
         postCodes = new ArrayList<>();
-        String current;
-        String[] splitCurrent;
+        //String current;
+        //String[] splitCurrent;
 
         //Adding addresses from XMLReader into the lists
-        for (int i = 0; i < addresses.size(); i++){
-            cityNames.add(addresses.get(i).getCity());
-            streetNames.add(addresses.get(i).getStreet());
-            postCodes.add(addresses.get(i).getPostcode());
+        for (TagAddress a : addresses.values()){
+            cityNames.add(a.getCity());
+            streetNames.add(a.getStreet());
+            postCodes.add(a.getPostcode());
         }
         
         /*try{
@@ -71,9 +71,9 @@ public class Search {
      * 
      * @param input String that will be contructed into an address.
      */
-    public void searchForAdress(String input, TextArea output){
+    public void searchForAddress(String input/*, TextArea output*/){
         SearchAddress a = new SearchAddress(input);
-            output.setText(a.toString());
+            //output.setText(a.toString());
 
             long time = System.currentTimeMillis();
 
@@ -102,7 +102,7 @@ public class Search {
 
             } 
             System.out.println("Time: " + (System.currentTimeMillis() - time));
-            System.out.println(a.street);
+            //System.out.println(a.street);
     }
 
     /**
