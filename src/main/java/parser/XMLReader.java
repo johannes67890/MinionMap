@@ -133,6 +133,7 @@ public class XMLReader {
                         String element = reader.getLocalName().intern();
                         if(element.equals("bounds")) {
                             bound = new TagBound(reader);
+                            new XMLWriter(bound);
                         }else {
                             tempBuilder.parse(element, reader);
                         };

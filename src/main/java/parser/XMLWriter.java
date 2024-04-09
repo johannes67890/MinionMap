@@ -1,34 +1,51 @@
 package parser;
-import javax.xml.stream.*;
-
 import java.io.*;
 import java.util.*;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
 
-class XMLWriter {
+public class XMLWriter {
     private String directoryPath = "src/main/resources/chunks/";
     private static ChunkFiles chunkFiles = new ChunkFiles();
-    public XMLWriter(){}
+    private static int chunkId = 0;
 
     public XMLWriter(TagBound bounds) {
-        initChunkFiles(new FileParser(bounds));
+        initChunkFiles(bounds);     
     }
 
-    public void initChunkFiles(FileParser fileParser) {   
-        int chunkId = 0;
-        for (int i = 0; i < 4; i++) {
-            // Create a new file for each chunk
-            String localChunkPath = directoryPath + "chunk_" + chunkId + ".bin";
+    public static void initChunkFiles(TagBound bounds) {   
+        int c = 0;
 
-            final int index = i; // Declare a final variable to use in the lambda expression
-            // Create the directory if it doesn't exist
 
-            TagBound ChunkBound = fileParser.getChunck().getQuadrant(index);
-            chunkFiles.appendChunkFile(ChunkBound, localChunkPath);
-            createBinaryChunkFile(localChunkPath, ChunkBound);
-            chunkId++; // Increment the chunkId for the next chunkFile. So each chunkFile has a unique id
+        
+        for (TagBound parentChunk : Chunk.getQuadrants(bounds).values()) {
+            Chunk childChunk = new Chunk(parentChunk);
+            
+            for (int j = 0; j < 4; j++) {
+                TagBound child = childChunk.getQuadrant(j);
+                System.out.println("parent chunk " + parentChunk + " -> " + childChunk.getBoundQuadrant(childChunk.getQuadrant(j)).toString() + " - " + child);
+                c++;
+                // chunkFiles.appendChunkFile(child, directoryPath + "chunk_" + chunkId + ".bin");
+                // createBinaryChunkFile(directoryPath + "chunk_" + chunkId + ".bin", child);
+                // chunkId++;
+            }
         }
+        System.out.println(c);
+            
+        
+
+
+        // for (int i = 0; i < 4; i++) {
+        //     // Create a new file for each chunk
+        //     String localChunkPath = directoryPath + "chunk_" + chunkId + ".bin";
+            
+        //     final int index = i; // Declare a final variable to use in the lambda expression
+        //     // Create the directory if it doesn't exist
+            
+        //     TagBound ChunkBound = chunk.getQuadrant(index);
+        //     chunkFiles.appendChunkFile(ChunkBound, localChunkPath);
+        //     createBinaryChunkFile(localChunkPath, ChunkBound);
+        //     chunkId++; // Increment the chunkId for the next chunkFile. So each chunkFile has a unique id
+
+        // }
     }
 
     private static void createBinaryChunkFile(String path, TagBound bound){

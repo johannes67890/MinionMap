@@ -8,39 +8,29 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import util.FileDistributer;
-import parser.FileParser;
+import parser.Chunk;
 import parser.XMLReader;
 import parser.TagBound;
 import parser.TagNode;
-import parser.FileParser.Chunck;
-import parser.FileParser.CompasPoints;
+import parser.Chunk.CompasPoints;
 
-public class FileParserTest {
-    private FileParser FileParser;
-    private XMLReader reader;
-
-    private Chunck chunck;
-    private TagNode centerPoint;
+public class ChunkTest {
+    private Chunk chunck;
 
     @BeforeEach
     public void setUp() {
         assertDoesNotThrow(() -> {
-            this.reader = new XMLReader(FileDistributer.input.getFilePath());
+            new XMLReader(FileDistributer.input.getFilePath());
         });
-        this.FileParser = new FileParser(reader.getBound());
-        this.chunck = this.FileParser.getChunck();
-        this.centerPoint = this.FileParser.centerPoint(this.reader.getBound());
-
+        this.chunck = new Chunk(new XMLReader(FileDistributer.input.getFilePath()).getBound());
     }
 
 
     @Test
     public void testCenterPoint() {
-        TagBound bound = this.reader.getBound();
-
         TagNode expectedCenterPoint = new TagNode(55.6572100d, 12.4705650d);
     
-        TagNode centerPoint = FileParser.centerPoint(bound);
+        TagNode centerPoint = Chunk.centerPoint(XMLReader.getBound());
 
         assertEquals(centerPoint.getLat(), expectedCenterPoint.getLat());
         assertEquals(centerPoint.getLon(), expectedCenterPoint.getLon());
@@ -49,8 +39,8 @@ public class FileParserTest {
     // TODO: Refactor test so that they calculate expected values based on their respective equation?
     @Test
     public void TestCenterPointsOfBound(){
-        TagBound bound = this.reader.getBound();
-        TagNode centerPoint = FileParser.centerPoint(bound);
+        TagBound bound = XMLReader.getBound();
+        TagNode centerPoint = Chunk.centerPoint(XMLReader.getBound());
         
         CompasPoints points = new CompasPoints(centerPoint, bound);
         
@@ -72,12 +62,11 @@ public class FileParserTest {
     public void testIsInBounds(){
         TagNode node = new TagNode(55.6581162d,12.4681259d);
 
-        assertTrue(node.isInBounds(FileParser.getChunck().getQuadrantOne()));
-        assertFalse(node.isInBounds(FileParser.getChunck().getQuadrantTwo()));
-        assertFalse(node.isInBounds(FileParser.getChunck().getQuadrantThree()));
-        assertFalse(node.isInBounds(FileParser.getChunck().getQuadrantFour()));
+        assertTrue(node.isInBounds(chunck.getQuadrantOne()));
+        assertFalse(node.isInBounds(chunck.getQuadrantTwo()));
+        assertFalse(node.isInBounds(chunck.getQuadrantThree()));
+        assertFalse(node.isInBounds(chunck.getQuadrantFour()));
     }
-
     
     @Test
     public void testSplitArea() {     
