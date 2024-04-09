@@ -46,6 +46,15 @@ public class TagRelation extends Tag<Relation>{
         return this.get(Relation.NAME).toString();
     }
 
+    public ArrayList<TagWay> getMembers(){
+        ArrayList<TagWay> members = new ArrayList<>();
+        members.addAll(this.getInner());
+        members.addAll(this.getOuter());
+        members.addAll(this.getWays());
+        return members;
+        
+    }
+
     public ArrayList<TagWay> getInner(){
         return (ArrayList<TagWay>) this.get(Relation.INNER);
     }

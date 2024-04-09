@@ -8,44 +8,22 @@ public class XMLWriter {
     private static int chunkId = 0;
 
     public XMLWriter(TagBound bounds) {
-        initChunkFiles(bounds);     
+        initChunkFiles(bounds);    
+
     }
 
-    public static void initChunkFiles(TagBound bounds) {   
-        int c = 0;
-
-
-        
+    public void initChunkFiles(TagBound bounds) {   
         for (TagBound parentChunk : Chunk.getQuadrants(bounds).values()) {
             Chunk childChunk = new Chunk(parentChunk);
             
             for (int j = 0; j < 4; j++) {
                 TagBound child = childChunk.getQuadrant(j);
-                System.out.println("parent chunk " + parentChunk + " -> " + childChunk.getBoundQuadrant(childChunk.getQuadrant(j)).toString() + " - " + child);
-                c++;
-                // chunkFiles.appendChunkFile(child, directoryPath + "chunk_" + chunkId + ".bin");
-                // createBinaryChunkFile(directoryPath + "chunk_" + chunkId + ".bin", child);
-                // chunkId++;
+                //System.out.println("parent chunk " + parentChunk + " -> " + childChunk.getBoundQuadrant(childChunk.getQuadrant(j)).toString() + " - " + child);
+                chunkFiles.appendChunkFile(child, directoryPath + "chunk_" + chunkId + ".bin");
+                createBinaryChunkFile(directoryPath + "chunk_" + chunkId + ".bin", child);
+                chunkId++;
             }
         }
-        System.out.println(c);
-            
-        
-
-
-        // for (int i = 0; i < 4; i++) {
-        //     // Create a new file for each chunk
-        //     String localChunkPath = directoryPath + "chunk_" + chunkId + ".bin";
-            
-        //     final int index = i; // Declare a final variable to use in the lambda expression
-        //     // Create the directory if it doesn't exist
-            
-        //     TagBound ChunkBound = chunk.getQuadrant(index);
-        //     chunkFiles.appendChunkFile(ChunkBound, localChunkPath);
-        //     createBinaryChunkFile(localChunkPath, ChunkBound);
-        //     chunkId++; // Increment the chunkId for the next chunkFile. So each chunkFile has a unique id
-
-        // }
     }
 
     private static void createBinaryChunkFile(String path, TagBound bound){
@@ -62,32 +40,9 @@ public class XMLWriter {
         }
         
     }
-  
-    public static void readNodeFromBinaryFile(String filename){
-        File file = new File(filename);
-        if (file.exists()){
-            ObjectInputStream ois = null;
-            try{
-                ois = new ObjectInputStream (new FileInputStream (filename));
-                while (true){
-                    Object s =  ois.readObject();
-                    System.out.println(s);
-                }
-            }catch (EOFException e){
 
-            }catch (Exception e){
-                e.printStackTrace ();
-            }finally{
-                try{
-                    if (ois != null) ois.close();
-                }catch (IOException e){
-                    e.printStackTrace ();
-                }
-            }
-        }
-    }
 
-    public static void writeToBinary(TagNode node, boolean append){
+    public static void writeToBinary(Tag<?> node){
         ObjectOutputStream out = null;
         
         for (TagBound bound : chunkFiles.getChunkFiles().keySet()) {
@@ -95,15 +50,15 @@ public class XMLWriter {
                 if (node.isInBounds(bound)){
                     File file = new File(path);
                     try{
-                        if (!file.exists () || !append) out = new ObjectOutputStream(new FileOutputStream (path));
-                        else out = new AppendableObjectOutputStream (new FileOutputStream (path, append));
+                        if (!file.exists()) out = new ObjectOutputStream(new FileOutputStream (path));
+                        else out = new AppendableObjectOutputStream (new FileOutputStream (path, true));
                         out.writeObject(node);
                         out.flush();
                     }catch (Exception e){
                         e.printStackTrace ();
                     }finally{
                         try{
-                            if (out != null) out.close ();
+                            if (out != null) out.close();
                         }catch (Exception e){
                             e.printStackTrace ();
                         }
@@ -112,32 +67,24 @@ public class XMLWriter {
                 }            
             }
     }
-
-    
-
-    public static void readFromBinaryFile (String filename){
-        File file = new File (filename);
-
-        if (file.exists()){
-            ObjectInputStream ois = null;
-            try{
-                ois = new ObjectInputStream (new FileInputStream (filename));
-                while (true){
-                    Object s =  ois.readObject();
-                    System.out.println(s);
-                }
-            }catch (EOFException e){
-
-            }catch (Exception e){
-                e.printStackTrace ();
-            }finally{
-                try{
-                    if (ois != null) ois.close();
-                }catch (IOException e){
-                    e.printStackTrace ();
-                }
+  
+    public static Tag<?> getTagByIdFromBinaryFile(long id){
+        try {
+        for (String path : chunkFiles.getChunkFilePaths()) {
+            FileInputStream fstream = new FileInputStream(path);
+            ObjectInputStream ostream = new ObjectInputStream(fstream);
+            while (true) {
+                Tag<?> s = (Tag<?>) ostream.readObject();
+                    if (s.getId() == id) return s;
             }
+
         }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            
+        }
+        return null;
     }
 
     private static class AppendableObjectOutputStream extends ObjectOutputStream {
@@ -150,7 +97,6 @@ public class XMLWriter {
     }
 
 
-    
     // public  static void writeTag(TagNode node) throws XMLStreamException{
     //     HashMap<TagBound, XMLStreamWriter> writers = XMLWriter.writers;
     //     for (TagBound b : writers.keySet()) {

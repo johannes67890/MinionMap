@@ -71,8 +71,14 @@ public abstract class Tag<E extends Enum<E>> extends HashMap<E, Object> {
      * @return True if the tag is within the {@link TagBound}, false otherwise.
      */
     public boolean isInBounds(TagBound bound) {
+        if(this instanceof TagWay) {
+            return ((TagWay)this).getRefs().stream().anyMatch(n -> n.isInBounds(bound));
+        }
+        if(this instanceof TagRelation) {
+            return ((TagRelation)this).getMembers().stream().anyMatch(m -> m.isInBounds(bound));
+        }
+
         return Double.valueOf(this.getLat()).compareTo(bound.getMinLat()) == 1 && Double.valueOf(this.getLat()).compareTo(bound.getMaxLat()) == -1
             && Double.valueOf(this.getLon()).compareTo(bound.getMinLon()) == 1 && Double.valueOf(this.getLon()).compareTo(bound.getMaxLon()) == -1;
     }
-
 }

@@ -144,16 +144,20 @@ public class XMLReader {
                         switch (element) {
                             case "node":
                                 if(!tempBuilder.getAddressBuilder().isEmpty()){
+                                    XMLWriter.writeToBinary(new TagAddress(tempBuilder));
                                     addresses.put(tempBuilder.getId(), new TagAddress(tempBuilder));
                                 } else {
+                                    XMLWriter.writeToBinary(new TagNode(tempBuilder));
                                     nodes.put(tempBuilder.getId(), new TagNode(tempBuilder));
                                 }
                                 tempBuilder = new XMLBuilder(); // Reset the builder
                                 break;
                             case "way":
+                                XMLWriter.writeToBinary(new TagWay(tempBuilder));
                                 ways.put(tempBuilder.getId(), new TagWay(tempBuilder));
                                 tempBuilder = new XMLBuilder();
                             case "relation":
+                                XMLWriter.writeToBinary(new TagRelation(tempBuilder));
                                 relations.put(tempBuilder.getId(), new TagRelation(tempBuilder));
                                 tempBuilder = new XMLBuilder();
                                 break;
