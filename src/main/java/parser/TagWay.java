@@ -2,6 +2,9 @@ package parser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 enum Way {
     ID, REFS, NAME, TYPE, SPEEDLIMIT
@@ -47,6 +50,10 @@ public class TagWay extends HashMap<Way, Object> implements Comparable<TagWay>{
         throw new UnsupportedOperationException("TagWay does not have a longitude value.");
     }
 
+    public int getSpeedLimit(){
+        return Integer.parseInt(this.get(Way.SPEEDLIMIT).toString());
+    }
+
     /**
      * Get the type of the way.
      * @return The {@link Type} of the way.
@@ -69,7 +76,7 @@ public class TagWay extends HashMap<Way, Object> implements Comparable<TagWay>{
     public ArrayList<TagNode> getNodes() {
         return (ArrayList<TagNode>) this.get(Way.REFS);
     }
-        
+
     public boolean isEmpty() {
         return getNodes().size() == 0;
     }

@@ -1,5 +1,7 @@
 package parser;
 
+import java.math.BigDecimal;
+
 import javax.xml.stream.XMLStreamReader;
 
 import parser.TagAddress.AddressBuilder;
@@ -128,14 +130,13 @@ public class XMLBuilder {
                 if (k.equals(currType.getKey())){
                     for (String currVal : currType.getValue()) {
                         if (v.equals(currVal) || currVal.equals("")) {
-                            
                             switch (currType) { 
                                 // Way types
-                                /*case PRIMARY_ROAD:
+                                case PRIMARY_ROAD:
                                 case SECONDARY_ROAD:
                                 case TERTIARY_ROAD:
                                 case OTHER_ROAD:
-                                    parseStreet(currType);*/
+                                    parseStreet(currType);
                                 // Relation types
                                 case BOUNDARY:
                                 case ROUTE:
@@ -147,7 +148,7 @@ public class XMLBuilder {
                                 default:
                                 this.type = currType; 
                                 break;
-                            }
+                            } 
                         }
                     }
                 }
@@ -160,7 +161,7 @@ public class XMLBuilder {
                     addressBuilder.city(v);
                         break;
                     case "addr:country":
-                    addressBuilder.contry(v);
+                    addressBuilder.country(v);
                         break;
                     case "addr:street":
                     addressBuilder.street(v);
@@ -179,17 +180,14 @@ public class XMLBuilder {
                 }
             }
         }
-        public void parseType(){
-
-        }
 
         public void parseStreet(Type type){
             final int DEFAULT_SPEED = 50;
 
             switch (type) {
-                /*case MOTORWAY:
+                case MOTORWAY:
                     wayBuilder.setSpeedLimit(130);
-                    break;*/
+                    break;
                 case PRIMARY_ROAD:
                 case SECONDARY_ROAD:
                 case TERTIARY_ROAD:
