@@ -11,6 +11,7 @@ import parser.TagBound;
 import parser.TagNode;
 import parser.TagRelation;
 import parser.TagWay;
+import parser.Type;
 import parser.XMLReader;
 import parser.XMLWriter;
 import util.MathUtil;
@@ -131,24 +132,26 @@ public class DrawingMap {
     
                 }
             }
-            if (!relation.getOuter().isEmpty()){
-
-                System.out.println("OUTER WAYS: " + relation.getOuter().size());
-
-            }
+            
 
             //System.out.println(relation.getId());
 
             if (!relation.getInner().isEmpty()){
 
-                System.out.println("OUTER WAYS: " + relation.getInner().size());
+                //System.out.println("OUTER WAYS: " + relation.getInner().size());
 
-            }else System.out.println("EMPTY");
+            }else //System.out.println("EMPTY");
 
-            for (TagWay way : relation.getOuter()){
 
-                if (way.getType() != null){
+            System.out.println(relation.getType());
+            //System.out.println(relation.getActualOuter().size());
+            for (TagWay way : relation.getActualOuter()){
+
+                way.setType(Type.FOREST);
+
+                if (relation.getType() != null){
                     if (way.getType().getThisHierarchy() >= hierarchyLevel){
+                        //System.out.println("ADDING WAY");
                         waysToDrawWithType.add(way);
                     }
                 } else{
@@ -157,22 +160,25 @@ public class DrawingMap {
                 }
             }
 
-            //System.out.println("INNER WAYS: " + relation.getInner().size());
-
-            for (TagWay way : relation.getInner()){
-
+            /* 
+            for (TagWay way : relation.getActualInner()){
 
                 if (way.getType() != null){
+                    if (way.getId() == 176294971){
+                        System.out.println("HELLO");
+                    }
                     if (way.getType().getThisHierarchy() >= hierarchyLevel){
-                        waysToDrawWithType.add(way);
+                        
+                        //waysToDrawWithType.add(way);
                     }
                 } else{
                     waysToDrawWithoutType.add(way);
     
                 }
+            }*/
 
 
-            }
+
 
 
         }

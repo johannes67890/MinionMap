@@ -23,6 +23,9 @@ public class TagRelation extends Tag<Relation>{
             {
                 put(Relation.ID, builder.getId());
                 put(Relation.INNER, builder.getRelationBuilder().getRelation().getInner());
+                if (builder.getRelationBuilder().getRelation().getOuter() != null){
+                    //System.out.println(builder.getRelationBuilder().getRelation().getOuter().size());
+                }
                 put(Relation.OUTER, builder.getRelationBuilder().getRelation().getOuter());
                 put(Relation.WAYS, builder.getRelationBuilder().getRelation().getWays());
                 put(Relation.RELATIONS, builder.getRelationBuilder().getRelation().getRelations());
@@ -52,7 +55,7 @@ public class TagRelation extends Tag<Relation>{
     public void addRelation(TagRelation relation){ relations.add(relation); };
     public void addWay(TagWay way){ ways.add(way); };
     public void addInner(TagWay way){ inner.add(way); };
-    public void addOuter(TagWay way){ outer.add(way); System.out.println("ADDING OUTER, NEW SIZE: " + outer.size()); };
+    public void addOuter(TagWay way){ outer.add(way); /*System.out.println("ADDING OUTER, NEW SIZE: " + outer.size());*/ };
     public void setTypeValue(Type type){ put(Relation.TYPEVALUE, type); };
     
 
@@ -61,6 +64,11 @@ public class TagRelation extends Tag<Relation>{
     public ArrayList<TagWay> getWays(){ return ways; };
     public ArrayList<TagWay> getInner(){ return inner; };
     public ArrayList<TagWay> getOuter(){ return outer; };
+    public ArrayList<TagWay> getActualOuter(){ return (ArrayList<TagWay>) this.get(Relation.OUTER) ; };
+    public ArrayList<TagWay> getActualInner(){ return (ArrayList<TagWay>) this.get(Relation.INNER) ; };
+    public Type getType() {
+        return (Type) this.get(Relation.TYPE);
+    }
     
     // https://wiki.openstreetmap.org/wiki/Relation:multipolygon/Algorithm
     public void ringAssignment(){

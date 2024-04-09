@@ -91,7 +91,9 @@ public class XMLBuilder {
                     break;
                 case "way":
                 case "relation":
-                    this.id = getAttributeByLong(reader, "id");                    
+                    this.id = getAttributeByLong(reader, "id");
+                    //System.out.println("RELATION ID: " + id);
+                    
                     break;
                 case "tag":
                     String k = reader.getAttributeValue(null, "k");
