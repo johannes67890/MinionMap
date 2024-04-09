@@ -74,6 +74,7 @@ public class DrawingMap {
     }
 
     public void DrawMap(GraphicsContext gc, ResizableCanvas canvas){
+        
         gc = canvas.getGraphicsContext2D();
         gc.setTransform(new Affine());
         gc.setFill(Color.WHITE);
