@@ -21,7 +21,6 @@ public class XMLBuilder {
 
         private String name; // name from a <tag> in a parrent element
         private Type type;
-        private String TypeValue;
         private Long id;
         private double lat, lon;
 
@@ -75,9 +74,6 @@ public class XMLBuilder {
         public Type getType(){
             return this.type;
         }
-        public String getTypeValue(){
-            return this.TypeValue;
-        }
 
         /**
          * Parse the XML element and add the data to the builder(s).
@@ -128,6 +124,7 @@ public class XMLBuilder {
                 if (k.equals(currType.getKey())){
                     for (String currVal : currType.getValue()) {
                         if (v.equals(currVal) || currVal.equals("")) {
+                            
                             switch (currType) { 
                                 // Way types
                                 case PRIMARY_ROAD:
@@ -140,13 +137,13 @@ public class XMLBuilder {
                                 case ROUTE:
                                 case RESTRICTION:
                                 case MULTIPOLYGON:
-                                    this.TypeValue = v;
+                                    relationBuilder.setRelationType(currType);
+                                    relationBuilder.setTypeValue(v);
                                     break;
                                 default:
-                                    this.type = Type.UNKNOWN;
+                                this.type = currType; 
                                 break;
                             }
-                                this.type = currType;    
                         }
                     }
                 }
