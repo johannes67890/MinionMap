@@ -128,16 +128,24 @@ public class XMLBuilder {
                 if (k.equals(currType.getKey())){
                     for (String currVal : currType.getValue()) {
                         if (v.equals(currVal) || currVal.equals("")) {
+                            
                             switch (currType) { 
+                                // Way types
+                                /*case PRIMARY_ROAD:
+                                case SECONDARY_ROAD:
+                                case TERTIARY_ROAD:
+                                case OTHER_ROAD:
+                                    parseStreet(currType);*/
+                                // Relation types
                                 case BOUNDARY:
                                 case ROUTE:
                                 case RESTRICTION:
                                 case MULTIPOLYGON:
-                                    this.type = currType;
-                                    this.TypeValue = v;
+                                    relationBuilder.setRelationType(currType);
+                                    relationBuilder.setTypeValue(v);
                                     break;
                                 default:
-                                this.type = currType;
+                                this.type = currType; 
                                 break;
                             }
                         }
@@ -174,7 +182,30 @@ public class XMLBuilder {
         public void parseType(){
 
         }
+
+        public void parseStreet(Type type){
+            final int DEFAULT_SPEED = 50;
+
+            switch (type) {
+                /*case MOTORWAY:
+                    wayBuilder.setSpeedLimit(130);
+                    break;*/
+                case PRIMARY_ROAD:
+                case SECONDARY_ROAD:
+                case TERTIARY_ROAD:
+                    wayBuilder.setSpeedLimit(80);
+                    break;
+                case OTHER_ROAD:
+                    wayBuilder.setSpeedLimit(DEFAULT_SPEED);
+                    break;
+                default:
+                    break;
+            }
+        }
     }
+    
+
+
 
 
 

@@ -143,13 +143,18 @@ public class DrawingMap {
             }else //System.out.println("EMPTY");
 
 
-            System.out.println(relation.getType());
             //System.out.println(relation.getActualOuter().size());
             for (TagWay way : relation.getActualOuter()){
 
-                way.setType(Type.FOREST);
+                
+
+                //System.out.println("TYPE: " + relation.getType());
 
                 if (relation.getType() != null){
+                    way.setType(relation.getType());
+                    
+                    //System.out.println(relation.getType());
+
                     if (way.getType().getThisHierarchy() >= hierarchyLevel){
                         //System.out.println("ADDING WAY");
                         waysToDrawWithType.add(way);

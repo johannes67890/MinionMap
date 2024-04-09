@@ -6,7 +6,7 @@ import java.util.HashMap;
 import javax.xml.stream.XMLStreamReader;
 
 enum Relation {
-    ID, INNER, OUTER, WAYS, RELATIONS, NODES, TYPE, TYPEVALUE, NAME
+    ID, INNER, OUTER, WAYS, RELATIONS, NODES, TYPE, TYPEVALUE, NAME, RELATIONTYPE
 }
 
 public class TagRelation extends Tag<Relation>{
@@ -22,17 +22,16 @@ public class TagRelation extends Tag<Relation>{
         super(new HashMap<Relation, Object>(){
             {
                 put(Relation.ID, builder.getId());
-                put(Relation.INNER, builder.getRelationBuilder().getRelation().getInner());
-                if (builder.getRelationBuilder().getRelation().getOuter() != null){
-                    //System.out.println(builder.getRelationBuilder().getRelation().getOuter().size());
-                }
-                put(Relation.OUTER, builder.getRelationBuilder().getRelation().getOuter());
-                put(Relation.WAYS, builder.getRelationBuilder().getRelation().getWays());
-                put(Relation.RELATIONS, builder.getRelationBuilder().getRelation().getRelations());
-                put(Relation.NODES, builder.getRelationBuilder().getRelation().getNodes());
-                put(Relation.TYPEVALUE, builder.getTypeValue());
                 put(Relation.TYPE, builder.getType());
                 put(Relation.NAME, builder.getName());
+                put(Relation.INNER, builder.getRelationBuilder().getInner());
+                put(Relation.OUTER, builder.getRelationBuilder().getOuter());
+                put(Relation.WAYS, builder.getRelationBuilder().getWays());
+                put(Relation.RELATIONS, builder.getRelationBuilder().getRelations());
+                put(Relation.NODES, builder.getRelationBuilder().getNodes());
+                put(Relation.RELATIONTYPE, builder.getRelationBuilder().getRelationType());
+                put(Relation.TYPEVALUE, builder.getRelationBuilder().getTypeValue());
+
             }
         });
     }
@@ -69,6 +68,10 @@ public class TagRelation extends Tag<Relation>{
     public Type getType() {
         return (Type) this.get(Relation.TYPE);
     }
+
+    public Type getRelationType(){
+        return (Type) this.get(Relation.RELATIONTYPE);
+    }
     
     // https://wiki.openstreetmap.org/wiki/Relation:multipolygon/Algorithm
     public void ringAssignment(){
@@ -90,8 +93,33 @@ public class TagRelation extends Tag<Relation>{
     }
 
     public static class RelationBuilder {
-        private boolean isEmpty;
         public TagRelation relation;
+
+        private boolean isEmpty = true;
+        private ArrayList<TagNode> nodes = new ArrayList<>();
+        private ArrayList<TagRelation> relations = new ArrayList<>();
+        private ArrayList<TagWay> ways = new ArrayList<>();
+        private ArrayList<TagWay> inner = new ArrayList<>();
+        private ArrayList<TagWay> outer = new ArrayList<>();
+        private Type RelationType;
+        private String TypeValue;
+
+        public void addNode(TagNode node){ nodes.add(node); };
+        public void addRelation(TagRelation relation){ relations.add(relation); };
+        public void addWay(TagWay way){ ways.add(way); };
+        public void addInner(TagWay way){ inner.add(way); };
+        public void addOuter(TagWay way){ outer.add(way); };
+        public void setRelationType(Type type){ RelationType = type; };
+        public void setTypeValue(String value){ TypeValue = value; };
+
+
+        public ArrayList<TagNode> getNodes(){ return nodes; };
+        public ArrayList<TagRelation> getRelations(){ return relations; };
+        public ArrayList<TagWay> getWays(){ return ways; };
+        public ArrayList<TagWay> getInner(){ return inner; };
+        public ArrayList<TagWay> getOuter(){ return outer; };
+        public Type getRelationType(){ return RelationType; };
+        public String getTypeValue(){ return TypeValue; }
 
         RelationBuilder() {
             this.relation = new TagRelation();
@@ -106,40 +134,41 @@ public class TagRelation extends Tag<Relation>{
             return relation;
         }
 
-        public void parseMember(XMLStreamReader reader) {
-            switch (reader.getAttributeValue(null, "type")) {     
-
+        public RelationBuilder parseMember(XMLStreamReader reader) {
+            switch (reader.getAttributeValue(null, "type")) {
                 case "node":
                     TagNode node = XMLReader.getNodeById(XMLBuilder.getAttributeByLong(reader, "ref"));
                     if(node != null){
-                        relation.addNode(node);
+                        this.addNode(node);
+                        isEmpty = false;
                     }
                     break;
                 case "way":
-
                     long ref = XMLBuilder.getAttributeByLong(reader, "ref");
                     if(XMLReader.getWayById(ref) != null){
-
                         switch (reader.getAttributeValue(null, "role")) {
-
                             case "outer":
-                                relation.addOuter(XMLReader.getWayById(ref));
+                                this.addOuter(XMLReader.getWayById(ref));
+                                isEmpty = false;
                                 break;
                             case "inner":
-                                relation.addInner(XMLReader.getWayById(ref));
+                                this.addInner(XMLReader.getWayById(ref));
+                                isEmpty = false;
                                 break;
                             default:
-                                relation.addWay(XMLReader.getWayById(ref));
+                                this.addWay(XMLReader.getWayById(ref));
+                                isEmpty = false;
                                 break;
                         }
                     }
                     break;
                 case "relation":
-                    relation.addRelation(XMLReader.getRelationById(XMLBuilder.getAttributeByLong(reader, "ref")));
+                    this.addRelation(XMLReader.getRelationById(XMLBuilder.getAttributeByLong(reader, "ref")));
                     break;
                 default:
                     break;
             }
+            return this;
         }
         
     }
