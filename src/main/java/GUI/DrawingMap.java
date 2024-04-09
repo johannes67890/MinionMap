@@ -97,14 +97,13 @@ public class DrawingMap {
 
 
         gc.setTransform(transform);
-        //GraphicsContext gc = canvas.getGraphicsContext2D();
         ArrayList<TagWay> waysToDrawWithType = new ArrayList<>();
         ArrayList<TagWay> waysToDrawWithoutType = new ArrayList<>();
         List<TagNode> nodes = XMLReader.getNodes().values().stream().toList();
         List<TagWay> ways = XMLReader.getWays().values().stream().toList();
         List<TagRelation> relations = XMLReader.getRelations().values().stream().toList();
+        List<TagWay> splitWayInRelation;
 
-        //System.out.println("RELATIONS: " + relations.size());
 
         for (TagWay way : ways){
             if (way.getType() != null){
@@ -118,9 +117,9 @@ public class DrawingMap {
             
         }
 
-        //System.out.println(XMLReader.getRelationById());
         for (TagRelation relation : relations){
             
+            splitWayInRelation = new ArrayList<>();
 
             for (TagWay way : relation.getWays()){
                 if (way.getType() != null){
@@ -134,29 +133,24 @@ public class DrawingMap {
             }
             
 
-            //System.out.println(relation.getId());
+            
 
-            if (!relation.getInner().isEmpty()){
-
-                //System.out.println("OUTER WAYS: " + relation.getInner().size());
-
-            }else //System.out.println("EMPTY");
-
-
-            //System.out.println(relation.getActualOuter().size());
             for (TagWay way : relation.getActualOuter()){
 
-                
+                System.out.println(way.loops());
 
-                //System.out.println("TYPE: " + relation.getType());
+                /* 
+
+                if (!way.loops()){
+                    splitWayInRelation.add(way);
+                    continue;
+                }*/
 
                 if (relation.getType() != null){
                     way.setType(relation.getType());
                     
-                    //System.out.println(relation.getType());
 
                     if (way.getType().getThisHierarchy() >= hierarchyLevel){
-                        //System.out.println("ADDING WAY");
                         waysToDrawWithType.add(way);
                     }
                 } else{
@@ -164,26 +158,18 @@ public class DrawingMap {
     
                 }
             }
+            /*
 
-            /* 
-            for (TagWay way : relation.getActualInner()){
+            if (!splitWayInRelation.isEmpty()){
 
-                if (way.getType() != null){
-                    if (way.getId() == 176294971){
-                        System.out.println("HELLO");
-                    }
-                    if (way.getType().getThisHierarchy() >= hierarchyLevel){
-                        
-                        //waysToDrawWithType.add(way);
-                    }
-                } else{
-                    waysToDrawWithoutType.add(way);
-    
+                TagWay tw = new TagWay(null);
+
+                for (TagWay way :splitWayInRelation){
+
                 }
+
+
             }*/
-
-
-
 
 
         }

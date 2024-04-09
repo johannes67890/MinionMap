@@ -57,6 +57,10 @@ public class TagWay extends HashMap<Way, Object> implements Comparable<TagWay>{
     public void setType(Type t){
         put(Way.TYPE, t);     
     }
+
+    public boolean loops(){
+        return getNodes().get(0).equals(getNodes().get(getNodes().size() - 1));
+    }
     
     /**
      * Get the refrerence nodes of the way.
