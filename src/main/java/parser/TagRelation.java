@@ -21,6 +21,7 @@ public class TagRelation extends Tag<Relation>{
     public TagRelation(XMLBuilder builder){
         super(new HashMap<Relation, Object>(){
             {
+                put(Relation.ID, builder.getId());
                 put(Relation.INNER, builder.getRelationBuilder().getRelation().getInner());
                 put(Relation.OUTER, builder.getRelationBuilder().getRelation().getOuter());
                 put(Relation.WAYS, builder.getRelationBuilder().getRelation().getWays());
@@ -51,7 +52,7 @@ public class TagRelation extends Tag<Relation>{
     public void addRelation(TagRelation relation){ relations.add(relation); };
     public void addWay(TagWay way){ ways.add(way); };
     public void addInner(TagWay way){ inner.add(way); };
-    public void addOuter(TagWay way){ outer.add(way); };
+    public void addOuter(TagWay way){ outer.add(way); System.out.println("ADDING OUTER, NEW SIZE: " + outer.size()); };
     public void setTypeValue(Type type){ put(Relation.TYPEVALUE, type); };
     
 
@@ -98,7 +99,8 @@ public class TagRelation extends Tag<Relation>{
         }
 
         public void parseMember(XMLStreamReader reader) {
-            switch (reader.getAttributeValue(null, "type")) {
+            switch (reader.getAttributeValue(null, "type")) {     
+
                 case "node":
                     TagNode node = XMLReader.getNodeById(XMLBuilder.getAttributeByLong(reader, "ref"));
                     if(node != null){
@@ -106,11 +108,15 @@ public class TagRelation extends Tag<Relation>{
                     }
                     break;
                 case "way":
+
                     long ref = XMLBuilder.getAttributeByLong(reader, "ref");
                     if(XMLReader.getWayById(ref) != null){
+
                         switch (reader.getAttributeValue(null, "role")) {
+
                             case "outer":
                                 relation.addOuter(XMLReader.getWayById(ref));
+                                break;
                             case "inner":
                                 relation.addInner(XMLReader.getWayById(ref));
                                 break;

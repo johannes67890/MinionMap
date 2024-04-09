@@ -9,8 +9,10 @@ import javafx.scene.transform.Affine;
 import javafx.stage.Screen;
 import parser.TagBound;
 import parser.TagNode;
+import parser.TagRelation;
 import parser.TagWay;
 import parser.XMLReader;
+import parser.XMLWriter;
 import util.MathUtil;
 import util.MinPQ;;
 
@@ -99,9 +101,12 @@ public class DrawingMap {
         ArrayList<TagWay> waysToDrawWithoutType = new ArrayList<>();
         List<TagNode> nodes = XMLReader.getNodes().values().stream().toList();
         List<TagWay> ways = XMLReader.getWays().values().stream().toList();
+        List<TagRelation> relations = XMLReader.getRelations().values().stream().toList();
+
+        //System.out.println("RELATIONS: " + relations.size());
 
         for (TagWay way : ways){
-            if (way.getType() != null && !way.getType().getKey().equals("UNKNOWN")){
+            if (way.getType() != null){
                 if (way.getType().getThisHierarchy() >= hierarchyLevel){
                     waysToDrawWithType.add(way);
                 }
@@ -111,6 +116,68 @@ public class DrawingMap {
             }
             
         }
+
+        //System.out.println(XMLReader.getRelationById());
+        for (TagRelation relation : relations){
+            
+
+            for (TagWay way : relation.getWays()){
+                if (way.getType() != null){
+                    if (way.getType().getThisHierarchy() >= hierarchyLevel){
+                        waysToDrawWithType.add(way);
+                    }
+                } else{
+                    waysToDrawWithoutType.add(way);
+    
+                }
+            }
+            if (!relation.getOuter().isEmpty()){
+
+                System.out.println("OUTER WAYS: " + relation.getOuter().size());
+
+            }
+
+            //System.out.println(relation.getId());
+
+            if (!relation.getInner().isEmpty()){
+
+                System.out.println("OUTER WAYS: " + relation.getInner().size());
+
+            }else System.out.println("EMPTY");
+
+            for (TagWay way : relation.getOuter()){
+
+                if (way.getType() != null){
+                    if (way.getType().getThisHierarchy() >= hierarchyLevel){
+                        waysToDrawWithType.add(way);
+                    }
+                } else{
+                    waysToDrawWithoutType.add(way);
+    
+                }
+            }
+
+            //System.out.println("INNER WAYS: " + relation.getInner().size());
+
+            for (TagWay way : relation.getInner()){
+
+
+                if (way.getType() != null){
+                    if (way.getType().getThisHierarchy() >= hierarchyLevel){
+                        waysToDrawWithType.add(way);
+                    }
+                } else{
+                    waysToDrawWithoutType.add(way);
+    
+                }
+
+
+            }
+
+
+        }
+
+
         MinPQ<TagWay> sortedWaysToDraw = new MinPQ<>(waysToDrawWithType.size());
         
         for (TagWay way : waysToDrawWithType){
