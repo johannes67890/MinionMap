@@ -1,15 +1,13 @@
 package gui;
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.TextField;
-
-import java.io.IOException;
-import java.net.URL;
-
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
@@ -18,7 +16,6 @@ import javafx.stage.Stage;
 import parser.XMLReader;
 import util.FileDistributer;
 import util.ZipHandler;
-
 public class MainView {
 
     enum StageSelect {
@@ -80,6 +77,7 @@ public class MainView {
         }
 
         if (selectedStage == StageSelect.MapView){
+            System.out.println("INITIALZING");
             drawView.initialize(canvas);
         }
     }
@@ -90,6 +88,7 @@ public class MainView {
 
     public void loadDrawingMap(){
         drawView = new DrawingMap(this, xmlReader);
+        System.out.println(drawView);
     }
 
     public void draw(){

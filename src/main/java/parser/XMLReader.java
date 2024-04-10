@@ -3,12 +3,12 @@ package parser;
 import static javax.xml.stream.XMLStreamConstants.*;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.HashMap;
+
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-
-import java.io.FileNotFoundException;
 
 /**
  * Reader for a OSM XML file.

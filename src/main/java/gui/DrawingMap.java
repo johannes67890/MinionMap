@@ -1,12 +1,21 @@
 package gui;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 import javafx.stage.Screen;
-import parser.*;
+import parser.TagBound;
+import parser.TagNode;
+import parser.TagRelation;
+import parser.TagWay;
+import parser.Type;
+import parser.XMLReader;
+import parser.XMLWriter;
+import util.MathUtil;
+import util.MinPQ;;
 
 
 public class DrawingMap {
@@ -17,8 +26,10 @@ public class DrawingMap {
     private XMLReader reader;
     private MainView mainView;
     private double zoomLevel = 1;
-    private final double zoomLevelMin = 40, zoomLevelMax = 300000; // These variables changes how much you can zoom in and out. Min is far out and max is closest in
+    private int hierarchyLevel = 9;
+    private final double zoomLevelMin = 40, zoomLevelMax = 3000000; // These variables changes how much you can zoom in and out. Min is far out and max is closest in
     private double zoomScalerToMeter; // This is the world meters of how long the scaler in the bottom right corner is. Divide it with the zoomLevel
+    private int[] zoomScales = {1000000, 500000, 250000, 125000, 67500, 33750, 16875, 8437, 4218, 2109};
 
     public DrawingMap(MainView mainView, XMLReader reader){
         this.mainView = mainView;
@@ -30,6 +41,8 @@ public class DrawingMap {
         this.canvas = canvas;
 
         TagBound bound = reader.getBound();
+
+        //System.out.println("BOUNDS: " + bound.getMaxLon());
 
         double minlon = bound.getMinLon();
         double maxlat = bound.getMaxLat();
@@ -74,7 +87,9 @@ public class DrawingMap {
     }
 
     public void DrawMap(GraphicsContext gc, ResizableCanvas canvas){
-        
+        long preTime = System.currentTimeMillis();
+
+
         gc = canvas.getGraphicsContext2D();
         gc.setTransform(new Affine());
         gc.setFill(Color.WHITE);
@@ -82,32 +97,176 @@ public class DrawingMap {
 
 
         gc.setTransform(transform);
-        //GraphicsContext gc = canvas.getGraphicsContext2D();
+        ArrayList<TagWay> waysToDrawWithType = new ArrayList<>();
+        ArrayList<TagWay> waysToDrawWithoutType = new ArrayList<>();
         List<TagNode> nodes = XMLReader.getNodes().values().stream().toList();
-        HashMap<Long, TagNode> nodesMap = XMLReader.getNodes();
         List<TagWay> ways = XMLReader.getWays().values().stream().toList();
+        List<TagRelation> relations = XMLReader.getRelations().values().stream().toList();
+        List<TagWay> splitWayInRelation;
+
+
+        for (TagWay way : ways){
+            if (way.getType() != null){
+                if (way.getType().getThisHierarchy() >= hierarchyLevel){
+                    waysToDrawWithType.add(way);
+                }
+            } else{
+                waysToDrawWithoutType.add(way);
+
+            }
+            
+        }
+
+        for (TagRelation relation : relations){
+            
+            splitWayInRelation = new ArrayList<>();
+
+            for (TagWay way : relation.getWays()){
+                if (way.getType() != null){
+                    if (way.getType().getThisHierarchy() >= hierarchyLevel){
+                        waysToDrawWithType.add(way);
+                    }
+                } else{
+                    waysToDrawWithoutType.add(way);
+    
+                }
+            }
+            
+
+            
+
+            for (TagWay way : relation.getActualOuter()){
+
+                System.out.println(way.loops());
+
+                /* 
+
+                if (!way.loops()){
+                    splitWayInRelation.add(way);
+                    continue;
+                }*/
+
+                if (relation.getType() != null){
+                    way.setType(relation.getType());
+                    
+
+                    if (way.getType().getThisHierarchy() >= hierarchyLevel){
+                        waysToDrawWithType.add(way);
+                    }
+                } else{
+                    waysToDrawWithoutType.add(way);
+    
+                }
+            }
+            /*
+
+            if (!splitWayInRelation.isEmpty()){
+
+                TagWay tw = new TagWay(null);
+
+                for (TagWay way :splitWayInRelation){
+
+                }
+
+
+            }*/
+
+
+        }
+
+
+        MinPQ<TagWay> sortedWaysToDraw = new MinPQ<>(waysToDrawWithType.size());
+        
+        for (TagWay way : waysToDrawWithType){
+            sortedWaysToDraw.insert(way);
+        }
+
+        /*while (!sortedWaysToDraw.isEmpty()) {
+
+            System.out.println(sortedWaysToDraw.delMin().getType().getLayer());
+            
+        }*/
+
         TagBound bound = reader.getBound();
 
-        Iterator<TagWay> it = ways.iterator();
+        //Iterator<TagWay> it = ways.iterator();
         
-        gc.setLineWidth(1/Math.sqrt(transform.determinant()));
 
-        while (it.hasNext()) {
+        double defaultLineWidth = 1/Math.sqrt(transform.determinant());
 
-            ArrayList<Long> nodesRef =  it.next().getNodes();
+        Color c;
+
+
+        
+        while (!sortedWaysToDraw.isEmpty()) {
+
+            gc.setLineWidth(defaultLineWidth);
+            //System.out.println("DEFAULT LINE WIDTH: " + defaultLineWidth);
+            gc.setStroke(Color.BLACK); 
+
+            //System.out.println("HELLO");
+
+      
+
+            TagWay tagWay = sortedWaysToDraw.delMin();
+
+            ArrayList<TagNode> nodesRef =  tagWay.getNodes();
+
+            c = tagWay.getType().getColor();
+            int counter = 0;
+            double[] xPoints = new double[nodesRef.size()];
+            double[] yPoints = new double[nodesRef.size()];
+
+            double min = tagWay.getType().getMinWidth() * 0.00001;
+            double max = tagWay.getType().getMaxWidth() * 0.00001;
+            double lineWidth = MathUtil.clamp(defaultLineWidth * tagWay.getType().getWidth(), min, max);
+            gc.setLineWidth(lineWidth);
+
+
+            if(tagWay.getType().getIsLine()){
+               
+                //System.out.println("CALCULATED LINEWIDTH: " + lineWidth);
+                gc.setStroke(tagWay.getType().getColor()); 
+            } else{
+                gc.setStroke(tagWay.getType().getPolyLineColor()); 
+            }
 
             gc.beginPath();
-            gc.moveTo(nodesMap.get(nodesRef.get(0)).getLon(), nodesMap.get(nodesRef.get(0)).getLat());
-            for (Long ref : nodesRef){
+            gc.moveTo(nodesRef.get(0).getLon(), nodesRef.get(0).getLat());
+
+            for (int i = 0; i < nodesRef.size() ; i++){
                 
-                gc.lineTo(nodesMap.get(ref).getLat(), nodesMap.get(ref).getLat());
+                TagNode ref = nodesRef.get(i);
+
+                gc.lineTo(ref.getLon(), ref.getLat());
+                xPoints[counter] = ref.getLon();
+                yPoints[counter] = ref.getLat();
+                counter++;
+                
+            }
+
+            //System.out.println(tagWay.getType());
+
+
+            //gc.lineTo(nodesMap.get(nodesRef.get(0)).getLonDouble(), nodesMap.get(nodesRef.get(0)).getLatDouble());
+
+            
+            if (!tagWay.getType().getIsLine()){
+                gc.setFill(c);
+                gc.fillPolygon(xPoints, yPoints, counter);
             }
 
             gc.stroke();
+
     
         }
 
+        //System.out.println("AFTER RENDERING: " + (System.currentTimeMillis() - preTime));
+
+
     }
+
+
 
     // Returns the distance for the ruler in the bottom right corner
     public double getZoomLevelMeters(){
@@ -119,14 +278,33 @@ public class DrawingMap {
     }
 
     void zoom(double factor, double dx, double dy){
+        System.out.println("ZOOMING");
         double zoomLevelNext = zoomLevel * factor;
         if (zoomLevelNext < zoomLevelMax && zoomLevelNext > zoomLevelMin){
             zoomLevel = zoomLevelNext;
 
+
+            for (int i = 0; i < zoomScales.length ; i++){
+                if (zoomLevel > zoomScales[i]){
+
+                    hierarchyLevel = i;
+                    //System.out.println(hierarchyLevel);
+                    break;
+                }
+            }
+            
+
+            System.out.println(zoomLevel);
             pan(-dx, -dy);
             transform.prependScale(factor, factor);
             pan(dx, dy);
-            mainView.draw(); 
+            //mainView.draw(); 
+        }
+        else if(zoomLevel > zoomLevelMax){
+            zoomLevel = zoomLevelMax - 1;
+        }
+        else if (zoomLevel < zoomLevelMin){
+            zoomLevel = zoomLevelMin + 1;
         }
           
     }

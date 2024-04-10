@@ -4,9 +4,13 @@ import java.util.ResourceBundle;
 
 import gui.MainView.StageSelect;
 import javafx.event.ActionEvent;
-import javafx.fxml.*;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 
 public class Controller implements Initializable, ControllerInterface{
     
@@ -28,6 +32,8 @@ public class Controller implements Initializable, ControllerInterface{
 
     double zoomMultiplier = 1.01f;
 
+    long timer = 0;
+    
     public void start(MainView mw){ // this is only ran after the stage is shown
         mainView = mw;
 
@@ -35,10 +41,12 @@ public class Controller implements Initializable, ControllerInterface{
         Pane p = new Pane(c);
         mainBorderPane.setCenter(p);
         mainView.setCanvas(c);
+        mainView.loadDrawingMap();
         c.widthProperty().bind(p.widthProperty());
         c.heightProperty().bind(p.heightProperty());
 
-        mainView.loadDrawingMap();
+        System.out.println("DRAWING MAP");
+
         panZoomInitialize();
     }
 
@@ -50,7 +58,13 @@ public class Controller implements Initializable, ControllerInterface{
         
         mainView.canvas.setOnScroll(event -> {
 
+            if (System.currentTimeMillis() - timer > 500){
+                timer = System.currentTimeMillis();
+            }
+
             mainView.getDrawingMap().zoom(Math.pow(zoomMultiplier,event.getDeltaY()), event.getX(), event.getY());
+
+            
             
         });
 
