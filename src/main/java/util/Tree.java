@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import javax.sql.rowset.spi.XmlReader;
+
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
 import parser.TagNode;
@@ -19,7 +21,7 @@ public class Tree {
     public ArrayList<TagNode> nodes;
     TagNode node;
 
-    KdTree kdtree = new KdTree();
+    KdTree kdtree;
     ArrayList<TagNode> nodesInBounds;
     ArrayList<TagWay> waysInBounds;
     ArrayList<TagRelation> relationsInBounds;
@@ -28,10 +30,12 @@ public class Tree {
 
     public Tree(ArrayList<TagNode> nodes){
         this.nodes = nodes;
-        
+        kdtree = new KdTree();
         for (TagNode node : nodes){
-            this.kdtree.insert(new Point2D(node.getLon(), node.getLat()));
+            Point2D temp = new Point2D(node.getLon()+180, node.getLat()+180);
+            kdtree.insert(temp, node);
         }
+        
     }
 
     
@@ -58,29 +62,17 @@ public class Tree {
         waysInBounds = new ArrayList<>();
         relationsInBounds = new ArrayList<>();
 
-        ArrayList<TagNode> allNodes = (ArrayList<TagNode>) XMLReader.getNodes().values().stream().toList();
-        Iterator<Point2D> it = kdtree.range(rect).iterator();
-
-        while(it.hasNext()){
-            Point2D point = it.next();
-            for (TagNode node : allNodes){
-                if (node.getLon() == point.x() && node.getLat() == point.y()){
-                    nodesInBounds.add(node);
-                    break;
-                }
-            }
-        }
-
-        return nodes;
+        nodesInBounds = kdtree.rangeNode(rect);
+        return nodesInBounds;
     }
 
-    public ArrayList<TagWay> getWaysFromTree(RectHV rect){
+    public ArrayList<TagWay> getWaysInBounds(RectHV rect){
 
         if (!waysInBounds.isEmpty()){
             return waysInBounds;
         }
 
-        ArrayList<TagWay> allWays = (ArrayList<TagWay>) XMLReader.getWays().values().stream().toList();
+        ArrayList<TagWay> allWays = new ArrayList<>(XMLReader.getWays().values());
         ArrayList<TagNode> nodes = getNodesInBounds(rect);
 
         for (TagNode node : nodes){
@@ -89,8 +81,8 @@ public class Tree {
                 if (wayFound){
                     break;
                 }
-                for (Long id : way.getNodes()){
-                    if (id == node.getId()){
+                for (TagNode allNode : way.getNodes()){
+                    if (allNode.getId() == node.getId()){
                         waysInBounds.add(way);
                         wayFound = true;
                         break;
@@ -103,14 +95,14 @@ public class Tree {
 
     }
 
-    public ArrayList<TagRelation> getRelationsFromTree(RectHV rect){
+    public ArrayList<TagRelation> getRelationsInBounds(RectHV rect){
 
         if (!relationsInBounds.isEmpty()){
             return relationsInBounds;
         }
 
-        ArrayList<TagRelation> allRelations = (ArrayList<TagRelation>) XMLReader.getRelations().values().stream().toList();
-        ArrayList<TagWay> ways = getWaysFromTree(rect);
+        ArrayList<TagRelation> allRelations = new ArrayList<>(XMLReader.getRelations().values());
+        ArrayList<TagWay> ways = getWaysInBounds(rect);
 
         for (TagRelation relation : allRelations){
             boolean relationFound = false;

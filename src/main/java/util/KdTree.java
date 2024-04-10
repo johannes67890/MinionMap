@@ -53,6 +53,7 @@ public class KdTree {
      */
     public KdTree() {
         size = 0;
+        pointToNode = new HashMap<>();
     }
     
     /**
@@ -121,10 +122,10 @@ public class KdTree {
         // new double[] {x_min, y_min, x_max, y_max)
         root = insert(root, p, true, new double[] {0, 0, 1, 1});
     }
-
+    
+    // Extra method for pointing a node to a coordinat
     public void insert(Point2D p, TagNode node) {
-        if (p == null) throw new java.lang.NullPointerException(
-                "called insert() with a null Point2D");
+        if (p == null) {throw new java.lang.NullPointerException("called insert() with a null Point2D");};
         
         // new double[] {x_min, y_min, x_max, y_max)
         root = insert(root, p, true, new double[] {0, 0, 1, 1});
@@ -134,6 +135,8 @@ public class KdTree {
     private Node insert(Node n, Point2D p, boolean evenLevel, double[] coords) {
         if (n == null) {
             size++;
+            // double xmin, double ymin, double xmax, double ymax
+            //System.out.println("xmin: " + coords[0] + "| ymin: " + coords[1] + "| xmax: " + coords[2] + "| ymax: " + coords[3]);
             return new Node(p, coords);
         }
         
@@ -197,7 +200,6 @@ public class KdTree {
          * Hence, duplicates are silently dropped, rather than
          * being added.
          */
-        
         return n;
     }
     

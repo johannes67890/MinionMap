@@ -2,6 +2,7 @@ package gui;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.princeton.cs.algs4.RectHV;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -15,7 +16,8 @@ import parser.Type;
 import parser.XMLReader;
 import parser.XMLWriter;
 import util.MathUtil;
-import util.MinPQ;;
+import util.MinPQ;
+import util.Tree;;
 
 
 public class DrawingMap {
@@ -25,15 +27,17 @@ public class DrawingMap {
     public ResizableCanvas canvas;
     private XMLReader reader;
     private MainView mainView;
+    private Tree kdtree;
     private double zoomLevel = 1;
     private int hierarchyLevel = 9;
+    private double[] transformOffset = {0,0};
     private final double zoomLevelMin = 40, zoomLevelMax = 3000000; // These variables changes how much you can zoom in and out. Min is far out and max is closest in
     private double zoomScalerToMeter; // This is the world meters of how long the scaler in the bottom right corner is. Divide it with the zoomLevel
     private int[] zoomScales = {1000000, 500000, 250000, 125000, 67500, 33750, 16875, 8437, 4218, 2109};
 
     public DrawingMap(MainView mainView, XMLReader reader){
         this.mainView = mainView;
-        this.reader = reader;        
+        this.reader = reader; 
     }
 
     public void initialize(ResizableCanvas canvas){
@@ -50,8 +54,9 @@ public class DrawingMap {
         double minlat = bound.getMinLat();
         double temp = Screen.getPrimary().getVisualBounds().getWidth() * 0.04;
         zoomScalerToMeter = haversineDist(new Point2D(0, 0), new Point2D(temp,0));
+        ArrayList<TagNode> tempList = new ArrayList<>(XMLReader.getNodes().values());
+        kdtree = new Tree(tempList);
 
-        //pan(-0.56*minlon, maxlat);
         pan(-0.56*minlon, maxlat);
         zoom(canvas.getWidth() / (maxlon - minlon), 0, 0);
         DrawMap(canvas.getGraphicsContext2D(), canvas);
@@ -94,14 +99,18 @@ public class DrawingMap {
         gc.setTransform(new Affine());
         gc.setFill(Color.WHITE);
         gc.fillRect(0,0,canvas.getWidth(), canvas.getHeight());
-
-
         gc.setTransform(transform);
+
+        RectHV rect = new RectHV(transformOffset[0]*zoomLevel, transformOffset[1]*zoomLevel, canvas.getWidth()+transformOffset[0]*zoomLevel, canvas.getHeight()+transformOffset[1]*zoomLevel);
+
         ArrayList<TagWay> waysToDrawWithType = new ArrayList<>();
         ArrayList<TagWay> waysToDrawWithoutType = new ArrayList<>();
         List<TagNode> nodes = XMLReader.getNodes().values().stream().toList();
+        //kdtree.getNodesInBounds(rect);
         List<TagWay> ways = XMLReader.getWays().values().stream().toList();
+        //ways = kdtree.getWaysInBounds(rect);
         List<TagRelation> relations = XMLReader.getRelations().values().stream().toList();
+        //relations = kdtree.getRelationsInBounds(rect);
         List<TagWay> splitWayInRelation;
 
 
@@ -311,7 +320,8 @@ public class DrawingMap {
 
 
     public void pan(double dx, double dy) {
-
+        transformOffset[0] += dx;
+        transformOffset[1] += dy;
         transform.prependTranslation(dx, dy);
         mainView.draw();
     }
