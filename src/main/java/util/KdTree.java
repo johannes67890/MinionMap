@@ -47,7 +47,8 @@ public class KdTree {
     private Node root;
     private int size;
     private HashMap<Point2D, TagNode> pointToNode;
-    
+    private double[] bounds = null;
+
     /**
      * Construct an empty set of points.
      */
@@ -77,6 +78,20 @@ public class KdTree {
      */
     public int size() {
         return size;
+    }
+
+    /*
+     * Set the bounds for the coordinates possible in the KdTree
+     */
+    public void setBound(double x_min, double y_min, double x_max, double y_max){
+        this.bounds = new double[]{x_min, y_min, x_max, y_max};
+    }
+
+    /*
+     * Getter function for the bounds
+     */
+    public double[] getBounds(){
+        return bounds;
     }
     
     /**
@@ -115,20 +130,18 @@ public class KdTree {
      * @param p the point to add
      * @throws NullPointerException if {@code p} is {@code null}
      */
-    public void insert(Point2D p) {
-        if (p == null) throw new java.lang.NullPointerException(
-                "called insert() with a null Point2D");
-        
-        // new double[] {x_min, y_min, x_max, y_max)
-        root = insert(root, p, true, new double[] {0, 0, 360, 360});
-    }
     
     // Extra method for pointing a node to a coordinat
     public void insert(Point2D p, TagNode node) {
         if (p == null) {throw new java.lang.NullPointerException("called insert() with a null Point2D");};
         
         // new double[] {x_min, y_min, x_max, y_max)
-        root = insert(root, p, true, new double[] {0, 0, 360, 360});
+        if(bounds != null) {
+            root = insert(root, p, true, bounds);
+        } else {
+            root = insert(root, p, true, new double[] {0, 0, 360, 360});
+        }
+        
         pointToNode.put(p, node);
     }
     
@@ -492,16 +505,5 @@ public class KdTree {
             this.p = p;
             rect = new RectHV(coords[0], coords[1], coords[2], coords[3]);
         }
-    }
-            
-    /**
-     * Unit testing of the methods (optional).
-     * @param args
-     */
-    public static void main(String[] args) {
-        KdTree kdtree = new KdTree();
-        Point2D p = new Point2D(0.2, 0.3);
-        kdtree.insert(p);
-        StdOut.println(kdtree.contains(p));
     }
 }

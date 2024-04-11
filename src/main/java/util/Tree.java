@@ -46,6 +46,10 @@ public class Tree {
         setNodesInBounds(rect);
     }
 
+    public void setTreeBounds(double minlat, double maxlat, double minlon, double maxlon) {
+        
+    }
+
     /**
      * Sets nodes in the given bounds
      * @param rect screenbounds
