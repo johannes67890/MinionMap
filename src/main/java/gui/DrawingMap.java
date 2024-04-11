@@ -56,7 +56,7 @@ public class DrawingMap {
         zoomScalerToMeter = haversineDist(new Point2D(0, 0), new Point2D(temp,0));
         ArrayList<TagNode> tempList = new ArrayList<>(XMLReader.getNodes().values());
         kdtree = new Tree(tempList);
-
+        
         pan(-0.56*minlon, maxlat);
         zoom(canvas.getWidth() / (maxlon - minlon), 0, 0);
         DrawMap(canvas.getGraphicsContext2D(), canvas);
@@ -94,6 +94,9 @@ public class DrawingMap {
     public void DrawMap(GraphicsContext gc, ResizableCanvas canvas){
         long preTime = System.currentTimeMillis();
 
+        if (kdtree == null){
+            return;
+        }
 
         gc = canvas.getGraphicsContext2D();
         gc.setTransform(new Affine());
@@ -101,16 +104,19 @@ public class DrawingMap {
         gc.fillRect(0,0,canvas.getWidth(), canvas.getHeight());
         gc.setTransform(transform);
 
-        RectHV rect = new RectHV(transformOffset[0]*zoomLevel, transformOffset[1]*zoomLevel, canvas.getWidth()+transformOffset[0]*zoomLevel, canvas.getHeight()+transformOffset[1]*zoomLevel);
+        //RectHV rect = new RectHV(XMLReader.getBound().getMinLon() * 0.56, -XMLReader.getBound().getMinLat(), XMLReader.getBound().getMaxLon() * 0.56, -XMLReader.getBound().getMaxLat());
+        RectHV rect = new RectHV(-180, -180, 180, 180);
+        System.out.println(rect);
 
         ArrayList<TagWay> waysToDrawWithType = new ArrayList<>();
         ArrayList<TagWay> waysToDrawWithoutType = new ArrayList<>();
         List<TagNode> nodes = XMLReader.getNodes().values().stream().toList();
-        kdtree.getNodesInBounds(rect);
+        nodes = kdtree.getNodesInBounds(rect);
+        System.out.println(nodes.size());
         List<TagWay> ways = XMLReader.getWays().values().stream().toList();
-        //ways = kdtree.getWaysInBounds(rect);
+        ways = kdtree.getWaysInBounds(rect);
         List<TagRelation> relations = XMLReader.getRelations().values().stream().toList();
-        //relations = kdtree.getRelationsInBounds(rect);
+        relations = kdtree.getRelationsInBounds(rect);
         List<TagWay> splitWayInRelation;
 
 
@@ -146,7 +152,7 @@ public class DrawingMap {
 
             for (TagWay way : relation.getActualOuter()){
 
-                System.out.println(way.loops());
+                //System.out.println(way.loops());
 
                 /* 
 
@@ -322,6 +328,7 @@ public class DrawingMap {
     public void pan(double dx, double dy) {
         transformOffset[0] += dx;
         transformOffset[1] += dy;
+        //System.out.println("x: " + transformOffset[0] + "| y: " + transformOffset[1]);
         transform.prependTranslation(dx, dy);
         mainView.draw();
     }

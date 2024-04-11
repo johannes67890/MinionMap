@@ -47,7 +47,7 @@ public class KdTree {
     private Node root;
     private int size;
     private HashMap<Point2D, TagNode> pointToNode;
-    private double[] bounds = null;
+    public double[] bounds = new double[4];
 
     /**
      * Construct an empty set of points.
@@ -84,7 +84,11 @@ public class KdTree {
      * Set the bounds for the coordinates possible in the KdTree
      */
     public void setBound(double x_min, double y_min, double x_max, double y_max){
-        this.bounds = new double[]{x_min, y_min, x_max, y_max};
+        //bounds = new double[]{x_min, y_min, x_max, y_max};
+        bounds[0] = x_min;
+        bounds[1] = y_min;
+        bounds[2] = x_max;
+        bounds[3] = y_max;
     }
 
     /*
@@ -133,13 +137,15 @@ public class KdTree {
     
     // Extra method for pointing a node to a coordinat
     public void insert(Point2D p, TagNode node) {
-        if (p == null) {throw new java.lang.NullPointerException("called insert() with a null Point2D");};
+        if (p == null) {
+            throw new java.lang.NullPointerException("called insert() with a null Point2D");
+        }
         
         // new double[] {x_min, y_min, x_max, y_max)
         if(bounds != null) {
             root = insert(root, p, true, bounds);
         } else {
-            root = insert(root, p, true, new double[] {0, 0, 360, 360});
+            root = insert(root, p, true, new double[] {-180, -180, 180, 180});
         }
         
         pointToNode.put(p, node);

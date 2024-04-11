@@ -31,8 +31,10 @@ public class Tree {
     public Tree(ArrayList<TagNode> nodes){
         this.nodes = nodes;
         kdtree = new KdTree();
+        kdtree.setBound(-180.0, -180.0, 180.0, 180.0);
+        System.out.println(kdtree.getBounds()[2]);
         for (TagNode node : nodes){
-            Point2D temp = new Point2D(node.getLon()+180, node.getLat()+180);
+            Point2D temp = new Point2D(node.getLon(), node.getLat());
             kdtree.insert(temp, node);
         }
         
