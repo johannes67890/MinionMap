@@ -7,7 +7,10 @@ import edu.princeton.cs.algs4.RectHV;
 import edu.princeton.cs.algs4.Stack;
 import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdOut;
+import parser.Tag;
 import parser.TagNode;
+import parser.TagRelation;
+import parser.TagWay;
 
 /*
  * Copyright (C) 2016 Michael <GrubenM@GMail.com>
@@ -46,7 +49,7 @@ import parser.TagNode;
 public class KdTree {
     private Node root;
     private int size;
-    private HashMap<Point2D, TagNode> pointToNode;
+    private HashMap<Point2D, Tag<?>> pointToTag;
     public double[] bounds = new double[4];
 
     /**
@@ -54,7 +57,7 @@ public class KdTree {
      */
     public KdTree() {
         size = 0;
-        pointToNode = new HashMap<>();
+        pointToTag = new HashMap<>();
     }
     
     /**
@@ -132,7 +135,7 @@ public class KdTree {
      */
     
     // Extra method for pointing a node to a coordinat
-    public void insert(Point2D p, TagNode node) {
+    public void insert(Point2D p, Tag<?> node) {
         if (p == null) {
             throw new java.lang.NullPointerException("called insert() with a null Point2D");
         }
@@ -144,7 +147,7 @@ public class KdTree {
             root = insert(root, p, true, new double[] {-180, -180, 180, 180});
         }
         
-        pointToNode.put(p, node);
+        pointToTag.put(p, node);
     }
     
     private Node insert(Node n, Point2D p, boolean evenLevel, double[] coords) {
@@ -299,48 +302,14 @@ public class KdTree {
      * @return an iterator to all of the points within the given RectHV
      * @throws NullPointerException if {@code rect} is {@code null}
      */
-    public Iterable<Point2D> range(RectHV rect) {
-        if (rect == null) throw new java.lang.NullPointerException(
-                "called range() with a null RectHV");
-        
-        Stack<Point2D> points = new Stack<>();
-        
-        // Handle KdTree without a root node yet
-        if (root == null) return points;
-        
-        Stack<Node> nodes = new Stack<>();
-        nodes.push(root);
-        while (!nodes.isEmpty()) {
-            
-            // Examine the next Node
-            Node tmp = nodes.pop();
-            
-            // Add contained points to our points stack
-            if (rect.contains(tmp.p)) points.push(tmp.p);
-            
-            /**
-             * Add Nodes containing promising rectangles to our nodes stack.
-             * 
-             * Note that, since we don't push Nodes onto the stack unless
-             * their rectangles intersect with the given RectHV, we achieve
-             * pruning as we traverse the BST.
-             */
-            if (tmp.lb != null && rect.intersects(tmp.lb.rect)) {
-                nodes.push(tmp.lb);
-            }
-            if (tmp.rt != null && rect.intersects(tmp.rt.rect)) {
-                nodes.push(tmp.rt);
-            }
-        }
-        return points;
-    }
+    
 
-    public ArrayList<TagNode> rangeNode(RectHV rect) {
+    public ArrayList<Tag<?>> rangeNode(RectHV rect) {
         if (rect == null) throw new java.lang.NullPointerException(
                 "called range() with a null RectHV");
         
         Stack<Point2D> points = new Stack<>();
-        ArrayList<TagNode> returnList = new ArrayList<>();
+        ArrayList<Tag<?>> returnList = new ArrayList<>();
         
         // Handle KdTree without a root node yet
         if (root == null) return returnList;
@@ -355,7 +324,7 @@ public class KdTree {
             // Add contained points to our points stack
             if (rect.contains(tmp.p)){
                 points.push(tmp.p);
-                returnList.add(pointToNode.get(tmp.p));
+                returnList.add(pointToTag.get(tmp.p));
             }
             /**
              * Add Nodes containing promising rectangles to our nodes stack.

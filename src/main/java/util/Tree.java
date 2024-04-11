@@ -9,6 +9,7 @@ import javax.sql.rowset.spi.XmlReader;
 
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
+import parser.Tag;
 import parser.TagNode;
 import parser.TagRelation;
 import parser.TagWay;
@@ -17,36 +18,44 @@ import parser.XMLReader;
 import util.KdTree;
 
 public class Tree {
-    
-    public ArrayList<TagNode> nodes;
-    TagNode node;
 
     KdTree kdtree;
-    ArrayList<TagNode> nodesInBounds;
+    ArrayList<Tag<?>> nodesInBounds;
     ArrayList<TagWay> waysInBounds;
     ArrayList<TagRelation> relationsInBounds;
 
     private HashSet<Point2D> points = new HashSet<Point2D>();
 
-    public Tree(ArrayList<TagNode> nodes){
-        this.nodes = nodes;
+    public Tree(ArrayList<Tag<?>> tags){
         kdtree = new KdTree();
         kdtree.setBound(-90, -90, 90, 90);
-        for (TagNode node : nodes){
-            Point2D temp = new Point2D(node.getLon(), node.getLat());
-            kdtree.insert(temp, node);
+        for (Tag<?> tag : tags){
+            if (tag instanceof TagNode){
+                TagNode node = (TagNode) tag;
+                Point2D temp = new Point2D(node.getLon(), node.getLat());
+                kdtree.insert(temp, tag);
+            }else if (tag instanceof TagWay){
+                TagWay way = (TagWay) tag;
+                for (TagNode node : way.getNodes()){
+                    Point2D temp = new Point2D(node.getLon(), node.getLat());
+                    kdtree.insert(temp, tag);
+                }
+            }else if (tag instanceof TagRelation){
+                TagRelation relation = (TagRelation) tag;
+                for (TagWay way : relation.getWays()){
+                    for (TagNode node : way.getNodes()){
+                        Point2D temp = new Point2D(node.getLon(), node.getLat());
+                        kdtree.insert(temp, tag);
+                    }
+                }
+            }
         }
         
     }
 
-    public ArrayList<TagNode> getNodesInBounds(RectHV rect) {
-        
-        nodesInBounds = new ArrayList<>();
-        waysInBounds = new ArrayList<>();
-        relationsInBounds = new ArrayList<>();
-
-        nodesInBounds = kdtree.rangeNode(rect);
-        return nodesInBounds;
+    public ArrayList<Tag<?>> getTagsInBounds(RectHV rect) {
+        ArrayList<Tag<?>> tagsInBounds = kdtree.rangeNode(rect);
+        return tagsInBounds;
     }
 
     public ArrayList<TagWay> getWaysInBounds(RectHV rect){
@@ -56,7 +65,7 @@ public class Tree {
         }
 
         ArrayList<TagWay> allWays = new ArrayList<>(XMLReader.getWays().values());
-        ArrayList<TagNode> nodes = getNodesInBounds(rect);
+        ArrayList<TagNode> nodes = new ArrayList<>();// = getNodesInBounds(rect);
 
         for (TagNode node : nodes){
             boolean wayFound = false;

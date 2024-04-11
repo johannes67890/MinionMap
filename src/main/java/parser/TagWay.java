@@ -17,7 +17,7 @@ enum Way {
  * {@link Way#ID}, {@link Way#REFS}, {@link Way#NAME}, {@link Way#TYPE}
  * </p>
  */
-public class TagWay extends HashMap<Way, Object> implements Comparable<TagWay>{
+public class TagWay extends Tag<Way> implements Comparable<TagWay>{
 
 
     boolean isLine = false;
