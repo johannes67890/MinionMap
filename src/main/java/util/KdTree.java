@@ -1,6 +1,7 @@
 package util;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
@@ -304,12 +305,13 @@ public class KdTree {
      */
     
 
-    public ArrayList<Tag<?>> rangeNode(RectHV rect) {
+    public HashSet<Tag<?>> rangeNode(RectHV rect) {
         if (rect == null) throw new java.lang.NullPointerException(
                 "called range() with a null RectHV");
         
         Stack<Point2D> points = new Stack<>();
-        ArrayList<Tag<?>> returnList = new ArrayList<>();
+        //ArrayList<Tag<?>> returnList = new ArrayList<>();
+        HashSet<Tag<?>> returnList = new HashSet<>();
         
         // Handle KdTree without a root node yet
         if (root == null) return returnList;

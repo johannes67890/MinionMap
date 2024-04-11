@@ -24,11 +24,9 @@ public class Tree {
     ArrayList<TagWay> waysInBounds;
     ArrayList<TagRelation> relationsInBounds;
 
-    private HashSet<Point2D> points = new HashSet<Point2D>();
-
     public Tree(ArrayList<Tag<?>> tags){
         kdtree = new KdTree();
-        kdtree.setBound(-90, -90, 90, 90);
+        kdtree.setBound(-180, -180, 180, 180);
         for (Tag<?> tag : tags){
             if (tag instanceof TagNode){
                 TagNode node = (TagNode) tag;
@@ -53,8 +51,8 @@ public class Tree {
         
     }
 
-    public ArrayList<Tag<?>> getTagsInBounds(RectHV rect) {
-        ArrayList<Tag<?>> tagsInBounds = kdtree.rangeNode(rect);
+    public HashSet<Tag<?>> getTagsInBounds(RectHV rect) {
+        HashSet<Tag<?>> tagsInBounds = kdtree.rangeNode(rect);
         return tagsInBounds;
     }
 

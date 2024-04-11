@@ -1,5 +1,6 @@
 package gui;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import edu.princeton.cs.algs4.RectHV;
@@ -35,6 +36,9 @@ public class DrawingMap {
     private final double zoomLevelMin = 40, zoomLevelMax = 3000000; // These variables changes how much you can zoom in and out. Min is far out and max is closest in
     private double zoomScalerToMeter; // This is the world meters of how long the scaler in the bottom right corner is. Divide it with the zoomLevel
     private int[] zoomScales = {1000000, 500000, 250000, 125000, 67500, 33750, 16875, 8437, 4218, 2109};
+    
+    private boolean test;
+    private double[] test1;
 
     public DrawingMap(MainView mainView, XMLReader reader){
         this.mainView = mainView;
@@ -46,8 +50,6 @@ public class DrawingMap {
         this.canvas = canvas;
 
         TagBound bound = reader.getBound();
-
-        //System.out.println("BOUNDS: " + bound.getMaxLon());
 
         double minlon = bound.getMinLon();
         double maxlat = bound.getMaxLat();
@@ -62,6 +64,7 @@ public class DrawingMap {
         
         pan(-0.56*minlon, maxlat);
         zoom(canvas.getWidth() / (maxlon - minlon), 0, 0);
+
         DrawMap(canvas.getGraphicsContext2D(), canvas);
     }
 
@@ -107,28 +110,28 @@ public class DrawingMap {
         gc.fillRect(0,0,canvas.getWidth(), canvas.getHeight());
         gc.setTransform(transform);
 
-        //RectHV rect = new RectHV(XMLReader.getBound().getMinLon() * 0.56, -XMLReader.getBound().getMaxLat(), XMLReader.getBound().getMaxLon() * 0.56, -XMLReader.getBound().getMinLat());
+        double[] canvasBounds = getScreenBoundsBigger(0.05);
 
-        double x1 = transform.getTx() / Math.sqrt(transform.determinant());
-        double y1 = (-transform.getTy()) / Math.sqrt(transform.determinant());
-        double x2 = canvas.getWidth() - x1;
-        double y2 = canvas.getHeight() - y1;
+        RectHV rect = new RectHV(canvasBounds[0], canvasBounds[1], canvasBounds[2], canvasBounds[3]);
 
-        RectHV rect = new RectHV(x1, y1, x2, y2);
+        if (!test){
+            test = true;
+            test1 = getScreenBoundsBigger(0.05);
+        }
+        //gc.setFill(Color.BLACK);
+        //gc.fillRect(test1[0], test1[1], test1[2], test1[3]);
+        //System.out.println("xmin: " + test1[0] + " | ymin: " + test1[1] + " | xmax: " + test1[2] + " | ymax: " + test1[3]);
+        //System.out.println(zoomLevel);
+
 
         ArrayList<TagWay> waysToDrawWithType = new ArrayList<>();
         ArrayList<TagWay> waysToDrawWithoutType = new ArrayList<>();
 
-        
-        //List<TagNode> nodes = XMLReader.getNodes().values().stream().toList();
         List<TagNode> nodes = new ArrayList<>();
-        //List<TagWay> ways = XMLReader.getWays().values().stream().toList();
         List<TagWay> ways = new ArrayList<>();
-        //List<TagRelation> relations = XMLReader.getRelations().values().stream().toList();
         List<TagRelation> relations = new ArrayList<>();
         List<TagWay> splitWayInRelation;
-        List<Tag<?>> tags = kdtree.getTagsInBounds(rect);
-        System.out.println("Antal tags: " + tags.size());
+        HashSet<Tag<?>> tags = kdtree.getTagsInBounds(rect);
         for(Tag<?> tag : tags){
             if (tag instanceof TagNode){
                 nodes.add((TagNode) tag);
@@ -138,7 +141,8 @@ public class DrawingMap {
                 relations.add((TagRelation) tag);
             }
         }
-        
+        System.out.println("Antal tags: " + tags.size());
+
 
         for (TagWay way : ways){
             if (way.getType() != null){
@@ -210,8 +214,8 @@ public class DrawingMap {
         }
 
 
-        MinPQ<TagWay> sortedWaysToDraw = new MinPQ<>(waysToDrawWithType.size());
         
+        MinPQ<TagWay> sortedWaysToDraw = new MinPQ<>(waysToDrawWithType.size());
         for (TagWay way : waysToDrawWithType){
             sortedWaysToDraw.insert(way);
         }
@@ -301,6 +305,33 @@ public class DrawingMap {
 
     }
 
+    /**
+     * Calculates the coordinates the screen sees and returns a array of coordinates.
+     * Index 0: X - Minimum
+     * Index 1: Y - Minimum
+     * Index 2: X - Maximum
+     * Index 3: Y - Maximum
+     * @return It returns the coordinates of the screen to map coordinates in an array (double[])
+     */
+    public double[] getScreenBounds(){
+        double[] bounds = new double[4]; // x_min ; y_min ; x_max ; y_max
+        bounds[0] = -(transform.getTx() / Math.sqrt(transform.determinant()));
+        bounds[1] = (-transform.getTy()) / Math.sqrt(transform.determinant());
+        bounds[2] = ((canvas.getWidth()) / zoomLevel) + bounds[0];
+        bounds[3] = ((canvas.getHeight()) / zoomLevel) + bounds[1];
+        return bounds;
+    }
+
+    public double[] getScreenBoundsBigger(double multiplier){
+        double[] bounds = getScreenBounds();
+        double width = bounds[2] - bounds[0];
+        double height = bounds[3] - bounds[1];
+        bounds[0] -= (width * (1.0 - multiplier));
+        bounds[1] -= (height * (1.0 - multiplier));
+        bounds[2] += (width * (1.0 + multiplier));
+        bounds[3] += (height * (1.0 + multiplier));
+        return bounds;
+    }
 
 
     // Returns the distance for the ruler in the bottom right corner
