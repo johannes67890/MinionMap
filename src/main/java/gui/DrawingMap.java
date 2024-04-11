@@ -106,7 +106,7 @@ public class DrawingMap {
         ArrayList<TagWay> waysToDrawWithType = new ArrayList<>();
         ArrayList<TagWay> waysToDrawWithoutType = new ArrayList<>();
         List<TagNode> nodes = XMLReader.getNodes().values().stream().toList();
-        //kdtree.getNodesInBounds(rect);
+        kdtree.getNodesInBounds(rect);
         List<TagWay> ways = XMLReader.getWays().values().stream().toList();
         //ways = kdtree.getWaysInBounds(rect);
         List<TagRelation> relations = XMLReader.getRelations().values().stream().toList();

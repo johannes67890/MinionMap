@@ -120,7 +120,7 @@ public class KdTree {
                 "called insert() with a null Point2D");
         
         // new double[] {x_min, y_min, x_max, y_max)
-        root = insert(root, p, true, new double[] {0, 0, 1, 1});
+        root = insert(root, p, true, new double[] {0, 0, 360, 360});
     }
     
     // Extra method for pointing a node to a coordinat
@@ -128,7 +128,7 @@ public class KdTree {
         if (p == null) {throw new java.lang.NullPointerException("called insert() with a null Point2D");};
         
         // new double[] {x_min, y_min, x_max, y_max)
-        root = insert(root, p, true, new double[] {0, 0, 1, 1});
+        root = insert(root, p, true, new double[] {0, 0, 360, 360});
         pointToNode.put(p, node);
     }
     
@@ -381,8 +381,7 @@ public class KdTree {
         return nearest(root, p, root.p, true);
     }
     
-    private Point2D nearest(Node n, Point2D p, Point2D champion,
-            boolean evenLevel) {
+    private Point2D nearest(Node n, Point2D p, Point2D champion, boolean evenLevel) {
         
         // Handle reaching the end of the tree
         if (n == null) return champion;
