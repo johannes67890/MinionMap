@@ -84,11 +84,7 @@ public class KdTree {
      * Set the bounds for the coordinates possible in the KdTree
      */
     public void setBound(double x_min, double y_min, double x_max, double y_max){
-        //bounds = new double[]{x_min, y_min, x_max, y_max};
-        bounds[0] = x_min;
-        bounds[1] = y_min;
-        bounds[2] = x_max;
-        bounds[3] = y_max;
+        bounds = new double[] {x_min, y_min, x_max, y_max};
     }
 
     /*
@@ -143,7 +139,7 @@ public class KdTree {
         
         // new double[] {x_min, y_min, x_max, y_max)
         if(bounds != null) {
-            root = insert(root, p, true, bounds);
+            root = insert(root, p, true, bounds.clone());
         } else {
             root = insert(root, p, true, new double[] {-180, -180, 180, 180});
         }

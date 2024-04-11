@@ -104,19 +104,16 @@ public class DrawingMap {
         gc.fillRect(0,0,canvas.getWidth(), canvas.getHeight());
         gc.setTransform(transform);
 
-        //RectHV rect = new RectHV(XMLReader.getBound().getMinLon() * 0.56, -XMLReader.getBound().getMinLat(), XMLReader.getBound().getMaxLon() * 0.56, -XMLReader.getBound().getMaxLat());
-        RectHV rect = new RectHV(-180, -180, 180, 180);
-        System.out.println(rect);
+        RectHV rect = new RectHV(XMLReader.getBound().getMinLon() * 0.56, -XMLReader.getBound().getMaxLat(), XMLReader.getBound().getMaxLon() * 0.56, -XMLReader.getBound().getMinLat());
 
         ArrayList<TagWay> waysToDrawWithType = new ArrayList<>();
         ArrayList<TagWay> waysToDrawWithoutType = new ArrayList<>();
-        List<TagNode> nodes = XMLReader.getNodes().values().stream().toList();
-        nodes = kdtree.getNodesInBounds(rect);
-        System.out.println(nodes.size());
-        List<TagWay> ways = XMLReader.getWays().values().stream().toList();
-        ways = kdtree.getWaysInBounds(rect);
-        List<TagRelation> relations = XMLReader.getRelations().values().stream().toList();
-        relations = kdtree.getRelationsInBounds(rect);
+        //List<TagNode> nodes = XMLReader.getNodes().values().stream().toList();
+        List<TagNode> nodes = kdtree.getNodesInBounds(rect);
+        //List<TagWay> ways = XMLReader.getWays().values().stream().toList();
+        List<TagWay> ways = kdtree.getWaysInBounds(rect);
+        //List<TagRelation> relations = XMLReader.getRelations().values().stream().toList();
+        List<TagRelation> relations = kdtree.getRelationsInBounds(rect);
         List<TagWay> splitWayInRelation;
 
 

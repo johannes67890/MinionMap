@@ -31,35 +31,12 @@ public class Tree {
     public Tree(ArrayList<TagNode> nodes){
         this.nodes = nodes;
         kdtree = new KdTree();
-        kdtree.setBound(-180.0, -180.0, 180.0, 180.0);
-        System.out.println(kdtree.getBounds()[2]);
+        kdtree.setBound(-90, -90, 90, 90);
         for (TagNode node : nodes){
             Point2D temp = new Point2D(node.getLon(), node.getLat());
             kdtree.insert(temp, node);
         }
         
-    }
-
-    
-    
-    public void setScreenBounds(int width, int height) {
-        
-        RectHV rect = new RectHV(0, 0, width, height);
-        setNodesInBounds(rect);
-    }
-
-    public void setTreeBounds(double minlat, double maxlat, double minlon, double maxlon) {
-        
-    }
-
-    /**
-     * Sets nodes in the given bounds
-     * @param rect screenbounds
-     */
-    private void setNodesInBounds(RectHV rect) {
-        HashSet<Point2D> points = new HashSet<Point2D>();
-        this.kdtree.range(rect).forEach(point -> {points.add(point);});
-
     }
 
     public ArrayList<TagNode> getNodesInBounds(RectHV rect) {
