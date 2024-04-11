@@ -33,6 +33,27 @@ public class TagWay extends HashMap<Way, Object> implements Comparable<TagWay>{
             }
         });
     }
+
+    /**
+     * 
+     * TagWay that is created from Relation's Outer ways.
+     * 
+     * @param builder
+     */
+    public TagWay(TagRelation relation, long id, ArrayList<TagNode> nodes, int speedLimit) {
+        super(new HashMap<Way, Object>(){
+            {
+                put(Way.ID, id);
+                put(Way.NAME, relation.getName());
+                put(Way.REFS, nodes);
+                put(Way.SPEEDLIMIT, speedLimit);
+                put(Way.TYPE, relation.getType());     
+            }
+        });
+    }
+
+
+
     /**
      * Get the id of the way.
      * @return The id of the way.
@@ -66,7 +87,17 @@ public class TagWay extends HashMap<Way, Object> implements Comparable<TagWay>{
     }
 
     public boolean loops(){
-        return getNodes().get(0).equals(getNodes().get(getNodes().size() - 1));
+        if (!getNodes().isEmpty()){
+            return getNodes().get(0).equals(getNodes().get(size() - 1));
+        } else{return false;}
+    }
+
+    public TagNode firsTagNode(){
+        return getNodes().get(0);
+    }
+
+    public TagNode lastTagNode(){
+        return getNodes().get(size() - 1);
     }
     
     /**
@@ -88,6 +119,7 @@ public class TagWay extends HashMap<Way, Object> implements Comparable<TagWay>{
     public boolean isLine(){
         return isLine;
     }
+
 
     public int compareTo(TagWay tW){
 
@@ -111,7 +143,7 @@ public class TagWay extends HashMap<Way, Object> implements Comparable<TagWay>{
     /**
     * Builder for a single way.
     * <p>
-    * Constructs a instance of the builder, that later can be used to construct a {@link TagWay}.
+    * Constructs an instance of the builder, that later can be used to construct a {@link TagWay}.
     * </p>
     */
     public static class WayBuilder {
@@ -150,6 +182,13 @@ public class TagWay extends HashMap<Way, Object> implements Comparable<TagWay>{
                 isEmpty = false;
             }
             refNodes.add(migrateNode(ref));
+        }
+
+        public void addNode(TagNode node) {
+            if (isEmpty) {
+                isEmpty = false;
+            }
+            refNodes.add(node);
         }
 
         public ArrayList<TagNode> getRefNodes() {

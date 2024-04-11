@@ -135,16 +135,16 @@ public class DrawingMap {
 
             
 
-            for (TagWay way : relation.getActualOuter()){
+            for (TagWay way : relation.getHandledOuter()){
 
-                System.out.println(way.loops());
+                //System.out.println(way.loops());
 
-                /* 
+                 
 
                 if (!way.loops()){
                     splitWayInRelation.add(way);
                     continue;
-                }*/
+                }
 
                 if (relation.getType() != null){
                     way.setType(relation.getType());
@@ -158,18 +158,7 @@ public class DrawingMap {
     
                 }
             }
-            /*
 
-            if (!splitWayInRelation.isEmpty()){
-
-                TagWay tw = new TagWay(null);
-
-                for (TagWay way :splitWayInRelation){
-
-                }
-
-
-            }*/
 
 
         }
@@ -181,15 +170,9 @@ public class DrawingMap {
             sortedWaysToDraw.insert(way);
         }
 
-        /*while (!sortedWaysToDraw.isEmpty()) {
-
-            System.out.println(sortedWaysToDraw.delMin().getType().getLayer());
-            
-        }*/
 
         TagBound bound = reader.getBound();
 
-        //Iterator<TagWay> it = ways.iterator();
         
 
         double defaultLineWidth = 1/Math.sqrt(transform.determinant());

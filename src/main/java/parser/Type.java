@@ -36,8 +36,11 @@ public enum Type {
 
 
     COASTLINE("natural", new String[]{"coastline"}, 9, 7, Color.PLUM, 5, true, 2, 100),
-    BEACH("natural",new String[]{"beach"}, 9, 2, Color.LIGHTYELLOW, Color.LIGHTYELLOW.darker(), 5, false),
-    FOREST("landuse",new String[]{"forest","meadow","grass"}, 9, 4, Color.GREEN.brighter().desaturate(), Color.GREEN.darker(), 5, false),
+    BEACH("natural",new String[]{"beach"}, 9, 2, Color.RED, Color.RED.darker(), 5, false),
+    FOREST("landuse",new String[]{"forest"}, 9, 4, Color.GREEN.brighter().desaturate(), Color.GREEN.darker(), 5, false),
+    GRASS("landuse",new String[]{"meadow","grass"}, 9, 5, Color.GREEN.brighter().desaturate().brighter(), Color.GREEN.darker(), 5, false),
+
+
     NATURALS("natural",new String[]{"scrub","grassland","heath", "wood"}, 9, 5, Color.GREENYELLOW, Color.GREENYELLOW.darker(), 5, false),
     WATER("natural",new String[]{"water"}, 9, 9, Color.LIGHTBLUE, Color.LIGHTBLUE.darker(), 5, false),
     WETLAND("natural",new String[]{"wetland"}, 9, 5, Color.DARKKHAKI, Color.DARKKHAKI, 5, false),
