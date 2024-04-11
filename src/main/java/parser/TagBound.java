@@ -97,7 +97,10 @@ public class TagBound extends Tag<Bounds> implements Comparable<TagBound>{
             return false;
         }
         TagBound tag = (TagBound) obj;
-        return Double.valueOf(this.getMaxLat()).equals(Double.valueOf(tag.getMaxLat())) && Double.valueOf(this.getMinLat()).equals(Double.valueOf(tag.getMinLat())) && Double.valueOf(this.getMaxLon()).equals(Double.valueOf(tag.getMaxLon())) && Double.valueOf(this.getMinLon()).equals(Double.valueOf(tag.getMinLon()));
+        return Double.valueOf(
+        this.getMaxLat()).equals(Double.valueOf(tag.getMaxLat())) && Double.valueOf(this.getMinLat()).equals(Double.valueOf(tag.getMinLat())) && 
+        Double.valueOf(this.getMaxLon()).equals(Double.valueOf(tag.getMaxLon())) 
+        && Double.valueOf(this.getMinLon()).equals(Double.valueOf(tag.getMinLon()));
     }
 
     @Override

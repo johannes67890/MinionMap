@@ -8,7 +8,7 @@ import parser.TagNode;
 
 import java.util.ArrayList;
 
-import pathfinding.Edge;
+import pathfinding.DirectedEdge;
 
 // Note: This Class is from https://algs4.cs.princeton.edu/44sp/EdgeWeightedGraph.java.html
 
@@ -25,8 +25,6 @@ import pathfinding.Edge;
  *  adjacency list of <em>v</em> twice and contributes two to the degree
  *  of <em>v</em>.
  *  <p>
- *  This implementation uses an <em>adjacency-lists representation</em>, which
- *  is a vertex-indexed array of {@link Bag} objects.
  *  It uses &Theta;(<em>E</em> + <em>V</em>) space, where <em>E</em> is
  *  the number of edges and <em>V</em> is the number of vertices.
  *  All instance methods take &Theta;(1) time. (Though, iterating over
@@ -47,7 +45,9 @@ import pathfinding.Edge;
 public class Digraph {
     private int V;
     private int E;
-    private TreeMap<TagNode, ArrayList<Edge>> adj;
+    private TreeMap<TagNode, ArrayList<DirectedEdge>> adj;
+    private TreeMap<TagNode, ArrayList<DirectedEdge>> indegree; // indegree[v] = indegree of vertex v
+
 
     /**
      * Initializes an empty edge-weighted graph with 0 edges.
@@ -56,6 +56,7 @@ public class Digraph {
         this.V = 0;
         this.E = 0;
         adj = new TreeMap<>(); 
+        
     }
 
     /**
@@ -82,26 +83,39 @@ public class Digraph {
      * @param  e the edge
      * @throws IllegalArgumentException unless both endpoints are between {@code 0} and {@code V-1}
      */
-    public void addEdge(Edge e) {
-        TagNode v = e.either();
-        TagNode w = e.other(v);
+    public void addEdge(DirectedEdge e) {
+        TagNode v = e.from();
+        TagNode w = e.to();
 
         if(adj.containsKey(v)){
             adj.get(v).add(e);
         } else {
-            ArrayList<Edge> list = new ArrayList<>();
+            ArrayList<DirectedEdge> list = new ArrayList<>();
             list.add(e);
             adj.put(v, list);
         }
         if (adj.containsKey(w)) {
             adj.get(w).add(e);
         } else {
-            ArrayList<Edge> list = new ArrayList<>();
+            ArrayList<DirectedEdge> list = new ArrayList<>();
             list.add(e);
             adj.put(w, list);
         }
         E++;
         V = adj.size();
+    }
+
+    public TagNode getNode(long id){
+        for(DirectedEdge node : edges()){
+            //System.out.println("edges:" + node.either().getId() + " " + node.other(node.either()).getId() + " " + id);
+            if(node.from().getId() == id){
+                return node.from();
+            } else if(node.to().getId() == id){
+                return node.to();
+            }
+
+        }
+        throw new NoSuchElementException("Node not found");
     }
 
     /**
@@ -111,19 +125,32 @@ public class Digraph {
      * @return the edges incident on vertex {@code v} as an Iterable
      * @throws IllegalArgumentException unless {@code 0 <= v < V}
      */
-    public Iterable<Edge> adj(TagNode v) {
+    public Iterable<DirectedEdge> adj(TagNode v) {
         return adj.get(v);
     }
 
     /**
-     * Returns the degree of vertex {@code v}.
+     * Returns the number of directed edges incident from vertex {@code v}.
+     * This is known as the <em>outdegree</em> of vertex {@code v}.
      *
      * @param  v the vertex
-     * @return the degree of vertex {@code v}
+     * @return the outdegree of vertex {@code v}
      * @throws IllegalArgumentException unless {@code 0 <= v < V}
      */
-    public int degree(TagNode v) {
+    public int outdegree(TagNode v) {
         return adj.get(v).size();
+    }
+
+    /**
+     * Returns the number of directed edges incident to vertex {@code v}.
+     * This is known as the <em>indegree</em> of vertex {@code v}.
+     *
+     * @param  v the vertex
+     * @return the indegree of vertex {@code v}
+     * @throws IllegalArgumentException unless {@code 0 <= v < V}
+     */
+    public int indegree(TagNode v) {
+        return indegree.get(v).size();
     }
 
     /**
@@ -133,10 +160,10 @@ public class Digraph {
      *
      * @return all edges in this edge-weighted graph, as an iterable
      */
-    public Iterable<Edge> edges() {
-        ArrayList<Edge> list = new ArrayList<>();
+    public Iterable<DirectedEdge> edges() {
+        ArrayList<DirectedEdge> list = new ArrayList<>();
         for (TagNode v : adj.keySet()) {
-            for (Edge e : adj.get(v)) {
+            for (DirectedEdge e : adj.get(v)) {
                 list.add(e);
             }
         }
