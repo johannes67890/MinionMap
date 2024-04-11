@@ -104,6 +104,7 @@ public class DrawingMap {
         List<TagRelation> relations = XMLReader.getRelations().values().stream().toList();
         List<TagWay> splitWayInRelation;
 
+        long time = System.currentTimeMillis();
 
         for (TagWay way : ways){
             if (way.getType() != null){
@@ -188,12 +189,12 @@ public class DrawingMap {
             gc.setStroke(Color.BLACK); 
 
             //System.out.println("HELLO");
-
       
-
             TagWay tagWay = sortedWaysToDraw.delMin();
 
             ArrayList<TagNode> nodesRef =  tagWay.getNodes();
+
+            //nodesRef = MathUtil.dp(nodesRef, 10000);
 
             c = tagWay.getType().getColor();
             int counter = 0;
@@ -214,9 +215,10 @@ public class DrawingMap {
                 gc.setStroke(tagWay.getType().getPolyLineColor()); 
             }
 
+            
             gc.beginPath();
             gc.moveTo(nodesRef.get(0).getLon(), nodesRef.get(0).getLat());
-
+            
             for (int i = 0; i < nodesRef.size() ; i++){
                 
                 TagNode ref = nodesRef.get(i);
@@ -244,7 +246,7 @@ public class DrawingMap {
     
         }
 
-        //System.out.println("AFTER RENDERING: " + (System.currentTimeMillis() - preTime));
+        System.out.println("AFTER RENDERING: " + (System.currentTimeMillis() - time));
 
 
     }

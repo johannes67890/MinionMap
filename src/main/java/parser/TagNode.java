@@ -42,5 +42,12 @@ public class TagNode extends Tag<Node> {
     public double getLon(){
         return 0.56 * Double.parseDouble(this.get(Node.LON).toString());
     }
+
+
+    public double distance(TagNode node){
+        return Math.sqrt(Math.pow(node.getLat() - getLat(), 2) + (Math.pow(node.getLon() - getLon(), 2)));
+    }
+
+
  
 }
