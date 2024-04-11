@@ -92,6 +92,12 @@ public class Search {
             }
             if(streetNames.contains(a.street)){
                 System.out.println("STREET FOUND: " + a.street);
+                if(getLatitudeByStreet(a.street) > 0 && getLongitudeByStreet(a.street) > 0){
+                    System.out.println("LATITUDE: " + getLatitudeByStreet(a.street));
+                    System.out.println("LONGITUDE: " + getLongitudeByStreet(a.street));
+                } else{
+                    System.out.println("LATITUDE AND LONGITUDE NOT FOUND");
+                }
             } else{
 
                 String topString = findSimilar(streetNames, a.street);
@@ -142,5 +148,23 @@ public class Search {
     }
 
 
+    //TODO: Only find the first instance of a street with the name. Turn into average lat and lon?
+    public double getLatitudeByStreet(String street){
+        for(TagAddress a : addresses.values()){
+            if(a.getStreet().equals(street)){
+                return a.getLat();
+            }
+        }
+        return -1;
+    }
+
+    public double getLongitudeByStreet(String street){
+        for(TagAddress a : addresses.values()){
+            if(a.getStreet().equals(street)){
+                return a.getLon();
+            }
+        }
+        return -1;
+    }
 
 }
