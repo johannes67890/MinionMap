@@ -34,6 +34,7 @@ import parser.TagNode;
      */
     public DirectedEdge(TagNode v, TagNode w, double weight) {
         if (Double.isNaN(weight)) throw new IllegalArgumentException("Weight is NaN");
+        if (v.equals(w)) throw new IllegalArgumentException("Edges cannot be self loops");
         this.v = v;
         this.w = w;
         this.weight = weight;

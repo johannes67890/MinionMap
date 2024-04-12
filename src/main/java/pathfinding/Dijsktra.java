@@ -1,6 +1,8 @@
 package pathfinding;
 
 import parser.TagNode;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.HashSet;
@@ -9,16 +11,20 @@ import java.util.Stack;
 
 public class Dijsktra {
     private HashMap<TagNode, Double> distTo = new HashMap<TagNode, Double>();
-    private HashMap<TagNode, TagNode> edgeTo = new HashMap<TagNode, TagNode>();
+    private ArrayList<DirectedEdge> edgeTo = new ArrayList<DirectedEdge>();
     private Set<TagNode> visited = new HashSet<TagNode>();
+    private IndexMinPQ<Double> pq;
 
-    Digraph G;
+    private Digraph G = new Digraph();
 
     public Dijsktra(Digraph G, TagNode start, TagNode end) {
-        visited.add(start);
+        for (DirectedEdge e : G.edges()) {
+            if (e.weight() < 0)
+                throw new IllegalArgumentException("edge " + e + " has negative weight");
+        }
+        
         distTo.put(start, 0.0);
-        this.G = G;
-
+            
         G.edges().forEach(e -> {
             TagNode v = e.from();
             TagNode w = e.to();
@@ -26,7 +32,18 @@ public class Dijsktra {
             setInfinity(w);
         });
 
-        findShortestPath();
+
+        pq = new IndexMinPQ<Double>(G.V());
+        pq.insert((int) start.getId(), distTo.get(start));
+
+        while (!pq.isEmpty()) {
+            TagNode v = G.getNode(pq.delMin());
+            for (DirectedEdge e : G.adj(v)) {
+                relax(e);                
+            }
+        }
+
+        // assert check(G, start, end);
 
         if (visited.contains(end)) {
             System.out.println("Shortest path from " + start + " to " + end + " is " + distTo.get(end));
@@ -39,13 +56,17 @@ public class Dijsktra {
         }
     }
 
-    private void relax(TagNode v, TagNode w, double weight) {
-        if (!distTo.containsKey(w)) {
-            distTo.put(w, Double.POSITIVE_INFINITY);
-        }
-        if (distTo.get(w) > distTo.get(v) + weight) {
-            distTo.put(w, distTo.get(v) + weight);
-            edgeTo.put(w, v);
+    public void relax(DirectedEdge e) {
+        TagNode v = e.from(), w = e.to();
+
+        if(distTo.get(w) > distTo.get(v) + e.weight()) {
+            distTo.put(w, distTo.get(v) + e.weight());
+            edgeTo.add((int) w.getId(), e);
+            if(pq.contains((int) w.getId())) {
+                pq.decreaseKey((int) w.getId(), distTo.get(w));
+            } else {
+                pq.insert((int) w.getId(), distTo.get(w));
+            }
         }
     }
 
@@ -67,35 +88,41 @@ public class Dijsktra {
         return minNode;
     }
 
-    public void findShortestPath() {
-        while (visited.size() < G.V()) {
-            TagNode v = minDistance();
-            if (v == null) {
-                break;
-            }
-            visited.add(v);
-            for (DirectedEdge e : G.adj(v)) {
-                TagNode w = e.to();
-                double weight = e.weight();
-                relax(v, w, weight);
-            }
-        }
-    }
-
     public double getDistanceTo(TagNode v) {
         return distTo.get(v);
     }
 
+    public boolean hasPathTo(TagNode v) {
+        return visited.contains(v);
+    }
+
     public Iterable<TagNode> pathTo(TagNode v) {
-        if (!visited.contains(v)) {
-            return null;
-        }
+        if(!hasPathTo(v)) return null;
         Stack<TagNode> path = new Stack<TagNode>();
-        for (TagNode x = v; x != null; x = edgeTo.get(x)) {
-            path.push(x);
+        for (DirectedEdge e = edgeTo.get((int) v.getId()); e != null; e = edgeTo.get((int) e.from().getId())) {
+            path.push(e.from());
         }
         return path;
     }
+
+    // private boolean check(Digraph G, TagNode start, TagNode end) {
+    //     for (DirectedEdge e : G.edges()) {
+    //         if(e.weight() < 0) {
+    //             System.err.println("negative edge weight detected");
+    //             return false;
+    //         }
+    //     }
+    //      // check that distTo[v] and edgeTo[v] are consistent
+    //     if (distTo.get(start) != 0.0 || edgeTo.get((int) start.getId()) != null) {
+    //         System.err.println("distTo[s] and edgeTo[s] inconsistent");
+    //         return false;
+    //     }
+    //     for (int i = 0; i < G.V(); i++) {
+    //         if(start.equals(end)) continue;
+    //         if( )
+    //     }
+    //     return true;
+    // }
 
     public static void main(String[] args) {
         Digraph G = new Digraph();
