@@ -19,3 +19,11 @@ gradle-app.setting
 .project
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
+# Ignore Gradle build output directory
+build
+
+# Ignores bin
+bin
+
+# Added input files that are local to your machine
+src/main/resources/inputFiles_ignored/*
