@@ -87,22 +87,22 @@ public class XMLBuilder {
                     this.lat = getAttributeByDouble(reader, "lat");
                     this.lon = getAttributeByDouble(reader, "lon");
                     break;
-                case "way":
-                case "relation":
-                    this.id = getAttributeByLong(reader, "id");                    
-                    break;
-                case "tag":
-                    String k = reader.getAttributeValue(null, "k");
-                    String v = reader.getAttributeValue(null, "v");
+                // case "way":
+                // case "relation":
+                //     this.id = getAttributeByLong(reader, "id");                    
+                //     break;
+                // case "tag":
+                //     String k = reader.getAttributeValue(null, "k");
+                //     String v = reader.getAttributeValue(null, "v");
 
-                    parseTag(k, v);
-                    break;
-                case "nd":
-                    Long ref = getAttributeByLong(reader, "ref");
-                    wayBuilder.addNode(ref);
-                    break;
-                case "member":
-                    relationBuilder.parseMember(reader);
+                //     parseTag(k, v);
+                //     break;
+                // case "nd":
+                //     Long ref = getAttributeByLong(reader, "ref");
+                //     wayBuilder.addNode(ref);
+                //     break;
+                // case "member":
+                //     relationBuilder.parseMember(reader);
                 default:
                     break;
             }

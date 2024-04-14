@@ -1,6 +1,7 @@
 package parser;
 import java.util.HashMap;
 
+import gnu.trove.map.hash.TObjectDoubleHashMap;
 /**
  * Class for storing a {@link HashMap} of a single node.
  * Contains the following tags:
@@ -10,46 +11,47 @@ import java.util.HashMap;
 */
 public class TagNode extends Tag<Node> {
 
+    private TObjectDoubleHashMap<Node> node = new TObjectDoubleHashMap<Node>();
+
     public TagNode(long id, double lat, double lon) {
-        super(new HashMap<Node, Object>(){
+        node = new TObjectDoubleHashMap<Node>(){
             {
                 put(Node.ID, id);
                 put(Node.LAT, lat);
                 put(Node.LON, lon);
             }
-        });
+        };
     }
 
     public TagNode(double lat, double lon) {
-        super(new HashMap<Node, Object>(){
+        node = new TObjectDoubleHashMap<Node>(){
             {
                 put(Node.LAT, lat);
                 put(Node.LON, lon);
             }
-        });
+        };
     }
 
     public TagNode(XMLBuilder builder) {
-        super(new HashMap<Node, Object>(){
+        node = new TObjectDoubleHashMap<Node>(){
             {
                 put(Node.ID, builder.getId());
                 put(Node.LAT, builder.getLat());
                 put(Node.LON, builder.getLon());
             }
-        });
+        };
     }
 
     @Override
     public long getId(){
-        return Long.parseLong(this.get(Node.ID).toString());
+        return (long) node.get(Node.ID);
     }
     @Override
     public double getLat(){
-        return Double.parseDouble(this.get(Node.LAT).toString());
+        return node.get(Node.LAT);
     }
     @Override
     public double getLon(){
-        return Double.parseDouble(this.get(Node.LON).toString());
+        return node.get(Node.LON);
     }
- 
 }

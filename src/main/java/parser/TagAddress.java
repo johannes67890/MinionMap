@@ -3,6 +3,7 @@ package parser;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import gnu.trove.map.hash.TCustomHashMap;
 
 enum Address{
     ID, LAT, LON, CITY, COUNTRY, STREET, HOUSENUMBER, POSTCODE, MUNICIPALITY;
@@ -16,58 +17,60 @@ enum Address{
  * </p>
 */
 public class TagAddress extends Tag<Address> {
-    
+
+    TCustomHashMap<Address, Double> address = new TCustomHashMap<>();
+
     TagAddress(XMLBuilder builder){
-        super(new HashMap<Address, Object>(){
+        address = new TCustomHashMap<Address, Double>(){
             {
-                put(Address.ID, builder.getId().toString());
-                put(Address.LAT, Double.toString(builder.getLat()));
-                put(Address.LON, Double.toString(builder.getLon()));
-                put(Address.STREET, builder.getAddressBuilder().street);
-                put(Address.HOUSENUMBER, builder.getAddressBuilder().house);
-                put(Address.POSTCODE, builder.getAddressBuilder().postcode);
-                put(Address.MUNICIPALITY, builder.getAddressBuilder().municipality);
-                put(Address.CITY, builder.getAddressBuilder().city);
-                put(Address.COUNTRY, builder.getAddressBuilder().country);
+                put(Address.ID, Double.parseDouble(builder.getId().toString()));
+                put(Address.LAT, builder.getLat());
+                put(Address.LON, builder.getLon());
+                put(Address.STREET, Double.parseDouble(builder.getAddressBuilder().street));
+                put(Address.HOUSENUMBER, Double.parseDouble(builder.getAddressBuilder().house));
+                put(Address.POSTCODE, Double.parseDouble(builder.getAddressBuilder().postcode));
+                put(Address.MUNICIPALITY, Double.parseDouble(builder.getAddressBuilder().municipality));
+                put(Address.CITY, Double.parseDouble(builder.getAddressBuilder().city));
+                put(Address.COUNTRY, Double.parseDouble(builder.getAddressBuilder().country));
             }
-        });
+        };
     }
 
     @Override
-    public long getId() {
-        return Long.parseLong(this.get(Address.ID).toString());
+    public long getId(){
+        return address.get(Address.ID).longValue();
     }
     @Override
-    public double getLat() {
-        return Double.parseDouble(this.get(Address.LAT).toString());
+    public double getLat(){
+        return address.get(Address.LAT);
     }
     @Override
-    public double getLon() {
-        return Double.parseDouble(this.get(Address.LON).toString());
+    public double getLon(){
+        return address.get(Address.LON);
     }
 
     public String getStreet() {
-        return this.get(Address.STREET).toString();
+        return address.get(Address.STREET).toString();
     }
 
     public String getHouseNumber() {
-        return this.get(Address.HOUSENUMBER).toString();
+        return address.get(Address.HOUSENUMBER).toString();
     }
 
     public String getPostcode() {
-        return this.get(Address.POSTCODE).toString();
+        return address.get(Address.POSTCODE).toString();
     }
 
     public String getMunicipality() {
-        return this.get(Address.MUNICIPALITY).toString();
+        return address.get(Address.MUNICIPALITY).toString();
     }
 
     public String getCity() {
-        return this.get(Address.CITY).toString();
+        return address.get(Address.CITY).toString();
     }
 
     public String getCountry() {
-        return this.get(Address.COUNTRY).toString();
+        return address.get(Address.COUNTRY).toString();
     }
 
     /**

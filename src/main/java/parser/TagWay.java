@@ -1,10 +1,9 @@
 package parser;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import gnu.trove.set.hash.TCustomHashSet;
+import gnu.trove.map.hash.TCustomHashMap;
+import gnu.trove.map.hash.TLongObjectHashMap;
 
 enum Way {
     ID, REFS, NAME, TYPE, SPEEDLIMIT
@@ -18,8 +17,10 @@ enum Way {
  * </p>
  */
 public class TagWay extends Tag<Way>{
+    TCustomHashMap<Way, Object> way = new TCustomHashMap<Way, Object>();
+
     public TagWay(XMLBuilder builder) {
-        super(new HashMap<Way, Object>(){
+       way = new TCustomHashMap<Way, Object>(){
             {
                 put(Way.ID, builder.getId());
                 put(Way.NAME, builder.getName());
@@ -27,7 +28,7 @@ public class TagWay extends Tag<Way>{
                 put(Way.SPEEDLIMIT, builder.getWayBuilder().getSpeedLimit());
                 put(Way.TYPE, builder.getType());     
             }
-        });
+        };
     }
     /**
      * Get the id of the way.
@@ -61,8 +62,8 @@ public class TagWay extends Tag<Way>{
      * Get the refrerence nodes of the way.
      * @return Long[] of the reference nodes of the way.
      */
-    public HashMap<Long, TagNode> getRefs() {
-        return (HashMap<Long, TagNode>) this.get(Way.REFS);
+    public TLongObjectHashMap<TagNode> getRefs() {
+        return (TLongObjectHashMap<TagNode>) this.get(Way.REFS);
     }
 
     public TagNode getNodeById(Long id){
@@ -84,7 +85,7 @@ public class TagWay extends Tag<Way>{
     * </p>
     */
     public static class WayBuilder {
-        private HashMap<Long, TagNode> refNodes = new HashMap<Long, TagNode>();
+        private TLongObjectHashMap<TagNode> refNodes;
         private boolean isEmpty = true;
         private int speedLimit;
 
@@ -103,9 +104,9 @@ public class TagWay extends Tag<Way>{
          */
         private TagNode migrateNode(Long id){
             TagNode node = XMLReader.getNodeById(id);
-            if(node != null){
-                XMLReader.getNodeById(id).remove(id, node);
-            }
+            // if(node != null){
+            //     XMLReader.getNodeById(id).remove(node);
+            // }
             return node;
         }
 
@@ -121,7 +122,7 @@ public class TagWay extends Tag<Way>{
             refNodes.put(ref, migrateNode(ref));
         }
 
-        public HashMap<Long, TagNode> getRefNodes() {
+        public TLongObjectHashMap<TagNode> getRefNodes() {
             return refNodes;
         }
     }

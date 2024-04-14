@@ -3,6 +3,9 @@ package parser;
 import java.util.HashMap;
 import javax.xml.stream.XMLStreamReader;
 
+import gnu.trove.map.TMap;
+import gnu.trove.map.hash.TObjectDoubleHashMap;
+
 enum Bounds {
     MINLAT, MAXLAT, MINLON, MAXLON
 }
@@ -16,6 +19,8 @@ enum Bounds {
 */
 public class TagBound extends Tag<Bounds> implements Comparable<TagBound>{
 
+    private TObjectDoubleHashMap<Bounds> bounds = new TObjectDoubleHashMap<Bounds>();
+
     /**
      * Create a new TagBound with the given values.
      * @param minlat - The minimum latitude of the bounds.
@@ -24,25 +29,25 @@ public class TagBound extends Tag<Bounds> implements Comparable<TagBound>{
      * @param maxlon - The maximum longitude of the bounds.
      */
     public TagBound(XMLStreamReader reader) {
-        super(new HashMap<Bounds, Object>(){
+        bounds = new TObjectDoubleHashMap<Bounds>(){
             {
                 put(Bounds.MINLAT, XMLBuilder.getAttributeByDouble(reader, "minlat"));
                 put(Bounds.MAXLAT, XMLBuilder.getAttributeByDouble(reader, "maxlat"));
                 put(Bounds.MINLON, XMLBuilder.getAttributeByDouble(reader, "minlon"));
                 put(Bounds.MAXLON, XMLBuilder.getAttributeByDouble(reader, "maxlon"));
             }
-        });
+        };
     }
 
     public TagBound(double minlat, double maxlat, double minlon, double maxlon) {
-        super(new HashMap<Bounds, Object>(){
+        bounds = new TObjectDoubleHashMap<Bounds>(){
             {
                 put(Bounds.MINLAT, minlat);
                 put(Bounds.MAXLAT, maxlat);
                 put(Bounds.MINLON, minlon);
                 put(Bounds.MAXLON, maxlon);
             }
-        });
+        };
     }
 
     /**
@@ -50,28 +55,28 @@ public class TagBound extends Tag<Bounds> implements Comparable<TagBound>{
      * @return The minimum latitude of the bounds.
      */
     public double getMinLat() {
-        return Double.parseDouble(this.get(Bounds.MINLAT).toString());
+        return bounds.get(Bounds.MINLAT);
     }
     /**
      * Get the maximum latitude of the bounds.
      * @return The maximum latitude of the bounds.
      */
     public double getMaxLat() {
-        return Double.parseDouble(this.get(Bounds.MAXLAT).toString());
+        return bounds.get(Bounds.MAXLAT);
     }
     /**
      * Get the minimum longitude of the bounds.
      * @return The minimum longitude of the bounds.
      */
     public double getMinLon() {
-        return Double.parseDouble(this.get(Bounds.MINLON).toString());
+        return bounds.get(Bounds.MINLON);
     }
     /**
      * Get the maximum longitude of the bounds.
      * @return The maximum longitude of the bounds.
      */
     public double getMaxLon() {
-        return Double.parseDouble(this.get(Bounds.MAXLON).toString());
+        return bounds.get(Bounds.MAXLON);
     }
 
     @Override
@@ -113,5 +118,4 @@ public class TagBound extends Tag<Bounds> implements Comparable<TagBound>{
     public double getLon() {
         throw new UnsupportedOperationException("TagWay does not have a longitude value.");
     }
- 
 }

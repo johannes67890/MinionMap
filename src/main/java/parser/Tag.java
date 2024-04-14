@@ -3,7 +3,11 @@ package parser;
 import java.io.Externalizable;
 import java.io.Serializable;
 import java.util.HashMap;
-
+import gnu.trove.map.hash.TCustomHashMap;
+import gnu.trove.map.hash.THashMap;
+import gnu.trove.impl.hash.TObjectHash;
+import gnu.trove.map.hash.TObjectDoubleHashMap;
+import gnu.trove.*;
 enum Node  {
     ID, LAT, LON;
 }
@@ -36,7 +40,7 @@ enum Node  {
  * **Note** that not all tags, like {@link TagRelation} and {@link TagWay} uses {@link #getLat()} and {@link #getLon()} methods.
  * </p>
  */
-public abstract class Tag<E extends Enum<E>> extends HashMap<E, Object>   {
+public abstract class Tag<E extends Enum<E>> extends TCustomHashMap<E, Object> implements Serializable{
     private static final long serialVersionUID = 1L;
     /**
      * Get the id of the tag.
@@ -57,12 +61,7 @@ public abstract class Tag<E extends Enum<E>> extends HashMap<E, Object>   {
     public abstract double getLon();
     
     public Tag() {}
-
-    public Tag(HashMap<E, Object> map) {
-        super(map);
-    }
-
-
+    
     public boolean isEmpty() {
         return this.size() == 0;
     }
@@ -75,10 +74,10 @@ public abstract class Tag<E extends Enum<E>> extends HashMap<E, Object>   {
      */
     public boolean isInBounds(TagBound bound) {
         if(this instanceof TagWay) {
-            return ((TagWay)this).getRefs().stream().anyMatch(n -> n.isInBounds(bound));
+            return ((TagWay)this).getRefs().valueCollection().stream().anyMatch(n -> n.isInBounds(bound));
         }
         if(this instanceof TagRelation) {
-            return ((TagRelation)this).getMembers().stream().anyMatch(m -> m.isInBounds(bound));
+            return ((TagRelation)this).getMembers().values().stream().anyMatch(m -> m.isInBounds(bound));
         }
 
         return Double.valueOf(this.getLat()).compareTo(bound.getMinLat()) == 1 && Double.valueOf(this.getLat()).compareTo(bound.getMaxLat()) == -1

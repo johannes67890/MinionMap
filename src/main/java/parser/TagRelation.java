@@ -2,7 +2,8 @@ package parser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
+import gnu.trove.map.hash.TCustomHashMap;
+import gnu.trove.map.hash.TLongObjectHashMap;
 import javax.xml.stream.XMLStreamReader;
 
 enum Relation {
@@ -10,14 +11,17 @@ enum Relation {
 }
 
 public class TagRelation extends Tag<Relation>{
+    TCustomHashMap<Relation, Object> relation = new TCustomHashMap<Relation, Object>();
+
     public TagRelation(){}
+    
 
     public TagRelation(XMLBuilder builder){
-        super(new HashMap<Relation, Object>(){
+        relation = new TCustomHashMap<Relation, Object>(){
             {
                 put(Relation.ID, builder.getId());
-                put(Relation.TYPE, builder.getType());
-                put(Relation.NAME, builder.getName());
+                put(Relation.TYPE, Double.parseDouble(builder.getType().toString()));
+                put(Relation.NAME, Double.parseDouble(builder.getName()));
                 put(Relation.INNER, builder.getRelationBuilder().getInner());
                 put(Relation.OUTER, builder.getRelationBuilder().getOuter());
                 put(Relation.WAYS, builder.getRelationBuilder().getWays());
@@ -26,12 +30,12 @@ public class TagRelation extends Tag<Relation>{
                 put(Relation.RELATIONTYPE, builder.getRelationBuilder().getRelationType());
                 put(Relation.RELATIONTYPEVALUE, builder.getRelationBuilder().getTypeValue());
             }
-        });
+        };
     }
 
     @Override
     public long getId(){
-        return Long.parseLong(this.get(Relation.ID).toString());
+        return Long.parseLong(relation.get(Relation.ID).toString());
     }
     @Override
     public double getLat() {
@@ -43,15 +47,15 @@ public class TagRelation extends Tag<Relation>{
     }
     
     public String getName(){
-        return this.get(Relation.NAME).toString();
+        return relation.get(Relation.NAME).toString();
     }
 
     public HashMap<Long, TagWay> getMembers(){
         HashMap<Long, TagWay> members = new HashMap<Long, TagWay>();
 
-        members.putAll(this.getInner().stream().collect(HashMap::new, (m, v) -> m.put(v.getId(), v), HashMap::putAll));
-        members.putAll(this.getOuter().stream().collect(HashMap::new, (m, v) -> m.put(v.getId(), v), HashMap::putAll));
-        members.putAll(this.getWays().stream().collect(HashMap::new, (m, v) -> m.put(v.getId(), v), HashMap::putAll));
+        members.putAll(this.getInner().valueCollection().stream().collect(HashMap::new, (m, v) -> m.put(v.getId(), v), HashMap::putAll));
+        members.putAll(this.getOuter().valueCollection().stream().collect(HashMap::new, (m, v) -> m.put(v.getId(), v), HashMap::putAll));
+        members.putAll(this.getWays().valueCollection().stream().collect(HashMap::new, (m, v) -> m.put(v.getId(), v), HashMap::putAll));
 
         return members;
         
@@ -61,24 +65,24 @@ public class TagRelation extends Tag<Relation>{
         return this.getMembers().get(id);
     }
 
-    public ArrayList<TagWay> getInner(){
-        return (ArrayList<TagWay>) this.get(Relation.INNER);
+    public TLongObjectHashMap<TagWay> getInner(){
+        return (TLongObjectHashMap<TagWay>) this.get(Relation.INNER);
     }
 
-    public ArrayList<TagWay> getOuter(){
-        return (ArrayList<TagWay>) this.get(Relation.OUTER);
+    public TLongObjectHashMap<TagWay> getOuter(){
+        return (TLongObjectHashMap<TagWay>) this.get(Relation.OUTER);
     }
 
-    public ArrayList<TagWay> getWays(){
-        return (ArrayList<TagWay>) this.get(Relation.WAYS);
+    public TLongObjectHashMap<TagWay> getWays(){
+        return (TLongObjectHashMap<TagWay>) this.get(Relation.WAYS);
     }
 
-    public ArrayList<TagRelation> getRelations(){
-        return (ArrayList<TagRelation>) this.get(Relation.RELATIONS);
+    public TLongObjectHashMap<TagRelation> getRelations(){
+        return (TLongObjectHashMap<TagRelation>) this.get(Relation.RELATIONS);
     }
 
-    public ArrayList<TagNode> getNodes(){
-        return (ArrayList<TagNode>) this.get(Relation.NODES);
+    public TLongObjectHashMap<TagNode> getNodes(){
+        return (TLongObjectHashMap<TagNode>) this.get(Relation.NODES);
     }
 
     public String getType(){
@@ -116,28 +120,26 @@ public class TagRelation extends Tag<Relation>{
 
     public static class RelationBuilder {
         private boolean isEmpty = true;
-        private ArrayList<TagNode> nodes = new ArrayList<>();
-        private ArrayList<TagRelation> relations = new ArrayList<>();
-        private ArrayList<TagWay> ways = new ArrayList<>();
-        private ArrayList<TagWay> inner = new ArrayList<>();
-        private ArrayList<TagWay> outer = new ArrayList<>();
+        private TLongObjectHashMap<TagNode> nodes = new TLongObjectHashMap<>();
+        private TLongObjectHashMap<TagRelation> relations = new TLongObjectHashMap<>();
+        private TLongObjectHashMap<TagWay> ways = new TLongObjectHashMap<>();
+        private TLongObjectHashMap<TagWay> inner = new TLongObjectHashMap<>();
+        private TLongObjectHashMap<TagWay> outer = new TLongObjectHashMap<>();
         private Type RelationType;
         private String TypeValue;
 
-        public void addNode(TagNode node){ nodes.add(node); };
-        public void addRelation(TagRelation relation){ relations.add(relation); };
-        public void addWay(TagWay way){ ways.add(way); };
-        public void addInner(TagWay way){ inner.add(way); };
-        public void addOuter(TagWay way){ outer.add(way); };
-        public void setRelationType(Type type){ RelationType = type; };
-        public void setTypeValue(String value){ TypeValue = value; };
+        public void setRelationType(Type currType) {
+            RelationType = currType;
+        }
+        public void setTypeValue(String v) {
+            TypeValue = v;
+        }
 
-
-        public ArrayList<TagNode> getNodes(){ return nodes; };
-        public ArrayList<TagRelation> getRelations(){ return relations; };
-        public ArrayList<TagWay> getWays(){ return ways; };
-        public ArrayList<TagWay> getInner(){ return inner; };
-        public ArrayList<TagWay> getOuter(){ return outer; };
+        public TLongObjectHashMap<TagNode> getNodes(){ return nodes; };
+        public TLongObjectHashMap<TagRelation> getRelations(){ return relations; };
+        public TLongObjectHashMap<TagWay> getWays(){ return ways; };
+        public TLongObjectHashMap<TagWay> getInner(){ return inner; };
+        public TLongObjectHashMap<TagWay> getOuter(){ return outer; };
         public Type getRelationType(){ return RelationType; };
         public String getTypeValue(){ return TypeValue; }
 
@@ -146,42 +148,38 @@ public class TagRelation extends Tag<Relation>{
         }
 
         public RelationBuilder parseMember(XMLStreamReader reader) {
+            long ref = XMLBuilder.getAttributeByLong(reader, "ref");
+
             switch (reader.getAttributeValue(null, "type")) {
                 case "node":
-                    TagNode node = XMLReader.getNodeById(XMLBuilder.getAttributeByLong(reader, "ref"));
-                    if(node != null){
-                        this.addNode(node);
-                        isEmpty = false;
-                    }
+                    nodes.put(ref, XMLReader.getNodeById(ref));
+                    isEmpty = false;
                     break;
                 case "way":
-                    long ref = XMLBuilder.getAttributeByLong(reader, "ref");
                     if(XMLReader.getWayById(ref) != null){
                         switch (reader.getAttributeValue(null, "role")) {
                             case "outer":
-                                this.addOuter(XMLReader.getWayById(ref));
+                                outer.put(ref, XMLReader.getWayById(ref));
                                 isEmpty = false;
                                 break;
                             case "inner":
-                                this.addInner(XMLReader.getWayById(ref));
+                                inner.put(ref, XMLReader.getWayById(ref));
                                 isEmpty = false;
                                 break;
                             default:
-                                this.addWay(XMLReader.getWayById(ref));
+                                ways.put(ref, XMLReader.getWayById(ref));
                                 isEmpty = false;
                                 break;
                         }
                     }
                     break;
                 case "relation":
-                    this.addRelation(XMLReader.getRelationById(XMLBuilder.getAttributeByLong(reader, "ref")));
+                    relations.put(ref, XMLReader.getRelationById(ref));
                     break;
                 default:
                     break;
             }
             return this;
         }
-        
     }
-
 }

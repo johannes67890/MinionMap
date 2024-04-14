@@ -90,19 +90,19 @@ public class DrawingMap {
         
         gc.setLineWidth(1/Math.sqrt(transform.determinant()));
 
-        while (it.hasNext()) {
+        // while (it.hasNext()) {
 
-            ArrayList<TagNode> nodesRef =  it.next().getRefs();
+        //     ArrayList<TagNode> nodesRef =  it.next().getRefs();
 
-            gc.beginPath();
-            gc.moveTo(nodesRef.get(0).getLon(), nodesRef.get(0).getLat());
-            for (TagNode ref : nodesRef){
-                gc.lineTo(ref.getLat(), ref.getLat());
-            }
+        //     gc.beginPath();
+        //     gc.moveTo(nodesRef.get(0).getLon(), nodesRef.get(0).getLat());
+        //     for (TagNode ref : nodesRef){
+        //         gc.lineTo(ref.getLat(), ref.getLat());
+        //     }
 
-            gc.stroke();
+        //     gc.stroke();
     
-        }
+        // }
 
     }
 
