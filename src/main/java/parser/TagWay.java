@@ -61,8 +61,12 @@ public class TagWay extends Tag<Way>{
      * Get the refrerence nodes of the way.
      * @return Long[] of the reference nodes of the way.
      */
-    public ArrayList<TagNode> getRefs() {
-        return (ArrayList<TagNode>) this.get(Way.REFS);
+    public HashMap<Long, TagNode> getRefs() {
+        return (HashMap<Long, TagNode>) this.get(Way.REFS);
+    }
+
+    public TagNode getNodeById(Long id){
+        return getRefs().get(id);
     }
 
     public boolean isEmpty() {
@@ -80,7 +84,7 @@ public class TagWay extends Tag<Way>{
     * </p>
     */
     public static class WayBuilder {
-        private ArrayList<TagNode> refNodes = new ArrayList<TagNode>();
+        private HashMap<Long, TagNode> refNodes = new HashMap<Long, TagNode>();
         private boolean isEmpty = true;
         private int speedLimit;
 
@@ -97,7 +101,7 @@ public class TagWay extends Tag<Way>{
          * @param id - The id of the node to migrate.
          * @return The node from the id.
          */
-        public TagNode migrateNode(Long id){
+        private TagNode migrateNode(Long id){
             TagNode node = XMLReader.getNodeById(id);
             if(node != null){
                 XMLReader.getNodeById(id).remove(id, node);
@@ -114,10 +118,10 @@ public class TagWay extends Tag<Way>{
             if (isEmpty) {
                 isEmpty = false;
             }
-            refNodes.add(migrateNode(ref));
+            refNodes.put(ref, migrateNode(ref));
         }
 
-        public ArrayList<TagNode> getRefNodes() {
+        public HashMap<Long, TagNode> getRefNodes() {
             return refNodes;
         }
     }

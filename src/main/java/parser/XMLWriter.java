@@ -77,7 +77,7 @@ public class XMLWriter {
 
     public static ArrayList<Tag<?>> getContentFromBinaryFile(){
         ArrayList<Tag<?>> objectList = new ArrayList<Tag<?>>();
-        String path = "src/main/resources/chunks/chunk_4.bin";
+        String path = "src/main/resources/chunks/chunk_5.bin";
         File file = new File(path);
 
         try{
@@ -114,7 +114,7 @@ public class XMLWriter {
 
   
     public static Tag<?> readTagByIdFromBinaryFile(long id){
-        String path = "src/main/resources/chunks/chunk_4.bin";
+        String path = "src/main/resources/chunks/chunk_5.bin";
         File file = new File(path);
 
         try{
@@ -123,14 +123,28 @@ public class XMLWriter {
             while (true) {
                 try {
                     Object o = ois.readObject();
-                    if (o instanceof Tag<?> && !(o instanceof TagBound)) {
-                        Tag<?> node = (Tag<?>) o;
-                        if(node.getId() == id){
-                            return node;
+                        if(o instanceof TagBound) continue;
+
+                        if(((Tag<?>) o).getId() == id){
+                            return (Tag<?>) o;
                         }
-                    }
+                    
+                        if (o instanceof TagWay) {
+                            TagWay way = (TagWay) o;
+                            if(way.getRefs().containsKey(id)){
+                                return way.getNodeById(id);
+                            } else continue;
+                        }
+                        if(o instanceof TagRelation){
+                            TagRelation relation = (TagRelation) o;
+                            if(relation.getMembers().containsKey(id)){
+                                relation.getMemberById(id);
+                            } else continue;
+                        }
+                    
                 } catch (EOFException e) {
-                    break; // end of stream
+                    ois.close();
+                    throw new IllegalArgumentException("Tag with " + id + " not found");
                 }
             }
         }catch (Exception e){

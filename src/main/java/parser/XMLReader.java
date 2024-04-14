@@ -147,7 +147,6 @@ public class XMLReader {
                                     XMLWriter.appendToBinary(new TagAddress(tempBuilder));
                                     addresses.put(tempBuilder.getId(), new TagAddress(tempBuilder));
                                 } else {
-                                    XMLWriter.appendToBinary(new TagNode(tempBuilder));
                                     nodes.put(tempBuilder.getId(), new TagNode(tempBuilder));
                                 }
                                 tempBuilder = new XMLBuilder(); // Reset the builder

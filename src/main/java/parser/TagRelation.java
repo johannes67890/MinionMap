@@ -46,13 +46,19 @@ public class TagRelation extends Tag<Relation>{
         return this.get(Relation.NAME).toString();
     }
 
-    public ArrayList<TagWay> getMembers(){
-        ArrayList<TagWay> members = new ArrayList<>();
-        members.addAll(this.getInner());
-        members.addAll(this.getOuter());
-        members.addAll(this.getWays());
+    public HashMap<Long, TagWay> getMembers(){
+        HashMap<Long, TagWay> members = new HashMap<Long, TagWay>();
+
+        members.putAll(this.getInner().stream().collect(HashMap::new, (m, v) -> m.put(v.getId(), v), HashMap::putAll));
+        members.putAll(this.getOuter().stream().collect(HashMap::new, (m, v) -> m.put(v.getId(), v), HashMap::putAll));
+        members.putAll(this.getWays().stream().collect(HashMap::new, (m, v) -> m.put(v.getId(), v), HashMap::putAll));
+
         return members;
         
+    }
+
+    public TagWay getMemberById(long id){
+        return this.getMembers().get(id);
     }
 
     public ArrayList<TagWay> getInner(){
