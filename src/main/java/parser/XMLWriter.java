@@ -4,22 +4,22 @@ import java.util.*;
 
 public class XMLWriter {
     private String directoryPath = "src/main/resources/chunks/";
-    private static ChunkFiles chunkFiles = new ChunkFiles();
+    public static ChunkFiles chunkFiles = new ChunkFiles();
     private static int chunkId = 0;
 
     public XMLWriter(TagBound bounds) {
         initChunkFiles(bounds);    
-
     }
 
     public void initChunkFiles(TagBound bounds) {   
+        // Split the bounds into smaller chunks
         for (TagBound parentChunk : Chunk.getQuadrants(bounds).values()) {
-            Chunk childChunk = new Chunk(parentChunk);
+            Chunk childChunk = new Chunk(parentChunk); 
             
             for (int j = 0; j < 4; j++) {
+                // Get one of the four quadrants in the chunk
                 TagBound child = childChunk.getQuadrant(j);
-                //System.out.println("parent chunk " + parentChunk + " -> " + childChunk.getBoundQuadrant(childChunk.getQuadrant(j)).toString() + " - " + child);
-                chunkFiles.appendChunkFile(child, directoryPath + "chunk_" + chunkId + ".bin");
+                // Create the chunk file
                 createBinaryChunkFile(directoryPath + "chunk_" + chunkId + ".bin", child);
                 chunkId++;
             }
@@ -27,12 +27,10 @@ public class XMLWriter {
     }
 
     private static void createBinaryChunkFile(String path, TagBound bound){
+        chunkFiles.appendChunkFile(bound, path);
         try{
             File file = new File(path);
-            if (!file.exists()){
-                file.createNewFile();
-            }
-            ObjectOutputStream oos = new AppendableObjectOutputStream (new FileOutputStream (path, true));
+            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file));
             oos.writeObject(bound);
             oos.close();
         }catch (Exception e){
@@ -41,151 +39,106 @@ public class XMLWriter {
         
     }
 
-
-    public static void writeToBinary(Tag<?> node){
-        ObjectOutputStream out = null;
+    public static void appendToBinary(Tag<?> node) throws IOException {
+        ObjectOutputStream oos=null;
         
         for (TagBound bound : chunkFiles.getChunkFiles().keySet()) {
             String path = chunkFiles.getChunkFilePath(bound);
-                if (node.isInBounds(bound)){
+            if(node.isInBounds(bound)){
+                try{
                     File file = new File(path);
-                    try{
-                        if (!file.exists()) out = new ObjectOutputStream(new FileOutputStream (path));
-                        else out = new AppendableObjectOutputStream (new FileOutputStream (path, true));
-                        out.writeObject(node);
-                        out.flush();
-                    }catch (Exception e){
-                        e.printStackTrace ();
-                    }finally{
-                        try{
-                            if (out != null) out.close();
-                        }catch (Exception e){
-                            e.printStackTrace ();
+                    if(file.exists()){
+                        oos = new AppendingObjectOutputStream(new FileOutputStream(file, true));
+                    }else{
+                        oos = new ObjectOutputStream(new FileOutputStream(file));
+                    }
+                    oos.writeObject(node);
+                    oos.close();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            
+            }
+        }
+    }
+
+    public static class AppendingObjectOutputStream extends ObjectOutputStream {
+
+        public AppendingObjectOutputStream(OutputStream out) throws IOException {
+          super(out);
+        }
+      
+        @Override
+        protected void writeStreamHeader() throws IOException {
+          reset();
+        }
+      
+      }
+
+    public static ArrayList<Tag<?>> getContentFromBinaryFile(){
+        ArrayList<Tag<?>> objectList = new ArrayList<Tag<?>>();
+        String path = "src/main/resources/chunks/chunk_4.bin";
+        File file = new File(path);
+
+        try{
+            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
+        
+            while (true) {
+                try {
+                    Object o = ois.readObject();
+                    if(o instanceof TagBound) continue;
+                    if (o instanceof TagRelation) {
+                        objectList.add((TagRelation) o);
+                    }
+                    if(o instanceof TagNode){
+                        objectList.add((TagNode) o);
+                    }
+                    if(o instanceof TagAddress){
+                        objectList.add((TagAddress) o);
+                    }
+                    if(o instanceof TagWay){
+                        objectList.add((TagWay) o);
+                    }
+                
+                } catch (EOFException e) {
+                    ois.close();
+                    break; // end of stream
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return objectList;
+    }
+
+
+  
+    public static Tag<?> readTagByIdFromBinaryFile(long id){
+        String path = "src/main/resources/chunks/chunk_4.bin";
+        File file = new File(path);
+
+        try{
+            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
+        
+            while (true) {
+                try {
+                    Object o = ois.readObject();
+                    if (o instanceof Tag<?> && !(o instanceof TagBound)) {
+                        Tag<?> node = (Tag<?>) o;
+                        if(node.getId() == id){
+                            return node;
                         }
                     }
-
-                }            
+                } catch (EOFException e) {
+                    break; // end of stream
+                }
             }
-    }
-  
-    public static Tag<?> getTagByIdFromBinaryFile(long id){
-        try {
-        for (String path : chunkFiles.getChunkFilePaths()) {
-            FileInputStream fstream = new FileInputStream(path);
-            ObjectInputStream ostream = new ObjectInputStream(fstream);
-            while (true) {
-                Tag<?> s = (Tag<?>) ostream.readObject();
-                    if (s.getId() == id) return s;
-            }
-
-        }
-        } catch (Exception e) {
+        }catch (Exception e){
             e.printStackTrace();
-        } finally {
-            
         }
         return null;
     }
 
-    private static class AppendableObjectOutputStream extends ObjectOutputStream {
-          public AppendableObjectOutputStream(OutputStream out) throws IOException {
-            super(out);
-          }
-
-          @Override
-          protected void writeStreamHeader() throws IOException {}
-    }
-
-
-    // public  static void writeTag(TagNode node) throws XMLStreamException{
-    //     HashMap<TagBound, XMLStreamWriter> writers = XMLWriter.writers;
-    //     for (TagBound b : writers.keySet()) {
-    //         if (Tag.isInBounds(node, b)){
-    //             XMLStreamWriter writer = getStreamWriter(b);
-                
-    //             node.createXMLElement(writer);
-    //             return;
-    //         }
-    //     }
-    // }
-    
-    // public  static void writeTag(TagAddress address) throws XMLStreamException{
-    //     for (TagBound b : writers.keySet()) {
-    //         if (Tag.isInBounds(address, b)){
-    //             XMLStreamWriter writer = getStreamWriter(b);
-    //             address.createXMLElement(writer);
-    //             writer.writeCharacters("\n"); // Add a newline character
-    //             return;
-    //         }
-    //     }
-    // }
-
-    // public static void writeTag(TagWay way) throws XMLStreamException {
-    //     for (TagBound b : writers.keySet()) {
-    //         if (Tag.isInBounds(way.getRefs().get(0), b)){
-    //             XMLStreamWriter writer = getStreamWriter(b);
-    //             try {
-    //                 way.createXMLElement(writer);
-    //                 writer.writeCharacters("\n"); // Add a newline character
-                    
-    //             } catch (XMLStreamException e) {
-    //                 // Handle the exception here
-    //                 System.err.println("An error occurred while creating the XML element: " + e.getMessage());
-    //             }
-    //             return;
-    //         }
-    //     }
-    // }
-
-    // /**
-    //  * Get the XMLStreamWriter for the a specific bound. The useage of this method is to write to a specific chunk file.
-    //  * @param bound - The bound to get the writer for
-    //  * @return XMLStreamWriter - The writer for the bound
-    //  */
-    // private static XMLStreamWriter getStreamWriter(TagBound bound) {
-    //     return writers.get(bound);
-    // }
-
-    // public static void closeWrtier(XMLStreamWriter writer) throws XMLStreamException{
-    //     writer.writeEndDocument();
-    //     writer.flush();
-    //     writer.close();
-    // }
-
-    // public static void closeAllWriters() throws XMLStreamException{
-    //     for (XMLStreamWriter writer : writers.values()) {
-    //         closeWrtier(writer);
-    //     }
-    // }
-
-    // public void initChunkFiles(FileParser fileParser) throws XMLStreamException{   
-    //     String localChunkPath = directoryPath + this.chunkId + ".xml";
-        
-    //     for (int i = 0; i < 4; i++) {
-    //         // Create a new file for each chunk
-    //         final int index = i; // Declare a final variable to use in the lambda expression
-    //         // Create the directory if it doesn't exist
-    //         File directory = new File(directoryPath);
-    //         if (!directory.exists()) {
-    //             directory.mkdirs(); // mkdirs() creates parent directories if they don't exist
-    //         }
-            
-    //         TagBound ChunkBound = fileParser.getChunck().getQuadrant(index);
-
-    //         XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(createChunkFile());
-    //         writer.writeStartDocument();
-    //             writer.writeStartElement("osm");
-    //             writer.writeAttribute("version", "0.6");
-    //             writer.writeAttribute("ChunkId", Integer.toString(this.chunkId));
-    //             ChunkBound.createXMLElement(writer);
-    //             writer.writeCharacters("\n"); // Add a newline character
-
-    //         chunkFiles.appendChunkFile(ChunkBound, localChunkPath);
-    //         writers.put(ChunkBound, writer); // Add the writer to the writers HashMap 
-
-    //         this.chunkId++; // Increment the chunkId for the next chunkFile. So each chunkFile has a unique id
-    //     }
-    // }
 
     /**
      * A class to control the chunk files' paths and the bounds of the chunks
@@ -219,9 +172,9 @@ public class XMLWriter {
             return null;
         }
 
-        public int getChunkId(TagBound bound){
-            return Integer.parseInt(this.chunkFiles.get(bound).split(".")[0]);
-        }
+        // public int getChunkId(TagBound bound){
+        //     return Integer.parseInt(this.chunkFiles.get(bound).split(".")[0]);
+        // }
 
         public HashMap<TagBound, String> getChunkFiles(){
             return this.chunkFiles;

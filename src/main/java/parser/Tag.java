@@ -1,8 +1,10 @@
 package parser;
 
+import java.io.Externalizable;
+import java.io.Serializable;
 import java.util.HashMap;
 
-enum Node {
+enum Node  {
     ID, LAT, LON;
 }
 
@@ -34,7 +36,8 @@ enum Node {
  * **Note** that not all tags, like {@link TagRelation} and {@link TagWay} uses {@link #getLat()} and {@link #getLon()} methods.
  * </p>
  */
-public abstract class Tag<E extends Enum<E>> extends HashMap<E, Object> {
+public abstract class Tag<E extends Enum<E>> extends HashMap<E, Object>   {
+    private static final long serialVersionUID = 1L;
     /**
      * Get the id of the tag.
      * @return The id of the tag.

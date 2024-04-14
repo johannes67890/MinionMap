@@ -8,14 +8,22 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.FileNotFoundException;
-
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.NotSerializableException;
+import java.io.ObjectOutputStream;
+import java.io.Serial;
+import java.io.Serializable;
 
 import org.junit.jupiter.api.*;
 import org.opentest4j.AssertionFailedError;
 
 import parser.TagAddress;
 import parser.TagBound;
+import parser.TagNode;
+import parser.TagWay;
 import parser.XMLReader;
+import parser.XMLWriter;
 
 public class XMLReaderTest {
     private XMLReader reader;
@@ -64,6 +72,23 @@ public class XMLReaderTest {
         assertEquals("Bellmansvej", address.getStreet());
         assertEquals("1", address.getHouseNumber());
         assertEquals("DK", address.getCountry());
+    }
+
+    @Test
+    public void whenSerializing_ThenThrowsError() throws IOException {
+        TagBound bound = new TagBound(55.4411300d, 12.1600100d, 55.4421100d, 12.1631900d);
+        TagAddress address = new TagAddress.AddressBuilder().street("Bellmansvej").house("1").postcode("4600").country("DK").city("Køge").municipality("Køge").build();
+        TagNode node = new TagNode(340820448l, 55.4411300d, 12.1600100d);
+        Object node2 = new Object();
+       
+        assertThrows(NotSerializableException.class, () -> {
+            FileOutputStream fileOut = new FileOutputStream("src/test/java/org/ressources/bound.bin");
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(bound);
+            out.close();
+            fileOut.close();
+        });
+       
     }
 }
 
