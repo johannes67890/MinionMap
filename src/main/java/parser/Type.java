@@ -35,7 +35,7 @@ public enum Type {
     FARMFIELD("landuse", new String[]{"farmland"}, 9, 6, Color.KHAKI.brighter(), Color.KHAKI.darker(), 5, false),
 
 
-    COASTLINE("natural", new String[]{"coastline"}, 9, 7, Color.PLUM, 5, false, 2, 100),
+    COASTLINE("natural", new String[]{"coastline"}, 9, 7, Color.PLUM, 5, true, 6, 100),
     BEACH("natural",new String[]{"beach"}, 9, 2, Color.RED, Color.RED.darker(), 5, false),
     FOREST("landuse",new String[]{"forest"}, 9, 4, Color.GREEN.brighter().desaturate(), Color.GREEN.darker(), 5, false),
     GRASS("landuse",new String[]{"meadow","grass"}, 9, 5, Color.GREEN.brighter().desaturate().brighter(), Color.GREEN.darker(), 5, false),
