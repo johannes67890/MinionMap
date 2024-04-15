@@ -36,12 +36,19 @@ public class TagNode extends Tag<Node> implements Comparable<TagNode> {
     }
     @Override
     public double getLat(){
-        return Double.parseDouble(this.get(Node.LAT).toString());
+        return -1.0 * Double.parseDouble(this.get(Node.LAT).toString());
     }
     @Override
     public double getLon(){
-        return Double.parseDouble(this.get(Node.LON).toString());
+        return 0.56 * Double.parseDouble(this.get(Node.LON).toString());
     }
+
+
+    public double distance(TagNode node){
+        return Math.sqrt(Math.pow(node.getLat() - getLat(), 2) + (Math.pow(node.getLon() - getLon(), 2)));
+    }
+
+
  
     @Override
     public int compareTo(TagNode o) {

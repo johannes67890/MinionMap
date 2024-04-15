@@ -17,7 +17,11 @@ enum Way {
  * {@link Way#ID}, {@link Way#REFS}, {@link Way#NAME}, {@link Way#TYPE}
  * </p>
  */
-public class TagWay extends Tag<Way>{
+public class TagWay extends Tag<Way> implements Comparable<TagWay>{
+
+
+    boolean isLine = false;
+
     public TagWay(XMLBuilder builder) {
         super(new HashMap<Way, Object>(){
             {
@@ -29,19 +33,40 @@ public class TagWay extends Tag<Way>{
             }
         });
     }
+
+    /**
+     * 
+     * TagWay that is created from Relation's Outer ways.
+     * 
+     * @param builder
+     */
+    public TagWay(TagRelation relation, long id, ArrayList<TagNode> nodes, int speedLimit) {
+        super(new HashMap<Way, Object>(){
+            {
+                put(Way.ID, id);
+                put(Way.NAME, relation.getName());
+                put(Way.REFS, nodes);
+                put(Way.SPEEDLIMIT, speedLimit);
+                put(Way.TYPE, relation.getType());     
+            }
+        });
+    }
+
+
+
     /**
      * Get the id of the way.
      * @return The id of the way.
      */
-    @Override
-    public long getId(){
+
+     public long getId(){
         return Long.parseLong(this.get(Way.ID).toString());
     }
-    @Override
     public double getLat() {
         throw new UnsupportedOperationException("TagWay does not have a latitude value.");
     }
-    @Override
+
+
     public double getLon() {
         throw new UnsupportedOperationException("TagWay does not have a longitude value.");
     }
@@ -57,26 +82,64 @@ public class TagWay extends Tag<Way>{
     public Type getType() {
         return (Type) this.get(Way.TYPE);
     }
+    public void setType(Type t){
+        put(Way.TYPE, t);     
+    }
+
+    public boolean loops(){
+        if (!getNodes().isEmpty()){
+            return getNodes().get(0).equals(getNodes().get(size() - 1));
+        } else{return false;}
+    }
+
+    public TagNode firsTagNode(){
+        return getNodes().get(0);
+    }
+
+    public TagNode lastTagNode(){
+        return getNodes().get(size() - 1);
+    }
+    
     /**
      * Get the refrerence nodes of the way.
      * @return Long[] of the reference nodes of the way.
      */
-    public ArrayList<TagNode> getRefs() {
+    public ArrayList<TagNode> getNodes() {
         return (ArrayList<TagNode>) this.get(Way.REFS);
     }
 
     public boolean isEmpty() {
-        return getRefs().size() == 0;
+        return getNodes().size() == 0;
     }
 
     public int size() {
-        return getRefs().size();
+        return getNodes().size();
+    }
+
+    public boolean isLine(){
+        return isLine;
+    }
+
+    public int compareTo(TagWay tW){
+
+        int tWLayer = tW.getType().getLayer();
+        int thisLayer = this.getType().getLayer();
+
+        if (thisLayer == tWLayer){
+            return 0;
+        } else if (thisLayer > tWLayer){
+            return 1;
+        } else{
+            return -1;
+        }
+
+
     }
 
     /**
     * Builder for a single way.
     * <p>
-    * Constructs a instance of the builder, that later can be used to construct a {@link TagWay}.
+    * Constructs an instance of the builder, that later can be used to construct a {@link TagWay}.
     * </p>
     */
     public static class WayBuilder {
@@ -115,6 +178,13 @@ public class TagWay extends Tag<Way>{
                 isEmpty = false;
             }
             refNodes.add(migrateNode(ref));
+        }
+
+        public void addNode(TagNode node) {
+            if (isEmpty) {
+                isEmpty = false;
+            }
+            refNodes.add(node);
         }
 
         public ArrayList<TagNode> getRefNodes() {
