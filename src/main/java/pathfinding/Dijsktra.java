@@ -2,127 +2,82 @@ package pathfinding;
 
 import parser.TagNode;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
-import java.util.HashSet;
 import java.util.Stack;
 
-
 public class Dijsktra {
-    private HashMap<TagNode, Double> distTo = new HashMap<TagNode, Double>();
-    private ArrayList<DirectedEdge> edgeTo = new ArrayList<DirectedEdge>();
-    private Set<TagNode> visited = new HashSet<TagNode>();
-    private IndexMinPQ<Double> pq;
+    private HashMap<TagNode, Double> distTo;          // distTo[v] = distance  of shortest s->v path
+    private HashMap<TagNode, DirectedEdge> edgeTo;    // edgeTo[v] = last edge on shortest s->v path
+    private IndexMinPQ<Double> pq;    // priority queue of vertices
+    
+       
 
-    private Digraph G = new Digraph();
-
-    public Dijsktra(Digraph G, TagNode start, TagNode end) {
+    Dijsktra(Digraph G, TagNode start, TagNode f) {
         for (DirectedEdge e : G.edges()) {
             if (e.weight() < 0)
                 throw new IllegalArgumentException("edge " + e + " has negative weight");
         }
-        
-        distTo.put(start, 0.0);
-            
-        G.edges().forEach(e -> {
-            TagNode v = e.from();
-            TagNode w = e.to();
-            setInfinity(v);
-            setInfinity(w);
-        });
 
+        distTo = new HashMap<>();
+        edgeTo = new HashMap<TagNode, DirectedEdge>(G.V());
+       
+        for (TagNode v : G.vertices()) {
+            distTo.put(v, Double.POSITIVE_INFINITY);   
+        }
+        distTo.put(start, 0.0);
 
         pq = new IndexMinPQ<Double>(G.V());
-        pq.insert((int) start.getId(), distTo.get(start));
-
+        pq.insert(start.getId(), distTo.get(start));
         while (!pq.isEmpty()) {
             TagNode v = G.getNode(pq.delMin());
             for (DirectedEdge e : G.adj(v)) {
-                relax(e);                
+                relax(e);
             }
-        }
-
-        // assert check(G, start, end);
-
-        if (visited.contains(end)) {
-            System.out.println("Shortest path from " + start + " to " + end + " is " + distTo.get(end));
-            for (TagNode node : pathTo(end)) {
-                System.out.print(node + " -> ");
-            }
-            System.out.println();
-        } else {
-            System.out.println("No path from " + start + " to " + end);
         }
     }
 
-    public void relax(DirectedEdge e) {
+      // relax edge e and update pq if changed
+    private void relax(DirectedEdge e) {
         TagNode v = e.from(), w = e.to();
-
         if(distTo.get(w) > distTo.get(v) + e.weight()) {
             distTo.put(w, distTo.get(v) + e.weight());
-            edgeTo.add((int) w.getId(), e);
-            if(pq.contains((int) w.getId())) {
-                pq.decreaseKey((int) w.getId(), distTo.get(w));
+            edgeTo.put(w, e);
+            if(pq.contains(w.getId())){
+                pq.decreaseKey(w.getId(), distTo.get(w));
             } else {
-                pq.insert((int) w.getId(), distTo.get(w));
+                pq.insert(w.getId(), distTo.get(w));
             }
         }
     }
 
-    private void setInfinity(TagNode v) {
-        if (!distTo.containsKey(v)) {
-            distTo.put(v, Double.POSITIVE_INFINITY);
-        }
-    }
-
-    private TagNode minDistance() {
-        double min = Double.POSITIVE_INFINITY;
-        TagNode minNode = null;
-        for (TagNode node : distTo.keySet()) {
-            if (!visited.contains(node) && distTo.get(node) < min) {
-                min = distTo.get(node);
-                minNode = node;
-            }
-        }
-        return minNode;
-    }
-
-    public double getDistanceTo(TagNode v) {
-        return distTo.get(v);
-    }
-
+    /**
+     * Returns true if there is a path from the source vertex {@code s} to vertex {@code v}.
+     *
+     * @param  v the destination vertex
+     * @return {@code true} if there is a path from the source vertex
+     *         {@code s} to vertex {@code v}; {@code false} otherwise
+     * @throws IllegalArgumentException unless {@code 0 <= v < V}
+     */
     public boolean hasPathTo(TagNode v) {
-        return visited.contains(v);
+        return distTo.get(v) < Double.POSITIVE_INFINITY;
     }
 
-    public Iterable<TagNode> pathTo(TagNode v) {
-        if(!hasPathTo(v)) return null;
-        Stack<TagNode> path = new Stack<TagNode>();
-        for (DirectedEdge e = edgeTo.get((int) v.getId()); e != null; e = edgeTo.get((int) e.from().getId())) {
-            path.push(e.from());
+    /**
+     * Returns a shortest path from the source vertex {@code s} to vertex {@code v}.
+     *
+     * @param  v the destination vertex
+     * @return a shortest path from the source vertex {@code s} to vertex {@code v}
+     *         as an iterable of edges, and {@code null} if no such path
+     * @throws IllegalArgumentException unless {@code 0 <= v < V}
+     */
+    public Iterable<DirectedEdge> pathTo(TagNode v) {
+        if (!hasPathTo(v)) return null;
+        Stack<DirectedEdge> path = new Stack<DirectedEdge>();
+        for (DirectedEdge e = edgeTo.get(v); e != null; e = edgeTo.get(e.from())) {
+            path.push(e);
         }
         return path;
     }
-
-    // private boolean check(Digraph G, TagNode start, TagNode end) {
-    //     for (DirectedEdge e : G.edges()) {
-    //         if(e.weight() < 0) {
-    //             System.err.println("negative edge weight detected");
-    //             return false;
-    //         }
-    //     }
-    //      // check that distTo[v] and edgeTo[v] are consistent
-    //     if (distTo.get(start) != 0.0 || edgeTo.get((int) start.getId()) != null) {
-    //         System.err.println("distTo[s] and edgeTo[s] inconsistent");
-    //         return false;
-    //     }
-    //     for (int i = 0; i < G.V(); i++) {
-    //         if(start.equals(end)) continue;
-    //         if( )
-    //     }
-    //     return true;
-    // }
 
     public static void main(String[] args) {
         Digraph G = new Digraph();
@@ -141,7 +96,22 @@ public class Dijsktra {
         G.addEdge(new DirectedEdge(d, f, 6));
         G.addEdge(new DirectedEdge(e, f, 7));
 
-        new Dijsktra(G, a, f);
+        Dijsktra sp = new Dijsktra(G, a, f);
+
+        
+         // print shortest path
+         for (int t = 0; t < G.V(); t++) {
+            if (sp.hasPathTo(f)) {
+                System.out.println("Path exists" + a.toString() + f.toString());
+                for (DirectedEdge edge : sp.pathTo(f)) {
+                    System.out.println(edge + "   ");
+                }
+                
+            }
+            else {
+                System.out.println("%d to %d         no path\n" + a + f);
+            }
+        }
        // dijsktra.getDistanceTo(f);
     }
 }

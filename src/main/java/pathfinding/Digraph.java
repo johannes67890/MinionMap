@@ -68,6 +68,10 @@ public class Digraph {
         return V;
     }
 
+    public Iterable<TagNode> vertices() {
+        return adj.keySet();
+    }
+
     /**
      * Returns the number of edges in this edge-weighted graph.
      *
