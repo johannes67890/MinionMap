@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import parser.TagBound;
+import parser.TagNode;
 import parser.XMLReader;
 
 public class TagTest {
@@ -24,5 +25,12 @@ public class TagTest {
         
         assertTrue(XMLReader.getNodeById(5660536753l).isInBounds(bound));
         assertTrue(XMLReader.getAddressById(340826416l).isInBounds(bound));
+    }
+    @Test
+    public void testDistance(){
+        TagNode a0 = new TagNode(0, 55.6572603d, 12.4682648d);
+        TagNode a1 = new TagNode(1, 55.6572610d, 12.4685185d);
+
+        assertEquals(15.93, a0.distance(a1), 0.1);
     }
 }

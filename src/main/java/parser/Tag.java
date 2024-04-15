@@ -2,6 +2,8 @@ package parser;
 
 import java.util.HashMap;
 
+import util.MecatorProjection;
+
 enum Node {
     ID, LAT, LON;
 }
@@ -75,4 +77,16 @@ public abstract class Tag<E extends Enum<E>> extends HashMap<E, Object> {
             && Double.valueOf(this.getLon()).compareTo(bound.getMinLon()) == 1 && Double.valueOf(this.getLon()).compareTo(bound.getMaxLon()) == -1;
     }
 
+    public double distance(Tag<?> a){
+        double lat1Rad = Math.toRadians(this.getLat());
+        double lat2Rad = Math.toRadians(a.getLat());
+        double lon1Rad = Math.toRadians(this.getLon());
+        double lon2Rad = Math.toRadians(a.getLon());
+
+        double x = (lon2Rad - lon1Rad) * Math.cos((lat1Rad + lat2Rad) / 2);
+        double y = (lat2Rad - lat1Rad);
+        double distance = Math.sqrt(x * x + y * y) * MecatorProjection.getEarthRadius();
+
+        return distance;
+    }
 }
