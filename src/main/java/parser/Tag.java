@@ -75,10 +75,10 @@ public abstract class Tag<E extends Enum<E>> extends HashMap<E, Object>   {
      */
     public boolean isInBounds(TagBound bound) {
         if(this instanceof TagWay) {
-            return ((TagWay)this).getRefs().stream().anyMatch(n -> n.isInBounds(bound));
+            return ((TagWay)this).getRefs().values().stream().anyMatch(n -> n.isInBounds(bound));
         }
         if(this instanceof TagRelation) {
-            return ((TagRelation)this).getMembers().stream().anyMatch(m -> m.isInBounds(bound));
+            return ((TagRelation)this).getMembers().values().stream().anyMatch(m -> m.isInBounds(bound));
         }
 
         return Double.valueOf(this.getLat()).compareTo(bound.getMinLat()) == 1 && Double.valueOf(this.getLat()).compareTo(bound.getMaxLat()) == -1
