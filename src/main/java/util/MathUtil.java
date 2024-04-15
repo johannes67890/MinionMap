@@ -22,7 +22,6 @@ public final class MathUtil {
         return Math.max(min, Math.min(max, val));
     }
 
-
     public static ArrayList<TagNode> reduce(ArrayList<TagNode> nodes, double minDistance) {
         ArrayList<TagNode> simplified = new ArrayList<TagNode>();
         int size = nodes.size();
