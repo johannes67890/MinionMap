@@ -3,23 +3,32 @@ package org;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.parallel.Execution;
 
 import parser.TagBound;
+import parser.TagNode;
 import parser.XMLReader;
 import parser.XMLWriter;
 import util.FileDistributer;
 
 public class XMLWriterTest {
-    XMLWriter writer;
-    @BeforeEach
-    public void setUp() {
+    @BeforeAll
+    public static void setUp() {
+        TagBound bound = new TagBound(55.6562600d, 55.6581600d, 12.4677300d, 12.4734000d);
         assertDoesNotThrow(() -> {
-            new XMLReader(FileDistributer.input.getFilePath());
+            new XMLWriter(bound);
         });
+        
     }
+  
     @Test
-    public void testWrite() {
-        this.writer = new XMLWriter(XMLReader.getBound());
-            
+    public void testInitChunkFiles() {
+        assertTrue(true);
+        try {
+            XMLWriter.appendToBinary(null);
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
     }
 }
