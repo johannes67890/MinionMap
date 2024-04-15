@@ -43,11 +43,11 @@ public class Controller implements Initializable, ControllerInterface{
         Pane p = new Pane(c);
         mainBorderPane.setCenter(p);
         mainView.setCanvas(c);
-        System.out.println("LOADING");
         mainView.loadDrawingMap();
-
         c.widthProperty().bind(p.widthProperty());
         c.heightProperty().bind(p.heightProperty());
+
+        System.out.println("DRAWING MAP");
 
         panZoomInitialize();
     }

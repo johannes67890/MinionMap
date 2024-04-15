@@ -63,7 +63,7 @@ public class XMLReaderTest {
         assertEquals("4600", address.getPostcode());
         assertEquals("Bellmansvej", address.getStreet());
         assertEquals("1", address.getHouseNumber());
-        assertEquals("DK", address.getContry());
+        assertEquals("DK", address.getCountry());
     }
 }
 

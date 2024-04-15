@@ -28,15 +28,19 @@ import javafx.scene.paint.Paint;
  */
 public enum Type {
     // Natural, Landuse and main infrastructure (Hierarchy 9)
-    COASTLINE("natural", new String[]{"coastline"}, 9, 9, Color.PLUM, 5, true, 2, 100),
     PRIMARY_ROAD("highway", new String[]{"primary"}, 9, 9, Color.PEACHPUFF, 5,  true, 6, 100),
-    RESIDENTIAL("landuse", new String[]{"residential", "industrial"}, 9, 6, Color.PEACHPUFF, Color.PEACHPUFF.darker(), 1, false),
+    MOTORWAY("highway", new String[]{"motorway"}, 9, 9, Color.DARKRED, 5, true, 6, 100),
+    RESIDENTIAL("landuse", new String[]{"residential", "industrial"}, 9, 7, Color.PEACHPUFF, Color.PEACHPUFF.darker(), 1, false),
+    AEROWAY("aeroway", new String[]{"aerodome", "apron", "hangar", "helipad", "heliport", "spaceport", "terminal"}, 9, 8, Color.LIGHTGRAY, Color.LIGHTGRAY.darker(), 5, false),
     FARMFIELD("landuse", new String[]{"farmland"}, 9, 6, Color.KHAKI.brighter(), Color.KHAKI.darker(), 5, false),
-    BEACH("natural",new String[]{"beach"}, 9, 6, Color.LIGHTYELLOW, Color.LIGHTYELLOW.darker(), 5, false),
-    FOREST("landuse",new String[]{"forest","meadow","grass"}, 9, 6, Color.GREEN.brighter().desaturate(), Color.GREEN.darker(), 5, false),
-    NATURALS("natural",new String[]{"scrub","grassland","heath", "wood"}, 9, 6, Color.GREENYELLOW, Color.GREENYELLOW.darker(), 5, false),
-    WATER("natural",new String[]{"water"}, 9, 8, Color.LIGHTBLUE, Color.LIGHTBLUE.darker(), 5, false),
-    WETLAND("natural",new String[]{"wetland"}, 9, 8, Color.DARKKHAKI, Color.DARKKHAKI, 5, false),
+
+
+    COASTLINE("natural", new String[]{"coastline"}, 9, 7, Color.PLUM, 5, true, 2, 100),
+    BEACH("natural",new String[]{"beach"}, 9, 2, Color.LIGHTYELLOW, Color.LIGHTYELLOW.darker(), 5, false),
+    FOREST("landuse",new String[]{"forest","meadow","grass"}, 9, 4, Color.GREEN.brighter().desaturate(), Color.GREEN.darker(), 5, false),
+    NATURALS("natural",new String[]{"scrub","grassland","heath", "wood"}, 9, 5, Color.GREENYELLOW, Color.GREENYELLOW.darker(), 5, false),
+    WATER("natural",new String[]{"water"}, 9, 9, Color.LIGHTBLUE, Color.LIGHTBLUE.darker(), 5, false),
+    WETLAND("natural",new String[]{"wetland"}, 9, 5, Color.DARKKHAKI, Color.DARKKHAKI, 5, false),
     
 
     
@@ -56,7 +60,6 @@ public enum Type {
     // Urban and natural (Hierarchy: 7)
     MILITARY("landuse", new String[]{"military"}, 7, 9, Color.SALMON.interpolate(Color.WHITE.TRANSPARENT, 0.5), Color.SALMON.interpolate(Color.WHITE, 0.5).darker(), 5, false),
     BUILDING("building",new String[]{"", "yes"},7, 8, Color.BURLYWOOD, Color.BURLYWOOD.darker(), 5, false),
-    AEROWAY("aeroway", new String[]{"aerodome", "apron", "hangar", "helipad", "heliport", "spaceport", "terminal"}, 7, 8, Color.LIGHTGRAY, Color.LIGHTGRAY.darker(), 5, false),
     LEISURE("leisure",new String[]{"park"},7, 8, Color.LIGHTGREEN, Color.LIGHTGREEN.darker(), 5, false),
     WATERWAY("waterway",new String[]{""},7, 8, Color.LIGHTBLUE, 3, true, 2, 25),
 

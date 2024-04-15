@@ -2,6 +2,9 @@ package parser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 enum Way {
     ID, REFS, NAME, TYPE, SPEEDLIMIT
@@ -14,7 +17,7 @@ enum Way {
  * {@link Way#ID}, {@link Way#REFS}, {@link Way#NAME}, {@link Way#TYPE}
  * </p>
  */
-public class TagWay extends HashMap<Way, Object> implements Comparable<TagWay>{
+public class TagWay extends Tag<Way> implements Comparable<TagWay>{
 
 
     boolean isLine = false;
@@ -47,6 +50,10 @@ public class TagWay extends HashMap<Way, Object> implements Comparable<TagWay>{
         throw new UnsupportedOperationException("TagWay does not have a longitude value.");
     }
 
+    public int getSpeedLimit(){
+        return Integer.parseInt(this.get(Way.SPEEDLIMIT).toString());
+    }
+
     /**
      * Get the type of the way.
      * @return The {@link Type} of the way.
@@ -54,6 +61,14 @@ public class TagWay extends HashMap<Way, Object> implements Comparable<TagWay>{
     public Type getType() {
         return (Type) this.get(Way.TYPE);
     }
+    public void setType(Type t){
+        put(Way.TYPE, t);     
+    }
+
+    public boolean loops(){
+        return getNodes().get(0).equals(getNodes().get(getNodes().size() - 1));
+    }
+    
     /**
      * Get the refrerence nodes of the way.
      * @return Long[] of the reference nodes of the way.
@@ -61,7 +76,7 @@ public class TagWay extends HashMap<Way, Object> implements Comparable<TagWay>{
     public ArrayList<TagNode> getNodes() {
         return (ArrayList<TagNode>) this.get(Way.REFS);
     }
-        
+
     public boolean isEmpty() {
         return getNodes().size() == 0;
     }
