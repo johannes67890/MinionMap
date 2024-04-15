@@ -12,6 +12,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import parser.XMLReader;
+import util.MecatorProjection;
 
 public class Controller implements Initializable, ControllerInterface{
     
@@ -120,6 +121,17 @@ public class Controller implements Initializable, ControllerInterface{
         //Search s = new Search(XMLReader.getAddresses());
         //System.out.println(s.toString());
         s.searchForAddress(address);
+        double[] bounds = mainView.getDrawingMap().getScreenBounds();
+        double x = ((bounds[2] - bounds[0]) / 2) + bounds[0];
+        double y = ((bounds[3] - bounds[1]) / 2) + bounds[1];
+        System.out.println(x + " " + y);
+        System.out.println(0.56 * s.getLongitudeByStreet(address) - x + " delta lon");
+        System.out.println(-1.0 * s.getLatitudeByStreet(address) - y + " delta lat");
+        mainView.getDrawingMap().pan(
+            10*(0.56 * s.getLongitudeByStreet(address) - x),
+            -1.0 * s.getLatitudeByStreet(address) - y
+        );
+
     }
 
 }

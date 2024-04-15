@@ -71,7 +71,7 @@ public class Search {
      * 
      * @param input String that will be contructed into an address.
      */
-    public void searchForAddress(String input/*, TextArea output*/){
+    public SearchAddress searchForAddress(String input/*, TextArea output*/){
         SearchAddress a = new SearchAddress(input);
             //output.setText(a.toString());
 
@@ -109,6 +109,7 @@ public class Search {
             } 
             System.out.println("Time: " + (System.currentTimeMillis() - time));
             //System.out.println(a.street);
+            return a;
     }
 
     /**
