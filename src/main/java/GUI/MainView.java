@@ -16,7 +16,6 @@ import javafx.stage.Stage;
 import parser.XMLReader;
 import util.FileDistributer;
 import util.ZipHandler;
-
 public class MainView {
 
     enum StageSelect {
@@ -78,6 +77,7 @@ public class MainView {
         }
 
         if (selectedStage == StageSelect.MapView){
+            System.out.println("INITIALZING");
             drawView.initialize(canvas);
         }
     }

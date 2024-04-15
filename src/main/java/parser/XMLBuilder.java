@@ -93,7 +93,9 @@ public class XMLBuilder {
                     break;
                 case "way":
                 case "relation":
-                    this.id = getAttributeByLong(reader, "id");                    
+                    this.id = getAttributeByLong(reader, "id");
+                    //System.out.println("RELATION ID: " + id);
+                    
                     break;
                 case "tag":
                     String k = reader.getAttributeValue(null, "k");
@@ -131,22 +133,26 @@ public class XMLBuilder {
                             switch (currType) { 
                                 // Way types
                                 case PRIMARY_ROAD:
+                                    this.type = currType; 
                                 case SECONDARY_ROAD:
+                                    this.type = currType; 
                                 case TERTIARY_ROAD:
+                                    this.type = currType; 
                                 case OTHER_ROAD:
+                                    this.type = currType; 
                                     parseStreet(currType);
                                 // Relation types
                                 case BOUNDARY:
                                 case ROUTE:
                                 case RESTRICTION:
                                 case MULTIPOLYGON:
-                                    this.TypeValue = v;
+                                    relationBuilder.setRelationType(currType);
+                                    relationBuilder.setTypeValue(v);
                                     break;
                                 default:
-                                    this.type = Type.UNKNOWN;
+                                this.type = currType; 
                                 break;
-                            }
-                                this.type = currType;    
+                            } 
                         }
                     }
                 }
@@ -199,6 +205,9 @@ public class XMLBuilder {
             }
         }
     }
+    
+
+
 
 
 
