@@ -11,13 +11,15 @@ import parser.TagBound;
 import parser.TagNode;
 import parser.TagRelation;
 import parser.TagWay;
-import parser.Type;
 import parser.XMLReader;
-import parser.XMLWriter;
 import util.MathUtil;
 import util.MinPQ;;
 
-
+/**
+ * 
+ * The class that processes all ways and relations, and draws them using their types.
+ * 
+ */
 public class DrawingMap {
 
 
@@ -35,6 +37,13 @@ public class DrawingMap {
         this.mainView = mainView;
         this.reader = reader;        
     }
+
+    /**
+     * 
+     * The first drawing of the map.
+     * 
+     * @param canvas - the canvas to be drawn.
+     */
 
     public void initialize(ResizableCanvas canvas){
 
@@ -78,6 +87,10 @@ public class DrawingMap {
         return Math.toDegrees(2 * Math.atan(Math.exp(Math.toRadians(aY))) - Math.PI / 2);
     }
 
+
+
+     
+
     public static double haversineDist(Point2D coord1, Point2D coord2){
         double x1 = coord1.getX();
         double y1 = coord1.getY();
@@ -85,6 +98,14 @@ public class DrawingMap {
         double y2 = coord2.getY();
         return haversineDist(x1, y1, x2, y2);
     }
+
+    /**
+     * Directly draws the map, starting by filling the canvas with white, followed by drawing lines and polygons
+     * 
+     * 
+     * @param gc - Graphicscontext, which ensures that the position of the vertices are placed correctly
+     * @param canvas - The canvas that get drawn
+     */
 
     public void DrawMap(GraphicsContext gc, ResizableCanvas canvas){
         long preTime = System.currentTimeMillis();
@@ -253,7 +274,10 @@ public class DrawingMap {
 
 
 
-    // Returns the distance for the ruler in the bottom right corner
+    /**
+     * 
+     * @return Returns the distance for the ruler in the bottom right corner
+     */
     public double getZoomLevelMeters(){
         double temp = zoomScalerToMeter / zoomLevel;
         temp = temp * 10000;
@@ -262,6 +286,16 @@ public class DrawingMap {
         return temp;
     }
 
+
+
+    /**
+     * 
+     * Zoomns in or out on the map dependent on the mouseposition
+     * 
+     * @param factor - The strength of which the map is zoomed
+     * @param dx - Distance to pan on the x-axis
+     * @param dy - Distance to pan on the y-axis
+     */
     void zoom(double factor, double dx, double dy){
         System.out.println("ZOOMING");
         double zoomLevelNext = zoomLevel * factor;
@@ -295,13 +329,16 @@ public class DrawingMap {
     }
 
 
+    /**
+     * 
+     * Pans the drawing
+     * @param dx - Distance to pan on the x-axis
+     * @param dy - Distance to pan on the y-axis
+     */
     public void pan(double dx, double dy) {
 
         transform.prependTranslation(dx, dy);
         mainView.draw();
     }
-
-
-
 
 }

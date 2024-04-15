@@ -5,8 +5,6 @@ import java.util.HashMap;
 
 import javax.xml.stream.XMLStreamReader;
 
-import parser.TagWay.WayBuilder;
-
 enum Relation {
     ID, INNER, OUTER, WAYS, RELATIONS, NODES, TYPE, TYPEVALUE, NAME, RELATIONTYPE
 }
@@ -77,6 +75,11 @@ public class TagRelation extends Tag<Relation>{
     public ArrayList<TagWay> getHandledOuter(){ return handledOuter; };
 
 
+    /**
+     * Constructs the outer ways as multiple connected polygons or lines,
+     * by assuming that ways with identical start- or endnodes should be merged into one way.
+     * 
+     */
     public void constructOuterWays(){
 
 

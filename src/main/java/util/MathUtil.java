@@ -1,7 +1,6 @@
 package util;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import parser.TagNode;
 
@@ -96,6 +95,15 @@ public final class MathUtil {
 
     }
 
+    /**
+     * 
+     * Calculates distance between a point from a line, using hardcoded mercatorprojections for Denmark.
+     * 
+     * @param point - Point distanced from the line
+     * @param l1 - Startpoint of line
+     * @param l2 - Endpoint of line
+     * @return
+     */
     public static double distancePointToLine(final TagNode point, final TagNode l1, final TagNode l2){
         return Math
         .abs((l2.getLon() - l1.getLon()) * (l1.getLat() - point.getLat())
