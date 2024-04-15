@@ -88,6 +88,7 @@ public class MainView {
 
     public void loadDrawingMap(){
         drawView = new DrawingMap(this, xmlReader);
+        System.out.println(drawView);
     }
 
     public void draw(){

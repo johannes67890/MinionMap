@@ -136,6 +136,7 @@ public class XMLBuilder {
                                 case SECONDARY_ROAD:
                                 case TERTIARY_ROAD:
                                 case OTHER_ROAD:
+                                    this.type = currType;
                                     parseStreet(currType);
                                 // Relation types
                                 case BOUNDARY:
