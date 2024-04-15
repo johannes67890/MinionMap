@@ -17,6 +17,10 @@ public class Tree {
     ArrayList<TagWay> waysInBounds;
     ArrayList<TagRelation> relationsInBounds;
 
+    /**
+     * Constructor for the Tree class
+     * @param tags ArrayList of tag-objects to be inserted in the tree
+     */
     public Tree(ArrayList<Tag<?>> tags){
         kdtree = new KdTree();
         kdtree.setBound(-180, -180, 180, 180);
@@ -26,6 +30,10 @@ public class Tree {
         
     }
 
+    /**
+     * Inserts a tag in the tree
+     * @param tag Tag to be inserted in the tree
+     */
     public void insertTagInTree(Tag<?> tag){
         if (tag instanceof TagNode){
             TagNode node = (TagNode) tag;
@@ -47,20 +55,40 @@ public class Tree {
             }
         }
     }
-
+    
+    /**
+     * Returns the tags near a point
+     * @param point Point to search near
+     * @return ArrayList of Tag-objects near the point
+     */
     public ArrayList<Tag<?>> getTagsNearPoint(Point2D point){
         return kdtree.nearestTags(point);
     }
 
+    /**
+     * Returns the nearest point in the tree to a given point
+     * @param point Point to search near
+     * @return Point2D object nearest to the given point
+     */
     public Point2D getNearestPoint(Point2D point){
         return kdtree.nearest(point);
     }
 
+    /**
+     * Returns the tags in a given bounds
+     * @param rect Bounds to search in
+     * @return HashSet of given tag-objects in the given bounds
+     */
     public HashSet<Tag<?>> getTagsInBounds(RectHV rect) {
         HashSet<Tag<?>> tagsInBounds = kdtree.rangeNode(rect);
         return tagsInBounds;
     }
 
+    /**
+     * Returns a list of tags containing objects in a given bounds
+     * @param point Point to search near
+     * @return ArrayList of tag-objects in the given bounds
+     */
     public ArrayList<Tag<?>> getTagsFromPoint(Point2D point){
         return kdtree.getTagsFromPoint(point);
     }
