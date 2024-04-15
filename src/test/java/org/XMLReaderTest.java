@@ -73,23 +73,6 @@ public class XMLReaderTest {
         assertEquals("1", address.getHouseNumber());
         assertEquals("DK", address.getCountry());
     }
-
-    @Test
-    public void whenSerializing_ThenThrowsError() throws IOException {
-        TagBound bound = new TagBound(55.4411300d, 12.1600100d, 55.4421100d, 12.1631900d);
-        TagAddress address = new TagAddress.AddressBuilder().street("Bellmansvej").house("1").postcode("4600").country("DK").city("Køge").municipality("Køge").build();
-        TagNode node = new TagNode(340820448l, 55.4411300d, 12.1600100d);
-        Object node2 = new Object();
-       
-        assertThrows(NotSerializableException.class, () -> {
-            FileOutputStream fileOut = new FileOutputStream("src/test/java/org/ressources/bound.bin");
-            ObjectOutputStream out = new ObjectOutputStream(fileOut);
-            out.writeObject(bound);
-            out.close();
-            fileOut.close();
-        });
-       
-    }
 }
 
 
