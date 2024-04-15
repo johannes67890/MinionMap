@@ -7,11 +7,13 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import parser.XMLReader;
+import parser.TagAddress.SearchAddress;
 import util.MecatorProjection;
 
 public class Controller implements Initializable, ControllerInterface{
@@ -20,8 +22,8 @@ public class Controller implements Initializable, ControllerInterface{
     @FXML private Button menuButton2;
     @FXML private Button searchButton;
     @FXML private Pane leftBurgerMenu;
-    @FXML private TextField searchBarStart;
-    @FXML private TextField searchBarDestination;
+    @FXML private ComboBox<String> searchBarStart;
+    @FXML private ComboBox<String> searchBarDestination;
     @FXML private Button mainMenuButton;
     @FXML private HBox mainUIHBox;
     @FXML private BorderPane mainBorderPane;
@@ -98,29 +100,45 @@ public class Controller implements Initializable, ControllerInterface{
             isMenuOpen = !isMenuOpen;
         });
 
+        // TODO: remake this function so it registers everytime the value is changed!
         searchBarStart.setOnAction((ActionEvent e) -> {
-            System.out.println("Searching for startpoint: " + searchBarStart.getText());
-            search(searchBarStart.getText());
+            System.out.println("Searching for startpoint: " + searchBarStart.getValue());
+            search(searchBarStart.getValue());
+
+            if (searchBarStart.getValue().equals("")){
+                setEnableDestinationTextField(false);
+            }else{
+                setEnableDestinationTextField(true);
+            }
         });
 
         //Will be changed later
         searchBarDestination.setOnAction((ActionEvent e) -> {
-            System.out.println("Searching for destination: " + searchBarDestination.getText());
-            search(searchBarDestination.getText());
+            System.out.println("Searching for destination: " + searchBarDestination.getValue());
+            search(searchBarDestination.getValue());
         });
 
         searchButton.setOnAction((ActionEvent e) -> {
-            System.out.println("Searching for destination: " + searchBarDestination.getText());
-            search(searchBarStart.getText());
+            System.out.println("Searching for destination: " + searchBarDestination.getValue());
+            search(searchBarDestination.getValue());
         });
 
+    }
+
+    private void setEnableDestinationTextField(boolean isEnabled){
+        if (isEnabled){
+            searchBarDestination.setMaxWidth(1000000);
+        }else{
+            searchBarDestination.setMaxWidth(0);
+        }
+        searchBarDestination.setVisible(isEnabled);
     }
 
 
     private void search(String address){
         //Search s = new Search(XMLReader.getAddresses());
         //System.out.println(s.toString());
-        s.searchForAddress(address);
+        SearchAddress addressObj = s.searchForAddress(address);
         double[] bounds = mainView.getDrawingMap().getScreenBounds();
         double x = ((bounds[2] - bounds[0]) / 2) + bounds[0];
         double y = ((bounds[3] - bounds[1]) / 2) + bounds[1];
@@ -131,6 +149,16 @@ public class Controller implements Initializable, ControllerInterface{
             10*(0.56 * s.getLongitudeByStreet(address) - x),
             -1.0 * s.getLatitudeByStreet(address) - y
         );
+
+        searchBarStart.getItems().setAll(
+            addressObj.street + " " + 
+            addressObj.house + " " + 
+            addressObj.floor + " " + 
+            addressObj.side + " " + 
+            addressObj.postcode + " " + 
+            addressObj.city
+        );
+        searchBarStart.show();
 
     }
 
