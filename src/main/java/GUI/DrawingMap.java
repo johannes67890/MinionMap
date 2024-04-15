@@ -31,7 +31,7 @@ public class DrawingMap {
     private int hierarchyLevel = 9;
     private final double zoomLevelMin = 40, zoomLevelMax = 3000000; // These variables changes how much you can zoom in and out. Min is far out and max is closest in
     private double zoomScalerToMeter; // This is the world meters of how long the scaler in the bottom right corner is. Divide it with the zoomLevel
-    private int[] zoomScales = {1000000, 500000, 250000, 125000, 67500, 33750, 16875, 8437, 4218, 2109};
+    private int[] zoomScales = {1000000, 500000, 250000, 125000, 67500, 33750, 16875, 8437, 4218, 2109, 1000};
 
     public DrawingMap(MainView mainView, XMLReader reader){
         this.mainView = mainView;
@@ -113,7 +113,7 @@ public class DrawingMap {
 
         gc = canvas.getGraphicsContext2D();
         gc.setTransform(new Affine());
-        gc.setFill(Color.WHITE);
+        gc.setFill(Color.LIGHTSKYBLUE);
         gc.fillRect(0,0,canvas.getWidth(), canvas.getHeight());
 
 

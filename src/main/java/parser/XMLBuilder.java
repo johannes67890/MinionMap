@@ -133,9 +133,13 @@ public class XMLBuilder {
                             switch (currType) { 
                                 // Way types
                                 case PRIMARY_ROAD:
+                                    this.type = currType; 
                                 case SECONDARY_ROAD:
+                                    this.type = currType; 
                                 case TERTIARY_ROAD:
+                                    this.type = currType; 
                                 case OTHER_ROAD:
+                                    this.type = currType; 
                                     parseStreet(currType);
                                 // Relation types
                                 case BOUNDARY:

@@ -16,6 +16,7 @@ public class Controller implements Initializable, ControllerInterface{
     
     @FXML private Button menuButton1;
     @FXML private Button menuButton2;
+    @FXML private Button layerButton;
     @FXML private Button searchButton;
     @FXML private Pane leftBurgerMenu;
     @FXML private TextField searchBarStart;
