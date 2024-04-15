@@ -50,7 +50,7 @@ import parser.TagWay;
 public class KdTree {
     private Node root;
     private int size;
-    private HashMap<Point2D, Tag<?>> pointToTag;
+    private HashMap<Point2D, ArrayList<Tag<?>>> pointToTag;
     public double[] bounds = new double[4];
 
     /**
@@ -132,10 +132,10 @@ public class KdTree {
      * 
      * 
      * @param p the point to add
+     * @param node the tag ({@link Tag}) associated with the Point2D
      * @throws NullPointerException if {@code p} is {@code null}
      */
     
-    // Extra method for pointing a node to a coordinat
     public void insert(Point2D p, Tag<?> node) {
         if (p == null) {
             throw new java.lang.NullPointerException("called insert() with a null Point2D");
@@ -148,7 +148,9 @@ public class KdTree {
             root = insert(root, p, true, new double[] {-180, -180, 180, 180});
         }
         
-        pointToTag.put(p, node);
+        ArrayList<Tag<?>> list = pointToTag.getOrDefault(node, new ArrayList<>());
+        list.add(node);
+        pointToTag.put(p, list);
     }
     
     private Node insert(Node n, Point2D p, boolean evenLevel, double[] coords) {
@@ -326,7 +328,7 @@ public class KdTree {
             // Add contained points to our points stack
             if (rect.contains(tmp.p)){
                 points.push(tmp.p);
-                returnList.add(pointToTag.get(tmp.p));
+                returnList.addAll(pointToTag.get(tmp.p));
             }
             /**
              * Add Nodes containing promising rectangles to our nodes stack.
@@ -430,6 +432,25 @@ public class KdTree {
         }
         
         return champion;
+    }
+
+    /**
+     * This method gets an ArrayList of tags (Tag<?>) which is associated with the nearest Point2D in relation to the {@link point}
+     * in the parameters
+     * @param point the point from where the search starts from
+     * @return a list of Tags thats is connected to the the nearest Point2D in the KDTree
+     */
+    public ArrayList<Tag<?>> nearestTags(Point2D point){
+        return pointToTag.get(nearest(point));
+    }
+    
+    /**
+     * This method gets the Tags ({@link Tag}) related to the point given in the parameters
+     * @param point is the point that you want the Tags related to
+     * @return this return an ArrayList<Tag<?>> of all tags related to the given Point2D
+     */
+    public ArrayList<Tag<?>> getTagsFromPoint(Point2D point){
+        return pointToTag.get(point);
     }
     
     /**
