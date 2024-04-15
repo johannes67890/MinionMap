@@ -1,18 +1,25 @@
 package gui;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
+import edu.princeton.cs.algs4.RectHV;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 import javafx.stage.Screen;
+import parser.Tag;
 import parser.TagBound;
 import parser.TagNode;
+import parser.TagRelation;
 import parser.TagWay;
+import parser.Type;
 import parser.XMLReader;
+import parser.XMLWriter;
 import util.MathUtil;
-import util.MinPQ;;
+import util.MinPQ;
+import util.Tree;;
 
 
 public class DrawingMap {
@@ -22,15 +29,17 @@ public class DrawingMap {
     public ResizableCanvas canvas;
     private XMLReader reader;
     private MainView mainView;
+    private Tree kdtree;
     private double zoomLevel = 1;
     private int hierarchyLevel = 9;
+    private double[] transformOffset = {0,0};
     private final double zoomLevelMin = 40, zoomLevelMax = 3000000; // These variables changes how much you can zoom in and out. Min is far out and max is closest in
     private double zoomScalerToMeter; // This is the world meters of how long the scaler in the bottom right corner is. Divide it with the zoomLevel
     private int[] zoomScales = {1000000, 500000, 250000, 125000, 67500, 33750, 16875, 8437, 4218, 2109};
 
     public DrawingMap(MainView mainView, XMLReader reader){
         this.mainView = mainView;
-        this.reader = reader;        
+        this.reader = reader; 
     }
 
     public void initialize(ResizableCanvas canvas){
@@ -39,18 +48,20 @@ public class DrawingMap {
 
         TagBound bound = reader.getBound();
 
-        //System.out.println("BOUNDS: " + bound.getMaxLon());
-
         double minlon = bound.getMinLon();
         double maxlat = bound.getMaxLat();
         double maxlon = bound.getMaxLon();
         double minlat = bound.getMinLat();
         double temp = Screen.getPrimary().getVisualBounds().getWidth() * 0.04;
         zoomScalerToMeter = haversineDist(new Point2D(0, 0), new Point2D(temp,0));
-
-        //pan(-0.56*minlon, maxlat);
+        ArrayList<Tag<?>> tempList = new ArrayList<>(XMLReader.getNodes().values());
+        tempList.addAll(XMLReader.getWays().values());
+        tempList.addAll(XMLReader.getRelations().values());
+        kdtree = new Tree(tempList);
+        
         pan(-0.56*minlon, maxlat);
         zoom(canvas.getWidth() / (maxlon - minlon), 0, 0);
+
         DrawMap(canvas.getGraphicsContext2D(), canvas);
     }
 
@@ -86,22 +97,48 @@ public class DrawingMap {
     public void DrawMap(GraphicsContext gc, ResizableCanvas canvas){
         long preTime = System.currentTimeMillis();
 
+        if (kdtree == null){
+            return;
+        }
 
         gc = canvas.getGraphicsContext2D();
         gc.setTransform(new Affine());
         gc.setFill(Color.WHITE);
         gc.fillRect(0,0,canvas.getWidth(), canvas.getHeight());
-
-
         gc.setTransform(transform);
-        //GraphicsContext gc = canvas.getGraphicsContext2D();
+
+        double[] canvasBounds = getScreenBoundsBigger(0.05);
+
+        RectHV rect = new RectHV(canvasBounds[0], canvasBounds[1], canvasBounds[2], canvasBounds[3]);
+
+        //gc.setFill(Color.BLACK);
+        //gc.fillRect(test1[0], test1[1], test1[2], test1[3]);
+        //System.out.println("xmin: " + test1[0] + " | ymin: " + test1[1] + " | xmax: " + test1[2] + " | ymax: " + test1[3]);
+        //System.out.println(zoomLevel);
+
+
         ArrayList<TagWay> waysToDrawWithType = new ArrayList<>();
         ArrayList<TagWay> waysToDrawWithoutType = new ArrayList<>();
-        List<TagNode> nodes = XMLReader.getNodes().values().stream().toList();
-        List<TagWay> ways = XMLReader.getWays().values().stream().toList();
+
+        List<TagNode> nodes = new ArrayList<>();
+        List<TagWay> ways = new ArrayList<>();
+        List<TagRelation> relations = new ArrayList<>();
+        List<TagWay> splitWayInRelation;
+        HashSet<Tag<?>> tags = kdtree.getTagsInBounds(rect);
+        for(Tag<?> tag : tags){
+            if (tag instanceof TagNode){
+                nodes.add((TagNode) tag);
+            }else if (tag instanceof TagWay){
+                ways.add((TagWay) tag);
+            }else if (tag instanceof TagRelation){
+                relations.add((TagRelation) tag);
+            }
+        }
+        System.out.println("Antal tags: " + tags.size());
+
 
         for (TagWay way : ways){
-            if (way.getType() != null && !way.getType().getKey().equals("UNKNOWN")){
+            if (way.getType() != null){
                 if (way.getType().getThisHierarchy() >= hierarchyLevel){
                     waysToDrawWithType.add(way);
                 }
@@ -111,8 +148,67 @@ public class DrawingMap {
             }
             
         }
-        MinPQ<TagWay> sortedWaysToDraw = new MinPQ<>(waysToDrawWithType.size());
+
+        for (TagRelation relation : relations){
+            
+            splitWayInRelation = new ArrayList<>();
+
+            for (TagWay way : relation.getWays()){
+                if (way.getType() != null){
+                    if (way.getType().getThisHierarchy() >= hierarchyLevel){
+                        waysToDrawWithType.add(way);
+                    }
+                } else{
+                    waysToDrawWithoutType.add(way);
+    
+                }
+            }
+            
+
+            
+
+            for (TagWay way : relation.getActualOuter()){
+
+                //System.out.println(way.loops());
+
+                /* 
+
+                if (!way.loops()){
+                    splitWayInRelation.add(way);
+                    continue;
+                }*/
+
+                if (relation.getType() != null){
+                    way.setType(relation.getType());
+                    
+
+                    if (way.getType().getThisHierarchy() >= hierarchyLevel){
+                        waysToDrawWithType.add(way);
+                    }
+                } else{
+                    waysToDrawWithoutType.add(way);
+    
+                }
+            }
+            /*
+
+            if (!splitWayInRelation.isEmpty()){
+
+                TagWay tw = new TagWay(null);
+
+                for (TagWay way :splitWayInRelation){
+
+                }
+
+
+            }*/
+
+
+        }
+
+
         
+        MinPQ<TagWay> sortedWaysToDraw = new MinPQ<>(waysToDrawWithType.size());
         for (TagWay way : waysToDrawWithType){
             sortedWaysToDraw.insert(way);
         }
@@ -202,6 +298,33 @@ public class DrawingMap {
 
     }
 
+    /**
+     * Calculates the coordinates the screen sees and returns a array of coordinates.
+     * Index 0: X - Minimum
+     * Index 1: Y - Minimum
+     * Index 2: X - Maximum
+     * Index 3: Y - Maximum
+     * @return It returns the coordinates of the screen to map coordinates in an array (double[])
+     */
+    public double[] getScreenBounds(){
+        double[] bounds = new double[4]; // x_min ; y_min ; x_max ; y_max
+        bounds[0] = -(transform.getTx() / Math.sqrt(transform.determinant()));
+        bounds[1] = (-transform.getTy()) / Math.sqrt(transform.determinant());
+        bounds[2] = ((canvas.getWidth()) / zoomLevel) + bounds[0];
+        bounds[3] = ((canvas.getHeight()) / zoomLevel) + bounds[1];
+        return bounds;
+    }
+
+    public double[] getScreenBoundsBigger(double multiplier){
+        double[] bounds = getScreenBounds();
+        double width = bounds[2] - bounds[0];
+        double height = bounds[3] - bounds[1];
+        bounds[0] -= (width * (1.0 - multiplier));
+        bounds[1] -= (height * (1.0 - multiplier));
+        bounds[2] += (width * (1.0 + multiplier));
+        bounds[3] += (height * (1.0 + multiplier));
+        return bounds;
+    }
 
 
     // Returns the distance for the ruler in the bottom right corner
@@ -214,7 +337,6 @@ public class DrawingMap {
     }
 
     void zoom(double factor, double dx, double dy){
-        System.out.println("ZOOMING");
         double zoomLevelNext = zoomLevel * factor;
         if (zoomLevelNext < zoomLevelMax && zoomLevelNext > zoomLevelMin){
             zoomLevel = zoomLevelNext;
@@ -224,17 +346,13 @@ public class DrawingMap {
                 if (zoomLevel > zoomScales[i]){
 
                     hierarchyLevel = i;
-                    //System.out.println(hierarchyLevel);
                     break;
                 }
             }
             
-
-            System.out.println(zoomLevel);
             pan(-dx, -dy);
             transform.prependScale(factor, factor);
             pan(dx, dy);
-            //mainView.draw(); 
         }
         else if(zoomLevel > zoomLevelMax){
             zoomLevel = zoomLevelMax - 1;
@@ -247,7 +365,8 @@ public class DrawingMap {
 
 
     public void pan(double dx, double dy) {
-
+        transformOffset[0] += dx;
+        transformOffset[1] += dy;
         transform.prependTranslation(dx, dy);
         mainView.draw();
     }
