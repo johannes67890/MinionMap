@@ -95,7 +95,7 @@ public class MainView {
         gc.setFill(Color.RED);
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
         //zoomLevelText.setText("" + Math.round(drawView.getZoomLevelMeters()) + "m");;
-        drawView.DrawMap(gc, canvas);
+        drawView.DrawMap(canvas);
         
     }
 
