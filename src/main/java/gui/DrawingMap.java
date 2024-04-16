@@ -70,7 +70,7 @@ public class DrawingMap {
         double maxlat = bound.getMaxLat();
         double maxlon = bound.getMaxLon();
         double minlat = bound.getMinLat();
-        double temp = Screen.getPrimary().getVisualBounds().getWidth() * 0.04;
+        double temp = Screen.getPrimary().getVisualBounds().getWidth();
 
         pan(-0.56*minlon, maxlat);
         zoom(canvas.getWidth() / (maxlon - minlon), 0, 0);
@@ -228,7 +228,7 @@ public class DrawingMap {
 
 
     /**
-     * 
+     * Getter for the zoomlevel in meters
      * @return Returns the distance for the ruler in the bottom right corner
      */
     public double getZoomLevelMeters(){
@@ -244,7 +244,6 @@ public class DrawingMap {
     /**
      * 
      * Zoomns in or out on the map dependent on the mouseposition
-     * 
      * @param factor - The strength of which the map is zoomed
      * @param dx - Distance to pan on the x-axis
      * @param dy - Distance to pan on the y-axis
@@ -287,6 +286,19 @@ public class DrawingMap {
 
         transform.prependTranslation(dx, dy);
         mainView.draw();
+    }
+    /**
+     * @param meters the amount of meters you want to know the pixel value of
+     * @return the amount of pixels that corresponds to the amount of meters
+     */
+
+    public double metersToPixels(int meters){
+        
+        double metersPerPixelRatio = screenWidth / zoomScalerToMeter;
+        System.out.println(metersPerPixelRatio);
+        System.out.println(meters);
+        
+        return metersPerPixelRatio * meters;
     }
 
 }

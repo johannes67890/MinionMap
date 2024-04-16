@@ -11,13 +11,11 @@ public final class StringUtility {
     /**
      * 
      * Calculates how much input to make two string identical, based on Levenshtein's distance calculation.
-     * 
      * @param s The first string, and initially the smallest
      * @param t The second string, and initially the biggest
      * @return an integer, that counts how much input is needed to make the two strings identical
      */
-    public static int getLevenshteinDistance(String s, String t){
-
+    public static int getLevenshteinDistance(String s, String t) {
 
         if (s == null || t == null){
             throw new IllegalArgumentException("Strings must not be null");
@@ -38,7 +36,6 @@ public final class StringUtility {
 
         if (n > m){
             // swaps strings.
-
             //System.out.print("SWAPPING STRINGS");
             String tmp = s;
             s = t;
@@ -54,7 +51,6 @@ public final class StringUtility {
         //indexes, one for each string
         int i;
         int j;
-
 
         //jth charcter of the second string
         char t_j;
@@ -80,9 +76,6 @@ public final class StringUtility {
             d = _d;
 
         }
-
         return p[n];
-       
     }
-    
 }
