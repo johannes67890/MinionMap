@@ -30,7 +30,7 @@ public class DrawingMap {
     private int hierarchyLevel = 9;
     private final double zoomLevelMin = 40, zoomLevelMax = 3000000; // These variables changes how much you can zoom in and out. Min is far out and max is closest in
     private double zoomScalerToMeter; // This is the world meters of how long the scaler in the bottom right corner is. Divide it with the zoomLevel
-    private int[] zoomScales = {1000000, 500000, 250000, 125000, 67500, 33750, 16875, 8437, 4218, 2109, 1000};
+    private int[] zoomScales = {1000000, 500000, 250000, 125000, 67500, 33750, 16875, 8437, 4218, 2109, 1000}; //Determines what hierachies should be drawn, smallest is zoomed out, biggest is zoomed in
 
     private List<TagNode> nodes;
     private List<TagWay> ways;
@@ -71,7 +71,6 @@ public class DrawingMap {
         double maxlon = bound.getMaxLon();
         double minlat = bound.getMinLat();
         double temp = Screen.getPrimary().getVisualBounds().getWidth() * 0.04;
-        zoomScalerToMeter = haversineDist(new Point2D(0, 0), new Point2D(temp,0));
         
         pan(-minlon, maxlat);
         zoom(canvas.getWidth() / (maxlon - minlon), 0, 0);
@@ -189,7 +188,7 @@ public class DrawingMap {
 
         for (TagWay way : waysToHandle){
             if (way.getType() != null){
-                if (way.getType().getThisHierarchy() >= hierarchyLevel){
+                if (way.getType().getThisHierarchy() >= 0){
                     waysToDrawWithType.add(way);
                 }
             } else{
@@ -252,6 +251,7 @@ public class DrawingMap {
      */
     void zoom(double factor, double dx, double dy){
         double zoomLevelNext = zoomLevel * factor;
+        System.out.println(zoomLevelNext);
         if (zoomLevelNext < zoomLevelMax && zoomLevelNext > zoomLevelMin){
             zoomLevel = zoomLevelNext;
 
