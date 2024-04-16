@@ -148,7 +148,7 @@ public class KdTree {
             root = insert(root, p, true, new double[] {-180, -180, 180, 180});
         }
         
-        ArrayList<Tag<?>> list = pointToTag.getOrDefault(node, new ArrayList<>());
+        ArrayList<Tag<?>> list = pointToTag.getOrDefault(p, new ArrayList<>());
         list.add(node);
         pointToTag.put(p, list);
     }
