@@ -5,7 +5,6 @@ import java.util.List;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
-import javafx.stage.Screen;
 import parser.TagBound;
 import parser.TagNode;
 import parser.TagRelation;
@@ -28,9 +27,9 @@ public class DrawingMap {
     private MainView mainView;
     private double zoomLevel = 1;
     private int hierarchyLevel = 9;
-    private final double zoomLevelMin = 40, zoomLevelMax = 3000000; // These variables changes how much you can zoom in and out. Min is far out and max is closest in
+    private final double zoomLevelMin = 0.001, zoomLevelMax = 3000000; // These variables changes how much you can zoom in and out. Min is far out and max is closest in
     private double zoomScalerToMeter; // This is the world meters of how long the scaler in the bottom right corner is. Divide it with the zoomLevel
-    private int[] zoomScales = {1000000, 500000, 250000, 125000, 67500, 33750, 16875, 8437, 4218, 2109, 1000}; //Determines what hierachies should be drawn, smallest is zoomed out, biggest is zoomed in
+    private double[] zoomScales = {0.8, 0.7, 0.6, 0.5, 0.4, 0.35, 0.34, 0.33, 0.02, 0.015, 0.01};
 
     private List<TagNode> nodes;
     private List<TagWay> ways;
@@ -70,7 +69,6 @@ public class DrawingMap {
         double maxlat = bound.getMaxLat();
         double maxlon = bound.getMaxLon();
         double minlat = bound.getMinLat();
-        double temp = Screen.getPrimary().getVisualBounds().getWidth() * 0.04;
         
         pan(-minlon, maxlat);
         zoom(canvas.getWidth() / (maxlon - minlon), 0, 0);
@@ -274,7 +272,7 @@ public class DrawingMap {
         else if (zoomLevel < zoomLevelMin){
             zoomLevel = zoomLevelMin + 1;
         }
-          
+        System.out.println(zoomLevel);
     }
 
 
