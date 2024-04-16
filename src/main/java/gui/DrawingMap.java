@@ -2,7 +2,6 @@ package gui;
 import java.util.ArrayList;
 import java.util.List;
 
-import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
@@ -33,9 +32,25 @@ public class DrawingMap {
     private double zoomScalerToMeter; // This is the world meters of how long the scaler in the bottom right corner is. Divide it with the zoomLevel
     private int[] zoomScales = {1000000, 500000, 250000, 125000, 67500, 33750, 16875, 8437, 4218, 2109, 1000};
 
+    private List<TagNode> nodes;
+    private List<TagWay> ways;
+    private List<TagRelation> relations;
+
+    private Color currentColor;
+
+    private GraphicsContext gc;
+
+    private List<TagWay> waysToDrawWithType;
+    private List<TagWay> waysToDrawWithoutType;
+
+
+
     public DrawingMap(MainView mainView, XMLReader reader){
         this.mainView = mainView;
-        this.reader = reader;        
+        this.reader = reader;
+        nodes = XMLReader.getNodes().values().stream().toList();  
+        ways = XMLReader.getWays().values().stream().toList();
+        relations = XMLReader.getRelations().values().stream().toList();
     }
 
     /**
@@ -51,8 +66,6 @@ public class DrawingMap {
 
         TagBound bound = reader.getBound();
 
-        //System.out.println("BOUNDS: " + bound.getMaxLon());
-
         double minlon = bound.getMinLon();
         double maxlat = bound.getMaxLat();
         double maxlon = bound.getMaxLon();
@@ -62,161 +75,65 @@ public class DrawingMap {
         
         pan(-minlon, maxlat);
         zoom(canvas.getWidth() / (maxlon - minlon), 0, 0);
-        DrawMap(canvas.getGraphicsContext2D(), canvas);
-    }
-
-
-    // This calculates something. I didnt make this and we should try to understand it, if we're going to use it
-    private static double haversineDist(double lon1, double lat1, double lon2, double lat2) {
-
-        lat1 = yToLat(lat1); //Transform back using the spherical Mercator projection
-        lat2 = yToLat(lat2);
-
-        double latDistance = Math.toRadians(lat2 - lat1); //Δlat = lat2 − lat1
-        double lonDistance = Math.toRadians(lon2 - lon1); //Δlon = lon2 − lon1
-
-        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2) //a = sin²(Δlat/2) + cos(lat1).cos(lat2).sin²(Δlon/2)
-                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
-                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
-
-        return 2 * 6356.752 * Math.asin(Math.sqrt(a)); //distance (km) = 2 * R * arcsin(√a)
-    }
-
-    public static double yToLat(double aY) {
-        return Math.toDegrees(2 * Math.atan(Math.exp(Math.toRadians(aY))) - Math.PI / 2);
-    }
-
-
-
-     
-
-    public static double haversineDist(Point2D coord1, Point2D coord2){
-        double x1 = coord1.getX();
-        double y1 = coord1.getY();
-        double x2 = coord2.getX();
-        double y2 = coord2.getY();
-        return haversineDist(x1, y1, x2, y2);
+        DrawMap(canvas);
     }
 
     /**
      * Directly draws the map, starting by filling the canvas with white, followed by drawing lines and polygons
-     * 
-     * 
      * @param gc - Graphicscontext, which ensures that the position of the vertices are placed correctly
      * @param canvas - The canvas that get drawn
      */
 
-    public void DrawMap(GraphicsContext gc, ResizableCanvas canvas){
+    public void DrawMap(ResizableCanvas canvas){
         long preTime = System.currentTimeMillis();
 
 
+        //Resfreshes the screen
         gc = canvas.getGraphicsContext2D();
         gc.setTransform(new Affine());
         gc.setFill(Color.LIGHTSKYBLUE);
         gc.fillRect(0,0,canvas.getWidth(), canvas.getHeight());
-
-
         gc.setTransform(transform);
-        ArrayList<TagWay> waysToDrawWithType = new ArrayList<>();
-        ArrayList<TagWay> waysToDrawWithoutType = new ArrayList<>();
-        List<TagNode> nodes = XMLReader.getNodes().values().stream().toList();
-        List<TagWay> ways = XMLReader.getWays().values().stream().toList();
-        List<TagRelation> relations = XMLReader.getRelations().values().stream().toList();
-        List<TagWay> splitWayInRelation;
+        currentColor = Color.BLACK;
+
+        waysToDrawWithType = new ArrayList<>();
+        waysToDrawWithoutType = new ArrayList<>();
 
         long time = System.currentTimeMillis();
 
-        for (TagWay way : ways){
-            if (way.getType() != null){
-                if (way.getType().getThisHierarchy() >= hierarchyLevel){
-                    waysToDrawWithType.add(way);
-                }
-            } else{
-                waysToDrawWithoutType.add(way);
+        handleWays(ways);
 
-            }
-            
-        }
-
-        for (TagRelation relation : relations){
-            
-            splitWayInRelation = new ArrayList<>();
-
-            for (TagWay way : relation.getWays()){
-                if (way.getType() != null){
-                    if (way.getType().getThisHierarchy() >= hierarchyLevel){
-                        waysToDrawWithType.add(way);
-                    }
-                } else{
-                    waysToDrawWithoutType.add(way);
-    
-                }
-            }
-            
-
-            
-
-            for (TagWay way : relation.getHandledOuter()){
-
-                //System.out.println(way.loops());
-
-                 
-
-                if (!way.loops()){
-                    splitWayInRelation.add(way);
-                    continue;
-                }
-
-                if (relation.getType() != null){
-                    way.setType(relation.getType());
-                    
-
-                    if (way.getType().getThisHierarchy() >= hierarchyLevel){
-                        waysToDrawWithType.add(way);
-                    }
-                } else{
-                    waysToDrawWithoutType.add(way);
-    
-                }
-            }
-
-
-
-        }
-
+        handleRelations();
 
         MinPQ<TagWay> sortedWaysToDraw = new MinPQ<>(waysToDrawWithType.size());
         
         for (TagWay way : waysToDrawWithType){
             sortedWaysToDraw.insert(way);
         }
+ 
+        drawWays(sortedWaysToDraw);
+    }
 
-
-        TagBound bound = reader.getBound();
-
-        
+    /**
+     * 
+     * Gets all ways in a priorityqueue and draws them based on individual TagWay Types
+     * 
+     * @param ways - the ways to be drawn
+     */
+    private void drawWays(MinPQ<TagWay> ways){
 
         double defaultLineWidth = 1/Math.sqrt(transform.determinant());
-
-        Color c;
-
-
         
-        while (!sortedWaysToDraw.isEmpty()) {
+        while (!ways.isEmpty()) {
 
             gc.setLineWidth(defaultLineWidth);
-            //System.out.println("DEFAULT LINE WIDTH: " + defaultLineWidth);
             gc.setStroke(Color.BLACK); 
-
-            //System.out.println("HELLO");
       
-            TagWay tagWay = sortedWaysToDraw.delMin();
+            TagWay tagWay = ways.delMin();
 
             ArrayList<TagNode> nodesRef =  tagWay.getNodes();
 
-            //nodesRef = MathUtil.dp(nodesRef, 10000);
-
-            c = tagWay.getType().getColor();
+            currentColor = tagWay.getType().getColor();
             int counter = 0;
             double[] xPoints = new double[nodesRef.size()];
             double[] yPoints = new double[nodesRef.size()];
@@ -229,7 +146,6 @@ public class DrawingMap {
 
             if(tagWay.getType().getIsLine()){
                
-                //System.out.println("CALCULATED LINEWIDTH: " + lineWidth);
                 gc.setStroke(tagWay.getType().getColor()); 
             } else{
                 gc.setStroke(tagWay.getType().getPolyLineColor()); 
@@ -250,14 +166,9 @@ public class DrawingMap {
                 
             }
 
-            //System.out.println(tagWay.getType());
-
-
-            //gc.lineTo(nodesMap.get(nodesRef.get(0)).getLonDouble(), nodesMap.get(nodesRef.get(0)).getLatDouble());
-
-            
+            //Fills polygons with color
             if (!tagWay.getType().getIsLine()){
-                gc.setFill(c);
+                gc.setFill(currentColor);
                 gc.fillPolygon(xPoints, yPoints, counter);
             }
 
@@ -266,11 +177,55 @@ public class DrawingMap {
     
         }
 
-        System.out.println("AFTER RENDERING: " + (System.currentTimeMillis() - time));
+    }
 
+    /**
+     * 
+     * Handles ways by checking if their connected to a type.
+     * If they are not connected, ways will be put into a list of ways without type.
+     * 
+     */
+    public void handleWays(List<TagWay> waysToHandle){
+
+        for (TagWay way : waysToHandle){
+            if (way.getType() != null){
+                if (way.getType().getThisHierarchy() >= hierarchyLevel){
+                    waysToDrawWithType.add(way);
+                }
+            } else{
+                waysToDrawWithoutType.add(way);
+            }
+        }
 
     }
 
+    /**
+     * Handles relations regarding their inner and outer ways.
+     * Outer way's type will be set based on the relation's type.
+     */
+
+    public void handleRelations(){
+        for (TagRelation relation : relations){
+
+            handleWays(relation.getWays());
+            
+            for (TagWay way : relation.getHandledOuter()){
+                if (!way.loops()){
+                    continue;
+                }
+
+                if (relation.getType() != null){
+                    way.setType(relation.getType());
+                    if (way.getType().getThisHierarchy() >= hierarchyLevel){
+                        waysToDrawWithType.add(way);
+                    }
+                } else{
+                    waysToDrawWithoutType.add(way);
+    
+                }
+            }
+        }
+    }
 
 
     /**
@@ -296,7 +251,6 @@ public class DrawingMap {
      * @param dy - Distance to pan on the y-axis
      */
     void zoom(double factor, double dx, double dy){
-        System.out.println("ZOOMING");
         double zoomLevelNext = zoomLevel * factor;
         if (zoomLevelNext < zoomLevelMax && zoomLevelNext > zoomLevelMin){
             zoomLevel = zoomLevelNext;
@@ -304,19 +258,15 @@ public class DrawingMap {
 
             for (int i = 0; i < zoomScales.length ; i++){
                 if (zoomLevel > zoomScales[i]){
-
                     hierarchyLevel = i;
-                    //System.out.println(hierarchyLevel);
                     break;
                 }
             }
             
-
-            System.out.println(zoomLevel);
+            //Panning the map using desired delta x- and y values
             pan(-dx, -dy);
             transform.prependScale(factor, factor);
             pan(dx, dy);
-            //mainView.draw(); 
         }
         else if(zoomLevel > zoomLevelMax){
             zoomLevel = zoomLevelMax - 1;
