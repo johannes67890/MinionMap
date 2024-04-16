@@ -40,8 +40,8 @@ public class MecatorProjection {
         public static TagNode project(TagNode node){
             return new TagNode(
                 node.getId(),
-                lon2x(node.getLon()),
-                lat2y(node.getLat())
+                lat2y(node.getLat()),
+                lon2x(node.getLon())
             );
         }
 
@@ -57,8 +57,8 @@ public class MecatorProjection {
         public static TagNode project(long id, double x, double y){
             return new TagNode(
                     id,
-                    lon2x(x),
-                    lat2y(y)
+                    lat2y(y),
+                    lon2x(x)
             );
         }
          /**
@@ -73,8 +73,8 @@ public class MecatorProjection {
         public static TagNode project(double x, double y){
             return new TagNode(
                     0,
-                    lon2x(x),
-                    lat2y(y)
+                    lat2y(y),
+                    lon2x(x)
             );
         }
 
@@ -92,6 +92,23 @@ public class MecatorProjection {
                 node.getId(),
                 y2lat(node.getLat()),
                 x2lon(node.getLon())
+            );
+        }
+
+        /**
+         * Unprojects a node from the mercator projection.
+         * This takes the {@link TagNode} and turns x and y into lat and lon.
+         * <p>
+         * The lat and lon is in degrees.
+         * </p>
+         * @param node The node to unproject
+         * @return The unprojected node
+         */
+        public static TagNode unproject(double x, double y){
+            return new TagNode(
+                0,
+                y2lat(y),
+                x2lon(x)
             );
         }
 
