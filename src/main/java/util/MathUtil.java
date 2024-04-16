@@ -12,16 +12,21 @@ public final class MathUtil {
     /**
      * 
      * Clamps a value by ensuring, that it does not go below min, and above max.
-     * 
      * @param val - The value to check
      * @param min - The minimum value
      * @param max - the maximum value
-     * @return
+     * @return the clamped value
      */
     public static double clamp(double val, double min, double max) {
         return Math.max(min, Math.min(max, val));
     }
 
+    /**
+     * Reduces the amount of points in a polygon, by removing points that are closer than minDistance.
+     * @param nodes - The list of points to reduce
+     * @param minDistance - The minimum distance between points
+     * @return a list of points with reduced amount of points
+     */
     public static ArrayList<TagNode> reduce(ArrayList<TagNode> nodes, double minDistance) {
         ArrayList<TagNode> simplified = new ArrayList<TagNode>();
         int size = nodes.size();
@@ -44,6 +49,7 @@ public final class MathUtil {
         return simplified;
     }
 
+   //---------------------------------------------------------------------------------------------------------------------------------------------
     public static ArrayList<TagNode> dp(ArrayList<TagNode> polyline, double max) {
         int size = polyline.size();
         TagNode first = polyline.get(0);
@@ -79,6 +85,13 @@ public final class MathUtil {
         }
     }
 
+    /**
+     * Returns a sublist of a list
+     * @param startindex the index of the first index from the list that the sublist should contain
+     * @param endIndex the index of the last index from the list that the sublist should contain
+     * @param list - The list to get the sublist from
+     * @return a sublist of the list
+     */
     public static ArrayList<TagNode> sublist(int startindex, int endIndex, ArrayList<TagNode> list) {
 
         ArrayList<TagNode> subList = new ArrayList<>();
@@ -91,13 +104,11 @@ public final class MathUtil {
     }
 
     /**
-     * 
      * Calculates distance between a point from a line, using hardcoded mercatorprojections for Denmark.
-     * 
      * @param point - Point distanced from the line
      * @param l1 - Startpoint of line
      * @param l2 - Endpoint of line
-     * @return
+     * @return the distance between the point and the line
      */
     public static double distancePointToLine(final TagNode point, final TagNode l1, final TagNode l2){
         return Math
