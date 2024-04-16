@@ -1,9 +1,5 @@
 package gui;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
-import javafx.stage.Screen;
 
 public class ResizableCanvas extends Canvas {
  
