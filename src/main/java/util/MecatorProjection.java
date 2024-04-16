@@ -78,6 +78,26 @@ public class MecatorProjection {
             );
         }
 
+         /**
+         * Projects a node to the mercator projection.
+         * This takes the {@link TagNode} and turns lat and lon into x and y.
+         * <p>
+         * The x and y are in meters.
+         * </p>
+         * @param node The node to project
+         * @return The projected node
+         */
+        public static TagBound unproject(TagBound bound){ 
+            TagNode max = unproject(bound.getMaxLon(), bound.getMaxLat());
+            TagNode min = unproject(bound.getMinLon(), bound.getMinLat());
+            return new TagBound(
+                -max.getLat(),
+                -min.getLat(),
+                min.getLon(),
+                max.getLon()
+            );
+        }
+
         /**
          * Unprojects a node from the mercator projection.
          * This takes the {@link TagNode} and turns x and y into lat and lon.
