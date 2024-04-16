@@ -136,7 +136,7 @@ public class XMLReader {
                     case START_ELEMENT:
                         String element = reader.getLocalName().intern();
                         if(element.equals("bounds")) {
-                            bound = new TagBound(reader);
+                            bound = MecatorProjection.project(new TagBound(reader));
                         }else {
                             tempBuilder.parse(element, reader);
                         };

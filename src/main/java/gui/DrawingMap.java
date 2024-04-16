@@ -59,9 +59,8 @@ public class DrawingMap {
         double minlat = bound.getMinLat();
         double temp = Screen.getPrimary().getVisualBounds().getWidth() * 0.04;
         zoomScalerToMeter = haversineDist(new Point2D(0, 0), new Point2D(temp,0));
-
-        //pan(-0.56*minlon, maxlat);
-        pan(-0.56*minlon, maxlat);
+        
+        pan(-minlon, maxlat);
         zoom(canvas.getWidth() / (maxlon - minlon), 0, 0);
         DrawMap(canvas.getGraphicsContext2D(), canvas);
     }
