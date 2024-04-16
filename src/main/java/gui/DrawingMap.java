@@ -1,5 +1,6 @@
 package gui;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import javafx.scene.canvas.GraphicsContext;
@@ -41,6 +42,7 @@ public class DrawingMap {
 
     private List<TagWay> waysToDrawWithType;
     private List<TagWay> waysToDrawWithoutType;
+
 
 
 
@@ -119,21 +121,29 @@ public class DrawingMap {
      */
     private void drawWays(MinPQ<TagWay> ways){
 
+        List<TagNode> nodesRef;
+
+        double[] xPoints;
+
+        double[] yPoints;
+
         double defaultLineWidth = 1/Math.sqrt(transform.determinant());
+
+        TagNode ref;
+
+        double currentLon;
+        double currentLat;
         
         while (!ways.isEmpty()) {
-
-            gc.setLineWidth(defaultLineWidth);
-            gc.setStroke(Color.BLACK); 
       
             TagWay tagWay = ways.delMin();
 
-            ArrayList<TagNode> nodesRef =  tagWay.getNodes();
+            nodesRef = tagWay.getNodes();
 
             currentColor = tagWay.getType().getColor();
             int counter = 0;
-            double[] xPoints = new double[nodesRef.size()];
-            double[] yPoints = new double[nodesRef.size()];
+            xPoints = new double[nodesRef.size()];
+            yPoints = new double[nodesRef.size()];
 
             double min = tagWay.getType().getMinWidth();
             double max = tagWay.getType().getMaxWidth();
@@ -152,13 +162,15 @@ public class DrawingMap {
             gc.beginPath();
             gc.moveTo(nodesRef.get(0).getLon(), nodesRef.get(0).getLat());
             
-            for (int i = 0; i < nodesRef.size() ; i++){
+            for (int i = 0; i < nodesRef.size() ; i ++){
                 
-                TagNode ref = nodesRef.get(i);
+                ref = nodesRef.get(i);
+                currentLat = ref.getLat();
+                currentLon = ref.getLon();
 
-                gc.lineTo(ref.getLon(), ref.getLat());
-                xPoints[counter] = ref.getLon();
-                yPoints[counter] = ref.getLat();
+                gc.lineTo(currentLon, currentLat);
+                xPoints[counter] = currentLon;
+                yPoints[counter] = currentLat;
                 counter++;
                 
             }
