@@ -1,7 +1,7 @@
 package util;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.*;
 
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
@@ -25,6 +25,19 @@ public class Tree {
         kdtree = new KdTree();
         kdtree.setBound(-180, -180, 180, 180);
         for (Tag<?> tag : tags){
+            insertTagInTree(tag);
+        }
+        
+    }
+
+    /**
+     * Constructor for the Tree class
+     * @param tags ArrayList of tag-objects to be inserted in the tree
+     */
+    public Tree(HashMap<Long, Tag<?>> tags){
+        kdtree = new KdTree();
+        kdtree.setBound(-180, -180, 180, 180);
+        for (Tag<?> tag : tags.values()){
             insertTagInTree(tag);
         }
         
@@ -91,5 +104,13 @@ public class Tree {
      */
     public ArrayList<Tag<?>> getTagsFromPoint(Point2D point){
         return kdtree.getTagsFromPoint(point);
+    }
+    /**
+     * Returns a list of tags containing objects in a given bounds
+     * @param point Point to search near
+     * @return ArrayList of tag-objects in the given bounds
+     */
+    public ArrayList<Tag<?>> getTagsFromPoint(TagNode node){
+        return kdtree.getTagsFromPoint(new Point2D(node.getLon(), node.getLat()));
     }
 }

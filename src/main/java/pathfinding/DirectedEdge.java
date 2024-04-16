@@ -32,12 +32,12 @@ import parser.TagNode;
      *    is a negative integer
      * @throws IllegalArgumentException if {@code weight} is {@code NaN}
      */
-    public DirectedEdge(TagNode v, TagNode w, double weight) {
-        if (Double.isNaN(weight)) throw new IllegalArgumentException("Weight is NaN");
+    public DirectedEdge(TagNode v, TagNode w, double speed) {
+        if (Double.isNaN(speed)) throw new IllegalArgumentException("Speed is NaN");
         if (v.equals(w)) throw new IllegalArgumentException("Edges cannot be self loops");
         this.v = v;
         this.w = w;
-        this.weight = weight;
+        this.weight = v.distance(w)/ speed;
     }
 
     /**

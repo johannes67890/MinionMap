@@ -1,6 +1,10 @@
 package pathfinding;
 
 import parser.TagNode;
+import parser.TagWay;
+import parser.XMLReader;
+import util.FileDistributer;
+import util.Tree;
 
 import java.util.HashMap;
 import java.util.Stack;
@@ -81,20 +85,17 @@ public class Dijsktra {
 
     public static void main(String[] args) {
         Digraph G = new Digraph();
-        TagNode a = new TagNode(1, 1, 1);
-        TagNode b = new TagNode(2, 2, 2);
-        TagNode c = new TagNode(3, 3, 3);
-        TagNode d = new TagNode(4, 4, 4);
-        TagNode e = new TagNode(5, 5, 5);
-        TagNode f = new TagNode(6, 6, 6);
+        
+        
 
-        G.addEdge(new DirectedEdge(a, b, 1));
-        G.addEdge(new DirectedEdge(a, c, 2));
-        G.addEdge(new DirectedEdge(b, d, 3));
-        G.addEdge(new DirectedEdge(b, e, 4));
-        G.addEdge(new DirectedEdge(c, f, 5));
-        G.addEdge(new DirectedEdge(d, f, 6));
-        G.addEdge(new DirectedEdge(e, f, 7));
+        new XMLReader(FileDistributer.input.getFilePath());
+
+        
+
+        TagNode a = XMLReader.getNodeById(248419951l);
+        TagNode f = XMLReader.getNodeById(6339967586l);
+
+
 
         Dijsktra sp = new Dijsktra(G, a, f);
 
@@ -112,6 +113,5 @@ public class Dijsktra {
                 System.out.println("%d to %d         no path\n" + a + f);
             }
         }
-       // dijsktra.getDistanceTo(f);
     }
 }

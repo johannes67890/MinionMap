@@ -109,6 +109,8 @@ public class Digraph {
         V = adj.size();
     }
 
+    
+
     public TagNode getNode(long id){
         for(DirectedEdge node : edges()){
             //System.out.println("edges:" + node.either().getId() + " " + node.other(node.either()).getId() + " " + id);
@@ -119,7 +121,7 @@ public class Digraph {
             }
 
         }
-        throw new NoSuchElementException("Node not found");
+        throw new NoSuchElementException("Node not found in graph");
     }
 
     /**

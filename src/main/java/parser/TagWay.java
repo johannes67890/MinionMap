@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
+import java.util.LinkedList;
 
 enum Way {
     ID, REFS, NAME, TYPE, SPEEDLIMIT
@@ -143,9 +143,27 @@ public class TagWay extends Tag<Way> implements Comparable<TagWay>{
     * </p>
     */
     public static class WayBuilder {
+        private TagNode tailNode;
+        private TagNode headNode;
         private ArrayList<TagNode> refNodes = new ArrayList<TagNode>();
         private boolean isEmpty = true;
         private int speedLimit;
+        
+        public void addNode(Long ref) {
+            TagNode node = XMLReader.getNodeById(ref);
+            if(node == null){
+                
+            }
+            if (isEmpty) {
+                this.tailNode = node;
+                isEmpty = false;
+            }
+            refNodes.add(node);
+
+            
+
+            
+        }
 
         public boolean isEmpty() {
             return isEmpty;
@@ -155,39 +173,14 @@ public class TagWay extends Tag<Way> implements Comparable<TagWay>{
             return speedLimit;
         }
 
-        /**
-         * Returns and removes a node from XMLReader node List.
-         * @param id - The id of the node to migrate.
-         * @return The node from the id.
-         */
-        public TagNode migrateNode(Long id){
-            TagNode node = XMLReader.getNodeById(id);
-            if(node != null){
-                XMLReader.getNodeById(id).remove(id, node);
-            }
-            return node;
-        }
-
         public void setSpeedLimit(int speedLimit) {
             isEmpty = false;
             this.speedLimit = speedLimit;
         }
 
-        public void addNode(Long ref) {
-            if (isEmpty) {
-                isEmpty = false;
-            }
-            refNodes.add(migrateNode(ref));
-        }
-
-        public void addNode(TagNode node) {
-            if (isEmpty) {
-                isEmpty = false;
-            }
-            refNodes.add(node);
-        }
 
         public ArrayList<TagNode> getRefNodes() {
+            // this.headNode = refNodes.getLast();
             return refNodes;
         }
     }
