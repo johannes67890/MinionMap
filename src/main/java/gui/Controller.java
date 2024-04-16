@@ -11,6 +11,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 
 public class Controller implements Initializable, ControllerInterface{
     
@@ -22,6 +23,8 @@ public class Controller implements Initializable, ControllerInterface{
     @FXML private TextField searchBarStart;
     @FXML private TextField searchBarDestination;
     @FXML private Button mainMenuButton;
+    @FXML private VBox mainMenuVBox;
+    @FXML private VBox graphicVBox;
     @FXML private HBox mainUIHBox;
     @FXML private BorderPane mainBorderPane;
 
@@ -89,11 +92,18 @@ public class Controller implements Initializable, ControllerInterface{
 
         menuButton1.setOnAction((ActionEvent e) -> {
             leftBurgerMenu.setVisible(!isMenuOpen);
+            mainMenuVBox.setVisible(!isMenuOpen);
             isMenuOpen = !isMenuOpen;
         });
         menuButton2.setOnAction((ActionEvent e) -> {
             leftBurgerMenu.setVisible(!isMenuOpen);
+            mainMenuVBox.setVisible(!isMenuOpen);
             isMenuOpen = !isMenuOpen;
+        });
+        layerButton.setOnAction((ActionEvent e) -> {
+            graphicVBox.setVisible(true);
+            mainMenuVBox.setVisible(false);
+
         });
 
         searchBarStart.setOnAction((ActionEvent e) -> {
