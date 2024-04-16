@@ -8,6 +8,8 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import util.MecatorProjection;
+
 import java.io.FileNotFoundException;
 
 /**
@@ -145,7 +147,7 @@ public class XMLReader {
                                 if(!tempBuilder.getAddressBuilder().isEmpty()){
                                     addresses.put(tempBuilder.getId(), new TagAddress(tempBuilder));
                                 } else {
-                                    nodes.put(tempBuilder.getId(), new TagNode(tempBuilder));
+                                    nodes.put(tempBuilder.getId(), MecatorProjection.project(new TagNode(tempBuilder)));
                                 }
                                 tempBuilder = new XMLBuilder(); // Reset the builder
                                 break;
