@@ -6,7 +6,11 @@ import java.util.*;
 public class XMLWriter {
     private XMLStreamReader reader;
     private XMLStreamWriter writer;
-
+    /**
+     * Constructor for the XMLWriter class
+     * @param inputFile file to read from
+     * @param outputFile file to write to
+     */
     public XMLWriter(String inputFile, String outputFile) {
         try {
             this.reader = XMLInputFactory.newInstance().createXMLStreamReader(new FileReader(inputFile));
@@ -17,7 +21,10 @@ public class XMLWriter {
         writeXML();
     }
     // TODO: Rewrite so no endtag is written like: <tag></tag>... Change to <tag/>
-    // Writes the XML file and returns the content
+    
+    /**
+     * Writes the XML file and returns the content
+     */
     public void writeXML() {
         try {
             while (reader.hasNext()) {
@@ -55,7 +62,11 @@ public class XMLWriter {
             e.printStackTrace();
     }}
 
-
+    /**
+     * Deletes the attribute from the XML file
+     * @param attribute the attribute to be deleted
+     * @throws XMLStreamException if the attribute is not found in the XML file
+     */
     private void deleteAtrribute(String attribute) throws XMLStreamException {
         writer.writeStartElement(reader.getLocalName()); 
         for (int i = 0; i < reader.getAttributeCount(); i++) {
@@ -65,6 +76,11 @@ public class XMLWriter {
         }
     }
 
+    /**
+     * Deletes multiple attributes from the XML file
+     * @param attribute String array containing the attributes to be deleted
+     * @throws XMLStreamException if an attribute from the array is not found in the XML file
+     */
     private void deleteAtrribute(String[] attribute) throws XMLStreamException {
         writer.writeStartElement(reader.getLocalName()); 
         for (int i = 0; i < reader.getAttributeCount(); i++) {
