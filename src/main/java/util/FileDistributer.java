@@ -9,8 +9,6 @@ public enum FileDistributer {
     main("view/main.fxml"),
     start_screen("view/start.fxml");
 
-    
-
     private String filePath;
 
     FileDistributer(String fileName) {
@@ -26,6 +24,7 @@ public enum FileDistributer {
             e.printStackTrace();
         }
     }
+    
     public String getFilePath() {
         return filePath.toString();
     }

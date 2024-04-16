@@ -52,11 +52,13 @@ public class Controller implements Initializable, ControllerInterface{
 
         System.out.println("DRAWING MAP");
         
-
+        
         panZoomInitialize();
+        
     }
 
     private void panZoomInitialize(){ 
+        
         mainView.canvas.setOnMousePressed(e -> {
             lastX = e.getX();
             lastY = e.getY();
@@ -70,7 +72,11 @@ public class Controller implements Initializable, ControllerInterface{
 
             mainView.getDrawingMap().zoom(Math.pow(zoomMultiplier,event.getDeltaY()), event.getX(), event.getY());
 
-            
+            zoomLevelText.setText("50m");
+
+            String meters = zoomLevelText.getText().replaceAll("m", "");
+
+            zoomLevelImage.setFitWidth(mainView.getDrawingMap().metersToPixels(Integer.parseInt(meters)));
             
         });
 
@@ -95,10 +101,12 @@ public class Controller implements Initializable, ControllerInterface{
         menuButton1.setOnAction((ActionEvent e) -> {
             leftBurgerMenu.setVisible(!isMenuOpen);
             isMenuOpen = !isMenuOpen;
+            
         });
         menuButton2.setOnAction((ActionEvent e) -> {
             leftBurgerMenu.setVisible(!isMenuOpen);
             isMenuOpen = !isMenuOpen;
+            
         });
 
         searchBarStart.setOnAction((ActionEvent e) -> {

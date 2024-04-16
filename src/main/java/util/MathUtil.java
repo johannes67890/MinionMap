@@ -39,9 +39,7 @@ public final class MathUtil {
             // if it's smaller, then we ignore the vertex
             // and continue
         }
-
         simplified.add(nodes.get(nodes.size() - 1));
-
 
         return simplified;
     }
@@ -81,8 +79,7 @@ public final class MathUtil {
         }
     }
 
-    public static ArrayList<TagNode> sublist(int startindex, int endIndex, ArrayList<TagNode> list){
-
+    public static ArrayList<TagNode> sublist(int startindex, int endIndex, ArrayList<TagNode> list) {
 
         ArrayList<TagNode> subList = new ArrayList<>();
 
@@ -91,7 +88,6 @@ public final class MathUtil {
         }
 
         return subList;
-
     }
 
     /**
