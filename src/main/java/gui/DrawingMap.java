@@ -5,7 +5,6 @@ import java.util.List;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
-import javafx.stage.Screen;
 import parser.TagBound;
 import parser.TagNode;
 import parser.TagRelation;
@@ -187,7 +186,7 @@ public class DrawingMap {
 
         for (TagWay way : waysToHandle){
             if (way.getType() != null){
-                if (way.getType().getThisHierarchy() >= hierarchyLevel){
+                if (way.getType().getThisHierarchy() >= 0){
                     waysToDrawWithType.add(way);
                 }
             } else{
@@ -250,6 +249,7 @@ public class DrawingMap {
      */
     void zoom(double factor, double dx, double dy){
         double zoomLevelNext = zoomLevel * factor;
+        System.out.println(zoomLevelNext);
         if (zoomLevelNext < zoomLevelMax && zoomLevelNext > zoomLevelMin){
             zoomLevel = zoomLevelNext;
 
