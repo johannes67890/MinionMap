@@ -29,7 +29,6 @@ public class DrawingMap {
     public ResizableCanvas canvas;
     private XMLReader reader;
     private MainView mainView;
-    private Tree kdtree;
     private double zoomLevel = 1;
     private int hierarchyLevel = 9;
     private double[] transformOffset = {0,0};
@@ -60,7 +59,7 @@ public class DrawingMap {
         ArrayList<Tag<?>> tempList = new ArrayList<>(XMLReader.getNodes().values());
         tempList.addAll(XMLReader.getWays().values());
         tempList.addAll(XMLReader.getRelations().values());
-        kdtree = new Tree(tempList);
+        Tree.initialize(tempList);;
         
         pan(-0.56*minlon, maxlat);
         zoom(canvas.getWidth() / (maxlon - minlon), 0, 0);
@@ -100,7 +99,7 @@ public class DrawingMap {
     public void DrawMap(GraphicsContext gc, ResizableCanvas canvas){
         long preTime = System.currentTimeMillis();
 
-        if (kdtree == null){
+        if (!Tree.isLoaded()){
             return;
         }
 
@@ -131,29 +130,27 @@ public class DrawingMap {
         List<TagWay> ways = new ArrayList<>();
         List<TagRelation> relations = new ArrayList<>();
         List<TagWay> splitWayInRelation;
-        HashSet<Tag<?>> tags = kdtree.getTagsInBounds(rect);
+        HashSet<Tag<?>> tags = Tree.getTagsInBounds(rect);
+        
+        
         for(Tag<?> tag : tags){
             if (tag instanceof TagNode){
                 nodes.add((TagNode) tag);
             }else if (tag instanceof TagWay){
-                ways.add((TagWay) tag);
-            }else if (tag instanceof TagRelation){
-                relations.add((TagRelation) tag);
-            }
-        }
-        System.out.println("Antal tags: " + tags.size());
-
-
-        for (TagWay way : ways){
-            if (way.getType() != null){
-                if (way.getType().getThisHierarchy() >= hierarchyLevel){
-                    waysToDrawWithType.add(way);
+                TagWay way = (TagWay) tag;
+                ways.add(way);
+                if (way.getType() != null){
+                    if (way.getType().getThisHierarchy() >= hierarchyLevel){
+                        waysToDrawWithType.add(way);
+                    }
+                } else{
+                    waysToDrawWithoutType.add(way);
+    
                 }
-            } else{
-                waysToDrawWithoutType.add(way);
-
+            }else if (tag instanceof TagRelation){
+                TagRelation relation = (TagRelation) tag;
+                relations.add(relation);
             }
-            
         }
 
         for (TagRelation relation : relations){
@@ -170,10 +167,6 @@ public class DrawingMap {
     
                 }
             }
-            
-
-            
-
             for (TagWay way : relation.getActualOuter()){
 
                 //System.out.println(way.loops());
