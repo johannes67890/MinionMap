@@ -16,6 +16,7 @@ import javafx.stage.Stage;
 import parser.XMLReader;
 import util.FileDistributer;
 import util.ZipHandler;
+
 public class MainView {
 
     enum StageSelect {
@@ -88,7 +89,6 @@ public class MainView {
 
     public void loadDrawingMap(){
         drawView = new DrawingMap(this, xmlReader);
-        System.out.println(drawView);
     }
 
     public void draw(){
