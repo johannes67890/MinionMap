@@ -91,8 +91,8 @@ public class MecatorProjection {
             TagNode max = unproject(bound.getMaxLon(), bound.getMaxLat());
             TagNode min = unproject(bound.getMinLon(), bound.getMinLat());
             return new TagBound(
-                -max.getLat(),
-                -min.getLat(),
+                max.getLat(),
+                min.getLat(),
                 min.getLon(),
                 max.getLon()
             );
@@ -135,7 +135,7 @@ public class MecatorProjection {
         // Projection
         /* These functions take their angle parameter in degrees and return a length in meters */
         public static double lat2y(double aLat) {
-            return Math.log(Math.tan(Math.PI / 4 + Math.toRadians(aLat) / 2)) * RADIUS;
+            return -Math.log(Math.tan(Math.PI / 4 + Math.toRadians(aLat) / 2)) * RADIUS;
         }  
         public static double lon2x(double aLong) {
             return Math.toRadians(aLong) * RADIUS;
