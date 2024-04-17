@@ -45,7 +45,7 @@ public enum Type {
     AEROWAY("aeroway", new String[]{"aerodome", "apron", "hangar", "helipad", "heliport", "spaceport", "terminal"}, 8, 8, Color.LIGHTGRAY, Color.LIGHTGRAY.darker(), 5, false),
     FARMFIELD("landuse", new String[]{"farmland"}, 8, 6, Color.KHAKI.brighter(), Color.KHAKI.darker(), 5, false),
 
-    BEACH("natural",new String[]{"beach"}, 8, 2, Color.RED, Color.RED.darker(), 5, false),
+    BEACH("natural",new String[]{"beach"}, 8, 3, Color.YELLOW, Color.YELLOW.darker(), 5, false),
     FOREST("landuse",new String[]{"forest"}, 8, 4, Color.GREEN.brighter().desaturate(), Color.GREEN.darker(), 5, false),
     GRASS("landuse",new String[]{"meadow","grass"}, 8, 5, Color.GREEN.brighter().desaturate().brighter(), Color.GREEN.darker(), 5, false),
  
