@@ -121,7 +121,7 @@ public class DrawingMap {
      */
     private void drawWays(MinPQ<TagWay> ways){
 
-        List<TagNode> nodesRef;
+        TagNode[] nodesRef;
 
         double[] xPoints;
 
@@ -144,8 +144,8 @@ public class DrawingMap {
 
             currentColor = tagWay.getType().getColor();
             int counter = 0;
-            xPoints = new double[nodesRef.size()];
-            yPoints = new double[nodesRef.size()];
+            xPoints = new double[nodesRef.length];
+            yPoints = new double[nodesRef.length];
 
             double min = tagWay.getType().getMinWidth();
             double max = tagWay.getType().getMaxWidth();
@@ -162,12 +162,12 @@ public class DrawingMap {
 
             
             gc.beginPath();
-            gc.moveTo(nodesRef.get(0).getLon(), nodesRef.get(0).getLat());
+            gc.moveTo(nodesRef[0].getLon(), nodesRef[0].getLat());
             
-            for (int i = 0; i < nodesRef.size() ; i ++){
+            for (int i = 0; i < nodesRef.length ; i ++){
                 count++;
                 
-                ref = nodesRef.get(i);
+                ref = nodesRef[i];
                 currentLat = ref.getLat();
                 currentLon = ref.getLon();
 

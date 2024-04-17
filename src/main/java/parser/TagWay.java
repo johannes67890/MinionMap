@@ -27,7 +27,7 @@ public class TagWay extends Tag<Way> implements Comparable<TagWay>{
             {
                 put(Way.ID, builder.getId());
                 put(Way.NAME, builder.getName());
-                put(Way.REFS, builder.getWayBuilder().getRefNodes());
+                put(Way.REFS, builder.getWayBuilder().getRefNodesList());
                 put(Way.SPEEDLIMIT, builder.getWayBuilder().getSpeedLimit());
                 put(Way.TYPE, builder.getType());     
             }
@@ -40,7 +40,7 @@ public class TagWay extends Tag<Way> implements Comparable<TagWay>{
      * 
      * @param builder
      */
-    public TagWay(TagRelation relation, long id, ArrayList<TagNode> nodes, int speedLimit) {
+    public TagWay(TagRelation relation, long id, TagNode[] nodes, int speedLimit) {
         super(new HashMap<Way, Object>(){
             {
                 put(Way.ID, id);
@@ -87,33 +87,33 @@ public class TagWay extends Tag<Way> implements Comparable<TagWay>{
     }
 
     public boolean loops(){
-        if (!getNodes().isEmpty()){
-            return getNodes().get(0).equals(getNodes().get(size() - 1));
+        if (getNodes()[0] != null){
+            return getNodes()[0].equals(getNodes()[size() - 1]);
         } else{return false;}
     }
 
     public TagNode firsTagNode(){
-        return getNodes().get(0);
+        return getNodes()[0];
     }
 
     public TagNode lastTagNode(){
-        return getNodes().get(size() - 1);
+        return getNodes()[size() - 1];
     }
     
     /**
      * Get the refrerence nodes of the way.
      * @return Long[] of the reference nodes of the way.
      */
-    public ArrayList<TagNode> getNodes() {
-        return (ArrayList<TagNode>) this.get(Way.REFS);
+    public TagNode[] getNodes() {
+        return (TagNode[]) this.get(Way.REFS);
     }
 
     public boolean isEmpty() {
-        return getNodes().size() == 0;
+        return getNodes().length == 0;
     }
 
     public int size() {
-        return getNodes().size();
+        return getNodes().length;
     }
 
     public boolean isLine(){
@@ -143,7 +143,8 @@ public class TagWay extends Tag<Way> implements Comparable<TagWay>{
     * </p>
     */
     public static class WayBuilder {
-        private ArrayList<TagNode> refNodes = new ArrayList<TagNode>();
+        private ArrayList<TagNode> refNodesList = new ArrayList<TagNode>();
+        private TagNode[] refNodes;
         private boolean isEmpty = true;
         private int speedLimit;
 
@@ -177,18 +178,35 @@ public class TagWay extends Tag<Way> implements Comparable<TagWay>{
             if (isEmpty) {
                 isEmpty = false;
             }
-            refNodes.add(migrateNode(ref));
+            refNodesList.add(migrateNode(ref));
         }
 
         public void addNode(TagNode node) {
             if (isEmpty) {
                 isEmpty = false;
             }
-            refNodes.add(node);
+            refNodesList.add(node);
         }
 
-        public ArrayList<TagNode> getRefNodes() {
-            return refNodes;
+        public void closeNodeList(){
+
+            refNodes = refNodesList.toArray(new TagNode[refNodesList.size()]);
+            refNodesList.clear();
         }
+
+        public TagNode[] getRefNodesList() {
+
+            closeNodeList();
+
+            return getRefNodes();
+        }
+
+        public TagNode[] getRefNodes(){
+
+            return refNodes;
+
+        }
+
+
     }
 }
