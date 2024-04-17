@@ -49,7 +49,6 @@ public class DrawingMap {
     public DrawingMap(MainView mainView, XMLReader reader){
         this.mainView = mainView;
         this.reader = reader;
-        nodes = XMLReader.getNodes().values().stream().toList();  
         ways = XMLReader.getWays().values().stream().toList();
         relations = XMLReader.getRelations().values().stream().toList();
     }
@@ -165,7 +164,6 @@ public class DrawingMap {
             gc.moveTo(nodesRef[0].getLon(), nodesRef[0].getLat());
             
             for (int i = 0; i < nodesRef.length ; i ++){
-                count++;
                 
                 ref = nodesRef[i];
                 currentLat = ref.getLat();
@@ -178,18 +176,15 @@ public class DrawingMap {
                 
             }
 
+
             //Fills polygons with color
             if (!tagWay.getType().getIsLine()){
                 gc.setFill(currentColor);
                 gc.fillPolygon(xPoints, yPoints, counter);
             }
-
-            gc.stroke();
-
-    
+            
+            gc.stroke();    
         }
-
-        System.out.println(count);
 
     }
 
