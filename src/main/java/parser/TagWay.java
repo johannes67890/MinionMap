@@ -173,7 +173,7 @@ public class TagWay extends Tag<Way> implements Comparable<TagWay>{
             this.speedLimit = speedLimit;
         }
 
-        public void addNode(Long ref) {
+        public void addNode(long ref) {
             if (isEmpty) {
                 isEmpty = false;
             }

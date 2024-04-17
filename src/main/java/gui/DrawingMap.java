@@ -133,6 +133,8 @@ public class DrawingMap {
 
         double currentLon;
         double currentLat;
+
+        int count = 0;
         
         while (!ways.isEmpty()) {
       
@@ -163,6 +165,7 @@ public class DrawingMap {
             gc.moveTo(nodesRef.get(0).getLon(), nodesRef.get(0).getLat());
             
             for (int i = 0; i < nodesRef.size() ; i ++){
+                count++;
                 
                 ref = nodesRef.get(i);
                 currentLat = ref.getLat();
@@ -185,6 +188,8 @@ public class DrawingMap {
 
     
         }
+
+        System.out.println(count);
 
     }
 
@@ -261,7 +266,6 @@ public class DrawingMap {
      */
     void zoom(double factor, double dx, double dy){
         double zoomLevelNext = zoomLevel * factor;
-        System.out.println(zoomLevelNext);
         if (zoomLevelNext < zoomLevelMax && zoomLevelNext > zoomLevelMin){
             zoomLevel = zoomLevelNext;
 
@@ -284,7 +288,6 @@ public class DrawingMap {
         else if (zoomLevel < zoomLevelMin){
             zoomLevel = zoomLevelMin + 1;
         }
-        System.out.println(zoomLevel);
     }
 
 
