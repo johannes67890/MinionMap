@@ -10,24 +10,34 @@ import java.util.HashMap;
 */
 public class TagNode extends Tag<Node> {
 
+    double lon;
+    double lat;
+
     public TagNode(long id, double lat, double lon) {
         super(new HashMap<Node, Object>(){
             {
                 put(Node.ID, id);
-                put(Node.LAT, lat);
-                put(Node.LON, lon);
+                //put(Node.LAT, lat);
+               // put(Node.LON, lon);
             }
         });
+
+        this.lon = lon;
+        this.lat = lat;
+
     }
 
     public TagNode(XMLBuilder builder) {
         super(new HashMap<Node, Object>(){
             {
                 put(Node.ID, builder.getId());
-                put(Node.LAT, builder.getLat());
-                put(Node.LON, builder.getLon());
+                //put(Node.LAT, builder.getLat());
+                //put(Node.LON, builder.getLon());
             }
         });
+
+        this.lon = builder.getLon();
+        this.lat = builder.getLat();
     }
 
     @Override
@@ -36,11 +46,11 @@ public class TagNode extends Tag<Node> {
     }
     @Override
     public double getLat(){
-        return ((double) this.get(Node.LAT));
+        return this.lat;
     }
     @Override
     public double getLon(){
-        return ((double) this.get(Node.LON));
+        return this.lon;
     }
 
 
