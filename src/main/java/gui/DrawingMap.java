@@ -3,6 +3,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 import parser.TagBound;
@@ -324,6 +326,12 @@ public class DrawingMap {
         transform.prependTranslation(dx, dy);
         mainView.draw();
     }
+
+    public void zoombarUpdater(Label label, ImageView imageView){
+        label.setText(String.valueOf(getRange()) + "m");
+        imageView.setFitWidth(metersToPixels(getRange()));
+    }
+
     /**
      * @param meters the amount of meters you want to know the pixel value of
      * @return the amount of pixels that corresponds to the amount of meters
@@ -339,7 +347,21 @@ public class DrawingMap {
     }
 
     public int getRange(){
+        
+        double range = 2.6533*Math.pow(Math.E, 0.6864*hierarchyLevel);
+        double add = 0.625*Math.pow(Math.E, 0.6931*hierarchyLevel);
+        int temp = 0;
+        if(hierarchyLevel <= 3){
+            temp = (int) Math.round(((range+add)-1.25)/5)*5;
+            System.out.println(temp);
+        } else if(hierarchyLevel < 9){
+            temp = (int) Math.round((range+add)/10)*10;
+            System.out.println(temp);
+        } else {
+            temp = (int) Math.round((range+add)/500)*500;
+            System.out.println(temp);
+        }
 
-        return hierarchyLevel*10;
+        return temp;
     }
 }

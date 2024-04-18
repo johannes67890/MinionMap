@@ -52,7 +52,8 @@ public class Controller implements Initializable, ControllerInterface{
         mainView.loadDrawingMap();
         c.widthProperty().bind(p.widthProperty());
         c.heightProperty().bind(p.heightProperty());
-
+        
+        
         System.out.println("DRAWING MAP");
         
         
@@ -75,9 +76,7 @@ public class Controller implements Initializable, ControllerInterface{
 
             mainView.getDrawingMap().zoom(Math.pow(zoomMultiplier,event.getDeltaY()), event.getX(), event.getY());
             
-            zoomLevelText.setText("50m");
-            String meters = zoomLevelText.getText().replaceAll("m", "");
-            zoomLevelImage.setFitWidth(mainView.getDrawingMap().metersToPixels(Integer.parseInt(meters)));
+            mainView.getDrawingMap().zoombarUpdater(zoomLevelText, zoomLevelImage);
         });
 
         mainView.canvas.setOnMouseDragged(e -> {
