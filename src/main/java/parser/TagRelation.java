@@ -138,15 +138,11 @@ public class TagRelation extends Tag<Relation>{
                     }
                     
                 }
-
-
                 //Checks whether way should be read in reverse
 
                 if (prevLastTagNode != null && prevLastTagNode.equals(currentFirstTagNode)){
 
                     for (TagNode node : outer.getNodes()){
-
-
                         tempNodes.add(node);    
                     }
                 } else{

@@ -22,16 +22,32 @@ public class TagWay extends Tag<Way> implements Comparable<TagWay>{
 
     boolean isLine = false;
 
+    long id;
+    String name;
+    TagNode[] nodes;
+    int speedLimit;
+    Type type;
+
+
+
     public TagWay(XMLBuilder builder) {
         super(new HashMap<Way, Object>(){
             {
-                put(Way.ID, builder.getId());
-                put(Way.NAME, builder.getName());
-                put(Way.REFS, builder.getWayBuilder().getRefNodesList());
-                put(Way.SPEEDLIMIT, builder.getWayBuilder().getSpeedLimit());
-                put(Way.TYPE, builder.getType());     
+                //put(Way.ID, builder.getId());
+                //put(Way.NAME, builder.getName());
+                //put(Way.REFS, builder.getWayBuilder().getRefNodesList());
+                //put(Way.SPEEDLIMIT, builder.getWayBuilder().getSpeedLimit());
+                //put(Way.TYPE, builder.getType());     
             }
         });
+
+        this.id = builder.getId();
+        this.name = builder.getName();
+        this.nodes = builder.getWayBuilder().getRefNodesList();
+        this.speedLimit = builder.getWayBuilder().getSpeedLimit();
+        this.type = builder.getType();
+
+
     }
 
     /**
@@ -43,13 +59,21 @@ public class TagWay extends Tag<Way> implements Comparable<TagWay>{
     public TagWay(TagRelation relation, long id, TagNode[] nodes, int speedLimit) {
         super(new HashMap<Way, Object>(){
             {
-                put(Way.ID, id);
-                put(Way.NAME, relation.getName());
-                put(Way.REFS, nodes);
-                put(Way.SPEEDLIMIT, speedLimit);
-                put(Way.TYPE, relation.getType());     
+                //put(Way.ID, id);
+                //put(Way.NAME, relation.getName());
+                //put(Way.REFS, nodes);
+                //put(Way.SPEEDLIMIT, speedLimit);
+                //put(Way.TYPE, relation.getType());     
             }
         });
+
+        this.id = id;
+        this.name = relation.getName();
+        this.nodes = nodes;
+        this.speedLimit = speedLimit;
+        this.type = relation.getType();
+
+
     }
 
 
@@ -60,7 +84,7 @@ public class TagWay extends Tag<Way> implements Comparable<TagWay>{
      */
 
      public long getId(){
-        return Long.parseLong(this.get(Way.ID).toString());
+        return id;
     }
     public double getLat() {
         throw new UnsupportedOperationException("TagWay does not have a latitude value.");
@@ -72,7 +96,7 @@ public class TagWay extends Tag<Way> implements Comparable<TagWay>{
     }
 
     public int getSpeedLimit(){
-        return Integer.parseInt(this.get(Way.SPEEDLIMIT).toString());
+        return speedLimit;
     }
 
     /**
@@ -80,10 +104,10 @@ public class TagWay extends Tag<Way> implements Comparable<TagWay>{
      * @return The {@link Type} of the way.
      */
     public Type getType() {
-        return (Type) this.get(Way.TYPE);
+        return type;
     }
     public void setType(Type t){
-        put(Way.TYPE, t);     
+        type = t;     
     }
 
     public boolean loops(){
@@ -105,7 +129,7 @@ public class TagWay extends Tag<Way> implements Comparable<TagWay>{
      * @return Long[] of the reference nodes of the way.
      */
     public TagNode[] getNodes() {
-        return (TagNode[]) this.get(Way.REFS);
+        return nodes;
     }
 
     public boolean isEmpty() {
