@@ -16,13 +16,12 @@ enum Way {
  * {@link Way#ID}, {@link Way#REFS}, {@link Way#NAME}, {@link Way#TYPE}
  * </p>
  */
-public class TagWay extends Tag<Way>{
-    TCustomHashMap<Way, Object> way = new TCustomHashMap<Way, Object>();
+public class TagWay extends Tag<Way, TCustomHashMap<Way, Object>>{
+    private TCustomHashMap<Way, Object> way = new TCustomHashMap<Way, Object>();
 
     public TagWay(XMLBuilder builder) {
-       way = new TCustomHashMap<Way, Object>(){
+        way = new TCustomHashMap<Way, Object>(){
             {
-                put(Way.ID, builder.getId());
                 put(Way.NAME, builder.getName());
                 put(Way.REFS, builder.getWayBuilder().getRefNodes());
                 put(Way.SPEEDLIMIT, builder.getWayBuilder().getSpeedLimit());
@@ -30,14 +29,12 @@ public class TagWay extends Tag<Way>{
             }
         };
     }
-    /**
-     * Get the id of the way.
-     * @return The id of the way.
-     */
+
     @Override
-    public long getId(){
-        return Long.parseLong(this.get(Way.ID).toString());
+    public TCustomHashMap<Way, Object> getMap() {
+        return this.way;
     }
+
     @Override
     public double getLat() {
         throw new UnsupportedOperationException("TagWay does not have a latitude value.");
@@ -48,7 +45,7 @@ public class TagWay extends Tag<Way>{
     }
 
     public int getSpeedLimit(){
-        return Integer.parseInt(this.get(Way.SPEEDLIMIT).toString());
+        return (int) this.way.get(Way.SPEEDLIMIT);
     }
 
     /**
@@ -56,14 +53,14 @@ public class TagWay extends Tag<Way>{
      * @return The {@link Type} of the way.
      */
     public Type getType() {
-        return (Type) this.get(Way.TYPE);
+        return (Type) this.way.get(Way.TYPE);
     }
     /**
      * Get the refrerence nodes of the way.
      * @return Long[] of the reference nodes of the way.
      */
     public TLongObjectHashMap<TagNode> getRefs() {
-        return (TLongObjectHashMap<TagNode>) this.get(Way.REFS);
+        return (TLongObjectHashMap<TagNode>) this.way.get(Way.REFS);
     }
 
     public TagNode getNodeById(Long id){

@@ -10,11 +10,8 @@ enum Relation {
     ID, NAME, INNER, OUTER, WAYS, RELATIONS, NODES, TYPE, RELATIONTYPE, RELATIONTYPEVALUE
 }
 
-public class TagRelation extends Tag<Relation>{
-    TCustomHashMap<Relation, Object> relation = new TCustomHashMap<Relation, Object>();
-
-    public TagRelation(){}
-    
+public class TagRelation extends Tag<Relation, TCustomHashMap<Relation, Object>>{
+    private TCustomHashMap<Relation, Object> relation = new TCustomHashMap<Relation, Object>();
 
     public TagRelation(XMLBuilder builder){
         relation = new TCustomHashMap<Relation, Object>(){
@@ -34,9 +31,10 @@ public class TagRelation extends Tag<Relation>{
     }
 
     @Override
-    public long getId(){
-        return Long.parseLong(relation.get(Relation.ID).toString());
+    public TCustomHashMap<Relation, Object> getMap() {
+        return this.relation;
     }
+
     @Override
     public double getLat() {
         throw new UnsupportedOperationException("TagRelation does not have a latitude value.");
@@ -45,17 +43,22 @@ public class TagRelation extends Tag<Relation>{
     public double getLon() {
         throw new UnsupportedOperationException("TagRelation does not have a longitude value.");
     }
+
+    @Override
+    public boolean isEmpty(){
+        return this.relation.isEmpty();
+    }
     
     public String getName(){
         return relation.get(Relation.NAME).toString();
     }
 
-    public HashMap<Long, TagWay> getMembers(){
-        HashMap<Long, TagWay> members = new HashMap<Long, TagWay>();
+    public TLongObjectHashMap<TagWay> getMembers(){
+        TLongObjectHashMap<TagWay> members = new TLongObjectHashMap<TagWay>();
 
-        members.putAll(this.getInner().valueCollection().stream().collect(HashMap::new, (m, v) -> m.put(v.getId(), v), HashMap::putAll));
-        members.putAll(this.getOuter().valueCollection().stream().collect(HashMap::new, (m, v) -> m.put(v.getId(), v), HashMap::putAll));
-        members.putAll(this.getWays().valueCollection().stream().collect(HashMap::new, (m, v) -> m.put(v.getId(), v), HashMap::putAll));
+        members.putAll((TLongObjectHashMap<TagWay>) this.relation.get(Relation.INNER));
+        members.putAll((TLongObjectHashMap<TagWay>) this.relation.get(Relation.OUTER));
+        members.putAll((TLongObjectHashMap<TagWay>) this.relation.get(Relation.WAYS));
 
         return members;
         
@@ -66,35 +69,35 @@ public class TagRelation extends Tag<Relation>{
     }
 
     public TLongObjectHashMap<TagWay> getInner(){
-        return (TLongObjectHashMap<TagWay>) this.get(Relation.INNER);
+        return (TLongObjectHashMap<TagWay>) this.relation.get(Relation.INNER);
     }
 
     public TLongObjectHashMap<TagWay> getOuter(){
-        return (TLongObjectHashMap<TagWay>) this.get(Relation.OUTER);
+        return (TLongObjectHashMap<TagWay>) this.relation.get(Relation.OUTER);
     }
 
     public TLongObjectHashMap<TagWay> getWays(){
-        return (TLongObjectHashMap<TagWay>) this.get(Relation.WAYS);
+        return (TLongObjectHashMap<TagWay>) this.relation.get(Relation.WAYS);
     }
 
     public TLongObjectHashMap<TagRelation> getRelations(){
-        return (TLongObjectHashMap<TagRelation>) this.get(Relation.RELATIONS);
+        return (TLongObjectHashMap<TagRelation>) this.relation.get(Relation.RELATIONS);
     }
 
     public TLongObjectHashMap<TagNode> getNodes(){
-        return (TLongObjectHashMap<TagNode>) this.get(Relation.NODES);
+        return (TLongObjectHashMap<TagNode>) this.relation.get(Relation.NODES);
     }
 
     public String getType(){
-        return this.get(Relation.TYPE).toString();
+        return this.relation.get(Relation.TYPE).toString();
     }
 
     public Type getRelationType(){
-        return (Type) this.get(Relation.RELATIONTYPE);
+        return (Type) this.relation.get(Relation.RELATIONTYPE);
     }
 
     public String getTypeValue(){
-        return this.get(Relation.RELATIONTYPEVALUE).toString();
+        return this.relation.get(Relation.RELATIONTYPEVALUE).toString();
     }
 
 

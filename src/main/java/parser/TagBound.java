@@ -17,7 +17,7 @@ enum Bounds {
  * {@link Bounds#MINLAT}, {@link Bounds#MAXLAT}, {@link Bounds#MINLON}, {@link Bounds#MAXLON}
  * </p>
 */
-public class TagBound extends Tag<Bounds> implements Comparable<TagBound>{
+public class TagBound extends Tag<Bounds, TObjectDoubleHashMap<Bounds>> implements Comparable<TagBound>{
 
     private TObjectDoubleHashMap<Bounds> bounds = new TObjectDoubleHashMap<Bounds>();
 
@@ -50,6 +50,11 @@ public class TagBound extends Tag<Bounds> implements Comparable<TagBound>{
         };
     }
 
+    @Override
+    public TObjectDoubleHashMap<Bounds> getMap() {
+        return this.bounds;
+    }
+
     /**
      * Get the minimum latitude of the bounds.
      * @return The minimum latitude of the bounds.
@@ -80,6 +85,11 @@ public class TagBound extends Tag<Bounds> implements Comparable<TagBound>{
     }
 
     @Override
+    public boolean isEmpty() {
+        return bounds.isEmpty();
+    }
+
+    @Override
     public int compareTo(TagBound o) {
         if (Double.valueOf(this.getMaxLat()).compareTo(Double.valueOf(o.getMaxLat())) == 0) {
             if (Double.valueOf(this.getMinLat()).compareTo(Double.valueOf(o.getMinLat())) == 0) {
@@ -105,10 +115,6 @@ public class TagBound extends Tag<Bounds> implements Comparable<TagBound>{
         return Double.valueOf(this.getMaxLat()).equals(Double.valueOf(tag.getMaxLat())) && Double.valueOf(this.getMinLat()).equals(Double.valueOf(tag.getMinLat())) && Double.valueOf(this.getMaxLon()).equals(Double.valueOf(tag.getMaxLon())) && Double.valueOf(this.getMinLon()).equals(Double.valueOf(tag.getMinLon()));
     }
 
-    @Override
-    public long getId() {
-        throw new UnsupportedOperationException("TagBound does not have an id value.");
-    }
 
     @Override
     public double getLat() {

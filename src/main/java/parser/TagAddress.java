@@ -16,37 +16,42 @@ enum Address{
  * {@link Address#ID}, {@link Address#LAT}, {@link Address#LON}, {@link Address#STREET}, {@link Address#HOUSENUMBER}, {@link Address#POSTCODE}, {@link Address#MUNICIPALITY}
  * </p>
 */
-public class TagAddress extends Tag<Address> {
+public class TagAddress extends Tag<Address, TCustomHashMap<Address, Object>> {
 
-    TCustomHashMap<Address, Double> address = new TCustomHashMap<>();
+    TCustomHashMap<Address, Object> address = new TCustomHashMap<>();
 
     TagAddress(XMLBuilder builder){
-        address = new TCustomHashMap<Address, Double>(){
+        new TCustomHashMap<Address, Object>(){
             {
-                put(Address.ID, Double.parseDouble(builder.getId().toString()));
                 put(Address.LAT, builder.getLat());
                 put(Address.LON, builder.getLon());
-                put(Address.STREET, Double.parseDouble(builder.getAddressBuilder().street));
-                put(Address.HOUSENUMBER, Double.parseDouble(builder.getAddressBuilder().house));
-                put(Address.POSTCODE, Double.parseDouble(builder.getAddressBuilder().postcode));
-                put(Address.MUNICIPALITY, Double.parseDouble(builder.getAddressBuilder().municipality));
-                put(Address.CITY, Double.parseDouble(builder.getAddressBuilder().city));
-                put(Address.COUNTRY, Double.parseDouble(builder.getAddressBuilder().country));
+                put(Address.STREET, builder.getAddressBuilder().street);
+                put(Address.HOUSENUMBER, builder.getAddressBuilder().house);
+                put(Address.POSTCODE, builder.getAddressBuilder().postcode);
+                put(Address.MUNICIPALITY, builder.getAddressBuilder().municipality);
+                put(Address.CITY, builder.getAddressBuilder().city);
+                put(Address.COUNTRY, builder.getAddressBuilder().country);
             }
         };
     }
 
     @Override
-    public long getId(){
-        return address.get(Address.ID).longValue();
+    public TCustomHashMap<Address, Object> getMap() {
+        return this.address;
     }
+
     @Override
     public double getLat(){
-        return address.get(Address.LAT);
+        return (double) address.get(Address.LAT);
     }
     @Override
     public double getLon(){
-        return address.get(Address.LON);
+        return (double) address.get(Address.LON);
+    }
+
+    @Override
+    public boolean isEmpty(){
+        return address.isEmpty();
     }
 
     public String getStreet() {

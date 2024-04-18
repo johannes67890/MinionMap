@@ -8,6 +8,8 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import gnu.trove.map.hash.TLongObjectHashMap;
+
 import java.io.FileNotFoundException;
 
 /**
@@ -18,10 +20,10 @@ import java.io.FileNotFoundException;
  */
 public class XMLReader {
     private static TagBound bound;
-    private static HashMap<Long, TagNode> nodes = new HashMap<Long, TagNode>();
-    private static HashMap<Long, TagAddress> addresses = new HashMap<Long, TagAddress>();
-    private static HashMap<Long, TagRelation> relations = new HashMap<Long, TagRelation>();
-    private static HashMap<Long, TagWay> ways = new HashMap<Long, TagWay>();
+    private static TLongObjectHashMap<TagNode> nodes = new TLongObjectHashMap<TagNode>();
+    private static TLongObjectHashMap<TagAddress> addresses = new TLongObjectHashMap<TagAddress>();
+    private static TLongObjectHashMap<TagRelation> relations = new TLongObjectHashMap<TagRelation>();
+    private static TLongObjectHashMap<TagWay> ways = new TLongObjectHashMap<TagWay>();
 
     /**
      * Get the {@link TagBound} of the XML file.
@@ -83,7 +85,7 @@ public class XMLReader {
      * Get all the {@link TagNode}s in the XML file.
      * @return A {@link HashMap} of the as {@link Node#ID} to all the {@link TagNode}s in the XML file.
      */
-    public static HashMap<Long, TagNode> getNodes(){
+    public static TLongObjectHashMap<TagNode> getNodes(){
         return nodes;
     }
 
@@ -91,7 +93,7 @@ public class XMLReader {
      * Get all the {@link TagAddress}' in the XML file.
      * @return A {@link HashMap} of the keys as {@link Address#ID} to all the {@link TagAddress}s in the XML file.
      */
-    public static HashMap<Long, TagAddress> getAddresses(){
+    public static TLongObjectHashMap<TagAddress> getAddresses(){
         return addresses;
     }
 
@@ -99,7 +101,7 @@ public class XMLReader {
      * Get all the {@link TagRelation}s in the XML file.
      * @return A {@link HashMap} of the keys as {@link Relation#ID} to all the {@link TagRelation}s in the XML file.
      */
-    public static HashMap<Long, TagRelation> getRelations(){
+    public static TLongObjectHashMap<TagRelation> getRelations(){
         return relations;
     }
 
@@ -107,7 +109,7 @@ public class XMLReader {
      * Get all the {@link TagWay}s in the XML file.
      * @return A {@link HashMap} of the keys as {@link Way#ID} to all the {@link TagWay}s in the XML file.
      */
-    public static HashMap<Long, TagWay> getWays(){
+    public static TLongObjectHashMap<TagWay> getWays(){
         return ways;
     }
 
@@ -133,8 +135,8 @@ public class XMLReader {
                         String element = reader.getLocalName().intern();
                         if(element.equals("bounds")) {
                             bound = new TagBound(reader);
-                            System.out.println(bound);
-                            new XMLWriter(bound);
+                            System.out.println("Bounds " + bound.getMap());
+                            //new XMLWriter(bound);
                         }else {
                             tempBuilder.parse(element, reader);
                         };
@@ -169,6 +171,7 @@ public class XMLReader {
                         break;
                     }
             }
+           
             reader.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
