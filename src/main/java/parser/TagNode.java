@@ -13,9 +13,9 @@ public class TagNode extends Tag<Node> {
     public TagNode(long id, double lat, double lon) {
         super(new HashMap<Node, Object>(){
             {
-                put(Node.ID, id);
-                put(Node.LAT, lat);
-                put(Node.LON, lon);
+               put(Node.ID, id);
+               put(Node.LAT, lat);
+               put(Node.LON, lon);
             }
         });
     }
@@ -32,15 +32,15 @@ public class TagNode extends Tag<Node> {
 
     @Override
     public long getId(){
-        return Long.parseLong(this.get(Node.ID).toString());
+        return ((long) this.get(Node.ID));
     }
     @Override
     public double getLat(){
-        return Double.parseDouble(this.get(Node.LAT).toString());
+        return ((double) this.get(Node.LAT));
     }
     @Override
     public double getLon(){
-        return Double.parseDouble(this.get(Node.LON).toString());
+        return ((double) this.get(Node.LON));
     }
 
 

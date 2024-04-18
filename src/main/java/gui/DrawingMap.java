@@ -1,11 +1,11 @@
 package gui;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
-import javafx.stage.Screen;
 import parser.TagBound;
 import parser.TagNode;
 import parser.TagRelation;
@@ -28,9 +28,9 @@ public class DrawingMap {
     private MainView mainView;
     private double zoomLevel = 1;
     private int hierarchyLevel = 9;
-    private final double zoomLevelMin = 40, zoomLevelMax = 3000000; // These variables changes how much you can zoom in and out. Min is far out and max is closest in
+    private final double zoomLevelMin = 0.001, zoomLevelMax = 30; // These variables changes how much you can zoom in and out. Min is far out and max is closest in
     private double zoomScalerToMeter; // This is the world meters of how long the scaler in the bottom right corner is. Divide it with the zoomLevel
-    private int[] zoomScales = {1000000, 500000, 250000, 125000, 67500, 33750, 16875, 8437, 4218, 2109, 1000};
+    private double[] zoomScales = {32, 16, 8, 4, 2, 1, 0.5, 0.1, 0.05, 0.015, 0.0001}; //
 
     private List<TagNode> nodes;
     private List<TagWay> ways;
@@ -45,10 +45,10 @@ public class DrawingMap {
 
 
 
+
     public DrawingMap(MainView mainView, XMLReader reader){
         this.mainView = mainView;
         this.reader = reader;
-        nodes = XMLReader.getNodes().values().stream().toList();  
         ways = XMLReader.getWays().values().stream().toList();
         relations = XMLReader.getRelations().values().stream().toList();
     }
@@ -70,9 +70,8 @@ public class DrawingMap {
         double maxlat = bound.getMaxLat();
         double maxlon = bound.getMaxLon();
         double minlat = bound.getMinLat();
-        double temp = Screen.getPrimary().getVisualBounds().getWidth();
-
-        pan(-0.56*minlon, maxlat);
+        
+        pan(-minlon, minlat);
         zoom(canvas.getWidth() / (maxlon - minlon), 0, 0);
         DrawMap(canvas);
     }
@@ -121,24 +120,34 @@ public class DrawingMap {
      */
     private void drawWays(MinPQ<TagWay> ways){
 
+        TagNode[] nodesRef;
+
+        double[] xPoints;
+
+        double[] yPoints;
+
         double defaultLineWidth = 1/Math.sqrt(transform.determinant());
+
+        TagNode ref;
+
+        double currentLon;
+        double currentLat;
+
+        int count = 0;
         
         while (!ways.isEmpty()) {
-
-            gc.setLineWidth(defaultLineWidth);
-            gc.setStroke(Color.BLACK); 
       
             TagWay tagWay = ways.delMin();
 
-            ArrayList<TagNode> nodesRef =  tagWay.getNodes();
+            nodesRef = tagWay.getNodes();
 
             currentColor = tagWay.getType().getColor();
             int counter = 0;
-            double[] xPoints = new double[nodesRef.size()];
-            double[] yPoints = new double[nodesRef.size()];
+            xPoints = new double[nodesRef.length];
+            yPoints = new double[nodesRef.length];
 
-            double min = tagWay.getType().getMinWidth() * 0.00001;
-            double max = tagWay.getType().getMaxWidth() * 0.00001;
+            double min = tagWay.getType().getMinWidth();
+            double max = tagWay.getType().getMaxWidth();
             double lineWidth = MathUtil.clamp(defaultLineWidth * tagWay.getType().getWidth(), min, max);
             gc.setLineWidth(lineWidth);
 
@@ -152,28 +161,29 @@ public class DrawingMap {
 
             
             gc.beginPath();
-            gc.moveTo(nodesRef.get(0).getLon(), nodesRef.get(0).getLat());
+            gc.moveTo(nodesRef[0].getLon(), nodesRef[0].getLat());
             
-            for (int i = 0; i < nodesRef.size() ; i++){
+            for (int i = 0; i < nodesRef.length ; i ++){
                 
-                TagNode ref = nodesRef.get(i);
+                ref = nodesRef[i];
+                currentLat = ref.getLat();
+                currentLon = ref.getLon();
 
-                gc.lineTo(ref.getLon(), ref.getLat());
-                xPoints[counter] = ref.getLon();
-                yPoints[counter] = ref.getLat();
+                gc.lineTo(currentLon, currentLat);
+                xPoints[counter] = currentLon;
+                yPoints[counter] = currentLat;
                 counter++;
                 
             }
+
 
             //Fills polygons with color
             if (!tagWay.getType().getIsLine()){
                 gc.setFill(currentColor);
                 gc.fillPolygon(xPoints, yPoints, counter);
             }
-
-            gc.stroke();
-
-    
+            
+            gc.stroke();    
         }
 
     }
@@ -272,7 +282,6 @@ public class DrawingMap {
         else if (zoomLevel < zoomLevelMin){
             zoomLevel = zoomLevelMin + 1;
         }
-          
     }
 
 
@@ -294,7 +303,7 @@ public class DrawingMap {
 
     public double metersToPixels(int meters){
         
-        double metersPerPixelRatio = screenWidth / zoomScalerToMeter;
+        double metersPerPixelRatio = canvas.getWidth() / zoomScalerToMeter;
         System.out.println(metersPerPixelRatio);
         System.out.println(meters);
         
