@@ -9,6 +9,7 @@ import parser.Tag;
 import parser.TagNode;
 import parser.TagRelation;
 import parser.TagWay;
+import parser.XMLReader;
 
 public class Tree {
 
@@ -26,7 +27,8 @@ public class Tree {
     
     public static void initialize(ArrayList<Tag<?>> tags){
         kdtree = new KdTree();
-        kdtree.setBound(-180, -180, 180, 180);
+        System.out.println();
+        kdtree.setBound(XMLReader.getBound().getMinLon() * 0.8, XMLReader.getBound().getMaxLat() * 1.2, XMLReader.getBound().getMaxLon() * 1.2, XMLReader.getBound().getMinLat() * 0.8);
         for (Tag<?> tag : tags){
             insertTagInTree(tag);
         }
