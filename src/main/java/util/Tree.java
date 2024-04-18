@@ -27,8 +27,8 @@ public class Tree {
     
     public static void initialize(ArrayList<Tag<?>> tags){
         kdtree = new KdTree();
-        System.out.println();
-        kdtree.setBound(XMLReader.getBound().getMinLon() * 0.8, XMLReader.getBound().getMaxLat() * 1.2, XMLReader.getBound().getMaxLon() * 1.2, XMLReader.getBound().getMinLat() * 0.8);
+        //kdtree.setBound(1300000, -8000000, 1400000, -7000000);
+        kdtree.setBound(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
         for (Tag<?> tag : tags){
             insertTagInTree(tag);
         }

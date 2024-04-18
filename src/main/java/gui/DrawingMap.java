@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
 
 import java.util.HashSet;
@@ -55,9 +56,9 @@ public class DrawingMap {
     public DrawingMap(MainView mainView, XMLReader reader){
         this.mainView = mainView;
         this.reader = reader;
-        nodes = XMLReader.getNodes().values().stream().toList();
-        ways = XMLReader.getWays().values().stream().toList();
-        relations = XMLReader.getRelations().values().stream().toList();
+        //nodes = XMLReader.getNodes().values().stream().toList();
+        //ways = XMLReader.getWays().values().stream().toList();
+        //relations = XMLReader.getRelations().values().stream().toList();
     }
 
     /**
@@ -83,7 +84,6 @@ public class DrawingMap {
         tempList.addAll(XMLReader.getWays().values());
         tempList.addAll(XMLReader.getRelations().values());
         Tree.initialize(tempList);;
-        
         pan(-minlon, minlat);
         zoom(canvas.getWidth() / (maxlon - minlon), 0, 0);
         DrawMap(canvas);
@@ -113,15 +113,12 @@ public class DrawingMap {
 
         double[] canvasBounds = getScreenBoundsBigger(0.05);
         RectHV rect = new RectHV(canvasBounds[0], canvasBounds[1], canvasBounds[2], canvasBounds[3]);
-
-        /*
+        
         nodes = new ArrayList<>();
         ways = new ArrayList<>();
         relations = new ArrayList<>();
 
-        
         HashSet<Tag<?>> tags = Tree.getTagsInBounds(rect);
-        tags = new HashSet<>();
         
         for(Tag<?> tag : tags){
             if (tag instanceof TagNode){
@@ -134,9 +131,7 @@ public class DrawingMap {
                 relations.add(relation);
             }
         }
-
-        System.out.println(tags.size());
-        */
+        
         waysToDrawWithType = new ArrayList<>();
         waysToDrawWithoutType = new ArrayList<>();
 
@@ -302,7 +297,7 @@ public class DrawingMap {
     public double[] getScreenBounds(){
         double[] bounds = new double[4]; // x_min ; y_min ; x_max ; y_max
         bounds[0] = -(transform.getTx() / Math.sqrt(transform.determinant()));
-        bounds[1] = -(-transform.getTy()) / Math.sqrt(transform.determinant());
+        bounds[1] = (-transform.getTy()) / Math.sqrt(transform.determinant());
         bounds[2] = ((canvas.getWidth()) / zoomLevel) + bounds[0];
         bounds[3] = ((canvas.getHeight()) / zoomLevel) + bounds[1];
         return bounds;
