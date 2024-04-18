@@ -150,9 +150,9 @@ public class TagRelation extends Tag<Relation>{
                         tempNodes.add(node);    
                     }
                 } else{
-                    for (int i = outer.getNodes().size() - 1; i >= 0; i-- ){
+                    for (int i = outer.getNodes().length - 1; i >= 0; i-- ){
 
-                        TagNode node = outer.getNodes().get(i);
+                        TagNode node = outer.getNodes()[i];
 
                         tempNodes.add(node);    
                     }
@@ -164,8 +164,13 @@ public class TagRelation extends Tag<Relation>{
                 if (tempNodes.get(tempNodes.size() - 1).equals(beginFirstTagNode)){
 
                     //System.out.println(beginLastTagNode.getId() + " " + outer.getId());
-                    TagWay newTagWay = new TagWay(this, id, tempNodes, speedLimit);
+
+
+                    TagNode[] nodes = tempNodes.toArray(new TagNode[tempNodes.size()]);
+
+                    TagWay newTagWay = new TagWay(this, id, nodes, speedLimit);
                     handledOuter.add(newTagWay);
+                    tempNodes.clear();
                     tempNodes = new ArrayList<>();
                     beginFirstTagNode = null;
                     beginLastTagNode = null;

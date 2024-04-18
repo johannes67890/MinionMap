@@ -1,12 +1,33 @@
 package org;
 import org.junit.jupiter.api.Test;
 
+import parser.TagBound;
 import parser.TagNode;
 import util.MecatorProjection;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MercatorProjectorTest {
+    @Test
+    public void MercatorProjectorBoundProjectTest(){
+        TagBound bound = new TagBound(12, 55, 13, 56);
+        TagBound nd = MecatorProjection.project(bound);
+        assertEquals(-1345708.4, nd.getMaxLat(), 0.1E2);
+        assertEquals(-7361866.0, nd.getMinLat(), 0.1E2);
+        assertEquals(1447153.3, nd.getMinLon(), 0.1E2);
+        assertEquals(6233891.4, nd.getMaxLon(), 0.1E2);
+    }
+
+    @Test
+    public void MercatorProjectorBoundUnProjectTest(){
+        TagBound bound = new TagBound(-1345708.4, -7361866.0, 1447153.3, 6233891.4);
+        TagBound nd = MecatorProjection.unproject(bound);
+        assertEquals(12, nd.getMaxLat(), 0.1);
+        assertEquals(55, nd.getMinLat(), 0.1);
+        assertEquals(13, nd.getMinLon(), 0.1);
+        assertEquals(56, nd.getMaxLon(), 0.1);
+    }
+
     @Test
     public void positiveMercatorProjectorTest(){
         TagNode nd = MecatorProjection.project(12, 55);

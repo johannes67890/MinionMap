@@ -10,6 +10,10 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import util.MecatorProjection;
+
+import java.io.FileNotFoundException;
+
 /**
  * Reader for a OSM XML file.
  * <p>
@@ -132,7 +136,7 @@ public class XMLReader {
                     case START_ELEMENT:
                         String element = reader.getLocalName().intern();
                         if(element.equals("bounds")) {
-                            bound = new TagBound(reader);
+                            bound = MecatorProjection.project(new TagBound(reader));
                         }else {
                             tempBuilder.parse(element, reader);
                         };
