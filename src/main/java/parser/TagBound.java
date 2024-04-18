@@ -50,14 +50,14 @@ public class TagBound extends Tag<Bounds> implements Comparable<TagBound>{
     }
 
     public TagBound(float minlat, float maxlat, float minlon, float maxlon) {
-        super(new HashMap<Bounds, Object>(){
+        /*super(new HashMap<Bounds, Object>(){
             {
                 put(Bounds.MINLAT, minlat);
                 put(Bounds.MAXLAT, maxlat);
                 put(Bounds.MINLON, minlon);
                 put(Bounds.MAXLON, maxlon);
             }
-        });
+        });*/
 
 
         this.minLat = minlat;

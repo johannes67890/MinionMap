@@ -29,6 +29,8 @@ import javafx.scene.paint.Paint;
 public enum Type {
 
     REGION("place", new String[]{"island", ""}, 10, 2, Color.LIGHTYELLOW.desaturate(), Color.YELLOW, 5, false),
+    BOUNDARY("boundary", new String[]{"administrative"}, 10, 2, Color.LIGHTYELLOW.desaturate(), Color.YELLOW, 5, false),
+
 
     // Natural, Landuse and main infrastructure (Hierarchy 9)
     PRIMARY_ROAD("highway", new String[]{"primary"}, 9, 9, Color.PEACHPUFF, 5,  true, 6, 100),
@@ -38,7 +40,7 @@ public enum Type {
     RAILWAY("railway",new String[]{"rail","light_rail","subway"}, 9, 9, Color.DARKGRAY, 2, true, 4, 1000),
     WATER("natural",new String[]{"water"}, 9, 9, Color.LIGHTBLUE, Color.LIGHTBLUE.darker(), 5, false),
     WATERWAY("waterway",new String[]{""},9, 8, Color.LIGHTBLUE, 3, true, 2, 25),
-    COASTLINE("natural", new String[]{"coastline"}, 9, 7, Color.PLUM, 5, true, 6, 100),
+    COASTLINE("natural", new String[]{"coastline"}, 10, 7, Color.PLUM, 5, true, 6, 100),
     
     // Landuse (Hierarchy: 8)
     RESIDENTIAL("landuse", new String[]{"residential"}, 8, 7, Color.LIGHTGRAY.interpolate(Color.WHITE, 0.5), Color.LIGHTGRAY, 1, false),
@@ -86,7 +88,6 @@ public enum Type {
     MULTIPOLYGON("type", new String[]{"multipolygon"}, 3, Color.BLACK, 0),
     RESTRICTION("type", new String[]{"restriction"}, 3, Color.BLACK, 0),
     ROUTE("type", new String[]{"route"}, 3, Color.BLACK, 0),
-    BOUNDARY("type", new String[]{"boundary"}, 3, Color.BLACK, 0),
     // Unknown (Hierarchy: 0)
     UNKNOWN("", new String[]{""}, 0, 9, Color.BLACK, 5, true, 2, 7);
 

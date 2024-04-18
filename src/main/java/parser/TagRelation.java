@@ -28,7 +28,7 @@ public class TagRelation extends Tag<Relation>{
     public TagRelation(){}
 
     public TagRelation(XMLBuilder builder){
-        super(new HashMap<Relation, Object>(){
+        /*super(new HashMap<Relation, Object>(){
             {
                 //put(Relation.ID, builder.getId());
                 //put(Relation.TYPE, builder.getType());
@@ -42,7 +42,7 @@ public class TagRelation extends Tag<Relation>{
                 //put(Relation.TYPEVALUE, builder.getRelationBuilder().getTypeValue());
 
             }
-        });
+        });*/
 
         this.id = builder.getId();
         this.type = builder.getType();
@@ -117,6 +117,8 @@ public class TagRelation extends Tag<Relation>{
         int speedLimit = 0;
         long id = 0;
 
+        int wayCount = 0;
+
 
         for (int j = 0; j < getActualOuter().size() ; j++){
 
@@ -157,11 +159,14 @@ public class TagRelation extends Tag<Relation>{
                         }
                     
                     }
+                    else{
+                        break;
+                    }
                     
                 }
                 //Checks whether way should be read in reverse
 
-                if (prevLastTagNode != null && prevLastTagNode.equals(currentFirstTagNode)){
+                if ((prevLastTagNode != null) && prevLastTagNode.equals(currentFirstTagNode)){
 
                     for (TagNode node : outer.getNodes()){
                         tempNodes.add(node);    
@@ -174,6 +179,8 @@ public class TagRelation extends Tag<Relation>{
                         tempNodes.add(node);    
                     }
                 }
+
+                wayCount++;
 
                 prevLastTagNode = tempNodes.get(tempNodes.size() - 1);
 
@@ -192,6 +199,17 @@ public class TagRelation extends Tag<Relation>{
                     beginFirstTagNode = null;
                     beginLastTagNode = null;
                     success = true;
+
+
+                    if (name != null && name.equals("Bornholm")){
+                        System.out.println("Fyn");
+                        System.out.println(type.getKey() + " " + type.getValue() + " " + wayCount);
+
+
+                    }
+
+                    wayCount = 0;
+
 
                 }
             }

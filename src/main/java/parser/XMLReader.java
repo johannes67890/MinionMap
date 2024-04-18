@@ -168,6 +168,7 @@ public class XMLReader {
                         break;
                     }
             }
+            this.close();
             reader.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -178,4 +179,10 @@ public class XMLReader {
             e.printStackTrace();
         }
     }
+
+    public void close(){
+        nodes = null;
+    }
+
+
 }

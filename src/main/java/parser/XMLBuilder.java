@@ -160,6 +160,8 @@ public class XMLBuilder {
                                     parseStreet(currType);
                                 // Relation types
                                 case BOUNDARY:
+                                    this.type = currType;
+
                                 case ROUTE:
                                 case RESTRICTION:
                                 case MULTIPOLYGON:

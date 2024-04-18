@@ -31,7 +31,7 @@ public class TagWay extends Tag<Way> implements Comparable<TagWay>{
 
 
     public TagWay(XMLBuilder builder) {
-        super(new HashMap<Way, Object>(){
+        /*super(new HashMap<Way, Object>(){
             {
                 //put(Way.ID, builder.getId());
                 //put(Way.NAME, builder.getName());
@@ -39,7 +39,7 @@ public class TagWay extends Tag<Way> implements Comparable<TagWay>{
                 //put(Way.SPEEDLIMIT, builder.getWayBuilder().getSpeedLimit());
                 //put(Way.TYPE, builder.getType());     
             }
-        });
+        });*/
 
         this.id = builder.getId();
         this.name = builder.getName();
@@ -57,7 +57,7 @@ public class TagWay extends Tag<Way> implements Comparable<TagWay>{
      * @param builder
      */
     public TagWay(TagRelation relation, long id, TagNode[] nodes, int speedLimit) {
-        super(new HashMap<Way, Object>(){
+        /*super(new HashMap<Way, Object>(){
             {
                 //put(Way.ID, id);
                 //put(Way.NAME, relation.getName());
@@ -65,7 +65,7 @@ public class TagWay extends Tag<Way> implements Comparable<TagWay>{
                 //put(Way.SPEEDLIMIT, speedLimit);
                 //put(Way.TYPE, relation.getType());     
             }
-        });
+        });*/
 
         this.id = id;
         this.name = relation.getName();
@@ -119,10 +119,17 @@ public class TagWay extends Tag<Way> implements Comparable<TagWay>{
     }
 
     public TagNode firsTagNode(){
+        if (getNodes()[0] == null){
+            System.out.println("HELLO");
+        }
+        //System.out.println(getNodes()[0]);
         return getNodes()[0];
     }
 
     public TagNode lastTagNode(){
+        if (getNodes()[size() - 1] == null){
+            System.out.println("HELLO");
+        }
         return getNodes()[size() - 1];
     }
     
