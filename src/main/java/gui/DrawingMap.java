@@ -1,6 +1,5 @@
 package gui;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import edu.princeton.cs.algs4.RectHV;
@@ -15,6 +14,7 @@ import parser.TagWay;
 import parser.XMLReader;
 import parser.Tag;
 import util.MathUtil;
+import java.util.HashSet;
 import util.MinPQ;
 import util.Tree;
 
