@@ -78,6 +78,7 @@ public class MainView {
         }
 
         if (selectedStage == StageSelect.MapView){
+            System.out.println("INITIALZING");
             drawView.initialize(canvas);
         }
     }
@@ -87,16 +88,14 @@ public class MainView {
     }
 
     public void loadDrawingMap(){
-        drawView = new DrawingMap(this, xmlReader);
-        System.out.println(drawView);
+        drawView = new DrawingMap(this);
     }
 
     public void draw(){
         gc = canvas.getGraphicsContext2D();
         gc.setFill(Color.RED);
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        //zoomLevelText.setText("" + Math.round(drawView.getZoomLevelMeters()) + "m");;
-        drawView.DrawMap(gc, canvas);
+        drawView.DrawMap(canvas);
         
     }
 

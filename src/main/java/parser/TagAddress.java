@@ -3,7 +3,7 @@ package parser;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import gnu.trove.map.hash.TCustomHashMap;
+import gnu.trove.map.hash.THashMap;
 
 enum Address{
     ID, LAT, LON, CITY, COUNTRY, STREET, HOUSENUMBER, POSTCODE, MUNICIPALITY;
@@ -16,13 +16,14 @@ enum Address{
  * {@link Address#ID}, {@link Address#LAT}, {@link Address#LON}, {@link Address#STREET}, {@link Address#HOUSENUMBER}, {@link Address#POSTCODE}, {@link Address#MUNICIPALITY}
  * </p>
 */
-public class TagAddress extends Tag<Address, TCustomHashMap<Address, Object>> {
+public class TagAddress extends Tag<Address, THashMap<Address, Object>> {
 
-    TCustomHashMap<Address, Object> address = new TCustomHashMap<>();
+    THashMap<Address, Object> address = new THashMap<>();
 
     TagAddress(XMLBuilder builder){
-        new TCustomHashMap<Address, Object>(){
+        address = new THashMap<Address, Object>(){
             {
+                put(Address.ID, builder.getId());
                 put(Address.LAT, builder.getLat());
                 put(Address.LON, builder.getLon());
                 put(Address.STREET, builder.getAddressBuilder().street);
@@ -36,10 +37,14 @@ public class TagAddress extends Tag<Address, TCustomHashMap<Address, Object>> {
     }
 
     @Override
-    public TCustomHashMap<Address, Object> getMap() {
+    public THashMap<Address, Object> getMap() {
         return this.address;
     }
-
+    
+    @Override
+    public long getId() {
+        return (long) address.get(Address.ID);
+    }
     @Override
     public double getLat(){
         return (double) address.get(Address.LAT);

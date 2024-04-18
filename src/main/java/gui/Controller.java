@@ -4,21 +4,33 @@ import java.util.ResourceBundle;
 
 import gui.MainView.StageSelect;
 import javafx.event.ActionEvent;
-import javafx.fxml.*;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 
 public class Controller implements Initializable, ControllerInterface{
     
     @FXML private Button menuButton1;
     @FXML private Button menuButton2;
+    @FXML private Button layerButton;
     @FXML private Button searchButton;
     @FXML private Pane leftBurgerMenu;
     @FXML private TextField searchBarStart;
     @FXML private TextField searchBarDestination;
     @FXML private Button mainMenuButton;
+    @FXML private VBox mainMenuVBox;
+    @FXML private VBox graphicVBox;
     @FXML private HBox mainUIHBox;
     @FXML private BorderPane mainBorderPane;
+    @FXML private ImageView zoomLevelImage;
+    @FXML private Label zoomLevelText;
 
     private boolean isMenuOpen = false;
     private static MainView mainView;
@@ -28,6 +40,8 @@ public class Controller implements Initializable, ControllerInterface{
 
     double zoomMultiplier = 1.01f;
 
+    long timer = 0;
+    
     public void start(MainView mw){ // this is only ran after the stage is shown
         mainView = mw;
 
@@ -40,11 +54,14 @@ public class Controller implements Initializable, ControllerInterface{
         c.heightProperty().bind(p.heightProperty());
 
         System.out.println("DRAWING MAP");
-
+        
+        
         panZoomInitialize();
+        
     }
 
     private void panZoomInitialize(){ 
+        
         mainView.canvas.setOnMousePressed(e -> {
             lastX = e.getX();
             lastY = e.getY();
@@ -52,7 +69,18 @@ public class Controller implements Initializable, ControllerInterface{
         
         mainView.canvas.setOnScroll(event -> {
 
+            if (System.currentTimeMillis() - timer > 500){
+                timer = System.currentTimeMillis();
+            }
+
             mainView.getDrawingMap().zoom(Math.pow(zoomMultiplier,event.getDeltaY()), event.getX(), event.getY());
+
+            zoomLevelText.setText("50m");
+
+            String meters = zoomLevelText.getText().replaceAll("m", "");
+
+            // TODO: Fix
+            // zoomLevelImage.setFitWidth(mainView.getDrawingMap().metersToPixels(Integer.parseInt(meters)));
             
         });
 
@@ -76,11 +104,20 @@ public class Controller implements Initializable, ControllerInterface{
 
         menuButton1.setOnAction((ActionEvent e) -> {
             leftBurgerMenu.setVisible(!isMenuOpen);
+            mainMenuVBox.setVisible(!isMenuOpen);
             isMenuOpen = !isMenuOpen;
+            
         });
         menuButton2.setOnAction((ActionEvent e) -> {
             leftBurgerMenu.setVisible(!isMenuOpen);
+            mainMenuVBox.setVisible(!isMenuOpen);
             isMenuOpen = !isMenuOpen;
+            
+        });
+        layerButton.setOnAction((ActionEvent e) -> {
+            graphicVBox.setVisible(true);
+            mainMenuVBox.setVisible(false);
+
         });
 
         searchBarStart.setOnAction((ActionEvent e) -> {

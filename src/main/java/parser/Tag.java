@@ -1,15 +1,9 @@
 package parser;
-
-import java.io.Externalizable;
 import java.io.Serializable;
 import java.util.HashMap;
 
-
-import gnu.trove.map.hash.TCustomHashMap;
-import gnu.trove.map.hash.THashMap;
 import gnu.trove.impl.hash.TObjectHash;
-import gnu.trove.*;
-import gnu.trove.impl.hash.TCustomObjectHash;
+import gnu.trove.map.hash.THashMap;
 import gnu.trove.map.hash.TObjectDoubleHashMap;
 enum Node  {
     ID, LAT, LON;
@@ -45,13 +39,12 @@ enum Node  {
  */
 public abstract class Tag<E extends Enum<E>, T extends TObjectHash<E>> implements Serializable{
     static final long serialVersionUID = 1L;
+
     // /**
     //  * Get the id of the tag.
     //  * @return The id of the tag.
     //  */
-    // public abstract long getId(){
-    //     return th
-    // }
+    public abstract long getId();
     /**
      * Get the latitude of the tag.
      * @throws UnsupportedOperationException if the tag does not have a latitude value.
@@ -77,7 +70,7 @@ public abstract class Tag<E extends Enum<E>, T extends TObjectHash<E>> implement
      */
     public boolean isInBounds(TagBound bound) {
         if(this instanceof TagWay) {
-            return ((TagWay)this).getRefs().valueCollection().stream().anyMatch(n -> n.isInBounds(bound));
+            return ((TagWay)this).getRefs().stream().anyMatch(n -> n.isInBounds(bound));
         }
         if(this instanceof TagRelation) {
             return ((TagRelation)this).getNodes().valueCollection().stream().anyMatch(n -> n.isInBounds(bound));

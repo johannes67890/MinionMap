@@ -2,8 +2,6 @@ package parser;
 
 import java.util.HashMap;
 import javax.xml.stream.XMLStreamReader;
-
-import gnu.trove.map.TMap;
 import gnu.trove.map.hash.TObjectDoubleHashMap;
 
 enum Bounds {
@@ -53,6 +51,11 @@ public class TagBound extends Tag<Bounds, TObjectDoubleHashMap<Bounds>> implemen
     @Override
     public TObjectDoubleHashMap<Bounds> getMap() {
         return this.bounds;
+    }
+
+    @Override
+    public long getId() {
+        throw new UnsupportedOperationException("TagBound does not have an id value.");
     }
 
     /**

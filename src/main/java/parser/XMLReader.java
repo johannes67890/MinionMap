@@ -3,7 +3,9 @@ package parser;
 import static javax.xml.stream.XMLStreamConstants.*;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.HashMap;
+
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -148,7 +150,7 @@ public class XMLReader {
                             case "node":
                                 if(!tempBuilder.getAddressBuilder().isEmpty()){
                                     // XMLWriter.appendToBinary(new TagAddress(tempBuilder));
-                                    // addresses.put(tempBuilder.getId(), new TagAddress(tempBuilder));
+                                    addresses.put(tempBuilder.getId(), new TagAddress(tempBuilder));
                                 } else {
                                     nodes.put(tempBuilder.getId(), new TagNode(tempBuilder));
                                 }
@@ -156,7 +158,7 @@ public class XMLReader {
                                 break;
                             case "way":
                                 // XMLWriter.appendToBinary(new TagWay(tempBuilder));
-                                // ways.put(tempBuilder.getId(), new TagWay(tempBuilder));
+                                ways.put(tempBuilder.getId(), new TagWay(tempBuilder));
                                 tempBuilder = new XMLBuilder();
                             case "relation":
                                 // XMLWriter.appendToBinary(new TagRelation(tempBuilder));

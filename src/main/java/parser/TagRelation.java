@@ -2,7 +2,7 @@ package parser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import gnu.trove.map.hash.TCustomHashMap;
+import gnu.trove.map.hash.THashMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import javax.xml.stream.XMLStreamReader;
 
@@ -10,15 +10,16 @@ enum Relation {
     ID, NAME, INNER, OUTER, WAYS, RELATIONS, NODES, TYPE, RELATIONTYPE, RELATIONTYPEVALUE
 }
 
-public class TagRelation extends Tag<Relation, TCustomHashMap<Relation, Object>>{
-    private TCustomHashMap<Relation, Object> relation = new TCustomHashMap<Relation, Object>();
+public class TagRelation extends Tag<Relation, THashMap<Relation, Object>>{
+
+    private THashMap<Relation, Object> relation = new THashMap<Relation, Object>();
 
     public TagRelation(XMLBuilder builder){
-        relation = new TCustomHashMap<Relation, Object>(){
+        relation = new THashMap<Relation, Object>(){
             {
                 put(Relation.ID, builder.getId());
-                put(Relation.TYPE, Double.parseDouble(builder.getType().toString()));
-                put(Relation.NAME, Double.parseDouble(builder.getName()));
+                put(Relation.TYPE, builder.getType());
+                put(Relation.NAME, builder.getName());
                 put(Relation.INNER, builder.getRelationBuilder().getInner());
                 put(Relation.OUTER, builder.getRelationBuilder().getOuter());
                 put(Relation.WAYS, builder.getRelationBuilder().getWays());
@@ -28,98 +29,137 @@ public class TagRelation extends Tag<Relation, TCustomHashMap<Relation, Object>>
                 put(Relation.RELATIONTYPEVALUE, builder.getRelationBuilder().getTypeValue());
             }
         };
+        constructOuterWays();
+
     }
 
     @Override
-    public TCustomHashMap<Relation, Object> getMap() {
-        return this.relation;
-    }
+    public long getId() {return (long) this.relation.get(Relation.ID); }
 
     @Override
     public double getLat() {
         throw new UnsupportedOperationException("TagRelation does not have a latitude value.");
     }
+
     @Override
     public double getLon() {
         throw new UnsupportedOperationException("TagRelation does not have a longitude value.");
     }
+    
+    @Override
+    public boolean isEmpty(){ return this.relation.isEmpty(); }
 
     @Override
-    public boolean isEmpty(){
-        return this.relation.isEmpty();
-    }
+    public THashMap<Relation, Object> getMap() { return this.relation; }
     
-    public String getName(){
-        return relation.get(Relation.NAME).toString();
-    }
+    public String getName(){ return relation.get(Relation.NAME).toString(); }
+    public TagWay getMemberById(long id){ return this.getMembers().get(id); }
+    public Type getType(){ return  (Type) this.relation.get(Relation.TYPE); }
+    public Type getRelationType(){ return (Type) this.relation.get(Relation.RELATIONTYPE); }
+    public String getTypeValue(){ return this.relation.get(Relation.RELATIONTYPEVALUE).toString(); }
+
+    public TLongObjectHashMap<TagWay> getInner(){ return (TLongObjectHashMap<TagWay>) this.relation.get(Relation.INNER); }
+    public TLongObjectHashMap<TagWay> getOuter(){ return (TLongObjectHashMap<TagWay>) this.relation.get(Relation.OUTER); }
+    public TLongObjectHashMap<TagWay> getWays(){ return (TLongObjectHashMap<TagWay>) this.relation.get(Relation.WAYS); }
+    public TLongObjectHashMap<TagRelation> getRelations(){ return (TLongObjectHashMap<TagRelation>) this.relation.get(Relation.RELATIONS); }
+    public TLongObjectHashMap<TagNode> getNodes(){ return (TLongObjectHashMap<TagNode>) this.relation.get(Relation.NODES); }
 
     public TLongObjectHashMap<TagWay> getMembers(){
         TLongObjectHashMap<TagWay> members = new TLongObjectHashMap<TagWay>();
-
-        members.putAll((TLongObjectHashMap<TagWay>) this.relation.get(Relation.INNER));
-        members.putAll((TLongObjectHashMap<TagWay>) this.relation.get(Relation.OUTER));
-        members.putAll((TLongObjectHashMap<TagWay>) this.relation.get(Relation.WAYS));
-
+        members.putAll(getInner());
+        members.putAll(getOuter());
+        members.putAll(getWays());
         return members;
-        
     }
 
-    public TagWay getMemberById(long id){
-        return this.getMembers().get(id);
+    private ArrayList<TagWay> handledOuter = new ArrayList<>();
+    public ArrayList<TagWay> getHandledOuter(){ return handledOuter; };
+
+    /**
+     * Constructs the outer ways as multiple connected polygons or lines,
+     * by assuming that ways with identical start- or endnodes should be merged into one way.
+     */
+    public void constructOuterWays(){
+
+        ArrayList<TagNode> tempNodes = new ArrayList<>();
+        TagNode beginLastTagNode = null;
+        TagNode beginFirstTagNode = null;
+
+        TagNode currentLastTagNode = null;
+        TagNode currentFirstTagNode = null;
+
+        TagNode prevLastTagNode = null;
+
+        boolean success = false;
+        int speedLimit = 0;
+        long id = 0;
+
+        for (int j = 0; j < getOuter().size() ; j++){
+            TagWay outer = getOuter().get(j);
+
+            if(outer.Looped()){
+                handledOuter.add(outer);
+                continue;
+            } 
+
+            currentFirstTagNode = outer.firsTagNode();
+
+
+            if (beginFirstTagNode == null){
+                    TagWay other = getOuter().get(j + 1);
+
+                    if ((other.firsTagNode().equals(outer.lastTagNode())) || (other.lastTagNode().equals(outer.lastTagNode()))){
+
+                        beginFirstTagNode = outer.firsTagNode();
+                        currentFirstTagNode = beginFirstTagNode;
+                        beginLastTagNode = outer.lastTagNode();
+                        prevLastTagNode = outer.firsTagNode();
+                    } 
+                    // Starts from the opposite direction
+                    else{
+
+                        beginFirstTagNode = outer.lastTagNode();
+                        currentFirstTagNode = beginFirstTagNode;
+                        beginLastTagNode = outer.firsTagNode();
+                        prevLastTagNode = outer.firsTagNode();
+                    }
+            }
+
+
+            //Checks whether way should be read in reverse
+            if (prevLastTagNode != null && prevLastTagNode.equals(currentFirstTagNode)){
+
+                for (TagNode node : outer.getRefs()){
+
+
+                    tempNodes.add(node);    
+                }
+            } else {
+                for (int i = outer.getRefs().size() - 1; i >= 0; i-- ){
+
+                    TagNode node = outer.getRefs().get(i);
+
+                    tempNodes.add(node);    
+                }
+            }
+            prevLastTagNode = tempNodes.get(tempNodes.size() - 1);
+
+
+            if (tempNodes.get(tempNodes.size() - 1).equals(beginFirstTagNode)){
+
+                TagNode[] nodes = tempNodes.toArray(new TagNode[tempNodes.size()]);
+
+                TagWay newTagWay = new TagWay(this, id, nodes, speedLimit);
+                handledOuter.add(newTagWay);
+                tempNodes.clear();
+                tempNodes = new ArrayList<>();
+                beginFirstTagNode = null;
+                beginLastTagNode = null;
+                success = true;
+            }
+        }
     }
 
-    public TLongObjectHashMap<TagWay> getInner(){
-        return (TLongObjectHashMap<TagWay>) this.relation.get(Relation.INNER);
-    }
-
-    public TLongObjectHashMap<TagWay> getOuter(){
-        return (TLongObjectHashMap<TagWay>) this.relation.get(Relation.OUTER);
-    }
-
-    public TLongObjectHashMap<TagWay> getWays(){
-        return (TLongObjectHashMap<TagWay>) this.relation.get(Relation.WAYS);
-    }
-
-    public TLongObjectHashMap<TagRelation> getRelations(){
-        return (TLongObjectHashMap<TagRelation>) this.relation.get(Relation.RELATIONS);
-    }
-
-    public TLongObjectHashMap<TagNode> getNodes(){
-        return (TLongObjectHashMap<TagNode>) this.relation.get(Relation.NODES);
-    }
-
-    public String getType(){
-        return this.relation.get(Relation.TYPE).toString();
-    }
-
-    public Type getRelationType(){
-        return (Type) this.relation.get(Relation.RELATIONTYPE);
-    }
-
-    public String getTypeValue(){
-        return this.relation.get(Relation.RELATIONTYPEVALUE).toString();
-    }
-
-
-
-    // https://wiki.openstreetmap.org/wiki/Relation:multipolygon/Algorithm
-    // public void ringAssignment(){
-    //     //RA1
-    //     int c = 0;
-    //     HashMap<TagWay, Boolean> relationWays = new HashMap<TagWay, Boolean>();
-    //     // collect all ways that are members of the relation and mark them as not assigned
-    //     relationWays.putAll(ways.stream().collect(HashMap::new, (m, v) -> m.put(v, false), HashMap::putAll));
-    //     relationWays.putAll(inner.stream().collect(HashMap::new, (m, v) -> m.put(v, false), HashMap::putAll));
-    //     relationWays.putAll(outer.stream().collect(HashMap::new, (m, v) -> m.put(v, false), HashMap::putAll));
-
-    //     relationWays.forEach((way, assigned) -> {
-    //         if(assigned) return;
-    //         else {
-    //             TagWay assignedWay = way;
-    //             assigned = true;
-    //         }
-    //     });
-    // }
 
     public static class RelationBuilder {
         private boolean isEmpty = true;
@@ -138,13 +178,13 @@ public class TagRelation extends Tag<Relation, TCustomHashMap<Relation, Object>>
             TypeValue = v;
         }
 
+        public Type getRelationType(){ return RelationType; };
+        public String getTypeValue(){ return TypeValue; };
         public TLongObjectHashMap<TagNode> getNodes(){ return nodes; };
         public TLongObjectHashMap<TagRelation> getRelations(){ return relations; };
         public TLongObjectHashMap<TagWay> getWays(){ return ways; };
         public TLongObjectHashMap<TagWay> getInner(){ return inner; };
         public TLongObjectHashMap<TagWay> getOuter(){ return outer; };
-        public Type getRelationType(){ return RelationType; };
-        public String getTypeValue(){ return TypeValue; }
 
         public boolean isEmpty() {
             return isEmpty;
@@ -185,4 +225,5 @@ public class TagRelation extends Tag<Relation, TCustomHashMap<Relation, Object>>
             return this;
         }
     }
+
 }

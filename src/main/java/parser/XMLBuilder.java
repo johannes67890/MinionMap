@@ -7,6 +7,7 @@ import javax.xml.stream.XMLStreamReader;
 import parser.TagAddress.AddressBuilder;
 import parser.TagRelation.RelationBuilder;
 import parser.TagWay.WayBuilder;
+import util.MecatorProjection;
 
 /**
 * Builder for a single XML element.
@@ -21,7 +22,7 @@ public class XMLBuilder {
 
         private String name; // name from a <tag> in a parrent element
         private Type type;
-        private Long id;
+        private long id;
         private double lat, lon;
 
         /**
@@ -48,7 +49,7 @@ public class XMLBuilder {
             return this.getAddressBuilder().isEmpty() || this.getWayBuilder().isEmpty() || this.getRelationBuilder().isEmpty();
         }
 
-        public Long getId(){
+        public long getId(){
             return this.id;
         }
         public double getLat(){
@@ -84,25 +85,26 @@ public class XMLBuilder {
             switch (element) {
                 case "node":
                     this.id = getAttributeByLong(reader, "id");
-                    this.lat = getAttributeByDouble(reader, "lat");
-                    this.lon = getAttributeByDouble(reader, "lon");
+                    this.lat = MecatorProjection.lat2y(getAttributeByDouble(reader, "lat"));
+                    this.lon = MecatorProjection.lon2x(getAttributeByDouble(reader, "lon"));
                     break;
-                // case "way":
-                // case "relation":
-                //     this.id = getAttributeByLong(reader, "id");                    
-                //     break;
-                // case "tag":
-                //     String k = reader.getAttributeValue(null, "k");
-                //     String v = reader.getAttributeValue(null, "v");
+                case "way":
+                case "relation":
+                    this.id = getAttributeByLong(reader, "id");
+                    
+                    break;
+                case "tag":
+                    String k = reader.getAttributeValue(null, "k");
+                    String v = reader.getAttributeValue(null, "v");
 
-                //     parseTag(k, v);
-                //     break;
-                // case "nd":
-                //     Long ref = getAttributeByLong(reader, "ref");
-                //     wayBuilder.addNode(ref);
-                //     break;
-                // case "member":
-                //     relationBuilder.parseMember(reader);
+                    parseTag(k, v);
+                    break;
+                case "nd":
+                    long ref = getAttributeByLong(reader, "ref");
+                    wayBuilder.addNode(ref);
+                    break;
+                case "member":
+                    relationBuilder.parseMember(reader);
                 default:
                     break;
             }
@@ -128,9 +130,16 @@ public class XMLBuilder {
                             switch (currType) { 
                                 // Way types
                                 case PRIMARY_ROAD:
+                                    this.type = currType; 
+
                                 case SECONDARY_ROAD:
+                                    this.type = currType; 
+
                                 case TERTIARY_ROAD:
+                                    this.type = currType; 
+
                                 case OTHER_ROAD:
+                                    this.type = currType;
                                     parseStreet(currType);
                                 // Relation types
                                 case BOUNDARY:
@@ -143,7 +152,7 @@ public class XMLBuilder {
                                 default:
                                 this.type = currType; 
                                 break;
-                            }
+                            } 
                         }
                     }
                 }
@@ -196,6 +205,9 @@ public class XMLBuilder {
             }
         }
     }
+    
+
+
 
 
 

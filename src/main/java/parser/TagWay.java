@@ -1,9 +1,10 @@
 package parser;
 
 import java.util.HashMap;
-import gnu.trove.set.hash.TCustomHashSet;
-import gnu.trove.map.hash.TCustomHashMap;
-import gnu.trove.map.hash.TLongObjectHashMap;
+import java.util.LinkedList;
+
+import gnu.trove.map.hash.THashMap;
+import gnu.trove.strategy.HashingStrategy;
 
 enum Way {
     ID, REFS, NAME, TYPE, SPEEDLIMIT
@@ -16,11 +17,11 @@ enum Way {
  * {@link Way#ID}, {@link Way#REFS}, {@link Way#NAME}, {@link Way#TYPE}
  * </p>
  */
-public class TagWay extends Tag<Way, TCustomHashMap<Way, Object>>{
-    private TCustomHashMap<Way, Object> way = new TCustomHashMap<Way, Object>();
+public class TagWay extends Tag<Way, THashMap<Way, Object>> implements Comparable<TagWay>{
+    private THashMap<Way, Object> way = new THashMap<Way, Object>();
 
     public TagWay(XMLBuilder builder) {
-        way = new TCustomHashMap<Way, Object>(){
+        way = new THashMap<Way, Object>(){
             {
                 put(Way.NAME, builder.getName());
                 put(Way.REFS, builder.getWayBuilder().getRefNodes());
@@ -30,9 +31,32 @@ public class TagWay extends Tag<Way, TCustomHashMap<Way, Object>>{
         };
     }
 
+     /**
+     * 
+     * TagWay that is created from Relation's Outer ways.
+     * 
+     * @param builder
+     */
+    public TagWay(TagRelation relation, long id, TagNode[] nodes, int speedLimit) {
+        way = new THashMap<Way, Object>(){
+            {
+                put(Way.ID, id);
+                put(Way.NAME, relation.getName());
+                put(Way.REFS, nodes);
+                put(Way.SPEEDLIMIT, speedLimit);
+                put(Way.TYPE, relation.getType());     
+            }
+        };
+    }
+
     @Override
-    public TCustomHashMap<Way, Object> getMap() {
+    public THashMap<Way, Object> getMap() {
         return this.way;
+    }
+
+    @Override
+    public long getId() {
+        return (long) this.way.get(Way.ID);
     }
 
     @Override
@@ -55,24 +79,57 @@ public class TagWay extends Tag<Way, TCustomHashMap<Way, Object>>{
     public Type getType() {
         return (Type) this.way.get(Way.TYPE);
     }
+
+    public void setType(Type t){
+        way.put(Way.TYPE, t);     
+    }
+    
     /**
      * Get the refrerence nodes of the way.
      * @return Long[] of the reference nodes of the way.
      */
-    public TLongObjectHashMap<TagNode> getRefs() {
-        return (TLongObjectHashMap<TagNode>) this.way.get(Way.REFS);
+    public LinkedList<TagNode> getRefs() {
+        return (LinkedList<TagNode>) this.way.get(Way.REFS);
     }
 
     public TagNode getNodeById(Long id){
-        return getRefs().get(id);
+        for (TagNode node : getRefs()) {
+            if (node.getId() == id) {
+                return node;
+            }
+        }
+        return null;
     }
 
     public boolean isEmpty() {
         return getRefs().size() == 0;
     }
 
+    /**
+     * Check if the way loops.
+     * @return True if the way loops, false if not.
+     */
+    public boolean Looped(){
+        if (getRefs().get(0) != null){
+            return getRefs().get(0).equals(getRefs().get(getRefs().size()-1));
+        } else{return false;}
+    }
+
+    public TagNode firsTagNode(){
+        return getRefs().getFirst();
+    }
+
+    public TagNode lastTagNode(){
+        return getRefs().getLast();
+    }
+
     public int size() {
         return getRefs().size();
+    }
+
+    @Override
+    public int compareTo(TagWay o) {
+        return Integer.compare(this.size(), o.size());
     }
 
     /**
@@ -82,7 +139,7 @@ public class TagWay extends Tag<Way, TCustomHashMap<Way, Object>>{
     * </p>
     */
     public static class WayBuilder {
-        private TLongObjectHashMap<TagNode> refNodes;
+        private LinkedList<TagNode> refNodes = new LinkedList<TagNode>();
         private boolean isEmpty = true;
         private int speedLimit;
 
@@ -94,19 +151,6 @@ public class TagWay extends Tag<Way, TCustomHashMap<Way, Object>>{
             return speedLimit;
         }
 
-        /**
-         * Returns and removes a node from XMLReader node List.
-         * @param id - The id of the node to migrate.
-         * @return The node from the id.
-         */
-        private TagNode migrateNode(Long id){
-            TagNode node = XMLReader.getNodeById(id);
-            // if(node != null){
-            //     XMLReader.getNodeById(id).remove(node);
-            // }
-            return node;
-        }
-
         public void setSpeedLimit(int speedLimit) {
             isEmpty = false;
             this.speedLimit = speedLimit;
@@ -116,10 +160,10 @@ public class TagWay extends Tag<Way, TCustomHashMap<Way, Object>>{
             if (isEmpty) {
                 isEmpty = false;
             }
-            refNodes.put(ref, migrateNode(ref));
+            refNodes.add(XMLReader.getNodeById(ref));
         }
 
-        public TLongObjectHashMap<TagNode> getRefNodes() {
+        public LinkedList<TagNode> getRefNodes() {
             return refNodes;
         }
     }
