@@ -353,15 +353,11 @@ public class DrawingMap {
         int temp = 0;
         if(hierarchyLevel <= 3){
             temp = (int) Math.round(((range+add)-1.25)/5)*5;
-            System.out.println(temp);
         } else if(hierarchyLevel < 9){
             temp = (int) Math.round((range+add)/10)*10;
-            System.out.println(temp);
         } else {
             temp = (int) Math.round((range+add)/500)*500;
-            System.out.println(temp);
         }
-
         return temp;
     }
 }
