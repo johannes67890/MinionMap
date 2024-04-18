@@ -6,6 +6,7 @@ import java.util.HashSet;
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
 import parser.Tag;
+import parser.TagBound;
 import parser.TagNode;
 import parser.TagRelation;
 import parser.TagWay;
@@ -27,6 +28,7 @@ public class Tree {
     
     public static void initialize(ArrayList<Tag<?>> tags){
         kdtree = new KdTree();
+        // TODO: Fix this line of code. get the min and max value of all nodes!
         //kdtree.setBound(1300000, -8000000, 1400000, -7000000);
         kdtree.setBound(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
         for (Tag<?> tag : tags){
