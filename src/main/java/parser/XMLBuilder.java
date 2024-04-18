@@ -24,7 +24,7 @@ public class XMLBuilder {
         private Type type;
         private String TypeValue;
         private long id;
-        private double lat, lon;
+        private float lat, lon;
 
         /**
          * Get a attrubute from the {@link XMLStreamReader} as a {@link BigDecimal}.
@@ -34,6 +34,16 @@ public class XMLBuilder {
          */
         public static double getAttributeByDouble(XMLStreamReader event, String name) {
             return Double.parseDouble(event.getAttributeValue(null, name));
+        }
+
+                /**
+         * Get a attrubute from the {@link XMLStreamReader} as a {@link BigDecimal}.
+         * @param event - The {@link XMLStreamReader} to get the attribute from.
+         * @param name - The name of the attribute to get. ({@link String})
+         * @return The attribute as a {@link BigDecimal}.
+         */
+        public static float getAttributeByFloat(XMLStreamReader event, String name) {
+            return Float.parseFloat(event.getAttributeValue(null, name));
         }
         
         /**
@@ -53,10 +63,10 @@ public class XMLBuilder {
         public long getId(){
             return this.id;
         }
-        public double getLat(){
+        public float getLat(){
             return this.lat;
         }
-        public double getLon(){
+        public float getLon(){
             return this.lon;
         }
         
@@ -89,8 +99,8 @@ public class XMLBuilder {
             switch (element) {
                 case "node":
                     this.id = getAttributeByLong(reader, "id");
-                    this.lat = MecatorProjection.lat2y(getAttributeByDouble(reader, "lat"));
-                    this.lon = MecatorProjection.lon2x(getAttributeByDouble(reader, "lon"));
+                    this.lat = MecatorProjection.lat2y(getAttributeByFloat(reader, "lat"));
+                    this.lon = MecatorProjection.lon2x(getAttributeByFloat(reader, "lon"));
                     break;
                 case "way":
                 case "relation":
@@ -102,7 +112,10 @@ public class XMLBuilder {
                     String k = reader.getAttributeValue(null, "k");
                     String v = reader.getAttributeValue(null, "v");
 
-                    parseTag(k, v);
+
+                    if (this.type == null){
+                        parseTag(k, v);
+                    }
                     break;
                 case "nd":
                     long ref = getAttributeByLong(reader, "ref");

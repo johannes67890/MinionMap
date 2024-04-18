@@ -86,12 +86,12 @@ public class TagWay extends Tag<Way> implements Comparable<TagWay>{
      public long getId(){
         return id;
     }
-    public double getLat() {
+    public float getLat() {
         throw new UnsupportedOperationException("TagWay does not have a latitude value.");
     }
 
 
-    public double getLon() {
+    public float getLon() {
         throw new UnsupportedOperationException("TagWay does not have a longitude value.");
     }
 
@@ -190,7 +190,7 @@ public class TagWay extends Tag<Way> implements Comparable<TagWay>{
         public TagNode migrateNode(Long id){
             TagNode node = XMLReader.getNodeById(id);
             if(node != null){
-                XMLReader.getNodeById(id).remove(id, node);
+               //  XMLReader.getNodeById(id).remove(id, node);
             }
             return node;
         }

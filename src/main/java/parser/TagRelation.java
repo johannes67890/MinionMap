@@ -70,11 +70,11 @@ public class TagRelation extends Tag<Relation>{
 
 
     @Override
-    public double getLat() {
+    public float getLat() {
         throw new UnsupportedOperationException("TagRelation does not have a latitude value.");
     }
     @Override
-    public double getLon() {
+    public float getLon() {
         throw new UnsupportedOperationException("TagRelation does not have a longitude value.");
     }
 

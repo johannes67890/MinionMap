@@ -54,7 +54,7 @@ public class MecatorProjection {
          * @param node The node to project
          * @return The projected node
          */
-        public static TagNode project(long id, double x, double y){
+        public static TagNode project(long id, float x, float y){
             return new TagNode(
                     id,
                     lat2y(y),
@@ -70,7 +70,7 @@ public class MecatorProjection {
          * @param node The node to project
          * @return The projected node
          */
-        public static TagNode project(double x, double y){
+        public static TagNode project(float x, float y){
             return new TagNode(
                     0,
                     lat2y(y),
@@ -124,7 +124,7 @@ public class MecatorProjection {
          * @param node The node to unproject
          * @return The unprojected node
          */
-        public static TagNode unproject(double x, double y){
+        public static TagNode unproject(float x, float y){
             return new TagNode(
                 0,
                 y2lat(y),
@@ -134,20 +134,20 @@ public class MecatorProjection {
 
         // Projection
         /* These functions take their angle parameter in degrees and return a length in meters */
-        public static double lat2y(double aLat) {
-            return -Math.log(Math.tan(Math.PI / 4 + Math.toRadians(aLat) / 2)) * RADIUS;
+        public static final float lat2y(float aLat) {
+            return (float) (-Math.log(Math.tan(Math.PI / 4 + Math.toRadians(aLat) / 2)) * RADIUS);
         }  
-        public static double lon2x(double aLong) {
-            return Math.toRadians(aLong) * RADIUS;
+        public static float lon2x(float aLong) {
+            return (float) (Math.toRadians(aLong) * RADIUS);
         }
 
         // Unprojection
         /* These functions take their length parameter in meters and return an angle in degrees */
-        public static double x2lon(double aX) {
-            return Math.toDegrees(aX / RADIUS);
+        public static float x2lon(float aX) {
+            return (float)  Math.toDegrees(aX / RADIUS);
         }
-        public static double y2lat(double aY) {
-            return Math.toDegrees(Math.atan(Math.exp(aY / RADIUS)) * 2 - Math.PI/2);
+        public static float y2lat(float aY) {
+            return (float) Math.toDegrees(Math.atan(Math.exp(aY / RADIUS)) * 2 - Math.PI/2);
         }
 
         // Utility

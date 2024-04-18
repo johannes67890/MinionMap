@@ -34,7 +34,7 @@ enum Node {
  * **Note** that not all tags, like {@link TagRelation} and {@link TagWay} uses {@link #getLat()} and {@link #getLon()} methods.
  * </p>
  */
-public abstract class Tag<E extends Enum<E>> extends HashMap<E, Object> {
+public abstract class Tag<E extends Enum<E>> {
     /**
      * Get the id of the tag.
      * @return The id of the tag.
@@ -45,24 +45,25 @@ public abstract class Tag<E extends Enum<E>> extends HashMap<E, Object> {
      * @throws UnsupportedOperationException if the tag does not have a latitude value.
      * @return The latitude of the tag.
      */
-    public abstract double getLat();
+    public abstract float getLat();
     /**
      * Get the longitude of the tag.
      * @throws UnsupportedOperationException if the tag does not have a longitude value.
      * @return The longitude of the tag.
      */
-    public abstract double getLon();
+    public abstract float getLon();
     
     public Tag() {}
 
+
     public Tag(HashMap<E, Object> map) {
-        super(map);
+        
     }
 
-
+/* 
     public boolean isEmpty() {
         return this.size() == 0;
-    }
+    }*/
 
     /**
      * Check if a tag is within a specified {@link TagBound}.
@@ -71,8 +72,8 @@ public abstract class Tag<E extends Enum<E>> extends HashMap<E, Object> {
      * @return True if the tag is within the {@link TagBound}, false otherwise.
      */
     public boolean isInBounds(TagBound bound) {
-        return Double.valueOf(this.getLat()).compareTo(bound.getMinLat()) == 1 && Double.valueOf(this.getLat()).compareTo(bound.getMaxLat()) == -1
-            && Double.valueOf(this.getLon()).compareTo(bound.getMinLon()) == 1 && Double.valueOf(this.getLon()).compareTo(bound.getMaxLon()) == -1;
+        return Float.valueOf(this.getLat()).compareTo(bound.getMinLat()) == 1 && Float.valueOf(this.getLat()).compareTo(bound.getMaxLat()) == -1
+            && Float.valueOf(this.getLon()).compareTo(bound.getMinLon()) == 1 && Float.valueOf(this.getLon()).compareTo(bound.getMaxLon()) == -1;
     }
 
 }

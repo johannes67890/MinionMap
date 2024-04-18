@@ -17,7 +17,20 @@ enum Address{
 */
 public class TagAddress extends Tag<Address> {
     
+    long id;
+    float lat;
+    float lon;
+    String street;
+    String house;
+    String postCode;
+    String municipality;
+    String city;
+    String country;
+
+
+
     TagAddress(XMLBuilder builder){
+        /*
         super(new HashMap<Address, Object>(){
             {
                 put(Address.ID, Long.valueOf(builder.getId()).toString());
@@ -30,44 +43,56 @@ public class TagAddress extends Tag<Address> {
                 put(Address.CITY, builder.getAddressBuilder().city);
                 put(Address.COUNTRY, builder.getAddressBuilder().country);
             }
-        });
+        });*/
+
+        id = builder.getId();
+        lat = builder.getLat();
+        lon = builder.getLon();
+        street = builder.getAddressBuilder().street;
+        house = builder.getAddressBuilder().house;
+        postCode = builder.getAddressBuilder().postcode;
+        municipality =  builder.getAddressBuilder().municipality;
+        city = builder.getAddressBuilder().city;
+        country = builder.getAddressBuilder().country;
+
+
     }
 
     @Override
     public long getId() {
-        return Long.parseLong(this.get(Address.ID).toString());
+        return id;
     }
     @Override
-    public double getLat() {
-        return Double.parseDouble(this.get(Address.LAT).toString());
+    public float getLat() {
+        return lat;
     }
     @Override
-    public double getLon() {
-        return Double.parseDouble(this.get(Address.LON).toString());
+    public float getLon() {
+        return lon;
     }
 
     public String getStreet() {
-        return this.get(Address.STREET).toString();
+        return street;
     }
 
     public String getHouseNumber() {
-        return this.get(Address.HOUSENUMBER).toString();
+        return house;
     }
 
     public String getPostcode() {
-        return this.get(Address.POSTCODE).toString();
+        return postCode;
     }
 
     public String getMunicipality() {
-        return this.get(Address.MUNICIPALITY).toString();
+        return municipality;
     }
 
     public String getCity() {
-        return this.get(Address.CITY).toString();
+        return city;
     }
 
     public String getCountry() {
-        return this.get(Address.COUNTRY).toString();
+        return country;
     }
 
     /**
