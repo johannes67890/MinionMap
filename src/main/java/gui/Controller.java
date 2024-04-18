@@ -79,7 +79,8 @@ public class Controller implements Initializable, ControllerInterface{
 
             String meters = zoomLevelText.getText().replaceAll("m", "");
 
-            zoomLevelImage.setFitWidth(mainView.getDrawingMap().metersToPixels(Integer.parseInt(meters)));
+            // TODO: Fix
+            // zoomLevelImage.setFitWidth(mainView.getDrawingMap().metersToPixels(Integer.parseInt(meters)));
             
         });
 
