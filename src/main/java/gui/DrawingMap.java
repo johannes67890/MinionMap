@@ -1,6 +1,5 @@
 package gui;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import javafx.scene.canvas.GraphicsContext;
@@ -31,6 +30,7 @@ public class DrawingMap {
     private final double zoomLevelMin = 0.001, zoomLevelMax = 30; // These variables changes how much you can zoom in and out. Min is far out and max is closest in
     private double zoomScalerToMeter; // This is the world meters of how long the scaler in the bottom right corner is. Divide it with the zoomLevel
     private double[] zoomScales = {32, 16, 8, 4, 2, 1, 0.5, 0.1, 0.05, 0.015, 0.0001}; //
+    private double screenWidth;
 
     private List<TagNode> nodes;
     private List<TagWay> ways;
@@ -83,8 +83,6 @@ public class DrawingMap {
      */
 
     public void DrawMap(ResizableCanvas canvas){
-        long preTime = System.currentTimeMillis();
-
 
         //Resfreshes the screen
         gc = canvas.getGraphicsContext2D();
@@ -96,8 +94,6 @@ public class DrawingMap {
 
         waysToDrawWithType = new ArrayList<>();
         waysToDrawWithoutType = new ArrayList<>();
-
-        long time = System.currentTimeMillis();
 
         handleWays(ways);
 
@@ -259,6 +255,7 @@ public class DrawingMap {
      * @param dy - Distance to pan on the y-axis
      */
     void zoom(double factor, double dx, double dy){
+
         double zoomLevelNext = zoomLevel * factor;
         if (zoomLevelNext < zoomLevelMax && zoomLevelNext > zoomLevelMin){
             zoomLevel = zoomLevelNext;
@@ -282,6 +279,37 @@ public class DrawingMap {
         else if (zoomLevel < zoomLevelMin){
             zoomLevel = zoomLevelMin + 1;
         }
+
+        this.screenWidth = canvas.getWidth();
+    }
+
+    /**
+         
+    Calculates the coordinates the screen sees and returns a array of coordinates.
+    Index 0: X - Minimum
+    Index 1: Y - Minimum
+    Index 2: X - Maximum
+    Index 3: Y - Maximum
+    @return It returns the coordinates of the screen to map coordinates in an array (double[])
+    */
+    public double[] getScreenBounds(){
+        double[] bounds = new double[4]; // x_min ; y_min ; x_max ; y_max
+        bounds[0] = -(transform.getTx() / Math.sqrt(transform.determinant()));
+        bounds[1] = (-transform.getTy()) / Math.sqrt(transform.determinant());
+        bounds[2] = ((canvas.getWidth()) / zoomLevel) + bounds[0];
+        bounds[3] = ((canvas.getHeight()) / zoomLevel) + bounds[1];
+        return bounds;
+    }
+
+    public double[] getScreenBoundsBigger(double multiplier){
+        double[] bounds = getScreenBounds();
+        double width = bounds[2] - bounds[0];
+        double height = bounds[3] - bounds[1];
+        bounds[0] -= (width * (1.0 - multiplier));
+        bounds[1] -= (height * (1.0 - multiplier));
+        bounds[2] += (width * (1.0 + multiplier));
+        bounds[3] += (height * (1.0 + multiplier));
+        return bounds;
     }
 
 
@@ -302,12 +330,16 @@ public class DrawingMap {
      */
 
     public double metersToPixels(int meters){
-        
-        double metersPerPixelRatio = canvas.getWidth() / zoomScalerToMeter;
-        System.out.println(metersPerPixelRatio);
-        System.out.println(meters);
+        double[] bounds = getScreenBounds();
+        double widthInMeter = bounds[2] - bounds[0];
+
+        double metersPerPixelRatio = screenWidth / widthInMeter;
         
         return metersPerPixelRatio * meters;
     }
 
+    public int getRange(){
+
+        return hierarchyLevel*10;
+    }
 }

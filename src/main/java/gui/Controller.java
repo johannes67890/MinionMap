@@ -74,14 +74,10 @@ public class Controller implements Initializable, ControllerInterface{
             }
 
             mainView.getDrawingMap().zoom(Math.pow(zoomMultiplier,event.getDeltaY()), event.getX(), event.getY());
-
-            zoomLevelText.setText("50m");
-
-            String meters = zoomLevelText.getText().replaceAll("m", "");
-
-            // TODO: Fix
-            // zoomLevelImage.setFitWidth(mainView.getDrawingMap().metersToPixels(Integer.parseInt(meters)));
             
+            zoomLevelText.setText("50m");
+            String meters = zoomLevelText.getText().replaceAll("m", "");
+            zoomLevelImage.setFitWidth(mainView.getDrawingMap().metersToPixels(Integer.parseInt(meters)));
         });
 
         mainView.canvas.setOnMouseDragged(e -> {
