@@ -112,8 +112,10 @@ public class TagWay extends Tag<Way> implements Comparable<TagWay>{
 
     public boolean loops(){
         if (getNodes()[0] != null){
-            return getNodes()[0].equals(getNodes()[size() - 1]);
-        } else{return false;}
+
+            return getNodes()[0].getId() == getNodes()[size() - 1].getId();
+        } else{
+            return false;}
     }
 
     public TagNode firsTagNode(){

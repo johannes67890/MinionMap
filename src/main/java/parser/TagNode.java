@@ -15,13 +15,14 @@ public class TagNode extends Tag<Node> {
     double lat;
 
     public TagNode(long id, double lat, double lon) {
-        super(new HashMap<Node, Object>(){
+        
+        /*super(new HashMap<Node, Object>(){
             {
                 //put(Node.ID, id);
                 //put(Node.LAT, lat);
                // put(Node.LON, lon);
             }
-        });
+        });*/
 
         this.id = id;
         this.lon = lon;
@@ -30,13 +31,13 @@ public class TagNode extends Tag<Node> {
     }
 
     public TagNode(XMLBuilder builder) {
-        super(new HashMap<Node, Object>(){
+        /*super(new HashMap<Node, Object>(){
             {
-                put(Node.ID, builder.getId());
+                //put(Node.ID, builder.getId());
                 //put(Node.LAT, builder.getLat());
                 //put(Node.LON, builder.getLon());
             }
-        });
+        });*/
 
         this.id = builder.getId();
         this.lon = builder.getLon();
@@ -54,6 +55,15 @@ public class TagNode extends Tag<Node> {
     @Override
     public double getLon(){
         return this.lon;
+    }
+
+    public boolean equals(TagNode tN){
+
+        if (this.id == tN.getId()){
+            return true;
+        }
+        else{return false;}
+
     }
 
 
