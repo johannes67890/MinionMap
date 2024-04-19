@@ -8,11 +8,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import parser.XMLReader;
 import parser.TagAddress.SearchAddress;
 import util.MecatorProjection;
@@ -163,12 +165,11 @@ public class Controller implements Initializable, ControllerInterface{
         double x = ((bounds[2] - bounds[0]) / 2) + bounds[0];
         double y = ((bounds[3] - bounds[1]) / 2) + bounds[1];
         System.out.println(x + " " + y);
-        System.out.println(0.56 * s.getLongitudeByStreet(address) - x + " delta lon");
-        System.out.println(-1.0 * s.getLatitudeByStreet(address) - y + " delta lat");
-        mainView.getDrawingMap().pan(
-            10*(0.56 * s.getLongitudeByStreet(address) - x),
-            -1.0 * s.getLatitudeByStreet(address) - y
-        );
+        double deltaX = MecatorProjection.lon2x(s.getLongitudeByStreet(address)) - x;
+        double deltaY = MecatorProjection.lat2y(s.getLatitudeByStreet(address)) - y;
+        System.out.println(deltaX + " delta lon");
+        System.out.println(deltaY + " delta lat");
+        mainView.getDrawingMap().pan(deltaX, deltaY);
 
         searchBarStart.getItems().setAll(
             addressObj.street + " " + 
