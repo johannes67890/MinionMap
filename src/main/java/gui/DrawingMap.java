@@ -49,8 +49,8 @@ public class DrawingMap {
     public DrawingMap(MainView mainView, XMLReader reader){
         this.mainView = mainView;
         this.reader = reader;
-        ways = XMLReader.getWays().values().stream().toList();
-        relations = XMLReader.getRelations().values().stream().toList();
+        ways = XMLReader.getWays().valueCollection().stream().toList();
+        relations = XMLReader.getRelations().valueCollection().stream().toList();
     }
 
     /**
