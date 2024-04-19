@@ -28,7 +28,7 @@ public class TreeTest {
     void setUp() {
         this.reader = new XMLReader("src/test/java/org/ressources/map.osm");
         ArrayList<Tag> tempList = new ArrayList<>();
-        tempList.addAll(reader.getWays().values());
+        tempList.addAll(XMLReader.getWays().valueCollection());
 
         this.tree = new Tree(tempList);
     }
@@ -41,9 +41,9 @@ public class TreeTest {
 
     @Test
     void testGetTagsInBounds() {
-        ArrayList<Tag> tempList = new ArrayList<>(reader.getNodes().values());
-        tempList.addAll(reader.getWays().values());
-        tempList.addAll(reader.getRelations().values());
+        ArrayList<Tag> tempList = new ArrayList<>(XMLReader.getNodes().valueCollection());
+        tempList.addAll(XMLReader.getWays().valueCollection());
+        tempList.addAll(XMLReader.getRelations().valueCollection());
         this.tree = new Tree(tempList);
 
         HashSet<Tag> tagsInBounds = tree.getTagsInBounds(new RectHV(-200, -200, 200, 200));
@@ -53,8 +53,7 @@ public class TreeTest {
 
     @Test
     void testGetTagsNearPoint(){
-        HashMap<Long,TagNode> hM = new HashMap<>(reader.getNodes());
-        ArrayList<Tag> tagList = new ArrayList<>(hM.values());
+        ArrayList<Tag> tagList = new ArrayList<Tag>(XMLReader.getNodes().valueCollection());
 
         Point2D point = new Point2D(tagList.get(0).getLon(), tagList.get(0).getLat());
         
@@ -63,8 +62,7 @@ public class TreeTest {
 
     @Test
     void testGetTagsFromPoint(){
-        HashMap<Long,TagNode> hM = new HashMap<>(reader.getNodes());
-        ArrayList<Tag> tagList = new ArrayList<>(hM.values());
+        ArrayList<Tag> tagList = new ArrayList<>(XMLReader.getNodes().valueCollection());
 
         Point2D point = new Point2D(tagList.get(0).getLon(), tagList.get(0).getLat());
         
