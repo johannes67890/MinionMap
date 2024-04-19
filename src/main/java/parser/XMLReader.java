@@ -13,8 +13,6 @@ import javax.xml.stream.XMLStreamReader;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import util.MecatorProjection;
 
-import java.io.FileNotFoundException;
-
 /**
  * Reader for a OSM XML file.
  * <p>
@@ -169,7 +167,7 @@ public class XMLReader {
                         break;
                     }
             }
-            this.close();
+            nodes = null; // Free up memory
             reader.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -180,10 +178,4 @@ public class XMLReader {
             e.printStackTrace();
         }
     }
-
-    public void close(){
-        nodes = null;
-    }
-
-
 }

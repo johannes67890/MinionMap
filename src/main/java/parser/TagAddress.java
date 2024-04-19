@@ -16,7 +16,6 @@ enum Address{
  * </p>
 */
 public class TagAddress extends Tag {
-    
     long id;
     float lat;
     float lon;
@@ -27,24 +26,7 @@ public class TagAddress extends Tag {
     String city;
     String country;
 
-
-
     TagAddress(XMLBuilder builder){
-        /*
-        super(new HashMap<Address, Object>(){
-            {
-                put(Address.ID, Long.valueOf(builder.getId()).toString());
-                put(Address.LAT, Double.toString(builder.getLat()));
-                put(Address.LON, Double.toString(builder.getLon()));
-                put(Address.STREET, builder.getAddressBuilder().street);
-                put(Address.HOUSENUMBER, builder.getAddressBuilder().house);
-                put(Address.POSTCODE, builder.getAddressBuilder().postcode);
-                put(Address.MUNICIPALITY, builder.getAddressBuilder().municipality);
-                put(Address.CITY, builder.getAddressBuilder().city);
-                put(Address.COUNTRY, builder.getAddressBuilder().country);
-            }
-        });*/
-
         id = builder.getId();
         lat = builder.getLat();
         lon = builder.getLon();
@@ -54,8 +36,6 @@ public class TagAddress extends Tag {
         municipality =  builder.getAddressBuilder().municipality;
         city = builder.getAddressBuilder().city;
         country = builder.getAddressBuilder().country;
-
-
     }
 
     @Override

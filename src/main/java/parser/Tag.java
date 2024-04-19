@@ -31,6 +31,8 @@ import java.util.HashMap;
  * </p>
  */
 public abstract class Tag {
+    public Tag() {}
+
     /**
      * Get the id of the tag.
      * @return The id of the tag.
@@ -48,13 +50,6 @@ public abstract class Tag {
      * @return The longitude of the tag.
      */
     public abstract float getLon();
-    
-    public Tag() {}
-
-/* 
-    public boolean isEmpty() {
-        return this.size() == 0;
-    }*/
 
     /**
      * Check if a tag is within a specified {@link TagBound}.

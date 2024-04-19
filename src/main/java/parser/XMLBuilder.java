@@ -104,14 +104,11 @@ public class XMLBuilder {
                     break;
                 case "way":
                 case "relation":
-                    this.id = getAttributeByLong(reader, "id");
-                    //System.out.println("RELATION ID: " + id);
-                    
+                    this.id = getAttributeByLong(reader, "id");                    
                     break;
                 case "tag":
                     String k = reader.getAttributeValue(null, "k");
                     String v = reader.getAttributeValue(null, "v");
-
 
                     if (this.type == null){
                         parseTag(k, v);
@@ -127,7 +124,6 @@ public class XMLBuilder {
                     break;
             }
         }
-
 
         /**
          * Parse a tag and add the data to the builder.
@@ -147,21 +143,10 @@ public class XMLBuilder {
                             switch (currType) { 
                                 // Way types
                                 case PRIMARY_ROAD:
-                                    this.type = currType; 
-
                                 case SECONDARY_ROAD:
-                                    this.type = currType; 
-
                                 case TERTIARY_ROAD:
-                                    this.type = currType; 
-
                                 case OTHER_ROAD:
-                                    this.type = currType;
                                     parseStreet(currType);
-                                // Relation types
-                                case BOUNDARY:
-                                    this.type = currType;
-
                                 case ROUTE:
                                 case RESTRICTION:
                                 case MULTIPOLYGON:
@@ -169,9 +154,11 @@ public class XMLBuilder {
                                     relationBuilder.setTypeValue(v);
                                     break;
                                 default:
-                                this.type = currType; 
+                                    this.type = currType; 
                                 break;
                             } 
+                            this.type = currType;
+                            break;
                         }
                     }
                 }

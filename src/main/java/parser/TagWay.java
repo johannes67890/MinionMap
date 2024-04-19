@@ -36,8 +36,6 @@ public class TagWay extends Tag implements Comparable<TagWay>{
         this.nodes = builder.getWayBuilder().getRefNodesList();
         this.speedLimit = builder.getWayBuilder().getSpeedLimit();
         this.type = builder.getType();
-
-
     }
 
     /**
@@ -55,8 +53,6 @@ public class TagWay extends Tag implements Comparable<TagWay>{
 
 
     }
-
-
 
     /**
      * Get the id of the way.
@@ -169,19 +165,6 @@ public class TagWay extends Tag implements Comparable<TagWay>{
             return speedLimit;
         }
 
-        /**
-         * Returns and removes a node from XMLReader node List.
-         * @param id - The id of the node to migrate.
-         * @return The node from the id.
-         */
-        public TagNode migrateNode(Long id){
-            TagNode node = XMLReader.getNodeById(id);
-            if(node != null){
-               //  XMLReader.getNodeById(id).remove(id, node);
-            }
-            return node;
-        }
-
         public void setSpeedLimit(int speedLimit) {
             isEmpty = false;
             this.speedLimit = speedLimit;
@@ -191,7 +174,7 @@ public class TagWay extends Tag implements Comparable<TagWay>{
             if (isEmpty) {
                 isEmpty = false;
             }
-            refNodesList.add(migrateNode(ref));
+            refNodesList.add(XMLReader.getNodeById(ref));
         }
 
         public void addNode(TagNode node) {
