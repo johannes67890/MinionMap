@@ -15,7 +15,7 @@ enum Address{
  * {@link Address#ID}, {@link Address#LAT}, {@link Address#LON}, {@link Address#STREET}, {@link Address#HOUSENUMBER}, {@link Address#POSTCODE}, {@link Address#MUNICIPALITY}
  * </p>
 */
-public class TagAddress extends Tag<Address> {
+public class TagAddress extends Tag {
     
     long id;
     float lat;
