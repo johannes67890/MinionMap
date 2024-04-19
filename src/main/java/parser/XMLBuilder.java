@@ -7,6 +7,7 @@ import javax.xml.stream.XMLStreamReader;
 import parser.TagAddress.AddressBuilder;
 import parser.TagRelation.RelationBuilder;
 import parser.TagWay.WayBuilder;
+import util.MecatorProjection;
 
 /**
 * Builder for a single XML element.
@@ -22,7 +23,7 @@ public class XMLBuilder {
         private String name; // name from a <tag> in a parrent element
         private Type type;
         private String TypeValue;
-        private Long id;
+        private long id;
         private double lat, lon;
 
         /**
@@ -49,7 +50,7 @@ public class XMLBuilder {
             return this.getAddressBuilder().isEmpty() || this.getWayBuilder().isEmpty() || this.getRelationBuilder().isEmpty();
         }
 
-        public Long getId(){
+        public long getId(){
             return this.id;
         }
         public double getLat(){
@@ -104,7 +105,7 @@ public class XMLBuilder {
                     parseTag(k, v);
                     break;
                 case "nd":
-                    Long ref = getAttributeByLong(reader, "ref");
+                    long ref = getAttributeByLong(reader, "ref");
                     wayBuilder.addNode(ref);
                     break;
                 case "member":
@@ -133,9 +134,16 @@ public class XMLBuilder {
                             switch (currType) { 
                                 // Way types
                                 case PRIMARY_ROAD:
+                                    this.type = currType; 
+
                                 case SECONDARY_ROAD:
+                                    this.type = currType; 
+
                                 case TERTIARY_ROAD:
+                                    this.type = currType; 
+
                                 case OTHER_ROAD:
+                                    this.type = currType;
                                     parseStreet(currType);
                                 // Relation types
                                 case BOUNDARY:

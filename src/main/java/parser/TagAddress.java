@@ -20,7 +20,7 @@ public class TagAddress extends Tag<Address> {
     TagAddress(XMLBuilder builder){
         super(new HashMap<Address, Object>(){
             {
-                put(Address.ID, builder.getId().toString());
+                put(Address.ID, Long.valueOf(builder.getId()).toString());
                 put(Address.LAT, Double.toString(builder.getLat()));
                 put(Address.LON, Double.toString(builder.getLon()));
                 put(Address.STREET, builder.getAddressBuilder().street);

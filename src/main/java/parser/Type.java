@@ -27,49 +27,49 @@ import javafx.scene.paint.Paint;
  * </p>
  */
 public enum Type {
+
+    REGION("place", new String[]{"island", ""}, 10, 2, Color.LIGHTYELLOW.desaturate(), Color.YELLOW, 5, false),
+
     // Natural, Landuse and main infrastructure (Hierarchy 9)
     PRIMARY_ROAD("highway", new String[]{"primary"}, 9, 9, Color.PEACHPUFF, 5,  true, 6, 100),
     MOTORWAY("highway", new String[]{"motorway"}, 9, 9, Color.DARKRED, 5, true, 6, 100),
-    RESIDENTIAL("landuse", new String[]{"residential", "industrial"}, 9, 7, Color.PEACHPUFF, Color.PEACHPUFF.darker(), 1, false),
-    AEROWAY("aeroway", new String[]{"aerodome", "apron", "hangar", "helipad", "heliport", "spaceport", "terminal"}, 9, 8, Color.LIGHTGRAY, Color.LIGHTGRAY.darker(), 5, false),
-    FARMFIELD("landuse", new String[]{"farmland"}, 9, 6, Color.KHAKI.brighter(), Color.KHAKI.darker(), 5, false),
-
-
-    COASTLINE("natural", new String[]{"coastline"}, 9, 7, Color.PLUM, 5, true, 2, 100),
-    BEACH("natural",new String[]{"beach"}, 9, 2, Color.LIGHTYELLOW, Color.LIGHTYELLOW.darker(), 5, false),
-    FOREST("landuse",new String[]{"forest","meadow","grass"}, 9, 4, Color.GREEN.brighter().desaturate(), Color.GREEN.darker(), 5, false),
-    NATURALS("natural",new String[]{"scrub","grassland","heath", "wood"}, 9, 5, Color.GREENYELLOW, Color.GREENYELLOW.darker(), 5, false),
+    SECONDARY_ROAD("highway", new String[]{"secondary"}, 9, 9, Color.YELLOW.desaturate(), 5, true, 6, 75),
+    TERTIARY_ROAD("highway",new String[]{"tertiary", "tertiary_link"},9, 9, Color.LIGHTGRAY, 4, true, 4, 50),
+    RAILWAY("railway",new String[]{"rail","light_rail","subway"}, 9, 9, Color.DARKGRAY, 2, true, 4, 1000),
     WATER("natural",new String[]{"water"}, 9, 9, Color.LIGHTBLUE, Color.LIGHTBLUE.darker(), 5, false),
-    WETLAND("natural",new String[]{"wetland"}, 9, 5, Color.DARKKHAKI, Color.DARKKHAKI, 5, false),
-    
-
-    
+    WATERWAY("waterway",new String[]{""},9, 8, Color.LIGHTBLUE, 3, true, 2, 25),
+    COASTLINE("natural", new String[]{"coastline"}, 9, 7, Color.PLUM, 5, true, 6, 100),
     
     // Landuse (Hierarchy: 8)
-    SECONDARY_ROAD("highway", new String[]{"secondary"}, 8, 9, Color.LIGHTYELLOW, 5, true, 6, 150),
-    RAILWAY("railway",new String[]{"rail","light_rail","subway", "abandoned"}, 8, 9, Color.DARKGRAY, 2, true, 4, 1000),
+    RESIDENTIAL("landuse", new String[]{"residential", "industrial"}, 8, 7, Color.PEACHPUFF, Color.PEACHPUFF.darker(), 1, false),
+    AEROWAY("aeroway", new String[]{"aerodome", "apron", "hangar", "helipad", "heliport", "spaceport", "terminal"}, 8, 8, Color.LIGHTGRAY, Color.LIGHTGRAY.darker(), 5, false),
+    FARMFIELD("landuse", new String[]{"farmland"}, 8, 6, Color.KHAKI.brighter(), Color.KHAKI.darker(), 5, false),
+
+    BEACH("natural",new String[]{"beach"}, 8, 3, Color.YELLOW, Color.YELLOW.darker(), 5, false),
+    FOREST("landuse",new String[]{"forest"}, 8, 4, Color.GREEN.brighter().desaturate(), Color.GREEN.darker(), 5, false),
+    GRASS("landuse",new String[]{"meadow","grass"}, 8, 5, Color.GREEN.brighter().desaturate().brighter(), Color.GREEN.darker(), 5, false),
+ 
+    NATURALS("natural",new String[]{"scrub","grassland","heath", "wood"}, 8, 5, Color.GREENYELLOW, Color.GREENYELLOW.darker(), 5, false),
+    WETLAND("natural",new String[]{"wetland"}, 8, 5, Color.DARKKHAKI, Color.DARKKHAKI, 5, false), 
     LANDUSE("landuse", new String[]{"commercial","construction","brownfield","greenfield","allotments","basin",
     "cemetery","depot","garages","greenhouse_horticulture","landfill","orchard","plant_nursery",
     "port","quarry","railway","recreation_ground","religious","reservoir","retail","salt_pond","village_green","vineyard",
     "winter_sports","farmyard","farm"}, 8, 7, Color.BLANCHEDALMOND, Color.BLANCHEDALMOND.darker(), 5, false),
-    ROCK("natural", new String[]{"arch", "bare_rock", "blockfield", "cave_entrance", "dune", "fumarole", "hill", "rock", "sand", "scree", "sinkhole", "stone"}, 8, 7, Color.LIGHTGRAY.brighter(), Color.LIGHTGRAY, 5, false),
+    ROCK("natural", new String[]{"arch", "bare_rock", "blockfield", "cave_entrance", "dune", "fumarole", "hill", "rock", "sand", "scree", "sinkhole", "stone"}, 8, 7, Color.LIGHTGREY, Color.LIGHTGRAY, 5, false),
     ROCKLINE("natural", new String[]{"arete", "cliff", "earth_bank", "ridge", "valley"}, 8, 7, Color.LIGHTGRAY, 5, true, 2, 50),
     SAND("natural", new String[]{"sand", "dune"}, 8, 7, Color.SANDYBROWN.brighter(), Color.SANDYBROWN, 5, false),
 
-
     // Urban and natural (Hierarchy: 7)
+    ABANDONEDRAIL("railway",new String[]{"abandoned"}, 5, 9, Color.DARKGRAY, 2, true, 4, 1000),
     MILITARY("landuse", new String[]{"military"}, 7, 9, Color.SALMON.interpolate(Color.WHITE.TRANSPARENT, 0.5), Color.SALMON.interpolate(Color.WHITE, 0.5).darker(), 5, false),
     BUILDING("building",new String[]{"", "yes"},7, 8, Color.BURLYWOOD, Color.BURLYWOOD.darker(), 5, false),
     LEISURE("leisure",new String[]{"park"},7, 8, Color.LIGHTGREEN, Color.LIGHTGREEN.darker(), 5, false),
-    WATERWAY("waterway",new String[]{""},7, 8, Color.LIGHTBLUE, 3, true, 2, 25),
 
     // Man made objects (Hierarchy: 6)
     BRIDGE("man_made", new String[]{"bridge"},6, 9, Color.WHITE, 5, true, 4, 5),
-    TERTIARY_ROAD("highway",new String[]{"tertiary", "tertiary_link"},6, 9, Color.LIGHTGRAY, 5, true, 4, 10),
     PIER("man_made", new String[]{"pier"},6, 9, Color.WHITE, 5, true, 5, 10),
 
     // Natural (Hierarchy: 5)
-    
     
     // Other roads (Hierarchy: 4)
     AERIALWAY("aerialway", new String[]{"cable_car", "gondola", "mixed_lift", "chair_lift", "drag_lift", "t-bar", "j-bar", "platter", "rope_tow", "magic_carpet", "zip_line", "goods", "pylon"}, 
@@ -95,6 +95,7 @@ public enum Type {
     private final Color polyLineColor;
     private final double width;
     private final boolean isLine;
+    private boolean toShow = true;
     private final double minWidth;
     private final double maxWidth;
 
@@ -135,7 +136,6 @@ public enum Type {
         this.minWidth = minWidth;
         this.maxWidth = maxWidth;
         this.polyLineColor = Color.BLACK;
-
     }
     
     public String getKey() {
@@ -144,6 +144,12 @@ public enum Type {
 
     public String[] getValue() {
         return value;
+    }
+
+    public void toggleToShow(){
+        if(toShow){
+            toShow = false;
+        } else toShow = true;
     }
 
     public static Type[] getTypes(){

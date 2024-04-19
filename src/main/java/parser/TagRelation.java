@@ -15,6 +15,7 @@ public class TagRelation extends Tag<Relation>{
     private ArrayList<TagWay> ways = new ArrayList<>();
     private ArrayList<TagWay> inner = new ArrayList<>();
     private ArrayList<TagWay> outer = new ArrayList<>();
+    private ArrayList<TagWay> handledOuter = new ArrayList<>();
 
     public TagRelation(){}
 
@@ -34,12 +35,19 @@ public class TagRelation extends Tag<Relation>{
 
             }
         });
+
+
+        constructOuterWays();
+
     }
 
     @Override
     public long getId(){
         return Long.parseLong(this.get(Relation.ID).toString());
     }
+
+
+
     @Override
     public double getLat() {
         throw new UnsupportedOperationException("TagRelation does not have a latitude value.");
@@ -64,13 +72,135 @@ public class TagRelation extends Tag<Relation>{
     public ArrayList<TagWay> getInner(){ return inner; };
     public ArrayList<TagWay> getOuter(){ return outer; };
     public ArrayList<TagWay> getActualOuter(){ return (ArrayList<TagWay>) this.get(Relation.OUTER) ; };
+    public ArrayList<TagWay> getHandledOuter(){ return handledOuter; };
+
+
+    /**
+     * Constructs the outer ways as multiple connected polygons or lines,
+     * by assuming that ways with identical start- or endnodes should be merged into one way.
+     * 
+     */
+    public void constructOuterWays(){
+
+
+        ArrayList<TagNode> tempNodes = new ArrayList<>();
+        TagNode beginLastTagNode = null;
+        TagNode beginFirstTagNode = null;
+
+        TagNode currentLastTagNode = null;
+        TagNode currentFirstTagNode = null;
+
+        TagNode prevLastTagNode = null;
+
+        boolean success = false;
+        int speedLimit = 0;
+        long id = 0;
+
+
+        for (int j = 0; j < getActualOuter().size() ; j++){
+
+            TagWay outer = getActualOuter().get(j);
+
+            speedLimit = outer.getSpeedLimit();
+            success = false;
+            id = outer.getId();
+
+            if(outer.loops()){
+                success = true;
+                handledOuter.add(outer);
+            } else{
+
+                currentFirstTagNode = outer.firsTagNode();
+
+
+                if (beginFirstTagNode == null){
+
+                    if (j < getActualOuter().size() - 1){
+
+                        TagWay other = getActualOuter().get(j + 1);
+
+                        if ((other.firsTagNode().equals(outer.lastTagNode())) || (other.lastTagNode().equals(outer.lastTagNode()))){
+
+                            beginFirstTagNode = outer.firsTagNode();
+                            currentFirstTagNode = beginFirstTagNode;
+                            beginLastTagNode = outer.lastTagNode();
+                            prevLastTagNode = outer.firsTagNode();
+                        } 
+                        // Starts from the opposite direction
+                        else{
+
+                            beginFirstTagNode = outer.lastTagNode();
+                            currentFirstTagNode = beginFirstTagNode;
+                            beginLastTagNode = outer.firsTagNode();
+                            prevLastTagNode = outer.firsTagNode();
+                        }
+                    
+                    }
+                    
+                }
+
+
+                //Checks whether way should be read in reverse
+
+                if (prevLastTagNode != null && prevLastTagNode.equals(currentFirstTagNode)){
+
+                    for (TagNode node : outer.getNodes()){
+
+
+                        tempNodes.add(node);    
+                    }
+                } else{
+                    for (int i = outer.getNodes().length - 1; i >= 0; i-- ){
+
+                        TagNode node = outer.getNodes()[i];
+
+                        tempNodes.add(node);    
+                    }
+                }
+
+                prevLastTagNode = tempNodes.get(tempNodes.size() - 1);
+
+
+                if (tempNodes.get(tempNodes.size() - 1).equals(beginFirstTagNode)){
+
+                    //System.out.println(beginLastTagNode.getId() + " " + outer.getId());
+
+
+                    TagNode[] nodes = tempNodes.toArray(new TagNode[tempNodes.size()]);
+
+                    TagWay newTagWay = new TagWay(this, id, nodes, speedLimit);
+                    handledOuter.add(newTagWay);
+                    tempNodes.clear();
+                    tempNodes = new ArrayList<>();
+                    beginFirstTagNode = null;
+                    beginLastTagNode = null;
+                    success = true;
+
+                }
+            }
+        }
+        /*if (!success){
+            TagWay newTagWay = new TagWay(this, id, tempNodes, speedLimit);
+            handledOuter.add(newTagWay);
+            tempNodes = new ArrayList<>();
+        }*/
+    }
+
+
+
+    
     public ArrayList<TagWay> getActualInner(){ return (ArrayList<TagWay>) this.get(Relation.INNER) ; };
+
     public Type getType() {
         return (Type) this.get(Relation.TYPE);
     }
 
     public Type getRelationType(){
         return (Type) this.get(Relation.RELATIONTYPE);
+    }
+
+    public String getName(){
+        return (String) this.get(Relation.NAME);
     }
     
     // https://wiki.openstreetmap.org/wiki/Relation:multipolygon/Algorithm
