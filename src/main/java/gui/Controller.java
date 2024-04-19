@@ -124,13 +124,12 @@ public class Controller implements Initializable, ControllerInterface{
 
         // TODO: remake this function so it registers everytime the value is changed!
         searchBarStart.setOnAction((ActionEvent e) -> {
-            System.out.println("Searching for startpoint: " + searchBarStart.getValue());
-            search(searchBarStart.getValue());
-
+            
             if (searchBarStart.getValue().equals("")){
                 setEnableDestinationTextField(false);
             }else{
                 setEnableDestinationTextField(true);
+                search(searchBarStart.getValue());
             }
         });
 
@@ -142,7 +141,7 @@ public class Controller implements Initializable, ControllerInterface{
 
         searchButton.setOnAction((ActionEvent e) -> {
             System.out.println("Searching for destination: " + searchBarDestination.getValue());
-            search(searchBarDestination.getValue());
+            search(searchBarStart.getValue());
         });
 
     }
@@ -160,16 +159,18 @@ public class Controller implements Initializable, ControllerInterface{
     private void search(String address){
         //Search s = new Search(XMLReader.getAddresses());
         //System.out.println(s.toString());
+        // Vi har skærmkoordinater i xy og canvas witdh and height
         SearchAddress addressObj = s.searchForAddress(address);
         double[] bounds = mainView.getDrawingMap().getScreenBounds();
         double x = ((bounds[2] - bounds[0]) / 2) + bounds[0];
         double y = ((bounds[3] - bounds[1]) / 2) + bounds[1];
-        System.out.println(x + " " + y);
-        double deltaX = MecatorProjection.lon2x(s.getLongitudeByStreet(address)) - x;
-        double deltaY = MecatorProjection.lat2y(s.getLatitudeByStreet(address)) - y;
-        System.out.println(deltaX + " delta lon");
-        System.out.println(deltaY + " delta lat");
+        System.out.println("x: " + x + " | y: " + y);
+        double deltaX = MecatorProjection.lon2x(s.getLongitudeByStreet(addressObj.street)) - x;
+        double deltaY = MecatorProjection.lat2y(s.getLatitudeByStreet(addressObj.street)) - y;
+        System.out.println(deltaX + " delta x");
+        System.out.println(deltaY + " delta y");
         mainView.getDrawingMap().pan(deltaX, deltaY);
+        System.out.println("x: " + (x * mainView.getDrawingMap().zoomLevel) + " | y: " + (y * mainView.getDrawingMap().zoomLevel));
 
         searchBarStart.getItems().setAll(
             addressObj.street + " " + 
