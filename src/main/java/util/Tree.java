@@ -2,39 +2,47 @@ package util;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
 import parser.Tag;
+import parser.TagBound;
 import parser.TagNode;
 import parser.TagRelation;
 import parser.TagWay;
+import parser.XMLReader;
 
 public class Tree {
 
-    KdTree kdtree;
+    static KdTree kdtree;
     ArrayList<Tag> nodesInBounds;
     ArrayList<TagWay> waysInBounds;
     ArrayList<TagRelation> relationsInBounds;
+    static boolean isLoaded = false;
+    
 
     /**
      * Constructor for the Tree class
      * @param tags ArrayList of tag-objects to be inserted in the tree
      */
-    public Tree(ArrayList<Tag> tags){
+    
+    public static void initialize(List<Tag> tags){
         kdtree = new KdTree();
-        kdtree.setBound(-180, -180, 180, 180);
+        // TODO: Fix this line of code. get the min and max value of all nodes!
+        //kdtree.setBound(1300000, -8000000, 1400000, -7000000);
+        kdtree.setBound(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
         for (Tag tag : tags){
             insertTagInTree(tag);
         }
-        
+        isLoaded = true;
     }
 
     /**
      * Inserts a tag in the tree
      * @param tag Tag to be inserted in the tree
      */
-    public void insertTagInTree(Tag tag){
+    public static void insertTagInTree(Tag tag){
         if (tag instanceof TagNode){
             TagNode node = (TagNode) tag;
             Point2D temp = new Point2D(node.getLon(), node.getLat());
@@ -61,7 +69,7 @@ public class Tree {
      * @param point Point to search near
      * @return ArrayList of Tag-objects near the point
      */
-    public ArrayList<Tag> getTagsNearPoint(Point2D point){
+    public static  ArrayList<Tag> getTagsNearPoint(Point2D point){
         return kdtree.nearestTags(point);
     }
 
@@ -70,7 +78,7 @@ public class Tree {
      * @param point Point to search near
      * @return Point2D object nearest to the given point
      */
-    public Point2D getNearestPoint(Point2D point){
+    public static Point2D getNearestPoint(Point2D point){
         return kdtree.nearest(point);
     }
 
@@ -79,7 +87,7 @@ public class Tree {
      * @param rect Bounds to search in
      * @return HashSet of given tag-objects in the given bounds
      */
-    public HashSet<Tag> getTagsInBounds(RectHV rect) {
+    public static HashSet<Tag> getTagsInBounds(RectHV rect) {
         HashSet<Tag> tagsInBounds = kdtree.rangeNode(rect);
         return tagsInBounds;
     }
@@ -89,7 +97,11 @@ public class Tree {
      * @param point Point to search near
      * @return ArrayList of tag-objects in the given bounds
      */
-    public ArrayList<Tag> getTagsFromPoint(Point2D point){
+    public static ArrayList<Tag> getTagsFromPoint(Point2D point){
         return kdtree.getTagsFromPoint(point);
+    }
+
+    public static boolean isLoaded(){
+        return isLoaded;
     }
 }
