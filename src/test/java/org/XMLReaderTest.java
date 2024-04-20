@@ -22,7 +22,7 @@ public class XMLReaderTest {
 
     @BeforeEach
     void testXMLReaderStartup() {
-        this.reader = new XMLReader("src/test/java/org/ressources/map.osm");
+        new XMLReader("src/test/java/org/ressources/map.osm");
         assertNotNull(reader);
         assertDoesNotThrow(() -> this.reader);
     }
@@ -30,7 +30,7 @@ public class XMLReaderTest {
     @Test
     void testCount(){
         //assertEquals(4, XMLReader.getBound().size());
-        assertEquals(391, XMLReader.getNodes().size());
+        assertEquals(391, XMLReader.getNodes().valueCollection().size());
         assertEquals(21, XMLReader.getAddresses().size());
         assertEquals(1, XMLReader.getRelations().size());
         assertEquals(50, XMLReader.getWays().size());
