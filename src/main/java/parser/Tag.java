@@ -63,16 +63,6 @@ public abstract class Tag {
      */
     public boolean isInBounds(TagBound bound) {        
         if(this instanceof TagWay) {
-<<<<<<< HEAD
-            return ((TagWay)this).getRefs().values().stream().anyMatch(n -> n.isInBounds(bound));
-        }
-        if(this instanceof TagRelation) {
-            return ((TagRelation)this).getMembers().values().stream().anyMatch(m -> m.isInBounds(bound));
-        }
-
-        return Double.valueOf(this.getLat()).compareTo(bound.getMinLat()) == 1 && Double.valueOf(this.getLat()).compareTo(bound.getMaxLat()) == -1
-            && Double.valueOf(this.getLon()).compareTo(bound.getMinLon()) == 1 && Double.valueOf(this.getLon()).compareTo(bound.getMaxLon()) == -1;
-=======
             for (TagNode w  :((TagWay)this).getNodes()) {
                 if(w.isInBounds(bound)) return true;
             }
@@ -91,7 +81,6 @@ public abstract class Tag {
         float lon = MecatorProjection.unprojectLon(this.getLon());
         return Float.valueOf(lat).compareTo(MecatorProjection.unproject(bound).getMinLat()) == 1 && Float.valueOf(lat).compareTo(MecatorProjection.unproject(bound).getMaxLat()) == -1
             && Float.valueOf(lon).compareTo(MecatorProjection.unproject(bound).getMinLon()) == 1 && Float.valueOf(lon).compareTo(MecatorProjection.unproject(bound).getMaxLon()) == -1;
->>>>>>> memoryOpt
     }
 
 }
