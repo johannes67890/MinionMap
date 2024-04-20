@@ -2,6 +2,7 @@ package parser;
 
 import java.sql.Array;
 
+import gui.GraphicsHandler;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
@@ -215,10 +216,28 @@ public enum Type {
         return color;
     }
     public Color getColor(){
-        return color;
+
+
+        switch (GraphicsHandler.getGraphicStyle()) {
+            case DEFAULT:
+                return color;    
+            case DARKMODE:
+                return color.grayscale().invert();     
+            case GRAYSCALE:
+                return color.grayscale();
+            default: return color;
+        }
     }
     public Color getPolyLineColor(){
-        return polyLineColor;
+        switch (GraphicsHandler.getGraphicStyle()) {
+            case DEFAULT:
+                return polyLineColor;       
+            case DARKMODE:
+                return polyLineColor.grayscale().invert(); 
+            case GRAYSCALE:
+                return polyLineColor.grayscale();
+            default: return polyLineColor;
+        }
     }
     public boolean getIsLine(){
         return isLine;

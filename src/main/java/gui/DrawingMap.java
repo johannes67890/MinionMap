@@ -89,7 +89,19 @@ public class DrawingMap {
         //Resfreshes the screen
         gc = canvas.getGraphicsContext2D();
         gc.setTransform(new Affine());
-        gc.setFill(Color.LIGHTSKYBLUE);
+        switch (GraphicsHandler.getGraphicStyle()) {
+            case DEFAULT:
+                gc.setFill(Color.LIGHTSKYBLUE);
+                break;
+            case DARKMODE:
+                gc.setFill(Color.BLACK);
+                break;
+            case GRAYSCALE:
+                gc.setFill(Color.LIGHTSKYBLUE.grayscale());
+                break;
+            default:
+                break;
+        }
         gc.fillRect(0,0,canvas.getWidth(), canvas.getHeight());
         gc.setTransform(transform);
         currentColor = Color.BLACK;
