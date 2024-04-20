@@ -10,11 +10,11 @@ import java.util.HashMap;
 */
 public class TagNode extends Tag<Node> {
 
-    long id;
+    int id;
     float lon;
     float lat;
 
-    public TagNode(long id, float lat, float lon) {
+    public TagNode(int id, float lat, float lon) {
         
         /*super(new HashMap<Node, Object>(){
             {
@@ -39,7 +39,7 @@ public class TagNode extends Tag<Node> {
             }
         });*/
 
-        this.id = builder.getId();
+        this.id = builder.getIdasInt();
         this.lon = builder.getLon();
         this.lat = builder.getLat();
     }
@@ -48,6 +48,11 @@ public class TagNode extends Tag<Node> {
     public long getId(){
         return id;
     }
+
+    public int getIdasInt(){
+        return id;
+    }
+
     @Override
     public float getLat(){
         return this.lat;

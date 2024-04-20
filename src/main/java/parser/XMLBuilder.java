@@ -63,6 +63,10 @@ public class XMLBuilder {
         public long getId(){
             return this.id;
         }
+
+        public int getIdasInt(){
+            return (int) this.id;
+        }
         public float getLat(){
             return this.lat;
         }

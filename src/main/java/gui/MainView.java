@@ -101,7 +101,7 @@ public class MainView {
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
         drawView.DrawMap(canvas);
 
-        System.out.println(1000 / (System.currentTimeMillis() - time));
+        //System.out.println(1000 / (System.currentTimeMillis() - time));
 
 
         

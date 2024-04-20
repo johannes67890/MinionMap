@@ -39,7 +39,7 @@ public class MecatorProjection {
          */
         public static TagNode project(TagNode node){
             return new TagNode(
-                node.getId(),
+                node.getIdasInt(),
                 lat2y(node.getLat()),
                 lon2x(node.getLon())
             );
@@ -54,7 +54,7 @@ public class MecatorProjection {
          * @param node The node to project
          * @return The projected node
          */
-        public static TagNode project(long id, float x, float y){
+        public static TagNode project(int id, float x, float y){
             return new TagNode(
                     id,
                     lat2y(y),
@@ -109,7 +109,7 @@ public class MecatorProjection {
          */
         public static TagNode unproject(TagNode node){
             return new TagNode(
-                node.getId(),
+                node.getIdasInt(),
                 y2lat(node.getLat()),
                 x2lon(node.getLon())
             );
