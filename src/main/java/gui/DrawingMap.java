@@ -169,7 +169,7 @@ public class DrawingMap {
         }else if(tag instanceof TagWay){
             drawWay((TagWay) tag, true);
         }else if(tag instanceof TagNode){
-
+            drawPoint((TagNode) tag);
         }
     }
 
