@@ -103,8 +103,8 @@ public class XMLBuilder {
             switch (element) {
                 case "node":
                     this.id = getAttributeByLong(reader, "id");
-                    this.lat = getAttributeByFloat(reader, "lat");
-                    this.lon = getAttributeByFloat(reader, "lon");
+                    this.lat = MecatorProjection.lat2y(getAttributeByFloat(reader, "lat"));
+                    this.lon = MecatorProjection.lon2x(getAttributeByFloat(reader, "lon"));
                     break;
                 case "way":
                 case "relation":
