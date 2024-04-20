@@ -17,7 +17,7 @@ enum Way {
  * {@link Way#ID}, {@link Way#REFS}, {@link Way#NAME}, {@link Way#TYPE}
  * </p>
  */
-public class TagWay extends Tag<Way> implements Comparable<TagWay>{
+public class TagWay extends Tag implements Comparable<TagWay>{
 
 
     boolean isLine = false;
@@ -31,23 +31,11 @@ public class TagWay extends Tag<Way> implements Comparable<TagWay>{
 
 
     public TagWay(XMLBuilder builder) {
-        /*super(new HashMap<Way, Object>(){
-            {
-                //put(Way.ID, builder.getId());
-                //put(Way.NAME, builder.getName());
-                //put(Way.REFS, builder.getWayBuilder().getRefNodesList());
-                //put(Way.SPEEDLIMIT, builder.getWayBuilder().getSpeedLimit());
-                //put(Way.TYPE, builder.getType());     
-            }
-        });*/
-
         this.id = builder.getId();
         this.name = builder.getName();
         this.nodes = builder.getWayBuilder().getRefNodesList();
         this.speedLimit = builder.getWayBuilder().getSpeedLimit();
         this.type = builder.getType();
-
-
     }
 
     /**
@@ -57,16 +45,6 @@ public class TagWay extends Tag<Way> implements Comparable<TagWay>{
      * @param builder
      */
     public TagWay(TagRelation relation, long id, TagNode[] nodes, int speedLimit) {
-        /*super(new HashMap<Way, Object>(){
-            {
-                //put(Way.ID, id);
-                //put(Way.NAME, relation.getName());
-                //put(Way.REFS, nodes);
-                //put(Way.SPEEDLIMIT, speedLimit);
-                //put(Way.TYPE, relation.getType());     
-            }
-        });*/
-
         this.id = id;
         this.name = relation.getName();
         this.nodes = nodes;
@@ -75,8 +53,6 @@ public class TagWay extends Tag<Way> implements Comparable<TagWay>{
 
 
     }
-
-
 
     /**
      * Get the id of the way.
@@ -189,19 +165,6 @@ public class TagWay extends Tag<Way> implements Comparable<TagWay>{
             return speedLimit;
         }
 
-        /**
-         * Returns and removes a node from XMLReader node List.
-         * @param id - The id of the node to migrate.
-         * @return The node from the id.
-         */
-        public TagNode migrateNode(Long id){
-            TagNode node = XMLReader.getNodeById(id);
-            if(node != null){
-               //  XMLReader.getNodeById(id).remove(id, node);
-            }
-            return node;
-        }
-
         public void setSpeedLimit(int speedLimit) {
             isEmpty = false;
             this.speedLimit = speedLimit;
@@ -211,7 +174,7 @@ public class TagWay extends Tag<Way> implements Comparable<TagWay>{
             if (isEmpty) {
                 isEmpty = false;
             }
-            refNodesList.add(migrateNode(ref));
+            refNodesList.add(XMLReader.getNodeById(ref));
         }
 
         public void addNode(TagNode node) {

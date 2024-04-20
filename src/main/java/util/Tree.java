@@ -13,7 +13,7 @@ import parser.TagWay;
 public class Tree {
 
     KdTree kdtree;
-    ArrayList<Tag<?>> nodesInBounds;
+    ArrayList<Tag> nodesInBounds;
     ArrayList<TagWay> waysInBounds;
     ArrayList<TagRelation> relationsInBounds;
 
@@ -21,10 +21,10 @@ public class Tree {
      * Constructor for the Tree class
      * @param tags ArrayList of tag-objects to be inserted in the tree
      */
-    public Tree(ArrayList<Tag<?>> tags){
+    public Tree(ArrayList<Tag> tags){
         kdtree = new KdTree();
         kdtree.setBound(-180, -180, 180, 180);
-        for (Tag<?> tag : tags){
+        for (Tag tag : tags){
             insertTagInTree(tag);
         }
         
@@ -34,7 +34,7 @@ public class Tree {
      * Inserts a tag in the tree
      * @param tag Tag to be inserted in the tree
      */
-    public void insertTagInTree(Tag<?> tag){
+    public void insertTagInTree(Tag tag){
         if (tag instanceof TagNode){
             TagNode node = (TagNode) tag;
             Point2D temp = new Point2D(node.getLon(), node.getLat());
@@ -61,7 +61,7 @@ public class Tree {
      * @param point Point to search near
      * @return ArrayList of Tag-objects near the point
      */
-    public ArrayList<Tag<?>> getTagsNearPoint(Point2D point){
+    public ArrayList<Tag> getTagsNearPoint(Point2D point){
         return kdtree.nearestTags(point);
     }
 
@@ -79,8 +79,8 @@ public class Tree {
      * @param rect Bounds to search in
      * @return HashSet of given tag-objects in the given bounds
      */
-    public HashSet<Tag<?>> getTagsInBounds(RectHV rect) {
-        HashSet<Tag<?>> tagsInBounds = kdtree.rangeNode(rect);
+    public HashSet<Tag> getTagsInBounds(RectHV rect) {
+        HashSet<Tag> tagsInBounds = kdtree.rangeNode(rect);
         return tagsInBounds;
     }
 
@@ -89,7 +89,7 @@ public class Tree {
      * @param point Point to search near
      * @return ArrayList of tag-objects in the given bounds
      */
-    public ArrayList<Tag<?>> getTagsFromPoint(Point2D point){
+    public ArrayList<Tag> getTagsFromPoint(Point2D point){
         return kdtree.getTagsFromPoint(point);
     }
 }

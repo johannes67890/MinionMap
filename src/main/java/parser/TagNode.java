@@ -8,38 +8,20 @@ import java.util.HashMap;
  * {@link Node#ID}, {@link Node#LAT}, {@link Node#LON}
  * </p>
 */
-public class TagNode extends Tag<Node> {
+public class TagNode extends Tag {
 
-    int id;
+    long id;
     float lon;
     float lat;
 
-    public TagNode(int id, float lat, float lon) {
-        
-        /*super(new HashMap<Node, Object>(){
-            {
-                //put(Node.ID, id);
-                //put(Node.LAT, lat);
-               // put(Node.LON, lon);
-            }
-        });*/
-
+    public TagNode(long id, float lat, float lon) {
         this.id = id;
         this.lon = lon;
         this.lat = lat;
-
     }
 
     public TagNode(XMLBuilder builder) {
-        /*super(new HashMap<Node, Object>(){
-            {
-                //put(Node.ID, builder.getId());
-                //put(Node.LAT, builder.getLat());
-                //put(Node.LON, builder.getLon());
-            }
-        });*/
-
-        this.id = builder.getIdasInt();
+        this.id = builder.getId();
         this.lon = builder.getLon();
         this.lat = builder.getLat();
     }
@@ -48,11 +30,6 @@ public class TagNode extends Tag<Node> {
     public long getId(){
         return id;
     }
-
-    public int getIdasInt(){
-        return id;
-    }
-
     @Override
     public float getLat(){
         return this.lat;
@@ -76,6 +53,4 @@ public class TagNode extends Tag<Node> {
         return Math.sqrt(Math.pow(node.getLat() - getLat(), 2) + (Math.pow(node.getLon() - getLon(), 2)));
     }
 
-
- 
 }

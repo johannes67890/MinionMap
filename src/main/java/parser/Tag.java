@@ -2,10 +2,6 @@ package parser;
 
 import java.util.HashMap;
 
-enum Node {
-    ID, LAT, LON;
-}
-
 /**
  * Abstract class for a tag.
  * <p>
@@ -34,7 +30,9 @@ enum Node {
  * **Note** that not all tags, like {@link TagRelation} and {@link TagWay} uses {@link #getLat()} and {@link #getLon()} methods.
  * </p>
  */
-public abstract class Tag<E extends Enum<E>> {
+public abstract class Tag {
+    public Tag() {}
+
     /**
      * Get the id of the tag.
      * @return The id of the tag.
@@ -52,18 +50,6 @@ public abstract class Tag<E extends Enum<E>> {
      * @return The longitude of the tag.
      */
     public abstract float getLon();
-    
-    public Tag() {}
-
-
-    public Tag(HashMap<E, Object> map) {
-        
-    }
-
-/* 
-    public boolean isEmpty() {
-        return this.size() == 0;
-    }*/
 
     /**
      * Check if a tag is within a specified {@link TagBound}.

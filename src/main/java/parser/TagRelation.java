@@ -9,7 +9,7 @@ enum Relation {
     ID, INNER, OUTER, WAYS, RELATIONS, NODES, TYPE, TYPEVALUE, NAME, RELATIONTYPE
 }
 
-public class TagRelation extends Tag<Relation>{
+public class TagRelation extends Tag{
     private ArrayList<TagNode> nodes = new ArrayList<>();
     private ArrayList<TagRelation> relations = new ArrayList<>();
     private ArrayList<TagWay> ways = new ArrayList<>();
@@ -28,22 +28,6 @@ public class TagRelation extends Tag<Relation>{
     public TagRelation(){}
 
     public TagRelation(XMLBuilder builder){
-        /*super(new HashMap<Relation, Object>(){
-            {
-                //put(Relation.ID, builder.getId());
-                //put(Relation.TYPE, builder.getType());
-                //put(Relation.NAME, builder.getName());
-                //put(Relation.INNER, builder.getRelationBuilder().getInner());
-                //put(Relation.OUTER, builder.getRelationBuilder().getOuter());
-                //put(Relation.WAYS, builder.getRelationBuilder().getWays());
-                //put(Relation.RELATIONS, builder.getRelationBuilder().getRelations());
-                //put(Relation.NODES, builder.getRelationBuilder().getNodes());
-                //put(Relation.RELATIONTYPE, builder.getRelationBuilder().getRelationType());
-                //put(Relation.TYPEVALUE, builder.getRelationBuilder().getTypeValue());
-
-            }
-        });*/
-
         this.id = builder.getId();
         this.type = builder.getType();
         this.relationType = builder.getRelationBuilder().getRelationType();
@@ -66,8 +50,6 @@ public class TagRelation extends Tag<Relation>{
     public long getId(){
         return id;
     }
-
-
 
     @Override
     public float getLat() {
