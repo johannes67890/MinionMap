@@ -17,37 +17,74 @@ enum Way {
  * {@link Way#ID}, {@link Way#REFS}, {@link Way#NAME}, {@link Way#TYPE}
  * </p>
  */
-public class TagWay extends Tag<Way>{
+public class TagWay extends Tag implements Comparable<TagWay>{
+
+
+    boolean isLine = false;
+
+    long id;
+    String name;
+    TagNode[] nodes;
+    int speedLimit;
+    Type type;
+
+
+
     public TagWay(XMLBuilder builder) {
-        super(new HashMap<Way, Object>(){
-            {
-                put(Way.ID, builder.getId());
-                put(Way.NAME, builder.getName());
-                put(Way.REFS, builder.getWayBuilder().getRefNodes());
-                put(Way.SPEEDLIMIT, builder.getWayBuilder().getSpeedLimit());
-                put(Way.TYPE, builder.getType());     
-            }
-        });
+        this.id = builder.getId();
+        this.name = builder.getName();
+        this.nodes = builder.getWayBuilder().getRefNodesList();
+        this.speedLimit = builder.getWayBuilder().getSpeedLimit();
+        this.type = builder.getType();
     }
+
+    public TagWay(long id, String name, TagNode[] nodes, int speedLimit, Type type) {
+        this.id = id;
+        this.name = name;
+        this.nodes = nodes;
+        this.speedLimit = speedLimit;
+        this.type = type;
+    }
+
+    /**
+     * 
+     * TagWay that is created from Relation's Outer ways.
+     * 
+     * @param builder
+     */
+    public TagWay(TagRelation relation, long id, TagNode[] nodes, int speedLimit) {
+        this.id = id;
+        this.name = relation.getName();
+        this.nodes = nodes;
+        this.speedLimit = speedLimit;
+        this.type = relation.getType();
+
+
+    }
+
     /**
      * Get the id of the way.
      * @return The id of the way.
      */
-    @Override
-    public long getId(){
-        return Long.parseLong(this.get(Way.ID).toString());
+
+     public long getId(){
+        return id;
     }
-    @Override
-    public double getLat() {
+    public float getLat() {
         throw new UnsupportedOperationException("TagWay does not have a latitude value.");
     }
-    @Override
-    public double getLon() {
+
+
+    public float getLon() {
         throw new UnsupportedOperationException("TagWay does not have a longitude value.");
     }
 
     public int getSpeedLimit(){
-        return Integer.parseInt(this.get(Way.SPEEDLIMIT).toString());
+        return speedLimit;
+    }
+
+    public String getName(){
+        return name;
     }
 
     /**
@@ -55,36 +92,80 @@ public class TagWay extends Tag<Way>{
      * @return The {@link Type} of the way.
      */
     public Type getType() {
-        return (Type) this.get(Way.TYPE);
+        return type;
     }
+    public void setType(Type t){
+        type = t;     
+    }
+
+    public boolean loops(){
+        if (getNodes()[0] != null){
+
+            return getNodes()[0].getId() == getNodes()[size() - 1].getId();
+        } else{
+            return false;}
+    }
+
+    public TagNode firsTagNode(){
+        if (getNodes()[0] == null){
+            System.out.println("HELLO");
+        }
+        //System.out.println(getNodes()[0]);
+        return getNodes()[0];
+    }
+
+    public TagNode lastTagNode(){
+        if (getNodes()[size() - 1] == null){
+            System.out.println("HELLO");
+        }
+        return getNodes()[size() - 1];
+    }
+    
     /**
      * Get the refrerence nodes of the way.
      * @return Long[] of the reference nodes of the way.
      */
-    public HashMap<Long, TagNode> getRefs() {
-        return (HashMap<Long, TagNode>) this.get(Way.REFS);
-    }
-
-    public TagNode getNodeById(Long id){
-        return getRefs().get(id);
+    public TagNode[] getNodes() {
+        return nodes;
     }
 
     public boolean isEmpty() {
-        return getRefs().size() == 0;
+        return getNodes().length == 0;
     }
 
     public int size() {
-        return getRefs().size();
+        return getNodes().length;
+    }
+
+    public boolean isLine(){
+        return isLine;
+    }
+
+    public int compareTo(TagWay tW){
+
+        int tWLayer = tW.getType().getLayer();
+        int thisLayer = this.getType().getLayer();
+
+        if (thisLayer == tWLayer){
+            return 0;
+        } else if (thisLayer > tWLayer){
+            return 1;
+        } else{
+            return -1;
+        }
+
+
     }
 
     /**
     * Builder for a single way.
     * <p>
-    * Constructs a instance of the builder, that later can be used to construct a {@link TagWay}.
+    * Constructs an instance of the builder, that later can be used to construct a {@link TagWay}.
     * </p>
     */
     public static class WayBuilder {
-        private HashMap<Long, TagNode> refNodes = new HashMap<Long, TagNode>();
+        private ArrayList<TagNode> refNodesList = new ArrayList<TagNode>();
+        private TagNode[] refNodes;
         private boolean isEmpty = true;
         private int speedLimit;
 
@@ -96,33 +177,44 @@ public class TagWay extends Tag<Way>{
             return speedLimit;
         }
 
-        /**
-         * Returns and removes a node from XMLReader node List.
-         * @param id - The id of the node to migrate.
-         * @return The node from the id.
-         */
-        private TagNode migrateNode(Long id){
-            TagNode node = XMLReader.getNodeById(id);
-            if(node != null){
-                XMLReader.getNodeById(id).remove(id, node);
-            }
-            return node;
-        }
-
         public void setSpeedLimit(int speedLimit) {
             isEmpty = false;
             this.speedLimit = speedLimit;
         }
 
-        public void addNode(Long ref) {
+        public void addNode(long ref) {
             if (isEmpty) {
                 isEmpty = false;
             }
-            refNodes.put(ref, migrateNode(ref));
+            refNodesList.add(XMLReader.getNodeById(ref));
         }
 
-        public HashMap<Long, TagNode> getRefNodes() {
-            return refNodes;
+        public void addNode(TagNode node) {
+            if (isEmpty) {
+                isEmpty = false;
+            }
+            refNodesList.add(node);
         }
+
+        public void closeNodeList(){
+
+            refNodes = refNodesList.toArray(new TagNode[refNodesList.size()]);
+            refNodesList.clear();
+        }
+
+        public TagNode[] getRefNodesList() {
+
+            closeNodeList();
+
+            return getRefNodes();
+        }
+
+        public TagNode[] getRefNodes(){
+
+            return refNodes;
+
+        }
+
+
     }
 }

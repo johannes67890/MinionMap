@@ -16,7 +16,6 @@ import javafx.stage.Stage;
 import parser.XMLReader;
 import util.FileDistributer;
 import util.ZipHandler;
-
 public class MainView {
 
     enum StageSelect {
@@ -78,6 +77,7 @@ public class MainView {
         }
 
         if (selectedStage == StageSelect.MapView){
+            System.out.println("INITIALZING");
             drawView.initialize(canvas);
         }
     }
@@ -92,11 +92,18 @@ public class MainView {
     }
 
     public void draw(){
+
+        // long time = System.currentTimeMillis();
+
+
         gc = canvas.getGraphicsContext2D();
         gc.setFill(Color.RED);
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        //zoomLevelText.setText("" + Math.round(drawView.getZoomLevelMeters()) + "m");;
-        drawView.DrawMap(gc, canvas);
+        drawView.DrawMap(canvas);
+
+        // System.out.println(1000 / (System.currentTimeMillis() - time));
+
+
         
     }
 

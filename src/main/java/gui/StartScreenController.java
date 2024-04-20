@@ -4,7 +4,6 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import util.FileDistributer;
-import parser.XMLReader;
 
 import gui.MainView.StageSelect;
 
@@ -18,7 +17,6 @@ import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
 
 public class StartScreenController implements Initializable, ControllerInterface{
 
