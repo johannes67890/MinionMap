@@ -40,10 +40,7 @@ public class TagRelation extends Tag{
         this.relations = builder.getRelationBuilder().getRelations();
         this.nodes = builder.getRelationBuilder().getNodes();
 
-
-
         constructOuterWays();
-
     }
 
     @Override
@@ -74,9 +71,19 @@ public class TagRelation extends Tag{
     public ArrayList<TagWay> getWays(){ return ways; };
     public ArrayList<TagWay> getInner(){ return inner; };
     public ArrayList<TagWay> getOuter(){ return outer; };
+    public ArrayList<TagWay> getActualInner(){ return actualInner ; };
     public ArrayList<TagWay> getActualOuter(){ return actualOuter ; };
     public ArrayList<TagWay> getHandledOuter(){ return handledOuter; };
 
+    // TODO: Implement this method - all the memebers of the relation is empty?
+    // public ArrayList<TagWay> getMembers(){
+    //     ArrayList<TagWay> members = new ArrayList<>();
+    //     members.addAll(ways);
+    //     members.addAll(actualInner);
+    //     members.addAll(actualOuter);
+    //     members.addAll(handledOuter);
+    //     return members;
+    // }
 
     /**
      * Constructs the outer ways as multiple connected polygons or lines,
@@ -203,11 +210,6 @@ public class TagRelation extends Tag{
         }*/
     }
 
-
-
-    
-    public ArrayList<TagWay> getActualInner(){ return actualInner ; };
-
     public Type getType() {
         return type;
     }
@@ -220,24 +222,6 @@ public class TagRelation extends Tag{
         return name;
     }
     
-    // https://wiki.openstreetmap.org/wiki/Relation:multipolygon/Algorithm
-    public void ringAssignment(){
-        //RA1
-        int c = 0;
-        HashMap<TagWay, Boolean> relationWays = new HashMap<TagWay, Boolean>();
-        // collect all ways that are members of the relation and mark them as not assigned
-        relationWays.putAll(ways.stream().collect(HashMap::new, (m, v) -> m.put(v, false), HashMap::putAll));
-        relationWays.putAll(inner.stream().collect(HashMap::new, (m, v) -> m.put(v, false), HashMap::putAll));
-        relationWays.putAll(outer.stream().collect(HashMap::new, (m, v) -> m.put(v, false), HashMap::putAll));
-
-        relationWays.forEach((way, assigned) -> {
-            if(assigned) return;
-            else {
-                TagWay assignedWay = way;
-                assigned = true;
-            }
-        });
-    }
 
     public static class RelationBuilder {
         public TagRelation relation;

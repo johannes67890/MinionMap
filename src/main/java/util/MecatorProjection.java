@@ -4,6 +4,8 @@ import java.lang.Math;
 
 import parser.TagBound;
 import parser.TagNode;
+import parser.TagRelation;
+import parser.TagWay;
 public class MecatorProjection {
   
         private static final double RADIUS = 6378137.0; /* in meters on the equator */
@@ -40,8 +42,8 @@ public class MecatorProjection {
         public static TagNode project(TagNode node){
             return new TagNode(
                 node.getId(),
-                lat2y(node.getLat()),
-                lon2x(node.getLon())
+                projectLat(node.getLat()),
+                projectLon(node.getLon())
             );
         }
 
@@ -57,8 +59,8 @@ public class MecatorProjection {
         public static TagNode project(int id, float x, float y){
             return new TagNode(
                     id,
-                    lat2y(y),
-                    lon2x(x)
+                    projectLat(y),
+                    projectLon(x)
             );
         }
          /**
@@ -73,8 +75,8 @@ public class MecatorProjection {
         public static TagNode project(float x, float y){
             return new TagNode(
                     0,
-                    lat2y(y),
-                    lon2x(x)
+                    projectLat(y),
+                    projectLon(x)
             );
         }
 
@@ -91,8 +93,8 @@ public class MecatorProjection {
             TagNode max = unproject(bound.getMaxLon(), bound.getMaxLat());
             TagNode min = unproject(bound.getMinLon(), bound.getMinLat());
             return new TagBound(
-                max.getLat(),
-                min.getLat(),
+                -max.getLat(),
+                -min.getLat(),
                 min.getLon(),
                 max.getLon()
             );
@@ -110,8 +112,27 @@ public class MecatorProjection {
         public static TagNode unproject(TagNode node){
             return new TagNode(
                 node.getId(),
-                y2lat(node.getLat()),
-                x2lon(node.getLon())
+                unprojectLat(node.getLat()),
+                unprojectLon(node.getLon())
+            );
+        }
+
+         /**
+         * Unprojects a node from the mercator projection.
+         * This takes the {@link TagNode} and turns x and y into lat and lon.
+         * <p>
+         * The lat and lon is in degrees.
+         * </p>
+         * @param node The node to unproject
+         * @return The unprojected node
+         */
+        public static TagWay unproject(TagWay way){
+            return new TagWay(
+                way.getId(),
+                way.getName(),
+                unproject(way.getNodes()),
+                way.getSpeedLimit(),
+                way.getType()
             );
         }
 
@@ -127,27 +148,39 @@ public class MecatorProjection {
         public static TagNode unproject(float x, float y){
             return new TagNode(
                 0,
-                y2lat(y),
-                x2lon(x)
+                unprojectLat(y),
+                unprojectLon(x)
             );
         }
 
         // Projection
         /* These functions take their angle parameter in degrees and return a length in meters */
-        public static final float lat2y(float aLat) {
+        public static final float projectLat(float aLat) {
             return (float) (-Math.log(Math.tan(Math.PI / 4 + Math.toRadians(aLat) / 2)) * RADIUS);
         }  
-        public static float lon2x(float aLong) {
+        public static float projectLon(float aLong) {
             return (float) (Math.toRadians(aLong) * RADIUS);
         }
 
         // Unprojection
         /* These functions take their length parameter in meters and return an angle in degrees */
-        public static float x2lon(float aX) {
+        public static float unprojectLat(float aY) {
+            return (float) (-Math.toDegrees(Math.atan(Math.exp(aY / RADIUS)) * 2 - Math.PI/2));
+        }
+        public static float unprojectLon(float aX) {
             return (float)  Math.toDegrees(aX / RADIUS);
         }
-        public static float y2lat(float aY) {
-            return (float) Math.toDegrees(Math.atan(Math.exp(aY / RADIUS)) * 2 - Math.PI/2);
+        /**
+         * Unprojects a array of nodes from the mercator projection.
+         * @param nodes
+         * @return
+         */
+        private static TagNode[] unproject(TagNode[] nodes) {
+            TagNode[] unprojected = new TagNode[nodes.length];
+            for (int i = 0; i < nodes.length; i++) {
+                unprojected[i] = unproject(nodes[i]);
+            }
+            return unprojected;
         }
 
         // Utility

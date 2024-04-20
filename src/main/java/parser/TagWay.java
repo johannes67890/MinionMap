@@ -38,6 +38,14 @@ public class TagWay extends Tag implements Comparable<TagWay>{
         this.type = builder.getType();
     }
 
+    public TagWay(long id, String name, TagNode[] nodes, int speedLimit, Type type) {
+        this.id = id;
+        this.name = name;
+        this.nodes = nodes;
+        this.speedLimit = speedLimit;
+        this.type = type;
+    }
+
     /**
      * 
      * TagWay that is created from Relation's Outer ways.
@@ -73,6 +81,10 @@ public class TagWay extends Tag implements Comparable<TagWay>{
 
     public int getSpeedLimit(){
         return speedLimit;
+    }
+
+    public String getName(){
+        return name;
     }
 
     /**

@@ -24,7 +24,7 @@ public class TagBound extends Tag implements Comparable<TagBound>{
 
     /**
      * Create a new TagBound with the given values.
-     * @param minlat - The minimum latitude of the bounds.
+     * @param minlat - The minimum latitude of the bounds. 
      * @param maxlat - The maximum latitude of the bounds.
      * @param minlon - The minimum longitude of the bounds.
      * @param maxlon - The maximum longitude of the bounds.
@@ -112,6 +112,10 @@ public class TagBound extends Tag implements Comparable<TagBound>{
     @Override
     public float getLon() {
         throw new UnsupportedOperationException("TagWay does not have a longitude value.");
+    }
+    @Override
+    public String toString(){
+        return "minlat: " + minLat + " maxlat: " + maxLat + " minlon: " + minLon + " maxlon: " + maxLon;
     }
  
 }

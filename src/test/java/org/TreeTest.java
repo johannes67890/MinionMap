@@ -26,7 +26,7 @@ public class TreeTest {
 
     @BeforeEach
     void setUp() {
-        this.reader = new XMLReader("src/test/java/org/ressources/map.osm");
+        this.reader = new XMLReader("src/test/java/org/ressources/testMap.osm");
         ArrayList<Tag> tempList = new ArrayList<>();
         tempList.addAll(XMLReader.getWays().valueCollection());
 

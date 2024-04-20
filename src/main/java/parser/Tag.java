@@ -2,6 +2,8 @@ package parser;
 
 import java.util.HashMap;
 
+import util.MecatorProjection;
+
 /**
  * Abstract class for a tag.
  * <p>
@@ -53,13 +55,32 @@ public abstract class Tag {
 
     /**
      * Check if a tag is within a specified {@link TagBound}.
-     * @param node - The tag to check.
+     * <p>
+     * if the tag is a {@link TagWay} or {@link TagRelation} it will check if any of the nodes or members are within the {@link TagBound}. If yes return true.
+     * </p>
      * @param bound - The {@link TagBound} to check if the tag is within.
      * @return True if the tag is within the {@link TagBound}, false otherwise.
      */
-    public boolean isInBounds(TagBound bound) {
-        return Float.valueOf(this.getLat()).compareTo(bound.getMinLat()) == 1 && Float.valueOf(this.getLat()).compareTo(bound.getMaxLat()) == -1
-            && Float.valueOf(this.getLon()).compareTo(bound.getMinLon()) == 1 && Float.valueOf(this.getLon()).compareTo(bound.getMaxLon()) == -1;
+    public boolean isInBounds(TagBound bound) {        
+        if(this instanceof TagWay) {
+            for (TagNode w  :((TagWay)this).getNodes()) {
+                if(w.isInBounds(bound)) return true;
+            }
+            return false; // if none of the nodes are in bounds
+        }
+        
+        // TODO: Implement this for TagRelation
+        // if(this instanceof TagRelation) {
+        //     for (TagWay r : ((TagRelation)this).getMembers()) {
+        //         if(r.isInBounds(bound)) return true;
+        //     }
+        //     return false; // if none of the members are in bounds
+        // }
+        
+        float lat = MecatorProjection.unprojectLat(this.getLat());
+        float lon = MecatorProjection.unprojectLon(this.getLon());
+        return Float.valueOf(lat).compareTo(MecatorProjection.unproject(bound).getMinLat()) == 1 && Float.valueOf(lat).compareTo(MecatorProjection.unproject(bound).getMaxLat()) == -1
+            && Float.valueOf(lon).compareTo(MecatorProjection.unproject(bound).getMinLon()) == 1 && Float.valueOf(lon).compareTo(MecatorProjection.unproject(bound).getMaxLon()) == -1;
     }
 
 }
