@@ -150,6 +150,16 @@ public class DrawingMap {
         drawWays(sortedWaysToDraw);
     }
 
+    private void drawMarkedTag(Tag<?> tag){
+        if (tag instanceof TagRelation){
+
+        }else if(tag instanceof TagWay){
+
+        }else if(tag instanceof TagNode){
+            
+        }
+    }
+
     /**
      * 
      * Gets all ways in a priorityqueue and draws them based on individual TagWay Types

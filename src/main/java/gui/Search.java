@@ -86,15 +86,18 @@ public class Search {
                 if (topString != null){
 
                     System.out.println("Mente du: " + topString + "?");
+                    a.city = topString;
 
                 } else{System.out.println("This City: " + a.city + " does not exist");}
 
             }
             if(streetNames.contains(a.street)){
                 System.out.println("STREET FOUND: " + a.street);
-                if(getLatitudeByStreet(a.street) > 0 && getLongitudeByStreet(a.street) > 0){
-                    System.out.println("LATITUDE: " + getLatitudeByStreet(a.street));
-                    System.out.println("LONGITUDE: " + getLongitudeByStreet(a.street));
+                double lat = getLatitudeByStreet(a.street);
+                double lon = getLongitudeByStreet(a.street);
+                if(lat != 0 && lon != 0){
+                    System.out.println("LATITUDE(Y): " + lat);
+                    System.out.println("LONGITUDE(X): " + lon);
                 } else{
                     System.out.println("LATITUDE AND LONGITUDE NOT FOUND");
                 }
@@ -104,6 +107,7 @@ public class Search {
 
                 if (topString != null){
                     System.out.println("Mente du: " + topString + "?");
+                    a.street = topString;
                 } else{System.out.println("This City: " + a.street + " does not exist");}
 
             } 
@@ -156,7 +160,16 @@ public class Search {
                 return a.getLat();
             }
         }
-        return -1;
+        return 0;
+    }
+
+    public TagAddress getTagAddressByStreet(String street){
+        for(TagAddress a : addresses.values()){
+            if(a.getStreet().equals(street)){
+                return a;
+            }
+        }
+        return null;
     }
 
     public double getLongitudeByStreet(String street){
@@ -165,7 +178,7 @@ public class Search {
                 return a.getLon();
             }
         }
-        return -1;
+        return 0;
     }
 
 }

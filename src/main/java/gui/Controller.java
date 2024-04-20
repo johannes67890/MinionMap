@@ -164,21 +164,12 @@ public class Controller implements Initializable, ControllerInterface{
         double[] bounds = mainView.getDrawingMap().getScreenBounds();
         double x = ((bounds[2] - bounds[0]) / 2) + bounds[0];
         double y = ((bounds[3] - bounds[1]) / 2) + bounds[1];
-        System.out.println("x: " + x + " | y: " + y);
-        double deltaX = MecatorProjection.lon2x(s.getLongitudeByStreet(addressObj.street)) - x;
-        double deltaY = MecatorProjection.lat2y(s.getLatitudeByStreet(addressObj.street)) - y;
-        System.out.println(deltaX + " delta x");
-        System.out.println(deltaY + " delta y");
-        mainView.getDrawingMap().pan(deltaX, deltaY);
-        System.out.println("x: " + (x * mainView.getDrawingMap().zoomLevel) + " | y: " + (y * mainView.getDrawingMap().zoomLevel));
-
+        double deltaX = s.getLongitudeByStreet(addressObj.street) - x;
+        double deltaY = s.getLatitudeByStreet(addressObj.street) - y;
+        mainView.getDrawingMap().pan(-deltaX, -deltaY);
+        System.out.println(addressObj.toString());
         searchBarStart.getItems().setAll(
-            addressObj.street + " " + 
-            addressObj.house + " " + 
-            addressObj.floor + " " + 
-            addressObj.side + " " + 
-            addressObj.postcode + " " + 
-            addressObj.city
+            addressObj.toString()
         );
         searchBarStart.show();
 

@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import util.MecatorProjection;
+
 enum Address{
     ID, LAT, LON, CITY, COUNTRY, STREET, HOUSENUMBER, POSTCODE, MUNICIPALITY;
 }
@@ -21,8 +23,8 @@ public class TagAddress extends Tag<Address> {
         super(new HashMap<Address, Object>(){
             {
                 put(Address.ID, Long.valueOf(builder.getId()).toString());
-                put(Address.LAT, Double.toString(builder.getLat()));
-                put(Address.LON, Double.toString(builder.getLon()));
+                put(Address.LAT, Double.toString(MecatorProjection.lat2y(builder.getLat())));
+                put(Address.LON, Double.toString(MecatorProjection.lon2x(builder.getLon())));
                 put(Address.STREET, builder.getAddressBuilder().street);
                 put(Address.HOUSENUMBER, builder.getAddressBuilder().house);
                 put(Address.POSTCODE, builder.getAddressBuilder().postcode);
@@ -176,14 +178,44 @@ public class TagAddress extends Tag<Address> {
                     this.city = "";
                 }
 
+                if (matcher.group("postcode") == null){
+                    this.postcode = "";
+                }
+                if (matcher.group("house") == null){
+                    this.house = "";
+                }
+
             } else{
                 throw new IllegalArgumentException("Invalid input");
             }
         }
 
         public String toString() {
-            return street + " " + house + ", " + floor + " " + side + "\n"
-                    + postcode + " " + city;
+            String output = "";
+            if (street != null && !street.isBlank()){
+                output += street;
+                if (house != null && !house.isBlank()){
+                    output += " " + house;
+
+                    if (floor != null && !floor.isBlank()){
+                        output += ", " + floor;
+                    }
+                    if (side != null && !side.isBlank()){
+                        output += " " + side;
+                    }
+                }else{
+                    output += ", ";
+                }
+                if (city != null && !city.isBlank()){
+                    if (postcode != null && !postcode.isBlank()){
+                        output += postcode + " ";
+                    }
+                    output += city;
+                }
+                
+            }
+            return output;
+            //return street + " " + house + ", " + floor + " " + side + "\n" + postcode + " " + city;
         }
     }
 }
