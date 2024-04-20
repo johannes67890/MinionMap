@@ -1,5 +1,6 @@
 package gui;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -42,6 +43,7 @@ public class DrawingMap {
     private List<TagNode> nodes = new ArrayList<>();
     private List<TagWay> ways = new ArrayList<>();
     private List<TagRelation> relations = new ArrayList<>();
+    private Tag<?> markedTag;
 
     private Color currentColor;
 
@@ -148,15 +150,55 @@ public class DrawingMap {
         }
  
         drawWays(sortedWaysToDraw);
+
+        if (markedTag != null){
+            drawMarkedTag(markedTag);
+        }
+    }
+
+    public void setMarkedTag(Tag<?> tag){
+        markedTag = tag;
     }
 
     private void drawMarkedTag(Tag<?> tag){
+        gc.setFill(Color.PINK);
+        gc.setStroke(Color.ORANGE);
+        
         if (tag instanceof TagRelation){
-
+            drawRelation((TagRelation)tag);
         }else if(tag instanceof TagWay){
-
+            drawWay((TagWay) tag, true);
         }else if(tag instanceof TagNode){
-            
+
+        }
+    }
+
+    private void drawPoint(TagNode node){
+        double radius = 1/Math.sqrt(transform.determinant());
+        gc.fillOval(node.getLon(), node.getLat(), radius, radius);
+    }
+
+    private void drawRelation(TagRelation relation){
+        boolean isStarted = false;
+        for (TagWay way : relation.getWays()){
+            if (!isStarted){
+                drawWay(way, true);
+                isStarted = true;
+            }else{
+                drawWay(way, false);
+            }
+        }
+    }
+    
+    private void drawWay(TagWay way, boolean starting){
+        boolean isStarted = !starting;
+        for (TagNode node : way.getNodes()){
+            if (!isStarted){
+                gc.moveTo(node.getLon(), node.getLat());
+                isStarted = true;
+            }else{
+                gc.lineTo(node.getLon(), node.getLat());
+            }
         }
     }
 
