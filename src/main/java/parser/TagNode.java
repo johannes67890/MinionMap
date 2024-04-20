@@ -20,6 +20,11 @@ public class TagNode extends Tag {
         this.lat = lat;
     }
 
+    public TagNode(float lat, float lon) {
+        this.lon = lon;
+        this.lat = lat;
+    }
+
     public TagNode(XMLBuilder builder) {
         this.id = builder.getId();
         this.lon = builder.getLon();

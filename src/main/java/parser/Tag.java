@@ -3,7 +3,7 @@ package parser;
 import java.util.HashMap;
 
 import util.MecatorProjection;
-
+import java.io.Serializable;
 /**
  * Abstract class for a tag.
  * <p>
@@ -32,7 +32,7 @@ import util.MecatorProjection;
  * **Note** that not all tags, like {@link TagRelation} and {@link TagWay} uses {@link #getLat()} and {@link #getLon()} methods.
  * </p>
  */
-public abstract class Tag {
+public abstract class Tag implements Serializable{ 
     public Tag() {}
 
     /**

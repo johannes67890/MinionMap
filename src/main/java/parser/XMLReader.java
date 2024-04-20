@@ -136,6 +136,7 @@ public class XMLReader {
                         String element = reader.getLocalName().intern();
                         if(element.equals("bounds")) {
                             bound = MecatorProjection.project(new TagBound(reader));
+                            new XMLWriter(bound);
                         }else {
                             tempBuilder.parse(element, reader);
                         };
@@ -146,16 +147,20 @@ public class XMLReader {
                         switch (element) {
                             case "node":
                                 if(!tempBuilder.getAddressBuilder().isEmpty()){
+                                    XMLWriter.appendToBinary(new TagAddress(tempBuilder));
                                     addresses.put(tempBuilder.getId(), new TagAddress(tempBuilder));
                                 } else {
+                                    XMLWriter.appendToBinary(new TagNode(tempBuilder));
                                     nodes.put(tempBuilder.getId(), new TagNode(tempBuilder));
                                 }
                                 tempBuilder = new XMLBuilder(); // Reset the builder
                                 break;
                             case "way":
+                                XMLWriter.appendToBinary(new TagWay(tempBuilder));
                                 ways.put(tempBuilder.getId(), new TagWay(tempBuilder));
                                 tempBuilder = new XMLBuilder();
                             case "relation":
+                                XMLWriter.appendToBinary(new TagRelation(tempBuilder));
                                 relations.put(tempBuilder.getId(), new TagRelation(tempBuilder));
                                 tempBuilder = new XMLBuilder();
                                 break;
