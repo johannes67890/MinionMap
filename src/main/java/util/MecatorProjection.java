@@ -23,8 +23,8 @@ public class MecatorProjection {
             TagNode max = project(bound.getMaxLon(), bound.getMaxLat());
             TagNode min = project(bound.getMinLon(), bound.getMinLat());
             return new TagBound(
-                -max.getLat(),
-                -min.getLat(),
+                max.getLat(),
+                min.getLat(),
                 min.getLon(),
                 max.getLon()
             );
@@ -93,8 +93,8 @@ public class MecatorProjection {
             TagNode max = unproject(bound.getMaxLon(), bound.getMaxLat());
             TagNode min = unproject(bound.getMinLon(), bound.getMinLat());
             return new TagBound(
-                -max.getLat(),
-                -min.getLat(),
+                max.getLat(),
+                min.getLat(),
                 min.getLon(),
                 max.getLon()
             );
@@ -156,16 +156,16 @@ public class MecatorProjection {
         // Projection
         /* These functions take their angle parameter in degrees and return a length in meters */
         public static final float projectLat(float aLat) {
-            return (float) (-Math.log(Math.tan(Math.PI / 4 + Math.toRadians(aLat) / 2)) * RADIUS);
+            return (float) (Math.log(Math.tan(Math.PI / 4 + Math.toRadians(aLat) / 2)) * RADIUS);
         }  
         public static float projectLon(float aLong) {
             return (float) (Math.toRadians(aLong) * RADIUS);
         }
 
-        // Unprojection
+        // Unprojections
         /* These functions take their length parameter in meters and return an angle in degrees */
         public static float unprojectLat(float aY) {
-            return (float) (-Math.toDegrees(Math.atan(Math.exp(aY / RADIUS)) * 2 - Math.PI/2));
+            return (float) (Math.toDegrees(Math.atan(Math.exp(aY / RADIUS)) * 2 - Math.PI/2));
         }
         public static float unprojectLon(float aX) {
             return (float)  Math.toDegrees(aX / RADIUS);

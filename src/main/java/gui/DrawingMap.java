@@ -112,7 +112,6 @@ public class DrawingMap {
         long time = System.currentTimeMillis();
 
         handleWays(ways);
-
         handleRelations();
 
         MinPQ<TagWay> sortedWaysToDraw = new MinPQ<>(waysToDrawWithType.size());
@@ -173,12 +172,12 @@ public class DrawingMap {
 
             
             gc.beginPath();
-            gc.moveTo(nodesRef[0].getLon(), nodesRef[0].getLat());
+            gc.moveTo(nodesRef[0].getLon(), -nodesRef[0].getLat());
             
             for (int i = 0; i < nodesRef.length ; i ++){
                 
                 ref = nodesRef[i];
-                currentLat = ref.getLat();
+                currentLat = -ref.getLat();
                 currentLon = ref.getLon();
 
                 gc.lineTo(currentLon, currentLat);
