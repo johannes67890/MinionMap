@@ -2,6 +2,8 @@ package parser;
 
 import java.util.HashMap;
 
+import util.MecatorProjection;
+
 enum Quadrant {
     Q1, Q2, Q3, Q4
 }
@@ -24,14 +26,13 @@ public class Chunk {
         float x2 = tag.getMaxLat();
         float y1 = tag.getMinLon(); 
         float y2 = tag.getMaxLon();
-    
+
         // Calculate the center of the area.
         // x = x1 + (x2 - x1) / 2
         // y = y1 + (y2 - y1) / 2
         // Round to 7 decimal places to avoid floating point errors.
-        float centerX = Math.round((x1 + (x2 - x1) / 2) * 10000000f) / 10000000f;
-        float centerY =  Math.round((y1 + (y2 - y1) / 2) * 10000000f) / 10000000f;
-        
+        float centerX = Math.round((x1 + (x2 - x1) / 2));
+        float centerY = Math.round((y1 + (y2 - y1) / 2));
         return new TagNode(centerX, centerY);
     }
 

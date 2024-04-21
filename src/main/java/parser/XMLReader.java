@@ -156,11 +156,11 @@ public class XMLReader {
                                 tempBuilder = new XMLBuilder(); // Reset the builder
                                 break;
                             case "way":
-                                XMLWriter.appendToBinary(new TagWay(tempBuilder));
+                                // XMLWriter.appendToBinary(new TagWay(tempBuilder));
                                 ways.put(tempBuilder.getId(), new TagWay(tempBuilder));
                                 tempBuilder = new XMLBuilder();
                             case "relation":
-                                XMLWriter.appendToBinary(new TagRelation(tempBuilder));
+                                // XMLWriter.appendToBinary(new TagRelation(tempBuilder));
                                 relations.put(tempBuilder.getId(), new TagRelation(tempBuilder));
                                 tempBuilder = new XMLBuilder();
                                 break;

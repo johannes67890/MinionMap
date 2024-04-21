@@ -79,6 +79,10 @@ public class TagWay extends Tag implements Comparable<TagWay>{
         throw new UnsupportedOperationException("TagWay does not have a longitude value.");
     }
 
+    public String toString(){
+        return "ID: " + id + " " + nodes[0].getLat() + " " + nodes[0].getLon() ;
+    }
+
     public int getSpeedLimit(){
         return speedLimit;
     }
@@ -153,9 +157,9 @@ public class TagWay extends Tag implements Comparable<TagWay>{
         } else{
             return -1;
         }
-
-
     }
+
+
 
     /**
     * Builder for a single way.

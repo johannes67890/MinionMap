@@ -8,6 +8,12 @@ public class XMLWriter {
     private static int chunkId = 0;
 
     public XMLWriter(TagBound bounds) {
+        // Check if the directoryPath folder exists, if not, create it
+        File directory = new File(directoryPath);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
         initChunkFiles(bounds);    
     }
 
@@ -39,7 +45,7 @@ public class XMLWriter {
         
     }
 
-    public static void appendToBinary(Tag node) throws IOException {
+    public synchronized static void appendToBinary(Tag node) throws IOException {
         ObjectOutputStream oos=null;
         
         for (TagBound bound : chunkFiles.getChunkFiles().keySet()) {

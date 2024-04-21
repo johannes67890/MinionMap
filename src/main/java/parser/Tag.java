@@ -77,10 +77,12 @@ public abstract class Tag implements Serializable{
         //     return false; // if none of the members are in bounds
         // }
         
-        float lat = MecatorProjection.unprojectLat(this.getLat());
-        float lon = MecatorProjection.unprojectLon(this.getLon());
-        return Float.valueOf(lat).compareTo(MecatorProjection.unproject(bound).getMinLat()) == 1 && Float.valueOf(lat).compareTo(MecatorProjection.unproject(bound).getMaxLat()) == -1
-            && Float.valueOf(lon).compareTo(MecatorProjection.unproject(bound).getMinLon()) == 1 && Float.valueOf(lon).compareTo(MecatorProjection.unproject(bound).getMaxLon()) == -1;
+        // float lat = MecatorProjection.unprojectLat(this.getLat());
+        // float lon = MecatorProjection.unprojectLon(this.getLon());
+        
+        
+        return Float.valueOf(this.getLat()).compareTo(bound.getMinLat()) == 1 && Float.valueOf(this.getLat()).compareTo(bound.getMaxLat()) == -1
+            && Float.valueOf(this.getLon()).compareTo(bound.getMinLon()) == 1 && Float.valueOf(this.getLon()).compareTo(bound.getMaxLon()) == -1;
     }
 
 }
