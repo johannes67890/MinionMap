@@ -18,16 +18,18 @@ public class XMLWriter {
     }
 
     public void initChunkFiles(TagBound bounds) {   
-        // Split the bounds into smaller chunks
         for (TagBound parentChunk : Chunk.getQuadrants(bounds).values()) {
-            Chunk childChunk = new Chunk(parentChunk); 
-            
-            for (int j = 0; j < 4; j++) {
-                // Get one of the four quadrants in the chunk
-                TagBound child = childChunk.getQuadrant(j);
-                // Create the chunk file
-                createBinaryChunkFile(directoryPath + "chunk_" + chunkId + ".bin", child);
-                chunkId++;
+            for (TagBound midChunk : Chunk.getQuadrants(parentChunk).values()) {
+                for (TagBound smallChunk : Chunk.getQuadrants(midChunk).values()) {
+                    Chunk childChunk = new Chunk(smallChunk); 
+                    for (int j = 0; j < 4; j++) {
+                        // Get one of the four quadrants in the chunk
+                        TagBound child = childChunk.getQuadrant(j);
+                        // Create the chunk file
+                        createBinaryChunkFile(directoryPath + "chunk_" + chunkId + ".bin", child);
+                        chunkId++;
+                    }
+                }
             }
         }
     }
