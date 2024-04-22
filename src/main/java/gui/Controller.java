@@ -9,15 +9,13 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import parser.XMLReader;
+import parser.TagAddress;
 import parser.TagAddress.SearchAddress;
-import util.MecatorProjection;
 
 public class Controller implements Initializable, ControllerInterface{
     
@@ -38,6 +36,8 @@ public class Controller implements Initializable, ControllerInterface{
 
     private boolean isMenuOpen = false;
     private static MainView mainView;
+    private String selectedItem;
+    private String selectedEndItem;
     Search s = new Search();
 
     double lastX;
@@ -123,17 +123,17 @@ public class Controller implements Initializable, ControllerInterface{
         });
 
         // TODO: remake this function so it registers everytime the value is changed!
+        
+        searchBarStart.valueProperty().addListener((observable, oldValue, newValue) -> {
+            search(newValue, true);
+        });
+
         searchBarStart.setOnAction((ActionEvent e) -> {
-            
-            if (searchBarStart.getValue().equals("")){
-                setEnableDestinationTextField(false);
-            }else{
-                setEnableDestinationTextField(true);
-                search(searchBarStart.getValue());
-            }
+            System.out.println("selected: " + searchBarStart.getSelectionModel().getSelectedItem());
         });
 
         //Will be changed later
+        /*
         searchBarDestination.setOnAction((ActionEvent e) -> {
             System.out.println("Searching for destination: " + searchBarDestination.getValue());
             search(searchBarDestination.getValue());
@@ -143,8 +143,13 @@ public class Controller implements Initializable, ControllerInterface{
             System.out.println("Searching for destination: " + searchBarDestination.getValue());
             search(searchBarStart.getValue());
         });
+        */
+
+        
 
     }
+
+     
 
     private void setEnableDestinationTextField(boolean isEnabled){
         if (isEnabled){
@@ -155,24 +160,53 @@ public class Controller implements Initializable, ControllerInterface{
         searchBarDestination.setVisible(isEnabled);
     }
 
+    private void chooseDestination(String text, boolean isLeft){
+        if (isLeft){
+            showAddress(text);
+        }else{
+        }
+    }
 
-    private void search(String address){
-        //Search s = new Search(XMLReader.getAddresses());
-        //System.out.println(s.toString());
+
+    private void search(String address, boolean isStart){
         // Vi har skærmkoordinater i xy og canvas witdh and height
+        SearchAddress addressObj = s.searchForAddress(address);
+        System.out.println("addressObj: " + addressObj.toString());
+        if (isStart && (selectedItem == null || !selectedItem.equals(addressObj.toString()))){
+            searchBarStart.getItems().add(0, addressObj.toString());
+            if (!searchBarStart.isShowing()){
+                searchBarStart.show();
+            }
+
+        }else if (!isStart && (selectedEndItem == null || !selectedEndItem.equals(addressObj.toString()))){
+            searchBarDestination.getItems().add(0, addressObj.toString());
+            if (!searchBarDestination.isShowing()){
+                searchBarDestination.show();
+            }
+        }else{
+            if (isStart){
+                chooseDestination(selectedItem, true);
+            }else{
+                chooseDestination(selectedEndItem, false);
+            }
+        }
+        if (isStart){
+            selectedItem = addressObj.toString();
+        }else{
+            selectedEndItem = addressObj.toString();
+        }
+
+    }
+
+    private void showAddress(String address){
         SearchAddress addressObj = s.searchForAddress(address);
         double[] bounds = mainView.getDrawingMap().getScreenBounds();
         double x = ((bounds[2] - bounds[0]) / 2) + bounds[0];
         double y = ((bounds[3] - bounds[1]) / 2) + bounds[1];
-        double deltaX = s.getLongitudeByStreet(addressObj.street) - x;
-        double deltaY = s.getLatitudeByStreet(addressObj.street) - y;
+        TagAddress tagAddress = s.getTagAddressByStreet(addressObj.street);
+        double deltaX = tagAddress.getLon() - x;
+        double deltaY = tagAddress.getLat() - y;
         mainView.getDrawingMap().pan(-deltaX, -deltaY);
-        System.out.println(addressObj.toString());
-        searchBarStart.getItems().setAll(
-            addressObj.toString()
-        );
-        searchBarStart.show();
-
     }
 
 }

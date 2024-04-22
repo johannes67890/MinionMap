@@ -133,7 +133,10 @@ public class TagAddress extends Tag<Address> {
         public SearchAddress(String input){
             final String REGEX = "(?<street>[A-Za-zØÆÅåæø ]+)? ?(?<house>[0-9]{1,3}[A-Za-z]{0,2})? ?(?<floor> st| [0-9]{1,3})? ?(?<side>tv|th|mf)?\\.? ?(?<postcode>[0-9]{4})? ?(?<city>[A-Za-ØÆÅåøæ ]+)?$";
             final Pattern PATTERN = Pattern.compile(REGEX);
-
+            
+            if (input == null){
+                throw new IllegalArgumentException("SearchAddress input is null");
+            }
             Matcher matcher = PATTERN.matcher(input);
 
             if(matcher.matches()){
@@ -186,7 +189,7 @@ public class TagAddress extends Tag<Address> {
                 }
 
             } else{
-                throw new IllegalArgumentException("Invalid input");
+                throw new IllegalArgumentException("Invalid input: " + input);
             }
         }
 
@@ -198,13 +201,13 @@ public class TagAddress extends Tag<Address> {
                     output += " " + house;
 
                     if (floor != null && !floor.isBlank()){
-                        output += ", " + floor;
+                        output += " " + floor;
                     }
                     if (side != null && !side.isBlank()){
                         output += " " + side;
                     }
                 }else{
-                    output += ", ";
+                    output += " ";
                 }
                 if (city != null && !city.isBlank()){
                     if (postcode != null && !postcode.isBlank()){

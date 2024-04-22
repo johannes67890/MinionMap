@@ -72,6 +72,7 @@ public class Search {
      * @param input String that will be contructed into an address.
      */
     public SearchAddress searchForAddress(String input/*, TextArea output*/){
+        
         SearchAddress a = new SearchAddress(input);
             //output.setText(a.toString());
 
@@ -127,19 +128,19 @@ public class Search {
      * @return a string in the list that resembles s the most
      */
     public String findSimilar(ArrayList<String> list, String s){
-        String topString = null;
+        String nearestWord = null;
 
         int maxSim = Integer.MAX_VALUE;
         int current;
 
-        for (String cityName : cityNames){
-            current = util.StringUtility.getLevenshteinDistance(cityName, s);
+        for (String comparatorString : list){
+            current = util.StringUtility.getLevenshteinDistance(comparatorString, s);
             if (current < maxSim){
                 maxSim = current;
-                topString = cityName;
+                nearestWord = comparatorString;
             }
         }
-        return topString;
+        return nearestWord;
     }
 
     public ArrayList<String> getCities(){
