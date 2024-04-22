@@ -86,8 +86,8 @@ public class ChunkTest {
             float minLon = this.chunck.getQuadrant(i).getMinLon();
             float maxLon = this.chunck.getQuadrant(i).getMaxLon();
 
-            assertTrue(Float.compare(minLat, maxLat) == -1, "Did not pass for Quadrant: " + (i+1));   
-            assertTrue(Float.compare(minLon, maxLon) == -1, "Did not pass for Quadrant: " + (i+1));
+            assertTrue(Float.compare(minLat, maxLat) < 0, "Did not pass for Quadrant: " + (i+1));   
+            assertTrue(Float.compare(minLon, maxLon) < 0, "Did not pass for Quadrant: " + (i+1));
         }
     }
     
