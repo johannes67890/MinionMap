@@ -2,8 +2,6 @@ package gui;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import javafx.scene.control.TextArea;
 import parser.TagAddress;
 import parser.TagAddress.SearchAddress;
 import parser.XMLReader;
@@ -27,8 +25,6 @@ public class Search {
         cityNames = new ArrayList<>();
         streetNames = new ArrayList<>();
         postCodes = new ArrayList<>();
-        //String current;
-        //String[] splitCurrent;
 
         //Adding addresses from XMLReader into the lists
         for (TagAddress a : addresses.values()){
@@ -36,31 +32,6 @@ public class Search {
             streetNames.add(a.getStreet());
             postCodes.add(a.getPostcode());
         }
-        
-        /*try{
-
-            BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/citynames.txt"));
-            while (reader.ready()) {
-                cityNames.add(reader.readLine());
-            }
-            reader.close();
-            reader = new BufferedReader(new FileReader("src/main/resources/streetnames.txt"));
-            while (reader.ready()){
-                streetNames.add(reader.readLine());
-            }
-            reader.close();
-            reader = new BufferedReader(new FileReader("src/main/resources/postnumre.txt"));
-            while (reader.ready()){
-                current = reader.readLine();
-                splitCurrent = current.split(" ");
-
-                postCodes.add(splitCurrent[0]);
-            }
-            reader.close();
-        
-        } catch(IOException e){
-            System.out.println("FILE NOT FOUND");
-        }*/
     }
 
 
@@ -71,10 +42,9 @@ public class Search {
      * 
      * @param input String that will be contructed into an address.
      */
-    public SearchAddress searchForAddress(String input/*, TextArea output*/){
+    public SearchAddress searchForAddress(String input){
         
         SearchAddress a = new SearchAddress(input);
-            //output.setText(a.toString());
 
             long time = System.currentTimeMillis();
 
@@ -164,15 +134,6 @@ public class Search {
         return 0;
     }
 
-    public TagAddress getTagAddressByStreet(String street){
-        for(TagAddress a : addresses.values()){
-            if(a.getStreet().equals(street)){
-                return a;
-            }
-        }
-        return null;
-    }
-
     public double getLongitudeByStreet(String street){
         for(TagAddress a : addresses.values()){
             if(a.getStreet().equals(street)){
@@ -180,6 +141,15 @@ public class Search {
             }
         }
         return 0;
+    }
+
+    public TagAddress getTagAddressByStreet(String street){
+        for(TagAddress a : addresses.values()){
+            if(a.getStreet().equals(street)){
+                return a;
+            }
+        }
+        return null;
     }
 
 }
