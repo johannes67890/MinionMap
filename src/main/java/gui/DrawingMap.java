@@ -77,10 +77,10 @@ public class DrawingMap {
         double maxlon = bound.getMaxLon();
         double minlat = bound.getMinLat();
 
-        // ArrayList<Tag> tempList = new ArrayList<>();
-        // tempList.addAll(XMLReader.getWays().valueCollection());
-        // tempList.addAll(XMLReader.getRelations().valueCollection());
-        // Tree.initialize(tempList);;
+        ArrayList<Tag> tempList = new ArrayList<>();
+        tempList.addAll(XMLReader.getWays().valueCollection());
+        tempList.addAll(XMLReader.getRelations().valueCollection());
+        Tree.initialize(tempList);
         pan(-minlon, minlat);
         zoom(canvas.getWidth() / (maxlon - minlon), 0, 0);
         DrawMap(canvas);
@@ -94,11 +94,11 @@ public class DrawingMap {
 
     public void DrawMap(ResizableCanvas canvas){
         // TODO:
-        // long preTime = System.currentTimeMillis();
-        // this.canvas = canvas;
-        // if (!Tree.isLoaded()){
-        //     return;
-        // }
+        long preTime = System.currentTimeMillis();
+        this.canvas = canvas;
+        if (!Tree.isLoaded()){
+            return;
+        }
 
         //Resfreshes the screen
         gc = canvas.getGraphicsContext2D();
@@ -121,26 +121,26 @@ public class DrawingMap {
         currentColor = Color.BLACK;
 
         // TODO:
-        // double[] canvasBounds = getScreenBoundsBigger(0.05);
-        // RectHV rect = new RectHV(canvasBounds[0], canvasBounds[1], canvasBounds[2], canvasBounds[3]);
+        double[] canvasBounds = getScreenBoundsBigger(0.05);
+        RectHV rect = new RectHV(canvasBounds[0], canvasBounds[1], canvasBounds[2], canvasBounds[3]);
 
-        // nodes = new ArrayList<>();
-        // ways = new ArrayList<>();
-        // relations = new ArrayList<>();
+        nodes = new ArrayList<>();
+        ways = new ArrayList<>();
+        relations = new ArrayList<>();
 
-        // HashSet<Tag> tags = Tree.getTagsInBounds(rect);
+        HashSet<Tag> tags = Tree.getTagsInBounds(rect);
 
-        // for(Tag tag : tags){
-        //     if (tag instanceof TagNode){
-        //         nodes.add((TagNode) tag);
-        //     }else if (tag instanceof TagWay){
-        //         TagWay way = (TagWay) tag;
-        //         ways.add(way);
-        //     }else if (tag instanceof TagRelation){
-        //         TagRelation relation = (TagRelation) tag;
-        //         relations.add(relation);
-        //     }
-        // }
+        for(Tag tag : tags){
+            if (tag instanceof TagNode){
+                nodes.add((TagNode) tag);
+            }else if (tag instanceof TagWay){
+                TagWay way = (TagWay) tag;
+                ways.add(way);
+            }else if (tag instanceof TagRelation){
+                TagRelation relation = (TagRelation) tag;
+                relations.add(relation);
+            }
+        }
 
         waysToDrawWithType = new ArrayList<>();
         waysToDrawWithoutType = new ArrayList<>();
@@ -284,7 +284,7 @@ public class DrawingMap {
     }
 
 
-      /**
+    /**
      * Calculates the coordinates the screen sees and returns a array of coordinates.
      * Index 0: X - Minimum
      * Index 1: Y - Minimum
@@ -295,7 +295,7 @@ public class DrawingMap {
     public double[] getScreenBounds(){
         double[] bounds = new double[4]; // x_min ; y_min ; x_max ; y_max
         bounds[0] = -(transform.getTx() / Math.sqrt(transform.determinant()));
-        bounds[1] = (-transform.getTy()) / Math.sqrt(transform.determinant());
+        bounds[1] = -(-transform.getTy()) / Math.sqrt(transform.determinant());
         bounds[2] = ((canvas.getWidth()) / zoomLevel) + bounds[0];
         bounds[3] = ((canvas.getHeight()) / zoomLevel) + bounds[1];
         return bounds;
