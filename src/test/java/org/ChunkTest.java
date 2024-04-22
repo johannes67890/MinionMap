@@ -70,6 +70,8 @@ public class ChunkTest {
         TagBound q3 = chunck.getQuadrantThree();
         TagBound q4 = chunck.getQuadrantFour();
 
+        
+
         assertTrue(node.isInBounds(chunck.getQuadrantOne()));
         assertFalse(node.isInBounds(chunck.getQuadrantTwo()));
         assertFalse(node.isInBounds(chunck.getQuadrantThree()));
