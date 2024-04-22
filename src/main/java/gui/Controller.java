@@ -2,28 +2,45 @@ package gui;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import gui.GraphicsHandler.GraphicStyle;
 import gui.MainView.StageSelect;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 
 public class Controller implements Initializable, ControllerInterface{
     
+
+    ObservableList<String> style = FXCollections.observableArrayList(
+        "default", "dark", "gray scale");
+
     @FXML private Button menuButton1;
     @FXML private Button menuButton2;
+    @FXML private Button menuButton3;
     @FXML private Button layerButton;
     @FXML private Button searchButton;
     @FXML private Pane leftBurgerMenu;
     @FXML private TextField searchBarStart;
     @FXML private TextField searchBarDestination;
     @FXML private Button mainMenuButton;
+    @FXML private VBox mainMenuVBox;
+    @FXML private VBox graphicVBox;
     @FXML private HBox mainUIHBox;
     @FXML private BorderPane mainBorderPane;
+    @FXML private ChoiceBox<String> styleChoiceBox;
+
+
+
+
 
     private boolean isMenuOpen = false;
     private static MainView mainView;
@@ -83,18 +100,71 @@ public class Controller implements Initializable, ControllerInterface{
     @Override
     public void initialize(URL location, ResourceBundle resources) { // This runs when the fxml is loaded and the canvas is injected (before stage is shown)
 
+        mainMenuVBox.setVisible(false);
+        leftBurgerMenu.setVisible(false);
+        graphicVBox.setVisible(false);
+
+        styleChoiceBox.setItems(style);
+        styleChoiceBox.setValue("default");
+
+        styleChoiceBox.setOnAction((ActionEvent e) -> {
+            
+            switch(styleChoiceBox.getValue()){
+                case "default" : {
+
+                    GraphicsHandler.setGraphicsStyle(GraphicStyle.DEFAULT);
+                    mainView.draw();
+
+                    System.out.println("HELLO");
+                    break;
+                }
+                case "dark" : {
+                    System.out.println("DARKMODE");
+                    GraphicsHandler.setGraphicsStyle(GraphicStyle.DARKMODE);
+                    mainView.draw();
+
+                    break;
+
+                }
+                case "gray scale" : {
+                    System.out.println("GRAY SCALE");
+                    GraphicsHandler.setGraphicsStyle(GraphicStyle.GRAYSCALE);
+                    mainView.draw();
+                    break;
+
+
+                }
+            }
+
+
+        });
+
+
         mainMenuButton.setOnAction((ActionEvent e) -> {
             mainView.drawScene(StageSelect.MainMenu);
         });
 
         menuButton1.setOnAction((ActionEvent e) -> {
             leftBurgerMenu.setVisible(!isMenuOpen);
+            mainMenuVBox.setVisible(!isMenuOpen);
             isMenuOpen = !isMenuOpen;
         });
         menuButton2.setOnAction((ActionEvent e) -> {
             leftBurgerMenu.setVisible(!isMenuOpen);
+            mainMenuVBox.setVisible(!isMenuOpen);
             isMenuOpen = !isMenuOpen;
         });
+        menuButton3.setOnAction((ActionEvent e) -> {
+            leftBurgerMenu.setVisible(!isMenuOpen);
+            graphicVBox.setVisible(!isMenuOpen);
+            isMenuOpen = !isMenuOpen;
+        });
+        layerButton.setOnAction((ActionEvent e) -> {
+            graphicVBox.setVisible(true);
+            mainMenuVBox.setVisible(false);
+
+        });
+
 
         searchBarStart.setOnAction((ActionEvent e) -> {
             System.out.println("Searching for startpoint: " + searchBarStart.getText());

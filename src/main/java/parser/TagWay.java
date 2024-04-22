@@ -17,21 +17,33 @@ enum Way {
  * {@link Way#ID}, {@link Way#REFS}, {@link Way#NAME}, {@link Way#TYPE}
  * </p>
  */
-public class TagWay extends Tag<Way> implements Comparable<TagWay>{
+public class TagWay extends Tag implements Comparable<TagWay>{
 
 
     boolean isLine = false;
 
+    long id;
+    String name;
+    TagNode[] nodes;
+    int speedLimit;
+    Type type;
+
+
+
     public TagWay(XMLBuilder builder) {
-        super(new HashMap<Way, Object>(){
-            {
-                put(Way.ID, builder.getId());
-                put(Way.NAME, builder.getName());
-                put(Way.REFS, builder.getWayBuilder().getRefNodes());
-                put(Way.SPEEDLIMIT, builder.getWayBuilder().getSpeedLimit());
-                put(Way.TYPE, builder.getType());     
-            }
-        });
+        this.id = builder.getId();
+        this.name = builder.getName();
+        this.nodes = builder.getWayBuilder().getRefNodesList();
+        this.speedLimit = builder.getWayBuilder().getSpeedLimit();
+        this.type = builder.getType();
+    }
+
+    public TagWay(long id, String name, TagNode[] nodes, int speedLimit, Type type) {
+        this.id = id;
+        this.name = name;
+        this.nodes = nodes;
+        this.speedLimit = speedLimit;
+        this.type = type;
     }
 
     /**
@@ -40,19 +52,15 @@ public class TagWay extends Tag<Way> implements Comparable<TagWay>{
      * 
      * @param builder
      */
-    public TagWay(TagRelation relation, long id, ArrayList<TagNode> nodes, int speedLimit) {
-        super(new HashMap<Way, Object>(){
-            {
-                put(Way.ID, id);
-                put(Way.NAME, relation.getName());
-                put(Way.REFS, nodes);
-                put(Way.SPEEDLIMIT, speedLimit);
-                put(Way.TYPE, relation.getType());     
-            }
-        });
+    public TagWay(TagRelation relation, long id, TagNode[] nodes, int speedLimit) {
+        this.id = id;
+        this.name = relation.getName();
+        this.nodes = nodes;
+        this.speedLimit = speedLimit;
+        this.type = relation.getType();
+
+
     }
-
-
 
     /**
      * Get the id of the way.
@@ -60,19 +68,27 @@ public class TagWay extends Tag<Way> implements Comparable<TagWay>{
      */
 
      public long getId(){
-        return Long.parseLong(this.get(Way.ID).toString());
+        return id;
     }
-    public double getLat() {
+    public float getLat() {
         throw new UnsupportedOperationException("TagWay does not have a latitude value.");
     }
 
 
-    public double getLon() {
+    public float getLon() {
         throw new UnsupportedOperationException("TagWay does not have a longitude value.");
     }
 
+    public String toString(){
+        return "ID: " + id + " " + nodes[0].getLat() + " " + nodes[0].getLon() ;
+    }
+
     public int getSpeedLimit(){
-        return Integer.parseInt(this.get(Way.SPEEDLIMIT).toString());
+        return speedLimit;
+    }
+
+    public String getName(){
+        return name;
     }
 
     /**
@@ -80,40 +96,49 @@ public class TagWay extends Tag<Way> implements Comparable<TagWay>{
      * @return The {@link Type} of the way.
      */
     public Type getType() {
-        return (Type) this.get(Way.TYPE);
+        return type;
     }
     public void setType(Type t){
-        put(Way.TYPE, t);     
+        type = t;     
     }
 
     public boolean loops(){
-        if (!getNodes().isEmpty()){
-            return getNodes().get(0).equals(getNodes().get(size() - 1));
-        } else{return false;}
+        if (getNodes()[0] != null){
+
+            return getNodes()[0].getId() == getNodes()[size() - 1].getId();
+        } else{
+            return false;}
     }
 
     public TagNode firsTagNode(){
-        return getNodes().get(0);
+        if (getNodes()[0] == null){
+            System.out.println("HELLO");
+        }
+        //System.out.println(getNodes()[0]);
+        return getNodes()[0];
     }
 
     public TagNode lastTagNode(){
-        return getNodes().get(size() - 1);
+        if (getNodes()[size() - 1] == null){
+            System.out.println("HELLO");
+        }
+        return getNodes()[size() - 1];
     }
     
     /**
      * Get the refrerence nodes of the way.
      * @return Long[] of the reference nodes of the way.
      */
-    public ArrayList<TagNode> getNodes() {
-        return (ArrayList<TagNode>) this.get(Way.REFS);
+    public TagNode[] getNodes() {
+        return nodes;
     }
 
     public boolean isEmpty() {
-        return getNodes().size() == 0;
+        return getNodes().length == 0;
     }
 
     public int size() {
-        return getNodes().size();
+        return getNodes().length;
     }
 
     public boolean isLine(){
@@ -132,9 +157,9 @@ public class TagWay extends Tag<Way> implements Comparable<TagWay>{
         } else{
             return -1;
         }
-
-
     }
+
+
 
     /**
     * Builder for a single way.
@@ -143,27 +168,10 @@ public class TagWay extends Tag<Way> implements Comparable<TagWay>{
     * </p>
     */
     public static class WayBuilder {
-        private TagNode tailNode;
-        private TagNode headNode;
-        private ArrayList<TagNode> refNodes = new ArrayList<TagNode>();
+        private ArrayList<TagNode> refNodesList = new ArrayList<TagNode>();
+        private TagNode[] refNodes;
         private boolean isEmpty = true;
         private int speedLimit;
-        
-        public void addNode(Long ref) {
-            TagNode node = XMLReader.getNodeById(ref);
-            if(node == null){
-                
-            }
-            if (isEmpty) {
-                this.tailNode = node;
-                isEmpty = false;
-            }
-            refNodes.add(node);
-
-            
-
-            
-        }
 
         public boolean isEmpty() {
             return isEmpty;
@@ -178,10 +186,39 @@ public class TagWay extends Tag<Way> implements Comparable<TagWay>{
             this.speedLimit = speedLimit;
         }
 
-
-        public ArrayList<TagNode> getRefNodes() {
-            // this.headNode = refNodes.getLast();
-            return refNodes;
+        public void addNode(long ref) {
+            if (isEmpty) {
+                isEmpty = false;
+            }
+            refNodesList.add(XMLReader.getNodeById(ref));
         }
+
+        public void addNode(TagNode node) {
+            if (isEmpty) {
+                isEmpty = false;
+            }
+            refNodesList.add(node);
+        }
+
+        public void closeNodeList(){
+
+            refNodes = refNodesList.toArray(new TagNode[refNodesList.size()]);
+            refNodesList.clear();
+        }
+
+        public TagNode[] getRefNodesList() {
+
+            closeNodeList();
+
+            return getRefNodes();
+        }
+
+        public TagNode[] getRefNodes(){
+
+            return refNodes;
+
+        }
+
+
     }
 }

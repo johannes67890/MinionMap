@@ -47,8 +47,7 @@ public class Digraph {
     private int E;
     private TreeMap<TagNode, ArrayList<DirectedEdge>> adj;
     private TreeMap<TagNode, ArrayList<DirectedEdge>> indegree; // indegree[v] = indegree of vertex v
-
-
+    private TreeMap<TagNode, ArrayList<DirectedEdge>> outdegree; 
     /**
      * Initializes an empty edge-weighted graph with 0 edges.
      */
@@ -56,7 +55,8 @@ public class Digraph {
         this.V = 0;
         this.E = 0;
         adj = new TreeMap<>(); 
-        
+        indegree = new TreeMap<>();
+        outdegree = new TreeMap<>();
     }
 
     /**
@@ -91,7 +91,7 @@ public class Digraph {
         TagNode v = e.from();
         TagNode w = e.to();
 
-        if(adj.containsKey(v)){
+        if (adj.containsKey(v)) {
             adj.get(v).add(e);
         } else {
             ArrayList<DirectedEdge> list = new ArrayList<>();
@@ -105,6 +105,25 @@ public class Digraph {
             list.add(e);
             adj.put(w, list);
         }
+
+        // Add to indegree
+        if (indegree.containsKey(w)) {
+            indegree.get(w).add(e);
+        } else {
+            ArrayList<DirectedEdge> list = new ArrayList<>();
+            list.add(e);
+            indegree.put(w, list);
+        }
+
+        // Add to outdegree
+        if (outdegree.containsKey(v)) {
+            outdegree.get(v).add(e);
+        } else {
+            ArrayList<DirectedEdge> list = new ArrayList<>();
+            list.add(e);
+            outdegree.put(v, list);
+        }
+
         E++;
         V = adj.size();
     }
@@ -144,7 +163,7 @@ public class Digraph {
      * @throws IllegalArgumentException unless {@code 0 <= v < V}
      */
     public int outdegree(TagNode v) {
-        return adj.get(v).size();
+        return outdegree.get(v).size();
     }
 
     /**
