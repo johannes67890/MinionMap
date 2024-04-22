@@ -2,18 +2,25 @@ package gui;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.princeton.cs.algs4.Point2D;
+import edu.princeton.cs.algs4.RectHV;
+
+import java.util.HashSet;
+
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
+import parser.Tag;
 import parser.TagBound;
 import parser.TagNode;
 import parser.TagRelation;
 import parser.TagWay;
 import parser.XMLReader;
 import util.MathUtil;
-import util.MinPQ;;
+import util.MinPQ;
+import util.Tree;;
 
 /**
  * 
@@ -34,9 +41,9 @@ public class DrawingMap {
     private double[] zoomScales = {32, 16, 8, 4, 2, 1, 0.5, 0.1, 0.05, 0.015, 0.0001}; //
     private double screenWidth;
 
-    private List<TagNode> nodes;
-    private List<TagWay> ways;
-    private List<TagRelation> relations;
+    private List<TagNode> nodes = new ArrayList<>();
+    private List<TagWay> ways = new ArrayList<>();
+    private List<TagRelation> relations = new ArrayList<>();
 
     private Color currentColor;
 
@@ -51,8 +58,9 @@ public class DrawingMap {
     public DrawingMap(MainView mainView, XMLReader reader){
         this.mainView = mainView;
         this.reader = reader;
-        ways = XMLReader.getWays().values().stream().toList();
-        relations = XMLReader.getRelations().values().stream().toList();
+        //nodes = XMLReader.getNodes().values().stream().toList();
+        //ways = XMLReader.getWays().values().stream().toList();
+        //relations = XMLReader.getRelations().values().stream().toList();
     }
 
     /**
@@ -72,7 +80,12 @@ public class DrawingMap {
         double maxlat = bound.getMaxLat();
         double maxlon = bound.getMaxLon();
         double minlat = bound.getMinLat();
-        
+
+
+        ArrayList<Tag<?>> tempList = new ArrayList<>(XMLReader.getNodes().values());
+        tempList.addAll(XMLReader.getWays().values());
+        tempList.addAll(XMLReader.getRelations().values());
+        Tree.initialize(tempList);;
         pan(-minlon, minlat);
         zoom(canvas.getWidth() / (maxlon - minlon), 0, 0);
         DrawMap(canvas);
@@ -85,6 +98,12 @@ public class DrawingMap {
      */
 
     public void DrawMap(ResizableCanvas canvas){
+        long preTime = System.currentTimeMillis();
+        this.canvas = canvas;
+        if (!Tree.isLoaded()){
+            return;
+        }
+
 
         //Resfreshes the screen
         gc = canvas.getGraphicsContext2D();
@@ -94,6 +113,27 @@ public class DrawingMap {
         gc.setTransform(transform);
         currentColor = Color.BLACK;
 
+        double[] canvasBounds = getScreenBoundsBigger(0.05);
+        RectHV rect = new RectHV(canvasBounds[0], canvasBounds[1], canvasBounds[2], canvasBounds[3]);
+        
+        nodes = new ArrayList<>();
+        ways = new ArrayList<>();
+        relations = new ArrayList<>();
+
+        HashSet<Tag<?>> tags = Tree.getTagsInBounds(rect);
+        
+        for(Tag<?> tag : tags){
+            if (tag instanceof TagNode){
+                nodes.add((TagNode) tag);
+            }else if (tag instanceof TagWay){
+                TagWay way = (TagWay) tag;
+                ways.add(way);
+            }else if (tag instanceof TagRelation){
+                TagRelation relation = (TagRelation) tag;
+                relations.add(relation);
+            }
+        }
+        
         waysToDrawWithType = new ArrayList<>();
         waysToDrawWithoutType = new ArrayList<>();
 
@@ -117,7 +157,6 @@ public class DrawingMap {
      * @param ways - the ways to be drawn
      */
     private void drawWays(MinPQ<TagWay> ways){
-
         TagNode[] nodesRef;
 
         double[] xPoints;
@@ -132,7 +171,7 @@ public class DrawingMap {
         double currentLat;
 
         int count = 0;
-        
+
         while (!ways.isEmpty()) {
       
             TagWay tagWay = ways.delMin();
@@ -245,6 +284,34 @@ public class DrawingMap {
         temp = Math.round(temp);
         temp /= 10;
         return temp;
+    }
+
+    /**
+     * Calculates the coordinates the screen sees and returns a array of coordinates.
+     * Index 0: X - Minimum
+     * Index 1: Y - Minimum
+     * Index 2: X - Maximum
+     * Index 3: Y - Maximum
+     * @return It returns the coordinates of the screen to map coordinates in an array (double[])
+     */
+    public double[] getScreenBounds(){
+        double[] bounds = new double[4]; // x_min ; y_min ; x_max ; y_max
+        bounds[0] = -(transform.getTx() / Math.sqrt(transform.determinant()));
+        bounds[1] = (-transform.getTy()) / Math.sqrt(transform.determinant());
+        bounds[2] = ((canvas.getWidth()) / zoomLevel) + bounds[0];
+        bounds[3] = ((canvas.getHeight()) / zoomLevel) + bounds[1];
+        return bounds;
+    }
+
+    public double[] getScreenBoundsBigger(double multiplier){
+        double[] bounds = getScreenBounds();
+        double width = bounds[2] - bounds[0];
+        double height = bounds[3] - bounds[1];
+        bounds[0] -= (width * (1.0 - multiplier));
+        bounds[1] -= (height * (1.0 - multiplier));
+        bounds[2] += (width * (1.0 + multiplier));
+        bounds[3] += (height * (1.0 + multiplier));
+        return bounds;
     }
 
 

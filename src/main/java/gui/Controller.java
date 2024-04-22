@@ -52,11 +52,7 @@ public class Controller implements Initializable, ControllerInterface{
         mainView.loadDrawingMap();
         c.widthProperty().bind(p.widthProperty());
         c.heightProperty().bind(p.heightProperty());
-        
-        
-        System.out.println("DRAWING MAP");
-        
-        
+
         panZoomInitialize();
         
     }
