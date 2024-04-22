@@ -110,11 +110,15 @@ public class TagBound extends Tag implements Comparable<TagBound>{
 
     @Override
     public float getLat() {
-        throw new UnsupportedOperationException("TagWay does not have a latitude value.");
+        throw new UnsupportedOperationException("TagBound does not have a latitude value.");
     }
     @Override
     public float getLon() {
-        throw new UnsupportedOperationException("TagWay does not have a longitude value.");
+        throw new UnsupportedOperationException("TagBound does not have a longitude value.");
+    }
+    @Override
+    public Type getType() {
+        throw new UnsupportedOperationException("TagBound does not have a type.");
     }
     @Override
     public String toString(){

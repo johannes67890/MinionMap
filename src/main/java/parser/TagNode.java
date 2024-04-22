@@ -44,6 +44,11 @@ public class TagNode extends Tag implements Comparable<TagNode> {
         return this.lon;
     }
 
+    @Override
+    public Type getType() {
+        throw new UnsupportedOperationException("TagNode does not have a type.");
+    }
+
     public boolean equals(TagNode tN){
 
         if (this.id == tN.getId()){

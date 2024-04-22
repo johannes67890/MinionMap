@@ -9,21 +9,28 @@ import util.Tree;
 import java.util.HashMap;
 import java.util.Stack;
 
+
+import parser.Tag;
+import parser.TagAddress;
+
 public class Dijsktra {
-    private HashMap<TagNode, Double> distTo;          // distTo[v] = distance  of shortest s->v path
-    private HashMap<TagNode, DirectedEdge> edgeTo;    // edgeTo[v] = last edge on shortest s->v path
+    private HashMap<Tag, Double> distTo;          // distTo[v] = distance  of shortest s->v path
+    private HashMap<Tag, DirectedEdge> edgeTo;    // edgeTo[v] = last edge on shortest s->v path
     private IndexMinPQ<Double> pq;    // priority queue of vertices
     
        
 
-    Dijsktra(Digraph G, TagNode start, TagNode f) {
+    Dijsktra(Digraph G, Tag start, Tag f) {
+
         for (DirectedEdge e : G.edges()) {
             if (e.weight() < 0)
                 throw new IllegalArgumentException("edge " + e + " has negative weight");
         }
 
+
+
         distTo = new HashMap<>();
-        edgeTo = new HashMap<TagNode, DirectedEdge>(G.V());
+        edgeTo = new HashMap<Tag, DirectedEdge>(G.V());
        
         for (TagNode v : G.vertices()) {
             distTo.put(v, Double.POSITIVE_INFINITY);   

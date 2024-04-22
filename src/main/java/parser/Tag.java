@@ -53,6 +53,8 @@ public abstract class Tag implements Serializable{
      */
     public abstract float getLon();
 
+    public abstract Type getType();
+
     /**
      * Check if a tag is within a specified {@link TagBound}.
      * <p>

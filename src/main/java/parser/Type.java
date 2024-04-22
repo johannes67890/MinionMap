@@ -27,7 +27,7 @@ import javafx.scene.paint.Paint;
 *  <li>isLine ({@link Boolean}) - Determines to be drawn as a line or polygon</li> * </ul>
  * </p>
  */
-public enum Type {
+public enum Type  {
 
     REGION("place", new String[]{"island", ""}, 10, 2, Color.LIGHTYELLOW.desaturate(), Color.YELLOW, 5, false),
     BOUNDARY("boundary", new String[]{"administrative"}, 10, 2, Color.LIGHTYELLOW.desaturate(), Color.YELLOW, 5, false),
@@ -250,5 +250,11 @@ public enum Type {
         return maxWidth;
     }
 
+    public boolean equals(Type type) {
+        if(this instanceof Type){
+            this.getKey().equals(type.getKey());   
+        }
+        return false;
+    }
 
 }

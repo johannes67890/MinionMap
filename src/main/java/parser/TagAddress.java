@@ -51,6 +51,11 @@ public class TagAddress extends Tag {
         return lon;
     }
 
+    @Override
+    public Type getType() {
+        throw new UnsupportedOperationException("TagAddress does not have a type.");
+    }
+
     public String getStreet() {
         return street;
     }

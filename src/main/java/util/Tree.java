@@ -5,10 +5,12 @@ import java.util.*;
 
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
+import gnu.trove.map.hash.TLongObjectHashMap;
 import parser.Tag;
 import parser.TagNode;
 import parser.TagRelation;
 import parser.TagWay;
+import parser.Type;
 
 public class Tree {
 
@@ -18,17 +20,12 @@ public class Tree {
     ArrayList<TagRelation> relationsInBounds;
     static boolean isLoaded = false;
 
-    /**
-     * Constructor for the Tree class
-     * @param tags ArrayList of tag-objects to be inserted in the tree
-     */
-    public Tree(ArrayList<Tag> tags){
+    public Tree(TLongObjectHashMap<? extends Tag> tags) {
         kdtree = new KdTree();
-        kdtree.setBound(-180, -180, 180, 180);
-        for (Tag tag : tags){
+        kdtree.setBound(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
+        for (Tag tag : tags.valueCollection()){
             insertTagInTree(tag);
-        }
-        
+        }    
     }
 
     public static void initialize(ArrayList<Tag> tags){
@@ -40,19 +37,6 @@ public class Tree {
             insertTagInTree(tag);
         }
         isLoaded = true;
-    }
-
-    /**
-     * Constructor for the Tree class
-     * @param tags ArrayList of tag-objects to be inserted in the tree
-     */
-    public Tree(HashMap<Long, Tag> tags){
-        kdtree = new KdTree();
-        kdtree.setBound(-180, -180, 180, 180);
-        for (Tag tag : tags.values()){
-            insertTagInTree(tag);
-        }
-        
     }
 
     /**
@@ -91,12 +75,39 @@ public class Tree {
     }
 
     /**
+     * Returns the tags near a {@link Tag}
+     * @param point Point to search near
+     * @return ArrayList of Tag-objects near the point
+     */
+    public static ArrayList<Tag> getTagsNearTag(Tag tag){
+        return kdtree.nearestTags(new Point2D(tag.getLon(), tag.getLat()));
+    }
+
+    /**
+     * Returns the tags near a {@link Tag}
+     * @param point Point to search near
+     * @return ArrayList of Tag-objects near the point
+     */
+    public static ArrayList<Tag> getTagsNearTag(Tag tag, Type searchType){
+        return kdtree.nearestTags(new Point2D(tag.getLon(), tag.getLat()), searchType);
+    }
+
+    /**
      * Returns the nearest point in the tree to a given point
      * @param point Point to search near
      * @return Point2D object nearest to the given point
      */
     public static Point2D getNearestPoint(Point2D point){
         return kdtree.nearest(point);
+    }
+    
+    /**
+     * Returns the nearest point in the tree to a given point
+     * @param point Point to search near
+     * @return Point2D object nearest to the given point
+     */
+    public static Point2D getNearestTag(Tag tag){
+        return kdtree.nearest(new Point2D(tag.getLon(), tag.getLat()));
     }
 
     /**
@@ -122,7 +133,7 @@ public class Tree {
      * @param point Point to search near
      * @return ArrayList of tag-objects in the given bounds
      */
-    public ArrayList<Tag> getTagsFromPoint(TagNode node){
+    public ArrayList<Tag> getTagsFromPoint(Tag node){
         return kdtree.getTagsFromPoint(new Point2D(node.getLon(), node.getLat()));
     }
 
