@@ -36,10 +36,12 @@ public class DrawingMap {
     private MainView mainView;
     private double zoomLevel = 1;
     private int hierarchyLevel = 9;
-    private final double zoomLevelMax = 30, zoomLevelMin = zoomLevelMax/8192; // These variables changes how much you can zoom in and out. Min is far out and max is closest in
+    private final double zoomLevelMin = 0.0002, zoomLevelMax = 31; // These variables changes how much you can zoom in and out. Min is far out and max is closest in
     private double zoomScalerToMeter; // This is the world meters of how long the scaler in the bottom right corner is. Divide it with the zoomLevel
-    private double[] zoomScales = {zoomLevelMax, zoomLevelMax/2, zoomLevelMax/4, zoomLevelMax/8, zoomLevelMax/16, zoomLevelMax/32, zoomLevelMax/64, zoomLevelMax/128, zoomLevelMax/256, zoomLevelMax/512, zoomLevelMax/1024, zoomLevelMax/2048, zoomLevelMax/4096, zoomLevelMax/8192};
-    //private double[] zoomScales = {32, 16, 8, 4, 2, 1, 0.5, 0.1, 0.05, 0.015, 0.0001}; //
+    private double[] zoomScales = {32, 16, 8, 4, 2, 1, 0.5, 0.1, 0.05, 0.015, 0.0001}; //
+    //32, 16, 8, 4, 2, 1, 0.5, 0.1, 0.05, 0.015, 0.0001
+    //32, 8, 2, 0.5, 0.125, 0.03125, 0.007813, 0.001953, 0.000488, 0.000122
+    //                                                1/2  1/8  1/16  1/64  1/256  1/512  1/2048
     private double screenWidth;
 
     private List<TagNode> nodes = new ArrayList<>();
@@ -385,52 +387,12 @@ public class DrawingMap {
     }
 
     public int getRange(){
-
-        double range1 = 5*Math.pow(Math.E, 0.6931*hierarchyLevel);
-        double range2 = range1 + (5*Math.pow(Math.E, 0.6931*(hierarchyLevel-2)));
-        double range3 = range2 + 50*Math.pow(Math.E, 0.6931*(hierarchyLevel-5));
-        double range4 = range3 + 500*Math.pow(Math.E, 0.6931*(hierarchyLevel-8));
-        double range5 = range4 + 5000*Math.pow(Math.E, 0.6931*(hierarchyLevel-11));
-
-        double temp = 0;
-        
-        if(hierarchyLevel < 3){
-            temp = range1;
-        } else if(hierarchyLevel < 6){
-            temp = range2;
-        } else if(hierarchyLevel<9){
-            temp = range3;
-        } else if(hierarchyLevel<12){
-            temp = range4;
-        } else{
-            temp = range5;
-        }
-
-        
-        return temp;
+        int[] ranges = {10, 20, 50, 100,200, 500, 1000, 5000, 20000, 100000}; // 20m, 100m, 200m, 1km, 5km, 10km, 20km, 50km, 100km
+        System.out.println(hierarchyLevel);
+        return ranges[hierarchyLevel-1];
     }
 
     public int roundToClosest(int number, int closest){
         return (int) Math.round(number / closest) * closest;
     }
-    /**
-     * int temp = 0;
-        if(hierarchyLevel < 3){
-            temp = (int) Math.round((range1)/10)*10;
-        } else if(hierarchyLevel < 6){
-            temp = (int) Math.round((range2)/100)*100;
-        } else if(hierarchyLevel<9){
-            temp = (int) Math.round((range3)/1000)*1000;
-        } else if(hierarchyLevel<12){
-            temp = (int) Math.round((range4)/10000)*10000;
-        } else{
-            temp = (int) Math.round((range5)/100000)*100000;
-        }
-        
-     */
-    /**
-     * else{
-            temp = (int) Math.round((range5)/100000)*100000;
-        }
-     */
 }
