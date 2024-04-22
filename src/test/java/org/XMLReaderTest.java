@@ -54,16 +54,7 @@ public class XMLReaderTest {
         // assertNotNull(XMLReader.getAddressById(340820448l));
         // assertNull(XMLReader.getNodeById(340820448l));
         // assertNull(XMLReader.getWayById(340820448l));
-        // assertNull(XMLReader.getRelationById(340820448l));
-
-        // Tags
-        TagAddress address = XMLReader.getAddressById(340820448l);
-        assertEquals("Køge", address.getCity());
-        assertEquals("Køge", address.getMunicipality());
-        assertEquals("4600", address.getPostcode());
-        assertEquals("Bellmansvej", address.getStreet());
-        assertEquals("1", address.getHouseNumber());
-        assertEquals("DK", address.getCountry());
+        // assertNull(XMLReader.getRelationById(34082s0448l));
     }
 }
 

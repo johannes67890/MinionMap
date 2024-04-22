@@ -23,19 +23,20 @@ import util.Tree;
 public class TreeTest {
     private XMLReader reader;
     private Tree tree;
-
     @BeforeEach
     void setUp() {
-        this.reader = new XMLReader("src/test/java/org/ressources/testMap.osm");
+        this.reader = new XMLReader("src/test/java/org/ressources/map.osm");
+        assertNotNull(reader);
+        assertDoesNotThrow(() -> this.reader);
         ArrayList<Tag> tempList = new ArrayList<>();
         tempList.addAll(XMLReader.getWays().valueCollection());
 
-        this.tree = new Tree(tempList);
+        Tree.initialize(tempList);
     }
 
     @Test
     void testInsertTagInTree() {
-        assertNotNull(tree.getNearestPoint(new Point2D(20, 20)));
+        assertNotNull(Tree.getNearestPoint(new Point2D(20, 20)));
     }
 
 
@@ -44,20 +45,19 @@ public class TreeTest {
         ArrayList<Tag> tempList = new ArrayList<>(XMLReader.getNodes().valueCollection());
         tempList.addAll(XMLReader.getWays().valueCollection());
         tempList.addAll(XMLReader.getRelations().valueCollection());
-        this.tree = new Tree(tempList);
 
-        HashSet<Tag> tagsInBounds = tree.getTagsInBounds(new RectHV(-200, -200, 200, 200));
+        HashSet<Tag> tagsInBounds = Tree.getTagsInBounds(new RectHV(-200, -200, 200, 200));
 
         assertTrue(tagsInBounds.size() > 0);
     }
 
     @Test
     void testGetTagsNearPoint(){
-        ArrayList<Tag> tagList = new ArrayList<Tag>(XMLReader.getNodes().valueCollection());
+        ArrayList<Tag> tagList = new ArrayList<>(XMLReader.getNodes().valueCollection());
 
         Point2D point = new Point2D(tagList.get(0).getLon(), tagList.get(0).getLat());
-        
-        assertTrue(tree.getTagsNearPoint(point).size() > 0);
+
+        assertTrue(Tree.getTagsNearPoint(point).size() > 0);
     }
 
     @Test
@@ -65,7 +65,7 @@ public class TreeTest {
         ArrayList<Tag> tagList = new ArrayList<>(XMLReader.getNodes().valueCollection());
 
         Point2D point = new Point2D(tagList.get(0).getLon(), tagList.get(0).getLat());
-        
-        assertTrue(tree.getTagsFromPoint(point).size() > 0);
-    }
+
+        assertTrue(Tree.getTagsFromPoint(point).size() > 0);
+    }   
 }
