@@ -93,8 +93,8 @@ public class MecatorProjection {
             TagNode max = unproject(bound.getMaxLon(), bound.getMaxLat());
             TagNode min = unproject(bound.getMinLon(), bound.getMinLat());
             return new TagBound(
-                max.getLat(),
                 min.getLat(),
+                max.getLat(),
                 min.getLon(),
                 max.getLon()
             );
