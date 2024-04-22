@@ -140,4 +140,8 @@ public class Tree {
     public static boolean isLoaded(){
         return isLoaded;
     }
+
+    public static KdTree getKDTree(){
+        return kdtree;
+    }
 }

@@ -544,6 +544,25 @@ public class KdTree {
     public ArrayList<Tag> getTagsFromPoint(Point2D point){
         return pointToTag.get(point);
     }
+
+    public Tag nearestOfType(Point2D point, Type searchType, int searchInterval){
+        
+        while (true){
+            System.out.println("Test");
+            HashSet<Tag> set = rangeNode(new RectHV(point.x() - searchInterval, point.y() - searchInterval, point.x() + searchInterval, point.y() + searchInterval));
+            for (Tag t : set){
+                if (t instanceof TagWay){
+                    TagWay way = (TagWay) t;
+                    if (way.getType() != null && way.getType().equals(searchType)){
+                        return t;
+                    }
+    
+                }
+            }
+            searchInterval += searchInterval;
+
+        }
+    }
     
     /**
      * The distance and direction from the given point to the given Node's
