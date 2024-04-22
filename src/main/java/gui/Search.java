@@ -43,48 +43,52 @@ public class Search {
      * @param input String that will be contructed into an address.
      */
     public SearchAddress searchForAddress(String input){
-        
         SearchAddress a = new SearchAddress(input);
+        String street = a.street;
+        String house = a.house;
+        String floor = a.floor;
+        String side = a.side;
+        String postcode = a.postcode;
+        String city = a.city;
+        long time = System.currentTimeMillis();
 
-            long time = System.currentTimeMillis();
+        if(cityNames.contains(a.city)){
+            city = a.city;
+            //System.out.println("CITY FOUND: " + a.city);
+        } else{
 
-            if(cityNames.contains(a.city)){
-                System.out.println("CITY FOUND: " + a.city);
+            String topString = findSimilar(cityNames, a.city);
+
+            if (topString != null){
+
+                //System.out.println("Mente du: " + topString + "?");
+                a.city = topString;
+
             } else{
-
-                String topString = findSimilar(cityNames, a.city);
-
-                if (topString != null){
-
-                    System.out.println("Mente du: " + topString + "?");
-                    a.city = topString;
-
-                } else{System.out.println("This City: " + a.city + " does not exist");}
-
+                //System.out.println("This City: " + a.city + " does not exist");
             }
-            if(streetNames.contains(a.street)){
-                System.out.println("STREET FOUND: " + a.street);
-                double lat = getLatitudeByStreet(a.street);
-                double lon = getLongitudeByStreet(a.street);
-                if(lat != 0 && lon != 0){
-                    System.out.println("LATITUDE(Y): " + lat);
-                    System.out.println("LONGITUDE(X): " + lon);
-                } else{
-                    System.out.println("LATITUDE AND LONGITUDE NOT FOUND");
-                }
+
+        }
+        if(streetNames.contains(a.street)){
+            street = a.street;
+            
+        } else{
+
+            String topString = findSimilar(streetNames, a.street);
+
+            if (topString != null){
+                //System.out.println("Mente du: " + topString + "?");
+                a.street = topString;
             } else{
+                //System.out.println("This City: " + a.street + " does not exist");
+            }
 
-                String topString = findSimilar(streetNames, a.street);
+        } 
+        System.out.println("Time: " + (System.currentTimeMillis() - time));
+        //System.out.println(a.street);
 
-                if (topString != null){
-                    System.out.println("Mente du: " + topString + "?");
-                    a.street = topString;
-                } else{System.out.println("This City: " + a.street + " does not exist");}
-
-            } 
-            System.out.println("Time: " + (System.currentTimeMillis() - time));
-            //System.out.println(a.street);
-            return a;
+        a = new SearchAddress(street + " " + house + " " + floor + " " + side + " " + postcode + " " + city);
+        return a;
     }
 
     /**
@@ -143,13 +147,28 @@ public class Search {
         return 0;
     }
 
-    public TagAddress getTagAddressByStreet(String street){
-        for(TagAddress a : addresses.values()){
-            if(a.getStreet().equals(street)){
-                return a;
+    public TagAddress getTagAddressByAddress(SearchAddress searchAddress){
+        TagAddress best = null;
+        int depth = 0;
+        for(TagAddress tagAddress : addresses.values()){
+            if((searchAddress.city.isBlank() && searchAddress.postcode.isBlank())||tagAddress.getPostcode().equals(searchAddress.postcode) || tagAddress.getCity().equals(searchAddress.street)){
+                if(depth < 1){
+                    best = tagAddress;
+                    depth = 1;
+                }
+                if((searchAddress.street.isBlank())||tagAddress.getStreet().equals(searchAddress.street)){
+                    if(depth < 2){
+                        best = tagAddress;
+                        depth = 2;
+                    }
+                    if(tagAddress.getHouseNumber().equals(searchAddress.house)){
+                        System.out.println("THIS IS THE STREET " + tagAddress.getStreet());
+                        return tagAddress;
+                    }
+                }
             }
         }
-        return null;
+        return best;
     }
 
 }

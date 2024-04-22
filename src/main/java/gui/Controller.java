@@ -203,7 +203,7 @@ public class Controller implements Initializable, ControllerInterface{
         double[] bounds = mainView.getDrawingMap().getScreenBounds();
         double x = ((bounds[2] - bounds[0]) / 2) + bounds[0];
         double y = ((bounds[3] - bounds[1]) / 2) + bounds[1];
-        TagAddress tagAddress = s.getTagAddressByStreet(addressObj.street);
+        TagAddress tagAddress = s.getTagAddressByAddress(addressObj);
         double deltaX = tagAddress.getLon() - x;
         double deltaY = tagAddress.getLat() - y;
         mainView.getDrawingMap().pan(-deltaX, -deltaY);
