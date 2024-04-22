@@ -36,9 +36,10 @@ public class DrawingMap {
     private MainView mainView;
     private double zoomLevel = 1;
     private int hierarchyLevel = 9;
-    private final double zoomLevelMin = 0.001, zoomLevelMax = 30; // These variables changes how much you can zoom in and out. Min is far out and max is closest in
+    private final double zoomLevelMax = 30, zoomLevelMin = zoomLevelMax/8192; // These variables changes how much you can zoom in and out. Min is far out and max is closest in
     private double zoomScalerToMeter; // This is the world meters of how long the scaler in the bottom right corner is. Divide it with the zoomLevel
-    private double[] zoomScales = {32, 16, 8, 4, 2, 1, 0.5, 0.1, 0.05, 0.015, 0.0001}; //
+    private double[] zoomScales = {zoomLevelMax, zoomLevelMax/2, zoomLevelMax/4, zoomLevelMax/8, zoomLevelMax/16, zoomLevelMax/32, zoomLevelMax/64, zoomLevelMax/128, zoomLevelMax/256, zoomLevelMax/512, zoomLevelMax/1024, zoomLevelMax/2048, zoomLevelMax/4096, zoomLevelMax/8192};
+    //private double[] zoomScales = {32, 16, 8, 4, 2, 1, 0.5, 0.1, 0.05, 0.015, 0.0001}; //
     private double screenWidth;
 
     private List<TagNode> nodes = new ArrayList<>();
@@ -98,7 +99,7 @@ public class DrawingMap {
      */
 
     public void DrawMap(ResizableCanvas canvas){
-        long preTime = System.currentTimeMillis();
+        
         this.canvas = canvas;
         if (!Tree.isLoaded()){
             return;
@@ -287,36 +288,6 @@ public class DrawingMap {
     }
 
     /**
-     * Calculates the coordinates the screen sees and returns a array of coordinates.
-     * Index 0: X - Minimum
-     * Index 1: Y - Minimum
-     * Index 2: X - Maximum
-     * Index 3: Y - Maximum
-     * @return It returns the coordinates of the screen to map coordinates in an array (double[])
-     */
-    public double[] getScreenBounds(){
-        double[] bounds = new double[4]; // x_min ; y_min ; x_max ; y_max
-        bounds[0] = -(transform.getTx() / Math.sqrt(transform.determinant()));
-        bounds[1] = (-transform.getTy()) / Math.sqrt(transform.determinant());
-        bounds[2] = ((canvas.getWidth()) / zoomLevel) + bounds[0];
-        bounds[3] = ((canvas.getHeight()) / zoomLevel) + bounds[1];
-        return bounds;
-    }
-
-    public double[] getScreenBoundsBigger(double multiplier){
-        double[] bounds = getScreenBounds();
-        double width = bounds[2] - bounds[0];
-        double height = bounds[3] - bounds[1];
-        bounds[0] -= (width * (1.0 - multiplier));
-        bounds[1] -= (height * (1.0 - multiplier));
-        bounds[2] += (width * (1.0 + multiplier));
-        bounds[3] += (height * (1.0 + multiplier));
-        return bounds;
-    }
-
-
-
-    /**
      * 
      * Zoomns in or out on the map dependent on the mouseposition
      * @param factor - The strength of which the map is zoomed
@@ -414,17 +385,52 @@ public class DrawingMap {
     }
 
     public int getRange(){
+
+        double range1 = 5*Math.pow(Math.E, 0.6931*hierarchyLevel);
+        double range2 = range1 + (5*Math.pow(Math.E, 0.6931*(hierarchyLevel-2)));
+        double range3 = range2 + 50*Math.pow(Math.E, 0.6931*(hierarchyLevel-5));
+        double range4 = range3 + 500*Math.pow(Math.E, 0.6931*(hierarchyLevel-8));
+        double range5 = range4 + 5000*Math.pow(Math.E, 0.6931*(hierarchyLevel-11));
+
+        double temp = 0;
         
-        double range = 2.6533*Math.pow(Math.E, 0.6864*hierarchyLevel);
-        double add = 0.625*Math.pow(Math.E, 0.6931*hierarchyLevel);
-        int temp = 0;
-        if(hierarchyLevel <= 3){
-            temp = (int) Math.round(((range+add)-1.25)/5)*5;
-        } else if(hierarchyLevel < 9){
-            temp = (int) Math.round((range+add)/10)*10;
-        } else {
-            temp = (int) Math.round((range+add)/500)*500;
+        if(hierarchyLevel < 3){
+            temp = range1;
+        } else if(hierarchyLevel < 6){
+            temp = range2;
+        } else if(hierarchyLevel<9){
+            temp = range3;
+        } else if(hierarchyLevel<12){
+            temp = range4;
+        } else{
+            temp = range5;
         }
+
+        
         return temp;
     }
+
+    public int roundToClosest(int number, int closest){
+        return (int) Math.round(number / closest) * closest;
+    }
+    /**
+     * int temp = 0;
+        if(hierarchyLevel < 3){
+            temp = (int) Math.round((range1)/10)*10;
+        } else if(hierarchyLevel < 6){
+            temp = (int) Math.round((range2)/100)*100;
+        } else if(hierarchyLevel<9){
+            temp = (int) Math.round((range3)/1000)*1000;
+        } else if(hierarchyLevel<12){
+            temp = (int) Math.round((range4)/10000)*10000;
+        } else{
+            temp = (int) Math.round((range5)/100000)*100000;
+        }
+        
+     */
+    /**
+     * else{
+            temp = (int) Math.round((range5)/100000)*100000;
+        }
+     */
 }
