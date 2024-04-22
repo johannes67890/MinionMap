@@ -36,7 +36,7 @@ public class DijstraTest {
             KdTree tree = Tree.getKDTree();
             Tag tag = tree.nearestOfType(new Point2D(start.getLon(), start.getLat()), Type.RESIDENTIAL, 10);
             ArrayList<Tag> t = Tree.getTagsNearTag(start, Type.RESIDENTIAL);
-            assertEquals(1447913335l, tag.getId());
+            assertEquals(367167754, tag.getId());
         }
     }
 }

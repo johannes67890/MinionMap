@@ -250,11 +250,12 @@ public enum Type  {
         return maxWidth;
     }
 
+    /* 
     public boolean equals(Type type) {
         if(this instanceof Type){
-            this.getKey().equals(type.getKey());   
+            return this.getKey().equals(type.getKey());   
         }
         return false;
-    }
+    }*/
 
 }
