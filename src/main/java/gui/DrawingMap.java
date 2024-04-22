@@ -77,10 +77,10 @@ public class DrawingMap {
         double maxlon = bound.getMaxLon();
         double minlat = bound.getMinLat();
 
-        ArrayList<Tag> tempList = new ArrayList<>();
-        tempList.addAll(XMLReader.getWays().valueCollection());
-        tempList.addAll(XMLReader.getRelations().valueCollection());
-        Tree.initialize(tempList);;
+        // ArrayList<Tag> tempList = new ArrayList<>();
+        // tempList.addAll(XMLReader.getWays().valueCollection());
+        // tempList.addAll(XMLReader.getRelations().valueCollection());
+        // Tree.initialize(tempList);;
         pan(-minlon, minlat);
         zoom(canvas.getWidth() / (maxlon - minlon), 0, 0);
         DrawMap(canvas);
@@ -93,11 +93,12 @@ public class DrawingMap {
      */
 
     public void DrawMap(ResizableCanvas canvas){
-        long preTime = System.currentTimeMillis();
-        this.canvas = canvas;
-        if (!Tree.isLoaded()){
-            return;
-        }
+        // TODO:
+        // long preTime = System.currentTimeMillis();
+        // this.canvas = canvas;
+        // if (!Tree.isLoaded()){
+        //     return;
+        // }
 
         //Resfreshes the screen
         gc = canvas.getGraphicsContext2D();
@@ -119,26 +120,27 @@ public class DrawingMap {
         gc.setTransform(transform);
         currentColor = Color.BLACK;
 
-        double[] canvasBounds = getScreenBoundsBigger(0.05);
-        RectHV rect = new RectHV(canvasBounds[0], canvasBounds[1], canvasBounds[2], canvasBounds[3]);
+        // TODO:
+        // double[] canvasBounds = getScreenBoundsBigger(0.05);
+        // RectHV rect = new RectHV(canvasBounds[0], canvasBounds[1], canvasBounds[2], canvasBounds[3]);
 
-        nodes = new ArrayList<>();
-        ways = new ArrayList<>();
-        relations = new ArrayList<>();
+        // nodes = new ArrayList<>();
+        // ways = new ArrayList<>();
+        // relations = new ArrayList<>();
 
-        HashSet<Tag> tags = Tree.getTagsInBounds(rect);
+        // HashSet<Tag> tags = Tree.getTagsInBounds(rect);
 
-        for(Tag tag : tags){
-            if (tag instanceof TagNode){
-                nodes.add((TagNode) tag);
-            }else if (tag instanceof TagWay){
-                TagWay way = (TagWay) tag;
-                ways.add(way);
-            }else if (tag instanceof TagRelation){
-                TagRelation relation = (TagRelation) tag;
-                relations.add(relation);
-            }
-        }
+        // for(Tag tag : tags){
+        //     if (tag instanceof TagNode){
+        //         nodes.add((TagNode) tag);
+        //     }else if (tag instanceof TagWay){
+        //         TagWay way = (TagWay) tag;
+        //         ways.add(way);
+        //     }else if (tag instanceof TagRelation){
+        //         TagRelation relation = (TagRelation) tag;
+        //         relations.add(relation);
+        //     }
+        // }
 
         waysToDrawWithType = new ArrayList<>();
         waysToDrawWithoutType = new ArrayList<>();
