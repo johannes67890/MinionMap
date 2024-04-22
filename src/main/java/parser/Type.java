@@ -82,8 +82,10 @@ public enum Type  {
     AERIALWAY("aerialway", new String[]{"cable_car", "gondola", "mixed_lift", "chair_lift", "drag_lift", "t-bar", "j-bar", "platter", "rope_tow", "magic_carpet", "zip_line", "goods", "pylon"}, 
     4, 9, Color.LIGHTGRAY, 2, true, 4, 10),
     AERIALWAYSTATION("aerialway", new String[]{"station"},4, 8, Color.GRAY, Color.GRAY.darker(), 5, false),
-    OTHER_ROAD("highway",new String[]{"residential", "unclassified", "track", "footway", "cycleway", "path", 
+    OTHER_ROAD("highway",new String[]{"unclassified", "track", "footway", "cycleway", "path", 
     "service", "motorway_link", "steps", "living_street", "mini_roundabout", "pedestrian"}, 4, 9, Color.WHITE, 5, true, 2, 7),
+
+    RESIDENTIAL_ROAD("highway",new String[]{"residential"}, 4, 9, Color.WHITE, 5, true, 2, 7),
 
     // Relations (Hierarchy: 3)
     MULTIPOLYGON("type", new String[]{"multipolygon"}, 3, Color.BLACK, 0),
