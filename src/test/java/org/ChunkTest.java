@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.reporting.shadow.org.opentest4j.reporting.events.core.Tag;
@@ -16,6 +17,7 @@ import parser.XMLReader;
 import parser.TagBound;
 import parser.TagNode;
 import parser.Chunk.CompasPoints;
+import java.io.File;
 
 public class ChunkTest {
     private Chunk chunck;
@@ -24,11 +26,18 @@ public class ChunkTest {
     public void setUp() {
         assertDoesNotThrow(() -> {
             new XMLReader(FileDistributer.input.getFilePath());
-        });
-        this.chunck = new Chunk(new XMLReader(FileDistributer.input.getFilePath()).getBound());
-        
+        });       
+        chunck = new Chunk(XMLReader.getBound()); 
     }
 
+    @AfterAll
+    public static void tearDown() {
+        final String directoryPath = "src/main/resources/chunks/";
+        File directory = new File(directoryPath);
+        for (File file : directory.listFiles()) {
+            file.delete();
+        }
+    }
 
     @Test
     public void testCenterPoint() {
