@@ -60,7 +60,9 @@ public class Tree {
             }
         }else if (tag instanceof TagRelation){
             TagRelation relation = (TagRelation) tag;
-            for (TagWay way : relation.getWays()){
+
+            for (TagWay way : relation.getHandledOuter()){
+
                 for (TagNode node : way.getNodes()){
                     Point2D temp = new Point2D(node.getLon(), node.getLat());
                     kdtree.insert(temp, tag);
