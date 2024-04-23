@@ -53,7 +53,7 @@ public class XMLWriter {
     }
 
     private static void createBinaryChunkFile(String path, TagBound bound){
-        chunkFiles.appendChunkFile(bound, path);
+        ChunkFiles.appendChunkFile(bound, path);
         try{
             File file = new File(path);
             ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file));
@@ -67,7 +67,7 @@ public class XMLWriter {
 
     public static void appendToPool(Tag node){
 
-        for (TagBound bound : chunkFiles.getChunkFiles().keySet()) {
+        for (TagBound bound : ChunkFiles.getChunkFiles().keySet()) {
             if(node.isInBounds(bound)){
                 tagList.computeIfAbsent(bound, k -> new ArrayList<>()).add(node);
             }
@@ -76,9 +76,9 @@ public class XMLWriter {
 
     public static void appendToBinary() {
         ForkJoinPool pool = new ForkJoinPool();
-        long s = System.currentTimeMillis();
+
         for (Map.Entry<TagBound, List<Tag>> entry : tagList.entrySet()) {
-            String path = chunkFiles.getChunkFilePath(entry.getKey());
+            String path = ChunkFiles.getChunkFilePath(entry.getKey());
             pool.submit(new WriteTagAction(entry.getValue(), path));
         }
 
@@ -90,16 +90,14 @@ public class XMLWriter {
         }finally{
             tagList.clear();
         }
-
-        readAllLinesFromChunkFile();
-
-        // for (Tag t : readAllBytesFromChunkFile()) {
-        //     System.out.println(t);  
-        // }
-        System.out.println("Time for append to binary: " + (System.currentTimeMillis() - s) + "ms");
+        Tag t = getTagByIdFromBinaryFile(11186836118l);
+        System.out.println("Here:" + t.getId() + " from chunk: " + ChunkFiles.getBoundFromTag(t));
     }
-    public static long t = 0;
 
+    /**
+     * A RecursiveAction that writes a list of tags to a binary file.
+     * 
+     */
     private static class WriteTagAction extends RecursiveAction {
         private final List<? extends Tag> nodes;
         private final String path;
@@ -113,10 +111,10 @@ public class XMLWriter {
         protected void compute() {
             
             synchronized (path.intern()) {
-                try (DataOutputStream oos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(new File(path), true)))) {
+                try (AppendingObjectOutputStream oos = new AppendingObjectOutputStream(new BufferedOutputStream(new FileOutputStream(new File(path), true)))) {
                     // TODO: if tags is written to bytes as array - do data get lost?
                     for (Tag tag : nodes) {
-                        oos.write(tag.tagToBytes());
+                        oos.writeObject(tag);
                     }    
                     /*
                      * Write the nodes to the file - is this better? 
@@ -130,85 +128,80 @@ public class XMLWriter {
         }
     }
 
+    /**
+     * An ObjectOutputStream that does not write the stream header every time an object is written.
+     * This is done to avoid the stream header to be written multiple times in the same file.
+     * 
+     * See {@link ObjectOutputStream#writeStreamHeader()} for more information.
+     * or {@link <a href="https://www.geeksforgeeks.org/how-to-fix-java-io-streamcorruptedexception-invalid-type-code-in-java/">geeksforgeeks.org/java.io.StreamCorruptedException</a>} 
+     */
+    public static class AppendingObjectOutputStream extends ObjectOutputStream {
+        public AppendingObjectOutputStream(OutputStream out) throws IOException {
+          super(out);
+        }
 
-    public static void readAllLinesFromChunkFile() {
-        String path = "src/main/resources/chunks/chunk_5.bin";
+        @Override
+        protected void writeStreamHeader() throws IOException {
+          reset();
+        }
+      }
 
-        try (ObjectInputStream dis = new ObjectInputStream(new FileInputStream(new File(path)))) {
+    public static List<Tag> getTagsFromChunk(TagBound bound){ {
+        String path = ChunkFiles.getChunkFilePath(bound);
+        List<Tag> objectList = new ArrayList<>();
+
+        try (ObjectInputStream stream = new ObjectInputStream(new BufferedInputStream(new FileInputStream(path)))) {
             while (true) {
                 try {
-                    Object o = dis.readObject();
-                    if (o instanceof Tag) {
-                        System.out.println(o);
+                    Object o = stream.readObject();
+                    if(o instanceof TagBound) continue;
+                    if (o instanceof TagRelation) {
+                        objectList.add((TagRelation) o);
                     }
+                    if(o instanceof TagNode){
+                        objectList.add((TagNode) o);
+                    }
+                    if(o instanceof TagAddress){
+                        objectList.add((TagAddress) o);
+                    }
+                    if(o instanceof TagWay){
+                        objectList.add((TagWay) o);
+                    }
+                
                 } catch (EOFException e) {
-                    break;
+                    stream.close();
+                    break; // end of stream
                 }
             }
-        } catch (EOFException e) {
-            
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return objectList;
         }
     }
 
-    // public static List<Tag> getContentFromBinaryFile(String path) {
-    //     List<Tag> tagList = new ArrayList<>();
-    //     File file = new File(path);
-    
-    //     try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
-    //         while (true) {
-    //             try {
-    //                 Object o = ois.readObject();
-    //                 if (o instanceof Tag) {
-    //                     tagList.add((Tag) o);
-    //                 }
-    //             } catch (EOFException e) {
-    //                 // End of file reached
-    //                 break;
-    //             }
-    //         }
-    //     } catch (IOException | ClassNotFoundException e) {
-    //         throw new RuntimeException(e);
-    //     }
-    
-    //     return tagList;
-    // }
-
-
-
-    public static Tag readTagByIdFromBinaryFile(long id) {
-        File folder = new File("src/main/resources/chunks/");
-        File[] listOfFiles = folder.listFiles();
-    
-        if (listOfFiles != null) {
-            for (File file : listOfFiles) {
-                if (file.isFile() && file.getName().endsWith(".bin")) {
-                    try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
-                        while (true) {
-                            try {
-                                Object o = ois.readObject();
-                                if(o instanceof TagBound){
-                                    continue;
-                                } else if (o instanceof Tag && ((Tag) o).getId() == id) {
-                                    return (Tag) o;
-                                }
-                            } catch (EOFException e) {
-                                // End of file reached, continue with next file
-                                break;
-                            }
+    public static Tag getTagByIdFromBinaryFile(long id) {
+        for (String path : ChunkFiles.getChunkFilePaths()) {
+            try (ObjectInputStream stream = new ObjectInputStream(new BufferedInputStream(new FileInputStream(path)))) {
+                while (true) {
+                    try {
+                        Object o = stream.readObject();
+                        if(o instanceof TagBound) continue;
+                        if (o instanceof Tag && ((Tag) o).getId() == id) {
+                            return (Tag) o;
                         }
-                    } catch (IOException | ClassNotFoundException e) {
-                        throw new RuntimeException(e);
+                    } catch (EOFException e) {
+                        stream.close();
+                        break; // end of stream
                     }
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        }
-    
-        return null; // Return null if no Tag with the given id is found
+        }   
+        return null;
     }
- 
-
+    
     /**
      * A class to control the chunk files' paths and the bounds of the chunks
      * 
@@ -217,41 +210,51 @@ public class XMLWriter {
      * </p>
      * 
      */
-    private static class ChunkFiles {
-        private HashMap<TagBound, String> chunkFiles = new HashMap<TagBound, String>();
+    public static class ChunkFiles {
+        private static HashMap<TagBound, String> chunkFiles = new HashMap<TagBound, String>();
 
-        public void appendChunkFile(TagBound bound, String path){
-            this.chunkFiles.put(bound, path);
+        public static void appendChunkFile(TagBound bound, String path){
+            chunkFiles.put(bound, path);
         }
 
-        public String getChunkFilePath(TagBound bound){
-            return this.chunkFiles.get(bound);
-        }
-
-        public Collection<String> getChunkFilePaths(){
-            return this.chunkFiles.values();
-        }
-
-        public TagBound getBound(String path){
-            for (Map.Entry<TagBound, String> entry : this.chunkFiles.entrySet()) {
-                if (entry.getValue().equals(path)) {
+        public static TagBound getBoundFromTag(Tag tag){
+            for (Map.Entry<TagBound, String> entry : chunkFiles.entrySet()) {
+                if (tag.isInBounds(entry.getKey())) {
                     return entry.getKey();
                 }
             }
             return null;
         }
 
+        public static TagBound getBound(String path){
+            for (Map.Entry<TagBound, String> entry : chunkFiles.entrySet()) {
+                if (entry.getValue().equals(path)) {
+                    return entry.getKey();
+                }
+            }
+            return null;
+        }
+        
+        public static String getChunkFilePath(TagBound bound){
+            return chunkFiles.get(bound);
+        }
+
+        public static Collection<String> getChunkFilePaths(){
+            return chunkFiles.values();
+        }
+
+
         // public int getChunkId(TagBound bound){
         //     return Integer.parseInt(this.chunkFiles.get(bound).split(".")[0]);
         // }
 
-        public HashMap<TagBound, String> getChunkFiles(){
-            return this.chunkFiles;
+        public static HashMap<TagBound, String> getChunkFiles(){
+            return chunkFiles;
         }
 
         @Override
         public String toString(){
-            return this.chunkFiles.toString();
+            return chunkFiles.toString();
         }
     }
 }
