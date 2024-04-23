@@ -1,5 +1,6 @@
 package gui;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 import gui.GraphicsHandler.GraphicStyle;
@@ -17,8 +18,12 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import parser.Tag;
 import parser.TagAddress;
+import parser.TagNode;
 import parser.TagAddress.SearchAddress;
+import util.MecatorProjection;
+import util.Tree;
 
 public class Controller implements Initializable, ControllerInterface{
     
@@ -31,6 +36,7 @@ public class Controller implements Initializable, ControllerInterface{
     @FXML private Button menuButton3;
     @FXML private Button layerButton;
     @FXML private Button searchButton;
+    @FXML private Button pointButton;
     @FXML private Pane leftBurgerMenu;
     @FXML private ComboBox<String> searchBarStart;
     @FXML private ComboBox<String> searchBarDestination;
@@ -44,7 +50,7 @@ public class Controller implements Initializable, ControllerInterface{
 
 
 
-
+    private boolean pointofInterestState = false;
     private boolean isMenuOpen = false;
     private static MainView mainView;
     private String selectedItem;
@@ -79,6 +85,33 @@ public class Controller implements Initializable, ControllerInterface{
             lastX = e.getX();
             lastY = e.getY();
         });
+
+        mainView.canvas.setOnMouseClicked(e -> {
+            if (pointofInterestState){
+
+
+               DrawingMap drawingMap = mainView.getDrawingMap();
+
+               float currentY =  (float) e.getY() ;
+               float currentX =  (float) e.getX() ;
+
+               double[] bounds = drawingMap.getScreenBounds();
+              
+               double x = bounds[0] + e.getX() / drawingMap.getZoomLevel();
+               double y = bounds[1] - e.getY() / drawingMap.getZoomLevel();
+       
+
+                Point2D clickedPoint = mainView.getDrawingMap().getTransform().transform(currentX, currentY);
+
+                TagNode pointofInterest = new TagNode((float) y, (float) x);
+
+                mainView.getDrawingMap().setMarkedTag(pointofInterest);
+
+                mainView.draw();
+            }
+            
+        
+        });
         
         mainView.canvas.setOnScroll(event -> {
 
@@ -94,12 +127,16 @@ public class Controller implements Initializable, ControllerInterface{
 
         mainView.canvas.setOnMouseDragged(e -> {
 
-            double dx = e.getX() - lastX;
-            double dy = e.getY() - lastY;
-            mainView.getDrawingMap().pan(dx, dy);
+            if (!pointofInterestState){
+                double dx = e.getX() - lastX;
+                double dy = e.getY() - lastY;
+                mainView.getDrawingMap().pan(dx, dy);
+    
+                lastX = e.getX();
+                lastY = e.getY();
+            }
 
-            lastX = e.getX();
-            lastY = e.getY();
+           
         });
     }
 
@@ -170,6 +207,10 @@ public class Controller implements Initializable, ControllerInterface{
             mainMenuVBox.setVisible(false);
 
         });
+        pointButton.setOnAction((ActionEvent e) ->{
+
+            pointofInterestState = !pointofInterestState;
+        });
 
         // TODO: remake this function so it registers everytime the value is changed!
         
@@ -178,7 +219,7 @@ public class Controller implements Initializable, ControllerInterface{
         });
 
         searchBarStart.setOnAction((ActionEvent e) -> {
-            System.out.println("selected: " + searchBarStart.getSelectionModel().getSelectedItem());
+            //System.out.println("selected: " + searchBarStart.getSelectionModel().getSelectedItem());
         });
 
         //Will be changed later
@@ -273,9 +314,20 @@ public class Controller implements Initializable, ControllerInterface{
 
 
 
+        edu.princeton.cs.algs4.Point2D point2d = new edu.princeton.cs.algs4.Point2D(tagAddress.getLon(), tagAddress.getLat());
 
+
+        edu.princeton.cs.algs4.Point2D nearest = Tree.getNearestPoint(point2d);
+
+        ArrayList<Tag> nearestTag = Tree.getTagsFromPoint(nearest);
+
+        //System.out.println(nearestTag.get(0).getId());
+
+        drawingMap.setMarkedTag(nearestTag.get(0));
 
         mainView.getDrawingMap().pan(-deltaX, deltaY);
+
+
     }
 
 }
