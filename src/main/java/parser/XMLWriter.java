@@ -32,7 +32,7 @@ public class XMLWriter {
     public void initChunkFiles(TagBound bounds) {   
         for (TagBound parentChunk : Chunk.getQuadrants(bounds).values()) {
             for (TagBound midChunk : Chunk.getQuadrants(parentChunk).values()) {
-                    Chunk childChunk = new Chunk(bounds); 
+                    Chunk childChunk = new Chunk(midChunk); 
                     for (int j = 0; j < 4; j++) {
                         // Get one of the four quadrants in the chunk
                         TagBound child = childChunk.getQuadrant(j);
@@ -57,8 +57,8 @@ public class XMLWriter {
         
     }
 
-
     public static void appendToPool(Tag node){
+
         for (TagBound bound : chunkFiles.getChunkFiles().keySet()) {
             if(node.isInBounds(bound)){
                 tagList.computeIfAbsent(bound, k -> new ArrayList<>()).add(node);
@@ -68,7 +68,7 @@ public class XMLWriter {
 
     public static void appendToBinary() {
         ForkJoinPool pool = new ForkJoinPool();
-
+        long s = System.currentTimeMillis();
         for (Map.Entry<TagBound, List<Tag>> entry : tagList.entrySet()) {
             String path = chunkFiles.getChunkFilePath(entry.getKey());
             pool.submit(new WriteTagAction(entry.getValue(), path));
@@ -79,9 +79,14 @@ public class XMLWriter {
             pool.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
+        }finally{
+            tagList.clear();
         }
+
+        System.out.println("Time for append to binary: " + (System.currentTimeMillis() - s) + "ms");
     }
-    
+    public static long t = 0;
+
     private static class WriteTagAction extends RecursiveAction {
         private final List<? extends Tag> nodes;
         private final String path;
@@ -93,11 +98,18 @@ public class XMLWriter {
     
         @Override
         protected void compute() {
+            
             synchronized (path.intern()) {
                 try (DataOutputStream oos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(new File(path), true)))) {
-                    for (Tag node : nodes) {
-                        oos.write(node.tagToBytes());
-                    }
+                    // TODO: if tags is written to bytes as array - do data get lost?
+                    for (Tag tag : nodes) {
+                        oos.write(tag.tagToBytes());
+                    }    
+                    /*
+                     * Write the nodes to the file - is this better? 
+                     * It is for sure faster, but does it work?
+                     * oos.write(Tag.tagToBytes(nodes)); 
+                     */
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }

@@ -3,7 +3,7 @@ package parser;
 import java.util.HashMap;
 
 import util.MecatorProjection;
-
+import java.util.List;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -56,6 +56,14 @@ public abstract class Tag implements Serializable{
      * @return The longitude of the tag.
      */
     public abstract float getLon();
+
+    public static byte[] tagToBytes(List<? extends Tag> nodes) throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(bos);
+        oos.writeObject(nodes);
+        oos.flush();
+        return bos.toByteArray();
+    }
 
     public byte[] tagToBytes() throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
