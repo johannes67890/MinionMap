@@ -8,39 +8,49 @@ import java.util.HashMap;
  * {@link Node#ID}, {@link Node#LAT}, {@link Node#LON}
  * </p>
 */
-public class TagNode extends Tag<Node> {
+public class TagNode extends Tag {
 
-    public TagNode(long id, double lat, double lon) {
-        super(new HashMap<Node, Object>(){
-            {
-               put(Node.ID, id);
-               put(Node.LAT, lat);
-               put(Node.LON, lon);
-            }
-        });
+    long id;
+    float lon;
+    float lat;
+
+    public TagNode(long id, float lat, float lon) {
+        this.id = id;
+        this.lon = lon;
+        this.lat = lat;
+    }
+
+    public TagNode(float lat, float lon) {
+        this.lon = lon;
+        this.lat = lat;
     }
 
     public TagNode(XMLBuilder builder) {
-        super(new HashMap<Node, Object>(){
-            {
-                put(Node.ID, builder.getId());
-                put(Node.LAT, builder.getLat());
-                put(Node.LON, builder.getLon());
-            }
-        });
+        this.id = builder.getId();
+        this.lon = builder.getLon();
+        this.lat = builder.getLat();
     }
 
     @Override
     public long getId(){
-        return ((long) this.get(Node.ID));
+        return id;
     }
     @Override
-    public double getLat(){
-        return ((double) this.get(Node.LAT));
+    public float getLat(){
+        return this.lat;
     }
     @Override
-    public double getLon(){
-        return ((double) this.get(Node.LON));
+    public float getLon(){
+        return this.lon;
+    }
+
+    public boolean equals(TagNode tN){
+
+        if (this.id == tN.getId()){
+            return true;
+        }
+        else{return false;}
+
     }
 
 
@@ -48,6 +58,4 @@ public class TagNode extends Tag<Node> {
         return Math.sqrt(Math.pow(node.getLat() - getLat(), 2) + (Math.pow(node.getLon() - getLon(), 2)));
     }
 
-
- 
 }

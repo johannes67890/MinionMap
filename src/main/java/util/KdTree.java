@@ -50,7 +50,7 @@ import parser.TagWay;
 public class KdTree {
     private Node root;
     private int size;
-    private HashMap<Point2D, ArrayList<Tag<?>>> pointToTag;
+    private HashMap<Point2D, ArrayList<Tag>> pointToTag;
     public double[] bounds = new double[4];
 
     /**
@@ -136,7 +136,7 @@ public class KdTree {
      * @throws NullPointerException if {@code p} is {@code null}
      */
     
-    public void insert(Point2D p, Tag<?> node) {
+    public void insert(Point2D p, Tag node) {
         if (p == null) {
             throw new java.lang.NullPointerException("called insert() with a null Point2D");
         }
@@ -148,7 +148,7 @@ public class KdTree {
             root = insert(root, p, true, new double[] {-180, -180, 180, 180});
         }
         
-        ArrayList<Tag<?>> list = pointToTag.getOrDefault(p, new ArrayList<>());
+        ArrayList<Tag> list = pointToTag.getOrDefault(node, new ArrayList<>());
         list.add(node);
         pointToTag.put(p, list);
     }
@@ -307,13 +307,13 @@ public class KdTree {
      */
     
 
-    public HashSet<Tag<?>> rangeNode(RectHV rect) {
+    public HashSet<Tag> rangeNode(RectHV rect) {
         if (rect == null) throw new java.lang.NullPointerException(
                 "called range() with a null RectHV");
         
         Stack<Point2D> points = new Stack<>();
         //ArrayList<Tag<?>> returnList = new ArrayList<>();
-        HashSet<Tag<?>> returnList = new HashSet<>();
+        HashSet<Tag> returnList = new HashSet<>();
         
         // Handle KdTree without a root node yet
         if (root == null) return returnList;
@@ -440,7 +440,7 @@ public class KdTree {
      * @param point the point from where the search starts from
      * @return a list of Tags thats is connected to the the nearest Point2D in the KDTree
      */
-    public ArrayList<Tag<?>> nearestTags(Point2D point){
+    public ArrayList<Tag> nearestTags(Point2D point){
         return pointToTag.get(nearest(point));
     }
     
@@ -449,7 +449,7 @@ public class KdTree {
      * @param point is the point that you want the Tags related to
      * @return this return an ArrayList<Tag<?>> of all tags related to the given Point2D
      */
-    public ArrayList<Tag<?>> getTagsFromPoint(Point2D point){
+    public ArrayList<Tag> getTagsFromPoint(Point2D point){
         return pointToTag.get(point);
     }
     

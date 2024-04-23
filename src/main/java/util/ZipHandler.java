@@ -62,9 +62,6 @@ public class ZipHandler {
         bos.close();
     }
 
-    /**
-     * @return the destination of the directory
-     */
     public String getDestDir(){
         return this.destDir;
     }

@@ -9,51 +9,51 @@ enum Relation {
     ID, INNER, OUTER, WAYS, RELATIONS, NODES, TYPE, TYPEVALUE, NAME, RELATIONTYPE
 }
 
-public class TagRelation extends Tag<Relation>{
+public class TagRelation extends Tag{
     private ArrayList<TagNode> nodes = new ArrayList<>();
     private ArrayList<TagRelation> relations = new ArrayList<>();
     private ArrayList<TagWay> ways = new ArrayList<>();
     private ArrayList<TagWay> inner = new ArrayList<>();
     private ArrayList<TagWay> outer = new ArrayList<>();
+    private ArrayList<TagWay> actualOuter;
+    private ArrayList<TagWay> actualInner;
+
     private ArrayList<TagWay> handledOuter = new ArrayList<>();
+    
+    long id;
+    String name;
+    Type type, relationType;
+
 
     public TagRelation(){}
 
     public TagRelation(XMLBuilder builder){
-        super(new HashMap<Relation, Object>(){
-            {
-                put(Relation.ID, builder.getId());
-                put(Relation.TYPE, builder.getType());
-                put(Relation.NAME, builder.getName());
-                put(Relation.INNER, builder.getRelationBuilder().getInner());
-                put(Relation.OUTER, builder.getRelationBuilder().getOuter());
-                put(Relation.WAYS, builder.getRelationBuilder().getWays());
-                put(Relation.RELATIONS, builder.getRelationBuilder().getRelations());
-                put(Relation.NODES, builder.getRelationBuilder().getNodes());
-                put(Relation.RELATIONTYPE, builder.getRelationBuilder().getRelationType());
-                put(Relation.TYPEVALUE, builder.getRelationBuilder().getTypeValue());
+        this.id = builder.getId();
+        this.type = builder.getType();
+        this.relationType = builder.getRelationBuilder().getRelationType();
+        this.name = builder.getName();
+        //this.ways = builder.getRelationBuilder().getWays();
 
-            }
-        });
 
+        this.actualOuter = builder.getRelationBuilder().getOuter();
+        this.actualInner = builder.getRelationBuilder().getInner();
+        this.relations = builder.getRelationBuilder().getRelations();
+        this.nodes = builder.getRelationBuilder().getNodes();
 
         constructOuterWays();
-
     }
 
     @Override
     public long getId(){
-        return Long.parseLong(this.get(Relation.ID).toString());
+        return id;
     }
 
-
-
     @Override
-    public double getLat() {
+    public float getLat() {
         throw new UnsupportedOperationException("TagRelation does not have a latitude value.");
     }
     @Override
-    public double getLon() {
+    public float getLon() {
         throw new UnsupportedOperationException("TagRelation does not have a longitude value.");
     }
 
@@ -63,7 +63,7 @@ public class TagRelation extends Tag<Relation>{
     public void addWay(TagWay way){ ways.add(way); };
     public void addInner(TagWay way){ inner.add(way); };
     public void addOuter(TagWay way){ outer.add(way); /*System.out.println("ADDING OUTER, NEW SIZE: " + outer.size());*/ };
-    public void setTypeValue(Type type){ put(Relation.TYPEVALUE, type); };
+    public void setTypeValue(Type type){ this.type = type; };
     
 
     public ArrayList<TagNode> getNodes(){ return nodes; };
@@ -71,9 +71,19 @@ public class TagRelation extends Tag<Relation>{
     public ArrayList<TagWay> getWays(){ return ways; };
     public ArrayList<TagWay> getInner(){ return inner; };
     public ArrayList<TagWay> getOuter(){ return outer; };
-    public ArrayList<TagWay> getActualOuter(){ return (ArrayList<TagWay>) this.get(Relation.OUTER) ; };
+    public ArrayList<TagWay> getActualInner(){ return actualInner ; };
+    public ArrayList<TagWay> getActualOuter(){ return actualOuter ; };
     public ArrayList<TagWay> getHandledOuter(){ return handledOuter; };
 
+    // TODO: Implement this method - all the memebers of the relation is empty?
+    // public ArrayList<TagWay> getMembers(){
+    //     ArrayList<TagWay> members = new ArrayList<>();
+    //     members.addAll(ways);
+    //     members.addAll(actualInner);
+    //     members.addAll(actualOuter);
+    //     members.addAll(handledOuter);
+    //     return members;
+    // }
 
     /**
      * Constructs the outer ways as multiple connected polygons or lines,
@@ -95,6 +105,8 @@ public class TagRelation extends Tag<Relation>{
         boolean success = false;
         int speedLimit = 0;
         long id = 0;
+
+        int wayCount = 0;
 
 
         for (int j = 0; j < getActualOuter().size() ; j++){
@@ -136,17 +148,16 @@ public class TagRelation extends Tag<Relation>{
                         }
                     
                     }
+                    else{
+                        break;
+                    }
                     
                 }
-
-
                 //Checks whether way should be read in reverse
 
-                if (prevLastTagNode != null && prevLastTagNode.equals(currentFirstTagNode)){
+                if ((prevLastTagNode != null) && prevLastTagNode.equals(currentFirstTagNode)){
 
                     for (TagNode node : outer.getNodes()){
-
-
                         tempNodes.add(node);    
                     }
                 } else{
@@ -157,6 +168,8 @@ public class TagRelation extends Tag<Relation>{
                         tempNodes.add(node);    
                     }
                 }
+
+                wayCount++;
 
                 prevLastTagNode = tempNodes.get(tempNodes.size() - 1);
 
@@ -176,6 +189,17 @@ public class TagRelation extends Tag<Relation>{
                     beginLastTagNode = null;
                     success = true;
 
+
+                    if (name != null && name.equals("Bornholm")){
+                        System.out.println("Fyn");
+                        System.out.println(type.getKey() + " " + type.getValue() + " " + wayCount);
+
+
+                    }
+
+                    wayCount = 0;
+
+
                 }
             }
         }
@@ -186,41 +210,18 @@ public class TagRelation extends Tag<Relation>{
         }*/
     }
 
-
-
-    
-    public ArrayList<TagWay> getActualInner(){ return (ArrayList<TagWay>) this.get(Relation.INNER) ; };
-
     public Type getType() {
-        return (Type) this.get(Relation.TYPE);
+        return type;
     }
 
     public Type getRelationType(){
-        return (Type) this.get(Relation.RELATIONTYPE);
+        return relationType;
     }
 
     public String getName(){
-        return (String) this.get(Relation.NAME);
+        return name;
     }
     
-    // https://wiki.openstreetmap.org/wiki/Relation:multipolygon/Algorithm
-    public void ringAssignment(){
-        //RA1
-        int c = 0;
-        HashMap<TagWay, Boolean> relationWays = new HashMap<TagWay, Boolean>();
-        // collect all ways that are members of the relation and mark them as not assigned
-        relationWays.putAll(ways.stream().collect(HashMap::new, (m, v) -> m.put(v, false), HashMap::putAll));
-        relationWays.putAll(inner.stream().collect(HashMap::new, (m, v) -> m.put(v, false), HashMap::putAll));
-        relationWays.putAll(outer.stream().collect(HashMap::new, (m, v) -> m.put(v, false), HashMap::putAll));
-
-        relationWays.forEach((way, assigned) -> {
-            if(assigned) return;
-            else {
-                TagWay assignedWay = way;
-                assigned = true;
-            }
-        });
-    }
 
     public static class RelationBuilder {
         public TagRelation relation;
