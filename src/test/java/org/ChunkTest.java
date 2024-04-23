@@ -26,6 +26,7 @@ public class ChunkTest {
             new XMLReader(FileDistributer.input.getFilePath());
         });
         this.chunck = new Chunk(new XMLReader(FileDistributer.input.getFilePath()).getBound());
+        
     }
 
 
@@ -64,18 +65,18 @@ public class ChunkTest {
     @Test
     public void testIsInBounds(){
         TagNode node = MecatorProjection.project(new TagNode(55.6581162f,12.4681259f));
-        TagBound bound = XMLReader.getBound();
-        TagBound q1 = chunck.getQuadrantOne();
-        TagBound q2 = chunck.getQuadrantTwo();
-        TagBound q3 = chunck.getQuadrantThree();
-        TagBound q4 = chunck.getQuadrantFour();
-
         
-
         assertTrue(node.isInBounds(chunck.getQuadrantOne()));
         assertFalse(node.isInBounds(chunck.getQuadrantTwo()));
         assertFalse(node.isInBounds(chunck.getQuadrantThree()));
         assertFalse(node.isInBounds(chunck.getQuadrantFour()));
+
+        TagNode node2 = MecatorProjection.project(new TagNode(55.6581520f,12.4679991f));
+        
+        assertTrue(node2.isInBounds(chunck.getQuadrantOne()));
+        assertFalse(node2.isInBounds(chunck.getQuadrantTwo()));
+        assertFalse(node2.isInBounds(chunck.getQuadrantThree()));
+        assertFalse(node2.isInBounds(chunck.getQuadrantFour()));
     }
 
     @Test

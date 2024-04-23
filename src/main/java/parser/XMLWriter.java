@@ -1,10 +1,17 @@
 package parser;
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.RecursiveAction;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.io.BufferedOutputStream;
+import java.io.BufferedOutputStream;
 
 public class XMLWriter {
     private String directoryPath = "src/main/resources/chunks/";
     public static ChunkFiles chunkFiles = new ChunkFiles();
+    private static HashMap<TagBound, List<Tag>> tagList = new HashMap<TagBound, List<Tag>>();
     private static int chunkId = 0;
 
     public XMLWriter(TagBound bounds) {
@@ -13,6 +20,11 @@ public class XMLWriter {
         if (!directory.exists()) {
             directory.mkdirs();
         }
+        if(directory.listFiles().length > 256){
+            for (File file : directory.listFiles()) {
+                file.delete();
+            }
+        }
 
         initChunkFiles(bounds);    
     }
@@ -20,8 +32,7 @@ public class XMLWriter {
     public void initChunkFiles(TagBound bounds) {   
         for (TagBound parentChunk : Chunk.getQuadrants(bounds).values()) {
             for (TagBound midChunk : Chunk.getQuadrants(parentChunk).values()) {
-                for (TagBound smallChunk : Chunk.getQuadrants(midChunk).values()) {
-                    Chunk childChunk = new Chunk(smallChunk); 
+                    Chunk childChunk = new Chunk(bounds); 
                     for (int j = 0; j < 4; j++) {
                         // Get one of the four quadrants in the chunk
                         TagBound child = childChunk.getQuadrant(j);
@@ -30,7 +41,6 @@ public class XMLWriter {
                         chunkId++;
                     }
                 }
-            }
         }
     }
 
@@ -47,41 +57,53 @@ public class XMLWriter {
         
     }
 
-    public synchronized static void appendToBinary(Tag node) throws IOException {
-        ObjectOutputStream oos=null;
-        
+
+    public static void appendToPool(Tag node){
         for (TagBound bound : chunkFiles.getChunkFiles().keySet()) {
-            String path = chunkFiles.getChunkFilePath(bound);
             if(node.isInBounds(bound)){
-                try{
-                    File file = new File(path);
-                    if(file.exists()){
-                        oos = new AppendingObjectOutputStream(new FileOutputStream(file, true));
-                    }else{
-                        oos = new ObjectOutputStream(new FileOutputStream(file));
-                    }
-                    oos.writeObject(node);
-                    oos.close();
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-            
+                tagList.computeIfAbsent(bound, k -> new ArrayList<>()).add(node);
             }
         }
     }
 
-    public static class AppendingObjectOutputStream extends ObjectOutputStream {
+    public static void appendToBinary() {
+        ForkJoinPool pool = new ForkJoinPool();
 
-        public AppendingObjectOutputStream(OutputStream out) throws IOException {
-          super(out);
+        for (Map.Entry<TagBound, List<Tag>> entry : tagList.entrySet()) {
+            String path = chunkFiles.getChunkFilePath(entry.getKey());
+            pool.submit(new WriteTagAction(entry.getValue(), path));
         }
-      
+
+        pool.shutdown();
+        try {
+            pool.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    private static class WriteTagAction extends RecursiveAction {
+        private final List<? extends Tag> nodes;
+        private final String path;
+    
+        public WriteTagAction(List<? extends Tag> nodes, String path) {
+            this.nodes = nodes;
+            this.path = path;
+        }
+    
         @Override
-        protected void writeStreamHeader() throws IOException {
-          reset();
+        protected void compute() {
+            synchronized (path.intern()) {
+                try (DataOutputStream oos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(new File(path), true)))) {
+                    for (Tag node : nodes) {
+                        oos.write(node.tagToBytes());
+                    }
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
-      
-      }
+    }
 
     public static ArrayList<Tag> getContentFromBinaryFile(){
         ArrayList<Tag> objectList = new ArrayList<Tag>();

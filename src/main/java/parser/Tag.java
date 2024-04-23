@@ -3,6 +3,10 @@ package parser;
 import java.util.HashMap;
 
 import util.MecatorProjection;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 /**
  * Abstract class for a tag.
@@ -52,6 +56,14 @@ public abstract class Tag implements Serializable{
      * @return The longitude of the tag.
      */
     public abstract float getLon();
+
+    public byte[] tagToBytes() throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(bos);
+        oos.writeObject(this);
+        oos.flush();
+        return bos.toByteArray();
+    }
 
     /**
      * Check if a tag is within a specified {@link TagBound}.
