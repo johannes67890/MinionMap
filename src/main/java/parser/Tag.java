@@ -8,6 +8,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.io.ByteArrayInputStream;
+import java.io.ObjectInputStream;
 /**
  * Abstract class for a tag.
  * <p>
@@ -71,6 +73,19 @@ public abstract class Tag implements Serializable{
         oos.writeObject(this);
         oos.flush();
         return bos.toByteArray();
+    }
+
+    /**
+     * Convert bytes back to a Tag object.
+     * @param bytes - The byte array to convert.
+     * @return The Tag object.
+     * @throws IOException if an I/O error occurs.
+     * @throws ClassNotFoundException if the class of a serialized object cannot be found.
+     */
+    public static Tag bytesToTag(byte[] bytes) throws IOException, ClassNotFoundException {
+        ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
+        ObjectInputStream ois = new ObjectInputStream(bis);
+        return (Tag) ois.readObject();
     }
 
     /**

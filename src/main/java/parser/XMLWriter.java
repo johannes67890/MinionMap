@@ -7,6 +7,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.io.BufferedOutputStream;
 import java.io.BufferedOutputStream;
+import java.io.DataOutputStream;
+import java.io.EOFException;
+import java.io.FileOutputStream;
+
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.io.IOException;
+import java.io.DataInputStream;
 
 public class XMLWriter {
     private String directoryPath = "src/main/resources/chunks/";
@@ -83,6 +91,11 @@ public class XMLWriter {
             tagList.clear();
         }
 
+        readAllLinesFromChunkFile();
+
+        // for (Tag t : readAllBytesFromChunkFile()) {
+        //     System.out.println(t);  
+        // }
         System.out.println("Time for append to binary: " + (System.currentTimeMillis() - s) + "ms");
     }
     public static long t = 0;
@@ -117,84 +130,84 @@ public class XMLWriter {
         }
     }
 
-    public static ArrayList<Tag> getContentFromBinaryFile(){
-        ArrayList<Tag> objectList = new ArrayList<Tag>();
-        String path = "src/main/resources/chunks/chunk_5.bin";
-        File file = new File(path);
 
-        try{
-            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
-        
+    public static void readAllLinesFromChunkFile() {
+        String path = "src/main/resources/chunks/chunk_5.bin";
+
+        try (ObjectInputStream dis = new ObjectInputStream(new FileInputStream(new File(path)))) {
             while (true) {
                 try {
-                    Object o = ois.readObject();
-                    if(o instanceof TagBound) continue;
-                    if (o instanceof TagRelation) {
-                        objectList.add((TagRelation) o);
+                    Object o = dis.readObject();
+                    if (o instanceof Tag) {
+                        System.out.println(o);
                     }
-                    if(o instanceof TagNode){
-                        objectList.add((TagNode) o);
-                    }
-                    if(o instanceof TagAddress){
-                        objectList.add((TagAddress) o);
-                    }
-                    if(o instanceof TagWay){
-                        objectList.add((TagWay) o);
-                    }
-                
                 } catch (EOFException e) {
-                    ois.close();
-                    break; // end of stream
+                    break;
                 }
             }
-        }catch (Exception e){
-            e.printStackTrace();
+        } catch (EOFException e) {
+            
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        return objectList;
     }
 
+    // public static List<Tag> getContentFromBinaryFile(String path) {
+    //     List<Tag> tagList = new ArrayList<>();
+    //     File file = new File(path);
+    
+    //     try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+    //         while (true) {
+    //             try {
+    //                 Object o = ois.readObject();
+    //                 if (o instanceof Tag) {
+    //                     tagList.add((Tag) o);
+    //                 }
+    //             } catch (EOFException e) {
+    //                 // End of file reached
+    //                 break;
+    //             }
+    //         }
+    //     } catch (IOException | ClassNotFoundException e) {
+    //         throw new RuntimeException(e);
+    //     }
+    
+    //     return tagList;
+    // }
 
-  
-    public static Tag readTagByIdFromBinaryFile(long id){
-        String path = "src/main/resources/chunks/chunk_5.bin";
-        File file = new File(path);
 
-        try{
-            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
-        
-            while (true) {
-                try {
-                    Object o = ois.readObject();
-                        if(o instanceof TagBound) continue;
 
-                        if(((Tag) o).getId() == id){
-                            return (Tag) o;
+    public static Tag readTagByIdFromBinaryFile(long id) {
+        File folder = new File("src/main/resources/chunks/");
+        File[] listOfFiles = folder.listFiles();
+    
+        if (listOfFiles != null) {
+            for (File file : listOfFiles) {
+                if (file.isFile() && file.getName().endsWith(".bin")) {
+                    try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+                        while (true) {
+                            try {
+                                Object o = ois.readObject();
+                                if(o instanceof TagBound){
+                                    continue;
+                                } else if (o instanceof Tag && ((Tag) o).getId() == id) {
+                                    return (Tag) o;
+                                }
+                            } catch (EOFException e) {
+                                // End of file reached, continue with next file
+                                break;
+                            }
                         }
-                    
-                        // if (o instanceof TagWay) {
-                        //     TagWay way = (TagWay) o;
-                        //     if(way.getNodes().containsKey(id)){
-                        //         return way.getNodeById(id);
-                        //     } else continue;
-                        // }
-                        // if(o instanceof TagRelation){
-                        //     TagRelation relation = (TagRelation) o;
-                        //     if(relation.getMembers().containsKey(id)){
-                        //         relation.getMemberById(id);
-                        //     } else continue;
-                        // }
-                    
-                } catch (EOFException e) {
-                    ois.close();
-                    throw new IllegalArgumentException("Tag with " + id + " not found");
+                    } catch (IOException | ClassNotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
-        }catch (Exception e){
-            e.printStackTrace();
         }
-        return null;
+    
+        return null; // Return null if no Tag with the given id is found
     }
-
+ 
 
     /**
      * A class to control the chunk files' paths and the bounds of the chunks
