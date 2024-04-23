@@ -258,17 +258,18 @@ public class Controller implements Initializable, ControllerInterface{
         //drawingMap.getTransform().determinant()
         Point2D pointCenter = drawingMap.getTransform().transform(x, y);
         TagAddress tagAddress = s.getTagAddressByAddress(addressObj);
+        System.out.println(tagAddress.getMunicipality() + " " + tagAddress.getCity() + " " + tagAddress.getStreet() + " " + tagAddress.getHouseNumber());
         Point2D point = drawingMap.getTransform().transform(tagAddress.getLon(), tagAddress.getLat());
         double deltaX = point.getX() - pointCenter.getX();
         double deltaY = point.getY() - pointCenter.getY();
-        System.out.println( "X: CENTER: " + x + ", TAGADRESS: " + tagAddress.getLon());
+        /*System.out.println( "X: CENTER: " + x + ", TAGADRESS: " + tagAddress.getLon());
         System.out.println( "Y: CENTER: " + y + ", TAGADRESS: " + tagAddress.getLat());
         System.out.println( "POINT: X: " + point.getX() + ", Y: " + point.getY());
         System.out.println( "CENTERPOINT: X: " + pointCenter.getX() + ", Y: " + pointCenter.getY());
         System.out.println( "TRANSFORM: TX: " + drawingMap.getTransform().getTx() + ", TY: " + drawingMap.getTransform().getTy());
 
 
-        System.out.println( "DELTA: X: " + deltaX + ", Y: " + deltaY);
+        System.out.println( "DELTA: X: " + deltaX + ", Y: " + deltaY);*/
 
 
 

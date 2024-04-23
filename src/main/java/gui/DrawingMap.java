@@ -219,7 +219,7 @@ public class DrawingMap {
      */
     private void drawWays(MinPQ<TagWay> ways){
 
-        System.out.println("MIN X: " + getScreenBounds()[0] + " MIN Y: " + getScreenBounds()[1] + " DETERMINANT: " + Math.sqrt(transform.determinant()));
+        //System.out.println("MIN X: " + getScreenBounds()[0] + " MIN Y: " + getScreenBounds()[1] + " DETERMINANT: " + Math.sqrt(transform.determinant()));
 
         TagNode[] nodesRef;
 
