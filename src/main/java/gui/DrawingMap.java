@@ -15,7 +15,10 @@ import parser.XMLReader;
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
 import util.MathUtil;
+import util.MecatorProjection;
 import util.MinPQ;
+import util.Point3D;
+import util.Rect3D;
 import util.Tree;
 import parser.Tag;
 
@@ -36,7 +39,7 @@ public class DrawingMap {
     private int hierarchyLevel = 9;
     private final double zoomLevelMin = 0.001, zoomLevelMax = 30; // These variables changes how much you can zoom in and out. Min is far out and max is closest in
     private double zoomScalerToMeter; // This is the world meters of how long the scaler in the bottom right corner is. Divide it with the zoomLevel
-    private double[] zoomScales = {32, 16, 8, 4, 2, 1, 0.5, 0.1, 0.05, 0.015, 0.0001}; //
+    private double[] zoomScales = {32, 16, 8, 4, 2, 1, 0.5, 0.1, 0.05, 0.015, 0.0001}; // The zoom level at which given nodes will be shown (low index = farther away)
 
     private List<TagNode> nodes;
     private List<TagWay> ways;
@@ -49,6 +52,7 @@ public class DrawingMap {
     private List<TagWay> waysToDrawWithType;
     private List<TagWay> waysToDrawWithoutType;
 
+    private double[] tempBounds = new double[4];
 
 
 
@@ -76,13 +80,13 @@ public class DrawingMap {
         double maxlat = bound.getMaxLat();
         double maxlon = bound.getMaxLon();
         double minlat = bound.getMinLat();
-
         ArrayList<Tag> tempList = new ArrayList<>();
         tempList.addAll(XMLReader.getWays().valueCollection());
         tempList.addAll(XMLReader.getRelations().valueCollection());
-        Tree.initialize(tempList);
+        Tree.initialize2(tempList);
         pan(-minlon, minlat);
         zoom(canvas.getWidth() / (maxlon - minlon), 0, 0);
+        tempBounds = getScreenBounds();
         DrawMap(canvas);
     }
 
@@ -99,6 +103,7 @@ public class DrawingMap {
         if (!Tree.isLoaded()){
             return;
         }
+
 
         //Resfreshes the screen
         gc = canvas.getGraphicsContext2D();
@@ -120,16 +125,13 @@ public class DrawingMap {
         gc.setTransform(transform);
         currentColor = Color.BLACK;
 
-        // TODO:
-        double[] canvasBounds = getScreenBoundsBigger(0.09);
-        RectHV rect = new RectHV(canvasBounds[0], canvasBounds[1], canvasBounds[2], canvasBounds[3]);
-
+        double[] canvasBounds = getScreenBoundsBigger(0.2);
+        Rect3D rect = new Rect3D(canvasBounds[0], canvasBounds[1], hierarchyLevel, canvasBounds[2], canvasBounds[3], 100);
         nodes = new ArrayList<>();
         ways = new ArrayList<>();
         relations = new ArrayList<>();
 
-        HashSet<Tag> tags = Tree.getTagsInBounds(rect, hierarchyLevel);
-
+        HashSet<Tag> tags = Tree.getTagsInBounds2(rect);
         for(Tag tag : tags){
             if (tag instanceof TagNode){
                 nodes.add((TagNode) tag);
@@ -286,6 +288,8 @@ public class DrawingMap {
 
     /**
      * Calculates the coordinates the screen sees and returns a array of coordinates.
+     * A bit weird. If you draw with this calculation it draws perfect, but if you need the nodes within the screen the Y value needs to be negated
+     * This method is primarily made for the KdTree
      * Index 0: X - Minimum
      * Index 1: Y - Minimum
      * Index 2: X - Maximum
@@ -294,10 +298,12 @@ public class DrawingMap {
      */
     public double[] getScreenBounds(){
         double[] bounds = new double[4]; // x_min ; y_min ; x_max ; y_max
+        double width = ((canvas.getWidth()) / zoomLevel);
+        double height = ((canvas.getHeight()) / zoomLevel);
         bounds[0] = -(transform.getTx() / Math.sqrt(transform.determinant()));
-        bounds[1] = -(-transform.getTy()) / Math.sqrt(transform.determinant());
-        bounds[2] = ((canvas.getWidth()) / zoomLevel) + bounds[0];
-        bounds[3] = ((canvas.getHeight()) / zoomLevel) + bounds[1];
+        bounds[1] = (transform.getTy()) / Math.sqrt(transform.determinant()) - height;
+        bounds[2] = width + bounds[0];
+        bounds[3] = height + bounds[1];
         return bounds;
     }
 
@@ -305,8 +311,8 @@ public class DrawingMap {
         double[] bounds = getScreenBounds();
         double width = bounds[2] - bounds[0];
         double height = bounds[3] - bounds[1];
-        bounds[0] -= (width * (1.0 - multiplier));
-        bounds[1] -= (height * (1.0 - multiplier));
+        bounds[0] -= (width * (1.0 + multiplier));
+        bounds[1] -= (height * (1.0 + multiplier));
         bounds[2] += (width * (1.0 + multiplier));
         bounds[3] += (height * (1.0 + multiplier));
         return bounds;
@@ -338,7 +344,6 @@ public class DrawingMap {
         double zoomLevelNext = zoomLevel * factor;
         if (zoomLevelNext < zoomLevelMax && zoomLevelNext > zoomLevelMin){
             zoomLevel = zoomLevelNext;
-
 
             for (int i = 0; i < zoomScales.length ; i++){
                 if (zoomLevel > zoomScales[i]){

@@ -9,6 +9,9 @@ import parser.Tag;
 import parser.TagNode;
 import parser.TagRelation;
 import parser.TagWay;
+import util.Point3D;
+import util.Rect3D;
+import util.NewKdTree;
 
 public class Tree {
 
@@ -17,6 +20,8 @@ public class Tree {
     ArrayList<TagWay> waysInBounds;
     ArrayList<TagRelation> relationsInBounds;
     static boolean isLoaded = false;
+
+    static NewKdTree multiTree;
 
     /**
      * Initialize the kdtree with an arraylist of tags
@@ -29,6 +34,15 @@ public class Tree {
         kdtree.setBound(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
         for (Tag tag : tags){
             insertTagInTree(tag);
+        }
+        isLoaded = true;
+    }
+
+    public static void initialize2(ArrayList<Tag> tags){
+        multiTree = new NewKdTree();
+        multiTree.setBound(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
+        for (Tag tag : tags){
+            insertTagInTree2(tag);
         }
         isLoaded = true;
     }
@@ -56,6 +70,38 @@ public class Tree {
                 for (TagNode node : way.getNodes()){
                     Point2D temp = new Point2D(node.getLon(), node.getLat());
                     kdtree.insert(temp, tag);
+                }
+            }
+        }
+    }
+
+    /**
+     * Inserts a tag in the tree
+     * @param tag Tag to be inserted in the tree
+     */
+    public static void insertTagInTree2(Tag tag){
+        if (tag instanceof TagWay){
+            TagWay way = (TagWay) tag;
+            for (TagNode node : way.getNodes()){
+                Point3D temp;
+                if (way.getType() != null){
+                    temp = new Point3D(node.getLon(), node.getLat(), way.getType().getThisHierarchy());
+                }else{
+                    temp = new Point3D(node.getLon(), node.getLat(), 0);
+                }
+                multiTree.insert(temp, tag);
+            }
+        }else if (tag instanceof TagRelation){
+            TagRelation relation = (TagRelation) tag;
+            for (TagWay way : relation.getHandledOuter()){
+                for (TagNode node : way.getNodes()){
+                    Point3D temp;
+                    if (way.getType() != null){
+                        temp = new Point3D(node.getLon(), node.getLat(), way.getType().getThisHierarchy());
+                    }else{
+                        temp = new Point3D(node.getLon(), node.getLat(), 0);
+                    }
+                    multiTree.insert(temp, tag);
                 }
             }
         }
@@ -89,9 +135,8 @@ public class Tree {
         return tagsInBounds;
     }
 
-    
-    public static HashSet<Tag> getTagsInBounds(RectHV rect, int hierarchyLevel) {
-        return kdtree.rangeNode(rect, hierarchyLevel);
+    public static HashSet<Tag> getTagsInBounds2(Rect3D rect){
+        return multiTree.rangeNode(rect);
     }
 
     /**

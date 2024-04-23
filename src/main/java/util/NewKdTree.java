@@ -158,6 +158,11 @@ public class NewKdTree {
         }
         
         double cmp = comparePoints(p, n, xyz);
+
+        int xyztemp = xyz + 1;
+        if (xyztemp > 2){
+            xyztemp = 0;
+        }
         
         /**
          * Traverse down the BST.
@@ -221,7 +226,7 @@ public class NewKdTree {
          * at all, and so none of coords[] values are updated here.
          */
         else if (!n.p.equals(p))
-            n.rtf = insert(n.rtf, p, xyz+1, coords);
+            n.rtf = insert(n.rtf, p, xyztemp, coords);
         
         /**
          * Do nothing for a point which is already in the BST.

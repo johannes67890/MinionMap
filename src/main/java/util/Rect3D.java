@@ -31,13 +31,15 @@
       * x [<em>ymin</em>, <em>ymax</em>].
       *
       * @param  xmin the <em>x</em>-coordinate of the lower-left endpoint
-      * @param  xmax the <em>x</em>-coordinate of the upper-right endpoint
       * @param  ymin the <em>y</em>-coordinate of the lower-left endpoint
+      * @param  zmin the <em>z</em>-coordinate of the lower-left endpoint
+      * @param  xmax the <em>x</em>-coordinate of the upper-right endpoint
       * @param  ymax the <em>y</em>-coordinate of the upper-right endpoint
+      * @param  zmax the <em>z</em>-coordinate of the upper-right endpoint
       * @throws IllegalArgumentException if any of {@code xmin},
-      *         {@code xmax}, {@code ymin}, or {@code ymax}
+      *         {@code xmax}, {@code ymin}, {@code ymax}, {@code zmin} or {@code zmax}
       *         is {@code Double.NaN}.
-      * @throws IllegalArgumentException if {@code xmax < xmin} or {@code ymax < ymin}.
+      * @throws IllegalArgumentException if {@code xmax < xmin} or {@code ymax < ymin} or {@code zmax < zmin}.
       */
     public Rect3D(double xmin, double ymin, double zmin, double xmax, double ymax, double zmax) {
         this.xmin = xmin;
@@ -157,7 +159,7 @@
      public boolean contains(Point3D p) {
          return (p.x() >= xmin) && (p.x() <= xmax)
              && (p.y() >= ymin) && (p.y() <= ymax) 
-             && (p.z() >= zmin) && (p.z() <= zmin);
+             && (p.z() >= zmin) && (p.z() <= zmax);
      }
  
      /**
