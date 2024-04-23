@@ -1,0 +1,264 @@
+/******************************************************************************
+ *  Compilation:  javac Rect3D.java
+ *  Execution:    none
+ *  Dependencies: Point3D.java
+ *
+ *  Immutable data type for 3D axis-aligned rectangle.
+ *
+ ******************************************************************************/
+
+ package util;
+
+ /**
+  *  The {@code Rect3D} class is an immutable data type to encapsulate a
+  *  two-dimensional axis-aligned rectagle with real-value coordinates.
+  *  The rectangle is <em>closed</em>—it includes the points on the boundary.
+  *  <p>
+  *  For additional documentation, 
+  *  see <a href="https://algs4.cs.princeton.edu/12oop">Section 1.2</a> of 
+  *  <i>Algorithms, 4th Edition</i> by Robert Sedgewick and Kevin Wayne. 
+  *
+  *  @author Robert Sedgewick
+  *  @author Kevin Wayne
+  */
+ 
+ public final class Rect3D {
+     private final double xmin, ymin, zmin;   // minimum x- and y-coordinates
+     private final double xmax, ymax, zmax;   // maximum x- and y-coordinates
+ 
+     /**
+      * Initializes a new rectangle [<em>xmin</em>, <em>xmax</em>]
+      * x [<em>ymin</em>, <em>ymax</em>].
+      *
+      * @param  xmin the <em>x</em>-coordinate of the lower-left endpoint
+      * @param  xmax the <em>x</em>-coordinate of the upper-right endpoint
+      * @param  ymin the <em>y</em>-coordinate of the lower-left endpoint
+      * @param  ymax the <em>y</em>-coordinate of the upper-right endpoint
+      * @throws IllegalArgumentException if any of {@code xmin},
+      *         {@code xmax}, {@code ymin}, or {@code ymax}
+      *         is {@code Double.NaN}.
+      * @throws IllegalArgumentException if {@code xmax < xmin} or {@code ymax < ymin}.
+      */
+    public Rect3D(double xmin, double ymin, double zmin, double xmax, double ymax, double zmax) {
+        this.xmin = xmin;
+        this.ymin = ymin;
+        this.zmin = zmin;
+        this.xmax = xmax;
+        this.ymax = ymax;
+        this.zmax = zmax;
+        if (Double.isNaN(xmin) || Double.isNaN(xmax)) {
+            throw new IllegalArgumentException("x-coordinate is NaN: " + toString());
+        }
+        if (Double.isNaN(ymin) || Double.isNaN(ymax)) {
+            throw new IllegalArgumentException("y-coordinate is NaN: " + toString());
+        }
+        if (Double.isNaN(zmin) || Double.isNaN(zmax)){
+            throw new IllegalArgumentException("zcoordinate is NaN: " + toString());
+        }
+        if (xmax < xmin) {
+            throw new IllegalArgumentException("xmax < xmin: " + toString());
+        }
+        if (ymax < ymin) {
+            throw new IllegalArgumentException("ymax < ymin: " + toString());
+        }
+        if (zmax < zmin){
+            throw new IllegalArgumentException("zmax < zmin" + toString());
+        }
+    }
+ 
+     /**
+      * Returns the minimum <em>x</em>-coordinate of any point in this rectangle.
+      *
+      * @return the minimum <em>x</em>-coordinate of any point in this rectangle
+      */
+     public double xmin() {
+         return xmin;
+     }
+ 
+     /**
+      * Returns the maximum <em>x</em>-coordinate of any point in this rectangle.
+      *
+      * @return the maximum <em>x</em>-coordinate of any point in this rectangle
+      */
+     public double xmax() {
+         return xmax;
+     }
+ 
+     /**
+      * Returns the minimum <em>y</em>-coordinate of any point in this rectangle.
+      *
+      * @return the minimum <em>y</em>-coordinate of any point in this rectangle
+      */
+     public double ymin() {
+         return ymin;
+     }
+ 
+     /**
+      * Returns the maximum <em>y</em>-coordinate of any point in this rectangle.
+      *
+      * @return the maximum <em>y</em>-coordinate of any point in this rectangle
+      */
+     public double ymax() {
+         return ymax;
+     }
+
+     public double zmin(){
+        return zmin;
+     }
+
+     public double zmax(){
+        return zmax;
+     }
+ 
+     /**
+      * Returns the width of this rectangle.
+      *
+      * @return the width of this rectangle {@code xmax - xmin}
+      */
+     public double width() {
+         return xmax - xmin;
+     }
+ 
+     /**
+      * Returns the height of this rectangle.
+      *
+      * @return the height of this rectangle {@code ymax - ymin}
+      */
+     public double height() {
+         return ymax - ymin;
+     }
+
+     public double depth(){
+        return zmax - zmin;
+     }
+ 
+     /**
+      * Returns true if the two rectangles intersect. This includes
+      * <em>improper intersections</em> (at points on the boundary
+      * of each rectangle) and <em>nested intersctions</em>
+      * (when one rectangle is contained inside the other)
+      *
+      * @param  that the other rectangle
+      * @return {@code true} if this rectangle intersect the argument
+                rectangle at one or more points
+      */
+     public boolean intersects(Rect3D that) {
+         return this.xmax >= that.xmin && this.ymax >= that.ymin
+             && that.xmax >= this.xmin && that.ymax >= this.ymin 
+             && this.zmax >= that.zmin && that.zmax >= this.zmin;
+     }
+ 
+     /**
+      * Returns true if this rectangle contain the point.
+      * @param  p the point
+      * @return {@code true} if this rectangle contain the point {@code p},
+                possibly at the boundary; {@code false} otherwise
+      */
+     public boolean contains(Point3D p) {
+         return (p.x() >= xmin) && (p.x() <= xmax)
+             && (p.y() >= ymin) && (p.y() <= ymax) 
+             && (p.z() >= zmin) && (p.z() <= zmin);
+     }
+ 
+     /**
+      * Returns the Euclidean distance between this rectangle and the point {@code p}.
+      *
+      * @param  p the point
+      * @return the Euclidean distance between the point {@code p} and the closest point
+                on this rectangle; 0 if the point is contained in this rectangle
+      */
+     public double distanceTo(Point3D p) {
+         return Math.sqrt(this.distanceSquaredTo(p));
+     }
+ 
+     /**
+      * Returns the square of the Euclidean distance between this rectangle and the point {@code p}.
+      *
+      * @param  p the point
+      * @return the square of the Euclidean distance between the point {@code p} and
+      *         the closest point on this rectangle; 0 if the point is contained
+      *         in this rectangle
+      */
+     public double distanceSquaredTo(Point3D p) {
+         double dx = 0.0, dy = 0.0, dz = 0.0;
+         if      (p.x() < xmin) dx = p.x() - xmin;
+         else if (p.x() > xmax) dx = p.x() - xmax;
+         if      (p.y() < ymin) dy = p.y() - ymin;
+         else if (p.y() > ymax) dy = p.y() - ymax;
+         if      (p.z() < zmin) dz = p.z() - zmin;
+         else if (p.z() > zmax) dz = p.z() - zmax;
+         return dx*dx + dy*dy + dz*dz;
+     }
+ 
+     /**
+      * Compares this rectangle to the specified rectangle.
+      *
+      * @param  other the other rectangle
+      * @return {@code true} if this rectangle equals {@code other};
+      *         {@code false} otherwise
+      */
+     @Override
+     public boolean equals(Object other) {
+         if (other == this) return true;
+         if (other == null) return false;
+         if (other.getClass() != this.getClass()) return false;
+         Rect3D that = (Rect3D) other;
+         if (this.xmin != that.xmin) return false;
+         if (this.ymin != that.ymin) return false;
+         if (this.xmax != that.xmax) return false;
+         if (this.ymax != that.ymax) return false;
+         return true;
+     }
+ 
+     /**
+      * Returns an integer hash code for this rectangle.
+      * @return an integer hash code for this rectangle
+      */
+     @Override
+     public int hashCode() {
+         int hash1 = ((Double) xmin).hashCode();
+         int hash2 = ((Double) ymin).hashCode();
+         int hash5 = ((Double) zmin).hashCode();
+         int hash3 = ((Double) xmax).hashCode();
+         int hash4 = ((Double) ymax).hashCode();
+         int hash6 = ((Double) zmax).hashCode();
+         return 31*(31*(31*hash1 + hash2 + hash5) + hash3 + hash6) + hash4;
+     }
+ 
+     /**
+      * Returns a string representation of this rectangle.
+      *
+      * @return a string representation of this rectangle, using the format
+      *         {@code [xmin, xmax] x [ymin, ymax]}
+      */
+     @Override
+     public String toString() {
+         return "[" + xmin + ", " + xmax + "] x [" + ymin + ", " + ymax + "] x [" + zmin + ", " + zmax + "]";
+     }
+ 
+ }
+ 
+ /******************************************************************************
+  *  Copyright 2002-2016, Robert Sedgewick and Kevin Wayne.
+  *
+  *  This file is part of algs4.jar, which accompanies the textbook
+  *
+  *      Algorithms, 4th edition by Robert Sedgewick and Kevin Wayne,
+  *      Addison-Wesley Professional, 2011, ISBN 0-321-57351-X.
+  *      http://algs4.cs.princeton.edu
+  *
+  *
+  *  algs4.jar is free software: you can redistribute it and/or modify
+  *  it under the terms of the GNU General Public License as published by
+  *  the Free Software Foundation, either version 3 of the License, or
+  *  (at your option) any later version.
+  *
+  *  algs4.jar is distributed in the hope that it will be useful,
+  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  *  GNU General Public License for more details.
+  *
+  *  You should have received a copy of the GNU General Public License
+  *  along with algs4.jar.  If not, see http://www.gnu.org/licenses.
+  ******************************************************************************/
+ 

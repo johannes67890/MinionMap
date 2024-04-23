@@ -4,15 +4,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import edu.princeton.cs.algs4.Point2D;
-import edu.princeton.cs.algs4.RectHV;
+import util.Point3D;
+import util.Rect3D;
 import edu.princeton.cs.algs4.Stack;
-import edu.princeton.cs.algs4.StdDraw;
-import edu.princeton.cs.algs4.StdOut;
 import parser.Tag;
-import parser.TagNode;
-import parser.TagRelation;
-import parser.TagWay;
 
 /*
  * Copyright (C) 2016 Michael <GrubenM@GMail.com>
@@ -48,16 +43,16 @@ import parser.TagWay;
  * 
  * @author Michael <GrubenM@GMail.com>
  */
-public class KdTree {
+public class NewKdTree {
     private Node root;
     private int size;
-    private HashMap<Point2D, ArrayList<Tag>> pointToTag;
-    public double[] bounds = new double[4];
+    private HashMap<Point3D, ArrayList<Tag>> pointToTag;
+    public double[] bounds = new double[6];
 
     /**
      * Construct an empty set of points.
      */
-    public KdTree() {
+    public NewKdTree() {
         size = 0;
         pointToTag = new HashMap<>();
     }
@@ -88,8 +83,8 @@ public class KdTree {
     /*
      * Set the bounds for the coordinates possible in the KdTree
      */
-    public void setBound(double x_min, double y_min, double x_max, double y_max){
-        bounds = new double[] {x_min, y_min, x_max, y_max};
+    public void setBound(double x_min, double y_min, double z_min, double x_max, double y_max, double z_max){
+        bounds = new double[] {x_min, y_min, z_min, x_max, y_max, z_max};
     }
 
     /*
@@ -133,20 +128,20 @@ public class KdTree {
      * 
      * 
      * @param p the point to add
-     * @param node the tag ({@link Tag}) associated with the Point2D
+     * @param node the tag ({@link Tag}) associated with the Point3D
      * @throws NullPointerException if {@code p} is {@code null}
      */
     
-    public void insert(Point2D p, Tag node) {
+    public void insert(Point3D p, Tag node) {
         if (p == null) {
-            throw new java.lang.NullPointerException("called insert() with a null Point2D");
+            throw new java.lang.NullPointerException("called insert() with a null Point3D");
         }
         
         // new double[] {x_min, y_min, x_max, y_max)
         if(bounds != null) {
-            root = insert(root, p, true, bounds.clone());
+            root = insert(root, p, 0, bounds.clone());
         } else {
-            root = insert(root, p, true, new double[] {-180, -180, 180, 180});
+            root = insert(root, p, 0, new double[] {-180, -180, 180, 180});
         }
         
         ArrayList<Tag> list = pointToTag.getOrDefault(node, new ArrayList<>());
@@ -154,7 +149,7 @@ public class KdTree {
         pointToTag.put(p, list);
     }
     
-    private Node insert(Node n, Point2D p, boolean evenLevel, double[] coords) {
+    private Node insert(Node n, Point3D p, int xyz, double[] coords) {
         if (n == null) {
             size++;
             // double xmin, double ymin, double xmax, double ymax
@@ -162,7 +157,7 @@ public class KdTree {
             return new Node(p, coords);
         }
         
-        double cmp = comparePoints(p, n, evenLevel);
+        double cmp = comparePoints(p, n, xyz);
         
         /**
          * Traverse down the BST.
@@ -180,27 +175,39 @@ public class KdTree {
          */
         
         // Handle Nodes which should be inserted to the left
-        if (cmp < 0 && evenLevel) {
-            coords[2] = n.p.x(); // lessen x_max
-            n.lb = insert(n.lb, p, !evenLevel, coords);
+        if (cmp < 0 && xyz == 0) {
+            coords[3] = n.p.x(); // lessen x_max
+            n.lbb = insert(n.lbb, p, xyz+1, coords);
         }
         
         // Handle Nodes which should be inserted to the bottom
-        else if (cmp < 0 && !evenLevel) {
-            coords[3] = n.p.y(); // lessen y_max
-            n.lb = insert(n.lb, p, !evenLevel, coords);
+        else if (cmp < 0 && xyz == 1) {
+            coords[4] = n.p.y(); // lessen y_max
+            n.lbb = insert(n.lbb, p, xyz+1, coords);
+        }
+
+        // Handle Nodes which should be inserted to the back
+        else if (cmp < 0 && xyz == 2){
+            coords[5] = n.p.z();
+            n.lbb = insert(n.lbb, p, 0, coords);
         }
         
         // Handle Nodes which should be inserted to the right
-        else if (cmp > 0 && evenLevel) {
+        else if (cmp > 0 && xyz == 0) {
             coords[0] = n.p.x(); // increase x_min
-            n.rt = insert(n.rt, p, !evenLevel, coords);
+            n.rtf = insert(n.rtf, p, xyz+1, coords);
         }
         
         // Handle Nodes which should be inserted to the top
-        else if (cmp > 0 && !evenLevel) {
+        else if (cmp > 0 && xyz == 1) {
             coords[1] = n.p.y(); // increase y_min
-            n.rt = insert(n.rt, p, !evenLevel, coords);
+            n.rtf = insert(n.rtf, p, xyz+1, coords);
+        }
+
+        // Handle Nodes which should be inserted to the front
+        else if (cmp > 0 && xyz == 2){
+            coords[2] = n.p.z();
+            n.rtf = insert(n.rtf, p, 0, coords);
         }
         
         /**
@@ -210,11 +217,11 @@ public class KdTree {
          * As per the checklist, these "ties" are resolved in favor of the
          * right subtree.
          * 
-         * It is assumed that the RectHV to be created cannot be shrunk
+         * It is assumed that the Rect3D to be created cannot be shrunk
          * at all, and so none of coords[] values are updated here.
          */
         else if (!n.p.equals(p))
-            n.rt = insert(n.rt, p, !evenLevel, coords);
+            n.rtf = insert(n.rtf, p, xyz+1, coords);
         
         /**
          * Do nothing for a point which is already in the BST.
@@ -236,60 +243,31 @@ public class KdTree {
      *         {@code false} otherwise
      * @throws NullPointerException if {@code p} is {@code null}
      */
-    public boolean contains(Point2D p) {
+    public boolean contains(Point3D p) {
         if (p == null) throw new java.lang.NullPointerException(
-                "called contains() with a null Point2D");
-        return contains(root, p, true);
+                "called contains() with a null Point3D");
+        return contains(root, p, 0);
     }
     
-    private boolean contains(Node n, Point2D p, boolean evenLevel) {
-        
+    private boolean contains(Node n, Point3D p, int xyz) {
+
         // Handle reaching the end of the search
         if (n == null) return false;
         
         // Check whether the search point matches the current Node's point
         if (n.p.equals(p)) return true;
         
-        double cmp = comparePoints(p, n, evenLevel);
+        double cmp = comparePoints(p, n, xyz);
         
+        int temp = xyz + 1;
+        if (xyz > 2){
+            temp = 0;
+        }
         // Traverse the left path when necessary
-        if (cmp < 0) return contains(n.lb, p, !evenLevel);
+        if (cmp < 0) return contains(n.lbb, p, temp);
         
         // Traverse the right path when necessary, and as tie-breaker
-        else return contains(n.rt, p, !evenLevel); 
-    }
-    
-    /**
-     * Draw all points and partition lines to standard draw.
-     */
-    public void draw() {
-        draw(root, true);
-    }
-    
-    private void draw(Node n, boolean evenLevel) {
-        if (n == null) return;
-        
-        // Traverse the left Nodes
-        draw(n.lb, !evenLevel);
-        
-        // Draw the current Node
-        StdDraw.setPenColor(StdDraw.BLACK);
-        StdDraw.setPenRadius(0.01);
-        n.p.draw();
-        
-        // Draw the partition line
-        StdDraw.setPenRadius();
-        if (evenLevel) {
-            StdDraw.setPenColor(StdDraw.RED);
-            StdDraw.line(n.p.x(), n.rect.ymin(), n.p.x(), n.rect.ymax());
-        }
-        else {
-            StdDraw.setPenColor(StdDraw.BLUE);
-            StdDraw.line(n.rect.xmin(), n.p.y(), n.rect.xmax(), n.p.y());
-        }
-        
-        // Traverse the right Nodes
-        draw(n.rt, !evenLevel);
+        else return contains(n.rtf, p, temp); 
     }
     
     /**
@@ -302,17 +280,17 @@ public class KdTree {
      * takes time proportional to the logarithm of the number of
      * points in the set.
      * 
-     * @param rect the RectHV within which to look for points
-     * @return an iterator to all of the points within the given RectHV
+     * @param rect the Rect3D within which to look for points
+     * @return an iterator to all of the points within the given Rect3D
      * @throws NullPointerException if {@code rect} is {@code null}
      */
     
 
-    public HashSet<Tag> rangeNode(RectHV rect) {
+    public HashSet<Tag> rangeNode(Rect3D rect) {
         if (rect == null) throw new java.lang.NullPointerException(
-                "called range() with a null RectHV");
+                "called range() with a null Rect3D");
         
-        //Stack<Point2D> points = new Stack<>();
+        //Stack<Point3D> points = new Stack<>();
         //ArrayList<Tag<?>> returnList = new ArrayList<>();
         HashSet<Tag> returnList = new HashSet<>();
         
@@ -336,56 +314,14 @@ public class KdTree {
              * Add Nodes containing promising rectangles to our nodes stack.
              * 
              * Note that, since we don't push Nodes onto the stack unless
-             * their rectangles intersect with the given RectHV, we achieve
+             * their rectangles intersect with the given Rect3D, we achieve
              * pruning as we traverse the BST.
              */
-            if (tmp.lb != null && rect.intersects(tmp.lb.rect)) {
-                nodes.push(tmp.lb);
+            if (tmp.lbb != null && rect.intersects(tmp.lbb.rect)) {
+                nodes.push(tmp.lbb);
             }
-            if (tmp.rt != null && rect.intersects(tmp.rt.rect)) {
-                nodes.push(tmp.rt);
-            }
-        }
-        return returnList;
-    }
-
-    public HashSet<Tag> rangeNode(RectHV rect, int hierarchyLevel) {
-        if (rect == null) throw new java.lang.NullPointerException(
-                "called range() with a null RectHV");
-        
-        //Stack<Point2D> points = new Stack<>();
-        //ArrayList<Tag<?>> returnList = new ArrayList<>();
-        HashSet<Tag> returnList = new HashSet<>();
-        
-        // Handle KdTree without a root node yet
-        if (root == null) return returnList;
-        
-        Stack<Node> nodes = new Stack<>();
-        nodes.push(root);
-        while (!nodes.isEmpty()) {
-            
-            // Examine the next Node
-            Node tmp = nodes.pop();
-            
-            // Add contained points to our points stack
-            if (rect.contains(tmp.p)){
-                //points.push(tmp.p);
-                ArrayList<Tag> temp = pointToTag.get(tmp.p);
-                
-                returnList.addAll(temp);
-            }
-            /**
-             * Add Nodes containing promising rectangles to our nodes stack.
-             * 
-             * Note that, since we don't push Nodes onto the stack unless
-             * their rectangles intersect with the given RectHV, we achieve
-             * pruning as we traverse the BST.
-             */
-            if (tmp.lb != null && rect.intersects(tmp.lb.rect)) {
-                nodes.push(tmp.lb);
-            }
-            if (tmp.rt != null && rect.intersects(tmp.rt.rect)) {
-                nodes.push(tmp.rt);
+            if (tmp.rtf != null && rect.intersects(tmp.rtf.rect)) {
+                nodes.push(tmp.rtf);
             }
         }
         return returnList;
@@ -406,14 +342,14 @@ public class KdTree {
      *         {@code null} otherwise.
      * @throws NullPointerException if {@code p} is {@code null}
      */
-    public Point2D nearest(Point2D p) {
+    public Point3D nearest(Point3D p) {
         if (p == null) throw new java.lang.NullPointerException(
-                "called contains() with a null Point2D");
+                "called contains() with a null Point3D");
         if (isEmpty()) return null;
-        return nearest(root, p, root.p, true);
+        return nearest(root, p, root.p, 0);
     }
     
-    private Point2D nearest(Node n, Point2D p, Point2D champion, boolean evenLevel) {
+    private Point3D nearest(Node n, Point3D p, Point3D champion, int xyz) {
         
         // Handle reaching the end of the tree
         if (n == null) return champion;
@@ -439,19 +375,22 @@ public class KdTree {
          * of the points on the other side of that partition line, because none
          * can be closer.
          */
-        double toPartitionLine = comparePoints(p, n, evenLevel);
-        
+        double toPartitionLine = comparePoints(p, n, xyz);
+        int temp = xyz + 1;
+        if (xyz > 2){
+            temp = 0;
+        }
         /**
          * Handle the search point being to the left of or below
          * the current Node's point.
          */
         if (toPartitionLine < 0) {
-            champion = nearest(n.lb, p, champion, !evenLevel);
+            champion = nearest(n.lbb, p, champion, temp);
             
             // Since champion may have changed, recalculate distance
             if (champion.distanceSquaredTo(p) >=
                     toPartitionLine * toPartitionLine) {
-                champion = nearest(n.rt, p, champion, !evenLevel);
+                champion = nearest(n.rtf, p, champion, temp);
             }
         }
         
@@ -466,12 +405,12 @@ public class KdTree {
          * the level of the current Node).
          */
         else {
-            champion = nearest(n.rt, p, champion, !evenLevel);
+            champion = nearest(n.rtf, p, champion, temp);
             
             // Since champion may have changed, recalculate distance
             if (champion.distanceSquaredTo(p) >=
                     toPartitionLine * toPartitionLine) {
-                champion = nearest(n.lb, p, champion, !evenLevel);
+                champion = nearest(n.lbb, p, champion, temp);
             }
         }
         
@@ -479,21 +418,21 @@ public class KdTree {
     }
 
     /**
-     * This method gets an ArrayList of tags (Tag<?>) which is associated with the nearest Point2D in relation to the {@link point}
+     * This method gets an ArrayList of tags (Tag<?>) which is associated with the nearest Point3D in relation to the {@link point}
      * in the parameters
      * @param point the point from where the search starts from
-     * @return a list of Tags thats is connected to the the nearest Point2D in the KDTree
+     * @return a list of Tags thats is connected to the the nearest Point3D in the KDTree
      */
-    public ArrayList<Tag> nearestTags(Point2D point){
+    public ArrayList<Tag> nearestTags(Point3D point){
         return pointToTag.get(nearest(point));
     }
     
     /**
      * This method gets the Tags ({@link Tag}) related to the point given in the parameters
      * @param point is the point that you want the Tags related to
-     * @return this return an ArrayList<Tag<?>> of all tags related to the given Point2D
+     * @return this return an ArrayList<Tag<?>> of all tags related to the given Point3D
      */
-    public ArrayList<Tag> getTagsFromPoint(Point2D point){
+    public ArrayList<Tag> getTagsFromPoint(Point3D point){
         return pointToTag.get(point);
     }
     
@@ -515,11 +454,14 @@ public class KdTree {
      *        is horizontal, so the point will be above or below the Node.
      * @return the distance and direction from p to n's partition line
      */
-    private double comparePoints(Point2D p, Node n, boolean evenLevel) {
-        if (evenLevel) {
+    private double comparePoints(Point3D p, Node n, int xyz) {
+        if (xyz == 0) {
             return p.x() - n.p.x();
+        }else if (xyz == 1){
+            return p.y() - n.p.y();
+        }else{
+            return p.z() - n.p.z();
         }
-        else return p.y() - n.p.y();
     }
     
     /**
@@ -528,20 +470,20 @@ public class KdTree {
     private static class Node {
         
         // the point
-        private final Point2D p;
+        private final Point3D p;
         
         // the axis-aligned rectangle corresponding to this node
-        private final RectHV rect;
+        private final Rect3D rect;
         
         // the left/bottom subtree
-        private Node lb;
+        private Node lbb;
         
         // the right/top subtree
-        private Node rt;
+        private Node rtf;
         
-        private Node(Point2D p, double[] coords) {
+        private Node(Point3D p, double[] coords) {
             this.p = p;
-            rect = new RectHV(coords[0], coords[1], coords[2], coords[3]);
+            rect = new Rect3D(coords[0], coords[1], coords[2], coords[3], coords[4], coords[5]);
         }
     }
 }

@@ -29,7 +29,7 @@ import javafx.scene.paint.Paint;
  */
 public enum Type {
 
-    REGION("place", new String[]{"island", ""}, 10, 2, Color.LIGHTYELLOW.desaturate(), Color.YELLOW, 5, false),
+    REGION("place", new String[]{"island"}, 10, 2, Color.LIGHTYELLOW.desaturate(), Color.YELLOW, 5, false),
     BOUNDARY("boundary", new String[]{"administrative"}, 10, 2, Color.LIGHTYELLOW.desaturate(), Color.YELLOW, 5, false),
 
 

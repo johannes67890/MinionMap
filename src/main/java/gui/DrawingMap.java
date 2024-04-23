@@ -121,14 +121,14 @@ public class DrawingMap {
         currentColor = Color.BLACK;
 
         // TODO:
-        double[] canvasBounds = getScreenBoundsBigger(0.05);
+        double[] canvasBounds = getScreenBoundsBigger(0.09);
         RectHV rect = new RectHV(canvasBounds[0], canvasBounds[1], canvasBounds[2], canvasBounds[3]);
 
         nodes = new ArrayList<>();
         ways = new ArrayList<>();
         relations = new ArrayList<>();
 
-        HashSet<Tag> tags = Tree.getTagsInBounds(rect);
+        HashSet<Tag> tags = Tree.getTagsInBounds(rect, hierarchyLevel);
 
         for(Tag tag : tags){
             if (tag instanceof TagNode){

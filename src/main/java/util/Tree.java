@@ -19,18 +19,9 @@ public class Tree {
     static boolean isLoaded = false;
 
     /**
-     * Constructor for the Tree class
-     * @param tags ArrayList of tag-objects to be inserted in the tree
+     * Initialize the kdtree with an arraylist of tags
+     * @param tags an ArrayList of tags that is needed for initiliazation
      */
-    public Tree(ArrayList<Tag> tags){
-        kdtree = new KdTree();
-        kdtree.setBound(-180, -180, 180, 180);
-        for (Tag tag : tags){
-            insertTagInTree(tag);
-        }
-        
-    }
-
     public static void initialize(ArrayList<Tag> tags){
         kdtree = new KdTree();
         // TODO: Fix this line of code. get the min and max value of all nodes!
@@ -96,6 +87,11 @@ public class Tree {
     public static HashSet<Tag> getTagsInBounds(RectHV rect) {
         HashSet<Tag> tagsInBounds = kdtree.rangeNode(rect);
         return tagsInBounds;
+    }
+
+    
+    public static HashSet<Tag> getTagsInBounds(RectHV rect, int hierarchyLevel) {
+        return kdtree.rangeNode(rect, hierarchyLevel);
     }
 
     /**
