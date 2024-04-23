@@ -50,7 +50,7 @@ public class Tree {
         if (tag instanceof TagNode){
             TagNode node = (TagNode) tag;
             Point2D temp = new Point2D(node.getLon(), node.getLat());
-            kdtree.insertInMap(temp, node);
+            kdtree.insert(temp, node);
         }else if (tag instanceof TagWay){
             TagWay way = (TagWay) tag;
             for (TagNode node : way.getNodes()){

@@ -2,6 +2,9 @@ package gui;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import gnu.trove.map.hash.TLongLongHashMap;
+import gnu.trove.map.hash.TLongObjectHashMap;
 import parser.TagAddress;
 import parser.TagAddress.SearchAddress;
 import parser.XMLReader;
@@ -9,7 +12,7 @@ import parser.XMLReader;
 public class Search {
 
     private ArrayList<String> cityNames, streetNames, postCodes;
-    private HashMap<Long, TagAddress> addresses;
+    private TLongObjectHashMap<TagAddress> addresses;
 
     public Search(){
         this.addresses = XMLReader.getAddresses();
@@ -27,7 +30,7 @@ public class Search {
         postCodes = new ArrayList<>();
 
         //Adding addresses from XMLReader into the lists
-        for (TagAddress a : addresses.values()){
+        for (TagAddress a : addresses.valueCollection().stream().toList()){
             cityNames.add(a.getCity());
             streetNames.add(a.getStreet());
             postCodes.add(a.getPostcode());
@@ -130,7 +133,7 @@ public class Search {
 
     //TODO: Only find the first instance of a street with the name. Turn into average lat and lon?
     public double getLatitudeByStreet(String street){
-        for(TagAddress a : addresses.values()){
+        for(TagAddress a : addresses.valueCollection().stream().toList()){
             if(a.getStreet().equals(street)){
                 return a.getLat();
             }
@@ -139,7 +142,7 @@ public class Search {
     }
 
     public double getLongitudeByStreet(String street){
-        for(TagAddress a : addresses.values()){
+        for(TagAddress a : addresses.valueCollection().stream().toList()){
             if(a.getStreet().equals(street)){
                 return a.getLon();
             }
@@ -150,7 +153,7 @@ public class Search {
     public TagAddress getTagAddressByAddress(SearchAddress searchAddress){
         TagAddress best = null;
         int depth = 0;
-        for(TagAddress tagAddress : addresses.values()){
+        for(TagAddress tagAddress : addresses.valueCollection().stream().toList()){
             if((searchAddress.city.isBlank() && searchAddress.postcode.isBlank())||tagAddress.getPostcode().equals(searchAddress.postcode) || tagAddress.getCity().equals(searchAddress.street)){
                 if(depth < 1){
                     best = tagAddress;
@@ -170,5 +173,4 @@ public class Search {
         }
         return best;
     }
-
 }
