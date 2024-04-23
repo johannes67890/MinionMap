@@ -16,7 +16,6 @@ import javafx.stage.Stage;
 import parser.XMLReader;
 import util.FileDistributer;
 import util.ZipHandler;
-
 public class MainView {
 
     enum StageSelect {
@@ -89,13 +88,22 @@ public class MainView {
 
     public void loadDrawingMap(){
         drawView = new DrawingMap(this, xmlReader);
+        System.out.println(drawView);
     }
 
     public void draw(){
+
+        // long time = System.currentTimeMillis();
+
+
         gc = canvas.getGraphicsContext2D();
         gc.setFill(Color.RED);
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
         drawView.DrawMap(canvas);
+
+        // System.out.println(1000 / (System.currentTimeMillis() - time));
+
+
         
     }
 

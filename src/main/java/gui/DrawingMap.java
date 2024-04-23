@@ -1,14 +1,9 @@
 package gui;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.List;
 
-import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
-
-import java.util.HashSet;
-
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
@@ -20,7 +15,8 @@ import parser.TagWay;
 import parser.XMLReader;
 import util.MathUtil;
 import util.MinPQ;
-import util.Tree;;
+import util.Tree;
+
 
 /**
  * 
@@ -40,10 +36,11 @@ public class DrawingMap {
     private double zoomScalerToMeter; // This is the world meters of how long the scaler in the bottom right corner is. Divide it with the zoomLevel
     private double[] zoomScales = {32, 16, 8, 1, 0.7, 0.5, 0.2, 0.1, 0.05, 0, 0}; //
 
-    private List<TagNode> nodes = new ArrayList<>();
-    private List<TagWay> ways = new ArrayList<>();
-    private List<TagRelation> relations = new ArrayList<>();
-    private Tag<?> markedTag;
+
+    private Tag markedTag;
+    private List<TagNode> nodes;
+    private List<TagWay> ways;
+    private List<TagRelation> relations;
 
     private Color currentColor;
 
@@ -58,9 +55,8 @@ public class DrawingMap {
     public DrawingMap(MainView mainView, XMLReader reader){
         this.mainView = mainView;
         this.reader = reader;
-        //nodes = XMLReader.getNodes().values().stream().toList();
-        //ways = XMLReader.getWays().values().stream().toList();
-        //relations = XMLReader.getRelations().values().stream().toList();
+        ways = XMLReader.getWays().valueCollection().stream().toList();
+        relations = XMLReader.getRelations().valueCollection().stream().toList();
     }
 
     /**
@@ -81,11 +77,10 @@ public class DrawingMap {
         double maxlon = bound.getMaxLon();
         double minlat = bound.getMinLat();
 
-
-        ArrayList<Tag<?>> tempList = new ArrayList<>(XMLReader.getNodes().values());
-        tempList.addAll(XMLReader.getWays().values());
-        tempList.addAll(XMLReader.getRelations().values());
-        Tree.initialize(tempList);;
+        ArrayList<Tag> tempList = new ArrayList<>();
+        tempList.addAll(XMLReader.getWays().valueCollection());
+        tempList.addAll(XMLReader.getRelations().valueCollection());
+        Tree.initialize(tempList);
         pan(-minlon, minlat);
         zoom(canvas.getWidth() / (maxlon - minlon), 0, 0);
         DrawMap(canvas);
@@ -98,31 +93,44 @@ public class DrawingMap {
      */
 
     public void DrawMap(ResizableCanvas canvas){
+        // TODO:
         long preTime = System.currentTimeMillis();
         this.canvas = canvas;
         if (!Tree.isLoaded()){
             return;
         }
 
-
         //Resfreshes the screen
         gc = canvas.getGraphicsContext2D();
         gc.setTransform(new Affine());
-        gc.setFill(Color.LIGHTSKYBLUE);
+        switch (GraphicsHandler.getGraphicStyle()) {
+            case DEFAULT:
+                gc.setFill(Color.LIGHTSKYBLUE);
+                break;
+            case DARKMODE:
+                gc.setFill(Color.BLACK);
+                break;
+            case GRAYSCALE:
+                gc.setFill(Color.LIGHTSKYBLUE.grayscale());
+                break;
+            default:
+                break;
+        }
         gc.fillRect(0,0,canvas.getWidth(), canvas.getHeight());
         gc.setTransform(transform);
         currentColor = Color.BLACK;
 
+        // TODO:
         double[] canvasBounds = getScreenBoundsBigger(0.05);
         RectHV rect = new RectHV(canvasBounds[0], canvasBounds[1], canvasBounds[2], canvasBounds[3]);
-        
+
         nodes = new ArrayList<>();
         ways = new ArrayList<>();
         relations = new ArrayList<>();
 
-        HashSet<Tag<?>> tags = Tree.getTagsInBounds(rect);
-        
-        for(Tag<?> tag : tags){
+        HashSet<Tag> tags = Tree.getTagsInBounds(rect);
+
+        for(Tag tag : tags){
             if (tag instanceof TagNode){
                 nodes.add((TagNode) tag);
             }else if (tag instanceof TagWay){
@@ -133,14 +141,13 @@ public class DrawingMap {
                 relations.add(relation);
             }
         }
-        
+
         waysToDrawWithType = new ArrayList<>();
         waysToDrawWithoutType = new ArrayList<>();
 
         long time = System.currentTimeMillis();
 
         handleWays(ways);
-
         handleRelations();
 
         MinPQ<TagWay> sortedWaysToDraw = new MinPQ<>(waysToDrawWithType.size());
@@ -156,11 +163,11 @@ public class DrawingMap {
         }
     }
 
-    public void setMarkedTag(Tag<?> tag){
+    public void setMarkedTag(Tag tag){
         markedTag = tag;
     }
 
-    private void drawMarkedTag(Tag<?> tag){
+    private void drawMarkedTag(Tag tag){
         gc.setFill(Color.PINK);
         gc.setStroke(Color.ORANGE);
         
@@ -209,6 +216,7 @@ public class DrawingMap {
      * @param ways - the ways to be drawn
      */
     private void drawWays(MinPQ<TagWay> ways){
+
         TagNode[] nodesRef;
 
         double[] xPoints;
@@ -223,7 +231,7 @@ public class DrawingMap {
         double currentLat;
 
         int count = 0;
-
+        
         while (!ways.isEmpty()) {
       
             TagWay tagWay = ways.delMin();
@@ -250,12 +258,12 @@ public class DrawingMap {
 
             
             gc.beginPath();
-            gc.moveTo(nodesRef[0].getLon(), nodesRef[0].getLat());
+            gc.moveTo(nodesRef[0].getLon(), -nodesRef[0].getLat());
             
             for (int i = 0; i < nodesRef.length ; i ++){
                 
                 ref = nodesRef[i];
-                currentLat = ref.getLat();
+                currentLat = -ref.getLat();
                 currentLon = ref.getLon();
 
                 gc.lineTo(currentLon, currentLat);
@@ -327,18 +335,6 @@ public class DrawingMap {
 
 
     /**
-     * Getter for the zoomlevel in meters
-     * @return Returns the distance for the ruler in the bottom right corner
-     */
-    public double getZoomLevelMeters(){
-        double temp = zoomScalerToMeter / zoomLevel;
-        temp = temp * 10000;
-        temp = Math.round(temp);
-        temp /= 10;
-        return temp;
-    }
-
-    /**
      * Calculates the coordinates the screen sees and returns a array of coordinates.
      * Index 0: X - Minimum
      * Index 1: Y - Minimum
@@ -349,7 +345,7 @@ public class DrawingMap {
     public double[] getScreenBounds(){
         double[] bounds = new double[4]; // x_min ; y_min ; x_max ; y_max
         bounds[0] = -(transform.getTx() / Math.sqrt(transform.determinant()));
-        bounds[1] = (-transform.getTy()) / Math.sqrt(transform.determinant());
+        bounds[1] = -(-transform.getTy()) / Math.sqrt(transform.determinant());
         bounds[2] = ((canvas.getWidth()) / zoomLevel) + bounds[0];
         bounds[3] = ((canvas.getHeight()) / zoomLevel) + bounds[1];
         return bounds;
@@ -366,11 +362,24 @@ public class DrawingMap {
         return bounds;
     }
 
+    /**
+     * 
+     * @return Returns the distance for the ruler in the bottom right corner
+     */
+    public double getZoomLevelMeters(){
+        double temp = zoomScalerToMeter / zoomLevel;
+        temp = temp * 10000;
+        temp = Math.round(temp);
+        temp /= 10;
+        return temp;
+    }
+
 
 
     /**
      * 
      * Zoomns in or out on the map dependent on the mouseposition
+     * 
      * @param factor - The strength of which the map is zoomed
      * @param dx - Distance to pan on the x-axis
      * @param dy - Distance to pan on the y-axis
@@ -412,19 +421,6 @@ public class DrawingMap {
 
         transform.prependTranslation(dx, dy);
         mainView.draw();
-    }
-    /**
-     * @param meters the amount of meters you want to know the pixel value of
-     * @return the amount of pixels that corresponds to the amount of meters
-     */
-
-    public double metersToPixels(int meters){
-        
-        double metersPerPixelRatio = canvas.getWidth() / zoomScalerToMeter;
-        System.out.println(metersPerPixelRatio);
-        System.out.println(meters);
-        
-        return metersPerPixelRatio * meters;
     }
 
 }

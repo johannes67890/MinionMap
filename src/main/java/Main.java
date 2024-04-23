@@ -17,6 +17,7 @@ public class Main extends Application {
     public void start(Stage stage) {
 
         mainView = new MainView(stage);
+
         stage.show();
 
     }
@@ -30,6 +31,14 @@ public class Main extends Application {
         File file = new File(destDir);
         if(file.isDirectory()){
             for(File f : file.listFiles()){
+                f.delete();
+            }
+        }
+
+        String destDirChunks = System.getProperty("user.dir").toString() + "\\src\\main\\resources\\chunks\\";
+        File chunkFile = new File(destDirChunks);
+        if(chunkFile.isDirectory()){
+            for(File f : chunkFile.listFiles()){
                 f.delete();
             }
         }

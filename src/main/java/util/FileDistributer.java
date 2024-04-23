@@ -9,9 +9,10 @@ public enum FileDistributer {
     main("view/main.fxml"),
     start_screen("view/start.fxml");
 
+    
+
     private String filePath;
 
-   //---------------------------------------------------------------------------------------------------------------------------------------------
     FileDistributer(String fileName) {
         try {
             ClassLoader classLoader = getClass().getClassLoader();
@@ -25,11 +26,6 @@ public enum FileDistributer {
             e.printStackTrace();
         }
     }
-
-    /**
-     * Returns the file path of the file
-     * @return the file path of the file
-     */
     public String getFilePath() {
         return filePath.toString();
     }
