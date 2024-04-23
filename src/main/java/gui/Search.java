@@ -85,7 +85,6 @@ public class Search {
             }
 
         } 
-        System.out.println("Time: " + (System.currentTimeMillis() - time));
         //System.out.println(a.street);
 
         a = new SearchAddress(street + " " + house + " " + floor + " " + side + " " + postcode + " " + city);
@@ -169,7 +168,6 @@ public class Search {
                 }
             }
         }
-        System.out.println(best.getStreet() + " " + best.getMunicipality());
         return best;
     }
 }

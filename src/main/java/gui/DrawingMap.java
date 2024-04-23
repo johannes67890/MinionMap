@@ -219,6 +219,8 @@ public class DrawingMap {
      */
     private void drawWays(MinPQ<TagWay> ways){
 
+        System.out.println("MIN X: " + getScreenBounds()[0] + " MIN Y: " + getScreenBounds()[1] + " DETERMINANT: " + Math.sqrt(transform.determinant()));
+
         TagNode[] nodesRef;
 
         double[] xPoints;
@@ -416,6 +418,10 @@ public class DrawingMap {
         return transform;
     }
 
+    public double getZoomLevel(){
+        return zoomLevel;
+    }
+
 
     /**
      * 
@@ -426,6 +432,11 @@ public class DrawingMap {
     public void pan(double dx, double dy) {
 
         transform.prependTranslation(dx, dy);
+        mainView.draw();
+    }
+
+    public void append(double dx, double dy) {
+        transform.appendTranslation(dx, dy);
         mainView.draw();
     }
 

@@ -9,6 +9,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Point2D;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
@@ -219,7 +220,7 @@ public class Controller implements Initializable, ControllerInterface{
     private void search(String address, boolean isStart){
         // Vi har skærmkoordinater i xy og canvas witdh and height
         SearchAddress addressObj = s.searchForAddress(address);
-        System.out.println("addressObj: " + addressObj.toString());
+        //System.out.println("addressObj: " + addressObj.toString());
         if (isStart && (selectedItem == null || !selectedItem.equals(addressObj.toString()))){
             searchBarStart.getItems().add(0, addressObj.toString());
             if (!searchBarStart.isShowing()){
@@ -248,13 +249,32 @@ public class Controller implements Initializable, ControllerInterface{
 
     private void showAddress(String address){
         SearchAddress addressObj = s.searchForAddress(address);
-        double[] bounds = mainView.getDrawingMap().getScreenBounds();
+        DrawingMap drawingMap = mainView.getDrawingMap();
+
+        double[] bounds = drawingMap.getScreenBounds();
         double x = ((bounds[2] - bounds[0]) / 2) + bounds[0];
-        double y = ((bounds[3] - bounds[1]) / 2) + bounds[1];
+        double y = ((bounds[1] - bounds[3]) / 2) + bounds[1];
+
+        //drawingMap.getTransform().determinant()
+        Point2D pointCenter = drawingMap.getTransform().transform(x, y);
         TagAddress tagAddress = s.getTagAddressByAddress(addressObj);
-        double deltaX = tagAddress.getLon() - x;
-        double deltaY = tagAddress.getLat() - y;
-        mainView.getDrawingMap().pan(-deltaX, -deltaY);
+        Point2D point = drawingMap.getTransform().transform(tagAddress.getLon(), tagAddress.getLat());
+        double deltaX = point.getX() - pointCenter.getX();
+        double deltaY = point.getY() - pointCenter.getY();
+        System.out.println( "X: CENTER: " + x + ", TAGADRESS: " + tagAddress.getLon());
+        System.out.println( "Y: CENTER: " + y + ", TAGADRESS: " + tagAddress.getLat());
+        System.out.println( "POINT: X: " + point.getX() + ", Y: " + point.getY());
+        System.out.println( "CENTERPOINT: X: " + pointCenter.getX() + ", Y: " + pointCenter.getY());
+        System.out.println( "TRANSFORM: TX: " + drawingMap.getTransform().getTx() + ", TY: " + drawingMap.getTransform().getTy());
+
+
+        System.out.println( "DELTA: X: " + deltaX + ", Y: " + deltaY);
+
+
+
+
+
+        mainView.getDrawingMap().pan(-deltaX, deltaY);
     }
 
 }
