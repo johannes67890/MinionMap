@@ -34,7 +34,8 @@ public class DrawingMap {
     private int hierarchyLevel = 9;
     private final double zoomLevelMin = 0.001, zoomLevelMax = 30; // These variables changes how much you can zoom in and out. Min is far out and max is closest in
     private double zoomScalerToMeter; // This is the world meters of how long the scaler in the bottom right corner is. Divide it with the zoomLevel
-    private double[] zoomScales = {32, 16, 8, 1, 0.7, 0.5, 0.2, 0.1, 0.05, 0, 0}; //
+    private double[] zoomScales = {32, 16, 8, 4, 2, 1, 0.5, 0.1, 0.05, 0.015, 0.0001}; //
+     //
 
 
     private Tag markedTag;
@@ -158,6 +159,7 @@ public class DrawingMap {
  
         drawWays(sortedWaysToDraw);
 
+        
         if (markedTag != null){
             drawMarkedTag(markedTag);
         }
@@ -408,6 +410,10 @@ public class DrawingMap {
         else if (zoomLevel < zoomLevelMin){
             zoomLevel = zoomLevelMin + 1;
         }
+    }
+
+    public Affine getTransform(){
+        return transform;
     }
 
 

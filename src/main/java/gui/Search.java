@@ -1,9 +1,7 @@
 package gui;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
-import gnu.trove.map.hash.TLongLongHashMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import parser.TagAddress;
 import parser.TagAddress.SearchAddress;
@@ -171,6 +169,7 @@ public class Search {
                 }
             }
         }
+        System.out.println(best.getStreet() + " " + best.getMunicipality());
         return best;
     }
 }
