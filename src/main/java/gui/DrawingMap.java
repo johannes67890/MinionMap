@@ -36,12 +36,13 @@ public class DrawingMap {
     private MainView mainView;
     private double zoomLevel = 1;
     private int hierarchyLevel = 9;
-    private final double zoomLevelMin = 0.0002, zoomLevelMax = 31; // These variables changes how much you can zoom in and out. Min is far out and max is closest in
+    private int zoombarIntervals = 15;
+    private final double zoomLevelMin = 0.0002, zoomLevelMax = 31.8; // These variables changes how much you can zoom in and out. Min is far out and max is closest in
     private double zoomScalerToMeter; // This is the world meters of how long the scaler in the bottom right corner is. Divide it with the zoomLevel
     private double[] zoomScales = {32, 16, 8, 4, 2, 1, 0.5, 0.1, 0.05, 0.015, 0.0001}; //
     //32, 16, 8, 4, 2, 1, 0.5, 0.1, 0.05, 0.015, 0.0001
-    //32, 8, 2, 0.5, 0.125, 0.03125, 0.007813, 0.001953, 0.000488, 0.000122
-    //                                                1/2  1/8  1/16  1/64  1/256  1/512  1/2048
+    private double[] zoombarScales = getZoombarScales(zoombarIntervals);
+    
     private double screenWidth;
 
     private List<TagNode> nodes = new ArrayList<>();
@@ -92,6 +93,8 @@ public class DrawingMap {
         pan(-minlon, minlat);
         zoom(canvas.getWidth() / (maxlon - minlon), 0, 0);
         DrawMap(canvas);
+
+        
     }
 
     /**
@@ -323,6 +326,7 @@ public class DrawingMap {
         }
 
         this.screenWidth = canvas.getWidth();
+
     }
 
     /**
@@ -387,12 +391,49 @@ public class DrawingMap {
     }
 
     public int getRange(){
-        int[] ranges = {10, 20, 50, 100,200, 500, 1000, 5000, 20000, 100000}; // 20m, 100m, 200m, 1km, 5km, 10km, 20km, 50km, 100km
-        System.out.println(hierarchyLevel);
-        return ranges[hierarchyLevel-1];
+        int zoombarHierarchy = getZoomBarHierarchyLevel();
+        
+        int[] ranges = {10, 20, 50, 100, 200, 500, 1000, 2000,3000, 5000, 10000, 20000, 50000, 100000}; // 20m, 100m, 200m, 1km, 5km, 10km, 20km, 50km, 100km
+        
+        return ranges[zoombarHierarchy-1];
     }
 
     public int roundToClosest(int number, int closest){
         return (int) Math.round(number / closest) * closest;
     }
+
+    public int getZoomBarHierarchyLevel(){
+        for (int i = 0; i < zoombarScales.length ; i++){
+            if(zoomLevel > zoombarScales[i]){
+                return i;
+            }
+        }
+        if(zoomLevel < zoombarScales[0]){
+            return 15;
+        }
+        return 0;
+    }
+
+    public double[] getZoombarScales(int n) {
+        double[] zoombarNumbers = new double[n];
+        double[] zoombarScales = new double[n];
+        double frequency = (zoomLevelMax-zoomLevelMin)/n; 
+
+        for (int i = 0; i < n; i++) {
+            zoombarNumbers[i] = i*frequency;
+        }
+
+        for (int i = 0; i < n; i++) {
+            zoombarScales[i] = hierarchyToZoomscale(zoombarNumbers[i]+1.25);
+        }
+
+        return zoombarScales;
+    }
+
+    public double hierarchyToZoomscale(double d){
+        double zoomScale = 48.748*Math.pow(Math.E, -0.348*d);
+        return zoomScale;
+    }
+
+    
 }
