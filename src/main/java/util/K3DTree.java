@@ -35,7 +35,7 @@ public class K3DTree {
     private Node root;
     private int size;
     private HashMap<Point3D, ArrayList<Tag>> pointToTag;
-    public double[] bounds = new double[6];
+    public float[] bounds = new float[6];
 
     /**
      * Construct an empty set of points.
@@ -66,14 +66,14 @@ public class K3DTree {
     /*
      * Set the bounds for the coordinates possible in the KdTree
      */
-    public void setBound(double x_min, double y_min, double z_min, double x_max, double y_max, double z_max){
-        bounds = new double[] {x_min, y_min, z_min, x_max, y_max, z_max};
+    public void setBound(float x_min, float y_min, float z_min, float x_max, float y_max, float z_max){
+        bounds = new float[] {x_min, y_min, z_min, x_max, y_max, z_max};
     }
 
     /*
      * Getter function for the bounds
      */
-    public double[] getBounds(){
+    public float[] getBounds(){
         return bounds;
     }
     
@@ -100,7 +100,7 @@ public class K3DTree {
         if(bounds != null) {
             root = insert(root, p, 0, bounds.clone());
         } else {
-            root = insert(root, p, 0, new double[] {-180, -180, 180, 180});
+            root = insert(root, p, 0, new float[] {-180, -180, 180, 180});
         }
         
         ArrayList<Tag> list = pointToTag.getOrDefault(node, new ArrayList<>());
@@ -108,7 +108,7 @@ public class K3DTree {
         pointToTag.put(p, list);
     }
     
-    private Node insert(Node n, Point3D p, int xyz, double[] coords) {
+    private Node insert(Node n, Point3D p, int xyz, float[] coords) {
         if (n == null) {
             size++;
             // double xmin, double ymin, double xmax, double ymax
@@ -445,9 +445,9 @@ public class K3DTree {
         // the right/top/front subtree
         private Node rtf;
         
-        private Node(Point3D p, double[] coords) {
+        private Node(Point3D p, float[] coords) {
             this.p = p;
-            rect = new Rect3D(coords[0], coords[1], coords[2], coords[3], coords[4], coords[5]);
+            rect = new Rect3D(coords[0], coords[1], (int) coords[2], coords[3], coords[4], (int) coords[5]);
         }
     }
 }

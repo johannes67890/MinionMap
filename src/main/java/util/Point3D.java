@@ -50,9 +50,9 @@ public final class Point3D implements Comparable<Point3D> {
      */
     public static final Comparator<Point3D> R_ORDER = new ROrder();
 
-    private final double x; // x coordinate
-    private final double y; // y coordinate
-    private final double z; // z coordinate
+    private final float x; // x coordinate
+    private final float y; // y coordinate
+    private final int z; // z coordinate
 
     /**
      * Initializes a new point (x, y).
@@ -64,23 +64,23 @@ public final class Point3D implements Comparable<Point3D> {
      *                                  {@code Double.POSITIVE_INFINITY} or
      *                                  {@code Double.NEGATIVE_INFINITY}
      */
-    public Point3D(double x, double y, double z) {
-        if (Double.isInfinite(x) || Double.isInfinite(y) || Double.isInfinite(z))
+    public Point3D(float x, float y, int z) {
+        if (Float.isInfinite(x) || Float.isInfinite(y))
             throw new IllegalArgumentException("Coordinates must be finite");
-        if (Double.isNaN(x) || Double.isNaN(y) || Double.isNaN(z))
+        if (Float.isNaN(x) || Float.isNaN(y))
             throw new IllegalArgumentException("Coordinates cannot be NaN");
         if (x == 0.0)
-            this.x = 0.0; // convert -0.0 to +0.0
+            this.x = 0.0f; // convert -0.0 to +0.0
         else
             this.x = x;
 
         if (y == 0.0)
-            this.y = 0.0; // convert -0.0 to +0.0
+            this.y = 0.0f; // convert -0.0 to +0.0
         else
             this.y = y;
 
         if (z == 0.0)
-            this.z = 0.0;
+            this.z = 0;
         else
             this.z = z;
     }
@@ -90,7 +90,7 @@ public final class Point3D implements Comparable<Point3D> {
      * 
      * @return the x-coordinate
      */
-    public double x() {
+    public float x() {
         return x;
     }
 
@@ -99,11 +99,11 @@ public final class Point3D implements Comparable<Point3D> {
      * 
      * @return the y-coordinate
      */
-    public double y() {
+    public float y() {
         return y;
     }
 
-    public double z() {
+    public int z() {
         return z;
     }
 
@@ -113,10 +113,10 @@ public final class Point3D implements Comparable<Point3D> {
      * @return the angle in radians (between –&pi; and &pi;) between this point and
      *         that point (0 if equal)
      */
-    private double angleTo(Point3D that) {
-        double dx = that.x - this.x;
-        double dy = that.y - this.y;
-        return Math.atan2(dy, dx);
+    private float angleTo(Point3D that) {
+        float dx = that.x - this.x;
+        float dy = that.y - this.y;
+        return (float) Math.atan2(dy, dx);
     }
 
     /**
@@ -129,7 +129,7 @@ public final class Point3D implements Comparable<Point3D> {
      *         turn.
      */
     public static int ccw(Point3D a, Point3D b, Point3D c) {
-        double area2 = (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+        float area2 = (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
         if (area2 < 0)
             return -1;
         else if (area2 > 0)
@@ -144,11 +144,11 @@ public final class Point3D implements Comparable<Point3D> {
      * @param that the other point
      * @return the Euclidean distance between this point and that point
      */
-    public double distanceTo(Point3D that) {
-        double dx = this.x - that.x;
-        double dy = this.y - that.y;
-        double dz = this.z - that.z;
-        return Math.sqrt(dx * dx + dy * dy + dz * dz);
+    public float distanceTo(Point3D that) {
+        float dx = this.x - that.x;
+        float dy = this.y - that.y;
+        float dz = this.z - that.z;
+        return (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
     }
 
     /**
@@ -159,10 +159,10 @@ public final class Point3D implements Comparable<Point3D> {
      * @return the square of the Euclidean distance between this point and that
      *         point
      */
-    public double distanceSquaredTo(Point3D that) {
-        double dx = this.x - that.x;
-        double dy = this.y - that.y;
-        double dz = this.z - that.z;
+    public float distanceSquaredTo(Point3D that) {
+        float dx = this.x - that.x;
+        float dy = this.y - that.y;
+        float dz = this.z - that.z;
         return dx * dx + dy * dy + dz * dz;
     }
 

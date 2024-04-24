@@ -52,7 +52,7 @@ public class DrawingMap {
     private List<TagWay> waysToDrawWithType;
     private List<TagWay> waysToDrawWithoutType;
 
-    private double[] tempBounds = new double[4];
+    private float[] tempBounds = new float[4];
 
 
 
@@ -125,7 +125,7 @@ public class DrawingMap {
         gc.setTransform(transform);
         currentColor = Color.BLACK;
 
-        double[] canvasBounds = getScreenBoundsBigger(0.2);
+        float[] canvasBounds = getScreenBoundsBigger(0.2);
         Rect3D rect = new Rect3D(canvasBounds[0], canvasBounds[1], hierarchyLevel, canvasBounds[2], canvasBounds[3], 100);
         nodes = new ArrayList<>();
         ways = new ArrayList<>();
@@ -296,19 +296,19 @@ public class DrawingMap {
      * Index 3: Y - Maximum
      * @return It returns the coordinates of the screen to map coordinates in an array (double[])
      */
-    public double[] getScreenBounds(){
-        double[] bounds = new double[4]; // x_min ; y_min ; x_max ; y_max
+    public float[] getScreenBounds(){
+        float[] bounds = new float[4]; // x_min ; y_min ; x_max ; y_max
         double width = ((canvas.getWidth()) / zoomLevel);
         double height = ((canvas.getHeight()) / zoomLevel);
-        bounds[0] = -(transform.getTx() / Math.sqrt(transform.determinant()));
-        bounds[1] = (transform.getTy()) / Math.sqrt(transform.determinant()) - height;
-        bounds[2] = width + bounds[0];
-        bounds[3] = height + bounds[1];
+        bounds[0] = (float) -(transform.getTx() / Math.sqrt(transform.determinant()));
+        bounds[1] = (float) ((transform.getTy()) / Math.sqrt(transform.determinant()) - height);
+        bounds[2] = (float) width + bounds[0];
+        bounds[3] = (float) height + bounds[1];
         return bounds;
     }
 
-    public double[] getScreenBoundsBigger(double multiplier){
-        double[] bounds = getScreenBounds();
+    public float[] getScreenBoundsBigger(double multiplier){
+        float[] bounds = getScreenBounds();
         double width = bounds[2] - bounds[0];
         double height = bounds[3] - bounds[1];
         bounds[0] -= (width * (1.0 + multiplier));

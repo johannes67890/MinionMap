@@ -26,8 +26,9 @@ package util;
  */
 
 public final class Rect3D {
-    private final double xmin, ymin, zmin; // minimum x- and y-coordinates
-    private final double xmax, ymax, zmax; // maximum x- and y-coordinates
+    private final float xmin, ymin;  // minimum x- and y-coordinates
+    private final float xmax, ymax; // maximum x- and y-coordinates
+    private final int zmin, zmax;
 
     /**
      * Initializes a new rectangle [<em>xmin</em>, <em>xmax</em>]
@@ -46,7 +47,7 @@ public final class Rect3D {
      * @throws IllegalArgumentException if {@code xmax < xmin} or
      *                                  {@code ymax < ymin} or {@code zmax < zmin}.
      */
-    public Rect3D(double xmin, double ymin, double zmin, double xmax, double ymax, double zmax) {
+    public Rect3D(float xmin, float ymin, int zmin, float xmax, float ymax, int zmax) {
         this.xmin = xmin;
         this.ymin = ymin;
         this.zmin = zmin;
