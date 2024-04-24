@@ -4,17 +4,11 @@ import java.util.*;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 import java.io.BufferedOutputStream;
-import java.io.BufferedOutputStream;
-import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.FileOutputStream;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.io.IOException;
-import java.io.DataInputStream;
 
 public class XMLWriter {
     private String directoryPath = "src/main/resources/chunks/";
@@ -40,15 +34,17 @@ public class XMLWriter {
     public void initChunkFiles(TagBound bounds) {   
         for (TagBound parentChunk : Chunk.getQuadrants(bounds).values()) {
             for (TagBound midChunk : Chunk.getQuadrants(parentChunk).values()) {
-                    Chunk childChunk = new Chunk(midChunk); 
+                for (TagBound childChunk : Chunk.getQuadrants(midChunk).values()) {
+                    Chunk chunk = new Chunk(parentChunk); 
                     for (int j = 0; j < 4; j++) {
                         // Get one of the four quadrants in the chunk
-                        TagBound child = childChunk.getQuadrant(j);
+                        TagBound child = chunk.getQuadrant(j);
                         // Create the chunk file
                         createBinaryChunkFile(directoryPath + "chunk_" + chunkId + ".bin", child);
                         chunkId++;
                     }
                 }
+            }
         }
     }
 
@@ -66,7 +62,6 @@ public class XMLWriter {
     }
 
     public static void appendToPool(Tag node){
-
         for (TagBound bound : ChunkFiles.getChunkFiles().keySet()) {
             if(node.isInBounds(bound)){
                 tagList.computeIfAbsent(bound, k -> new ArrayList<>()).add(node);
@@ -83,6 +78,7 @@ public class XMLWriter {
         }
 
         pool.shutdown();
+        pool.close();
         try {
             pool.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
@@ -90,8 +86,6 @@ public class XMLWriter {
         }finally{
             tagList.clear();
         }
-        Tag t = getTagByIdFromBinaryFile(11186836118l);
-        System.out.println("Here:" + t.getId() + " from chunk: " + ChunkFiles.getBoundFromTag(t));
     }
 
     /**
@@ -119,8 +113,8 @@ public class XMLWriter {
                     /*
                      * Write the nodes to the file - is this better? 
                      * It is for sure faster, but does it work?
-                     * oos.write(Tag.tagToBytes(nodes)); 
                      */
+                    // oos.writeObject(nodes); 
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -146,6 +140,39 @@ public class XMLWriter {
         }
       }
 
+    public static List<Tag> getAllTagsFromChunks(){
+        List<Tag> objectList = new ArrayList<>();
+
+        if(ChunkFiles.getChunkFilePaths().isEmpty()) throw new IllegalArgumentException("No chunk files found");
+
+        for (String path : ChunkFiles.getChunkFilePaths()) {
+            try (ObjectInputStream stream = new ObjectInputStream(new BufferedInputStream(new FileInputStream(path)))) {
+                while (true) {
+                    try {
+                        Object o = stream.readObject();
+                        if(o instanceof TagBound) continue;
+                        if (o instanceof TagRelation) {
+                            objectList.add((TagRelation) o);
+                        }
+                        if(o instanceof TagAddress){
+                            objectList.add((TagAddress) o);
+                        }
+                        if(o instanceof TagWay){
+                            objectList.add((TagWay) o);
+                        }
+                    
+                    } catch (EOFException e) {
+                        stream.close();
+                        break; // end of stream
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return objectList;
+    }
+
     public static List<Tag> getTagsFromChunk(TagBound bound){ {
         String path = ChunkFiles.getChunkFilePath(bound);
         List<Tag> objectList = new ArrayList<>();
@@ -157,9 +184,6 @@ public class XMLWriter {
                     if(o instanceof TagBound) continue;
                     if (o instanceof TagRelation) {
                         objectList.add((TagRelation) o);
-                    }
-                    if(o instanceof TagNode){
-                        objectList.add((TagNode) o);
                     }
                     if(o instanceof TagAddress){
                         objectList.add((TagAddress) o);
@@ -187,9 +211,25 @@ public class XMLWriter {
                     try {
                         Object o = stream.readObject();
                         if(o instanceof TagBound) continue;
-                        if (o instanceof Tag && ((Tag) o).getId() == id) {
+                        if(o instanceof Tag && ((Tag) o).getId() == id){
                             return (Tag) o;
-                        }
+                        } else if(o instanceof TagWay) {
+                            for (TagNode n : ((TagWay) o).getNodes()) {
+                                if(n.getId() == id){
+                                    return n;
+                                }
+                            }
+                        } 
+                        //  else if(o instanceof TagRelation){
+                        //     for (TagWay w : ((TagRelation) o).getWays()) {
+                        //         for (TagNode n : w.getNodes()) {
+                        //             if(n.getId() == id){
+                        //                 return n;
+                        //             }
+                        //         }
+                        //     }
+                        // }
+
                     } catch (EOFException e) {
                         stream.close();
                         break; // end of stream
@@ -226,6 +266,15 @@ public class XMLWriter {
             return null;
         }
 
+        public static String getChunkFromTag(Tag tag){
+            for (Map.Entry<TagBound, String> entry : chunkFiles.entrySet()) {
+                if(tag.isInBounds(entry.getKey())){
+                    return entry.getValue();
+                }
+            }
+            return null;
+        }
+
         public static TagBound getBound(String path){
             for (Map.Entry<TagBound, String> entry : chunkFiles.entrySet()) {
                 if (entry.getValue().equals(path)) {
@@ -236,7 +285,9 @@ public class XMLWriter {
         }
         
         public static String getChunkFilePath(TagBound bound){
-            return chunkFiles.get(bound);
+            if(chunkFiles.containsKey(bound)){
+                return chunkFiles.get(bound);
+            }else throw new IllegalArgumentException("The bound: " + bound + " does not exist in the chunkFiles");
         }
 
         public static Collection<String> getChunkFilePaths(){

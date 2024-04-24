@@ -119,8 +119,8 @@ public class XMLBuilder {
                     }
                     break;
                 case "nd":
-                    long ref = getAttributeByLong(reader, "ref");
-                    wayBuilder.addNode(ref);
+                    TagNode node = XMLReader.getNodeById(getAttributeByLong(reader, "ref"));
+                    wayBuilder.addNode(node);
                     break;
                 case "member":
                     relationBuilder.parseMember(reader);

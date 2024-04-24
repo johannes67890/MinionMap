@@ -152,15 +152,15 @@ public class XMLReader {
                                     XMLWriter.appendToPool(new TagAddress(tempBuilder));
                                 } else {
                                     nodes.put(tempBuilder.getId(), new TagNode(tempBuilder));
-                                    XMLWriter.appendToPool(new TagNode(tempBuilder));
                                 }
                                 tempBuilder = new XMLBuilder(); // Reset the builder
                                 break;
                             case "way":
-                                ways.put(tempBuilder.getId(), new TagWay(tempBuilder));
                                 XMLWriter.appendToPool(new TagWay(tempBuilder));
+                                ways.put(tempBuilder.getId(), new TagWay(tempBuilder));
                                 tempBuilder = new XMLBuilder();
                             case "relation":
+                                // XMLWriter.appendToPool(new TagRelation(tempBuilder));
                                 relations.put(tempBuilder.getId(), new TagRelation(tempBuilder));
                                 tempBuilder = new XMLBuilder();
                                 break;
@@ -178,7 +178,7 @@ public class XMLReader {
 
             // end timer
             long end = System.currentTimeMillis();
-            System.out.println("Time: " + (end - start) + "ms");
+            System.out.println("Time total: " + (end - start) + "ms");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (XMLStreamException e) {

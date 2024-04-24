@@ -58,8 +58,6 @@ public class TagWay extends Tag implements Comparable<TagWay>{
         this.nodes = nodes;
         this.speedLimit = speedLimit;
         this.type = relation.getType();
-
-
     }
 
     /**
@@ -114,7 +112,6 @@ public class TagWay extends Tag implements Comparable<TagWay>{
         if (getNodes()[0] == null){
             System.out.println("HELLO");
         }
-        //System.out.println(getNodes()[0]);
         return getNodes()[0];
     }
 
@@ -186,13 +183,6 @@ public class TagWay extends Tag implements Comparable<TagWay>{
             this.speedLimit = speedLimit;
         }
 
-        public void addNode(long ref) {
-            if (isEmpty) {
-                isEmpty = false;
-            }
-            refNodesList.add(XMLReader.getNodeById(ref));
-        }
-
         public void addNode(TagNode node) {
             if (isEmpty) {
                 isEmpty = false;
@@ -203,7 +193,7 @@ public class TagWay extends Tag implements Comparable<TagWay>{
         public void closeNodeList(){
 
             refNodes = refNodesList.toArray(new TagNode[refNodesList.size()]);
-            refNodesList.clear();
+            // refNodesList.clear();
         }
 
         public TagNode[] getRefNodesList() {

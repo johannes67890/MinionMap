@@ -10,14 +10,15 @@ import java.util.HashMap;
 */
 public class TagNode extends Tag {
 
-    long id;
-    float lon;
-    float lat;
+    private long id;
+    private long parent;
+    private float lon;
+    private float lat;
 
     public TagNode(long id, float lat, float lon) {
         this.id = id;
-        this.lon = lon;
         this.lat = lat;
+        this.lon = lon;
     }
 
     public TagNode(float lat, float lon) {
@@ -30,6 +31,8 @@ public class TagNode extends Tag {
         this.lon = builder.getLon();
         this.lat = builder.getLat();
     }
+
+   
 
     @Override
     public long getId(){
