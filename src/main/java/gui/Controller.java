@@ -11,7 +11,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -37,7 +39,8 @@ public class Controller implements Initializable, ControllerInterface{
     @FXML private HBox mainUIHBox;
     @FXML private BorderPane mainBorderPane;
     @FXML private ChoiceBox<String> styleChoiceBox;
-
+    @FXML private Label zoomLevelText;
+    @FXML private ImageView zoomLevelImage;
 
 
 
@@ -82,7 +85,7 @@ public class Controller implements Initializable, ControllerInterface{
 
             mainView.getDrawingMap().zoom(Math.pow(zoomMultiplier,event.getDeltaY()), event.getX(), event.getY());
 
-            
+            mainView.getDrawingMap().zoombarUpdater(zoomLevelText, zoomLevelImage);
             
         });
 

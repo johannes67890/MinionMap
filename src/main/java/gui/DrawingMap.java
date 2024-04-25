@@ -3,8 +3,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-
+import javafx.scene.image.ImageView;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 import parser.TagBound;
@@ -17,6 +18,7 @@ import edu.princeton.cs.algs4.RectHV;
 import util.MathUtil;
 import util.MinPQ;
 import util.Tree;
+import util.Zoombar;
 import parser.Tag;
 
 
@@ -34,10 +36,12 @@ public class DrawingMap {
     private MainView mainView;
     private double zoomLevel = 1;
     private int hierarchyLevel = 9;
-    private final double zoomLevelMin = 0.001, zoomLevelMax = 30; // These variables changes how much you can zoom in and out. Min is far out and max is closest in
+    private int zoombarIntervals = 15;
+    private final double zoomLevelMin = 0.0002, zoomLevelMax = 31.8; // These variables changes how much you can zoom in and out. Min is far out and max is closest in
     private double zoomScalerToMeter; // This is the world meters of how long the scaler in the bottom right corner is. Divide it with the zoomLevel
-    private double[] zoomScales = {32, 16, 8, 4, 2, 1, 0.5, 0.1, 0.05, 0.015, 0.0001}; //
-
+    private double[] zoomScales = {32, 16, 8, 4, 2, 1, 0.5, 0.1, 0.05, 0.015, 0.0001}; // 32, 16, 8, 4, 2, 1, 0.5, 0.1, 0.05, 0.015, 0.0001
+    public Zoombar zoombar;
+    private double screenWidth;
     private List<TagNode> nodes;
     private List<TagWay> ways;
     private List<TagRelation> relations;
@@ -81,6 +85,7 @@ public class DrawingMap {
         tempList.addAll(XMLReader.getWays().valueCollection());
         tempList.addAll(XMLReader.getRelations().valueCollection());
         Tree.initialize(tempList);
+        zoombar = new Zoombar(zoombarIntervals, zoomLevelMax, zoomLevelMin);
         pan(-minlon, minlat);
         zoom(canvas.getWidth() / (maxlon - minlon), 0, 0);
         DrawMap(canvas);
@@ -358,6 +363,8 @@ public class DrawingMap {
         else if (zoomLevel < zoomLevelMin){
             zoomLevel = zoomLevelMin + 1;
         }
+
+        this.screenWidth = canvas.getWidth();
     }
 
 
@@ -371,6 +378,25 @@ public class DrawingMap {
 
         transform.prependTranslation(dx, dy);
         mainView.draw();
+    }
+
+    public void zoombarUpdater(Label label, ImageView imageView) {
+        zoombar.setRange(zoomLevel);
+        label.setText(String.valueOf(zoombar.getRange()) + "m");
+        imageView.setFitWidth(metersToPixels(zoombar.getRange()));
+    }
+
+    /**
+     * @param meters the amount of meters you want to know the pixel value of
+     * @return the amount of pixels that corresponds to the amount of meters
+     */
+
+     public double metersToPixels(int meters){
+        double[] bounds = getScreenBounds();
+        double widthInMeter = bounds[2] - bounds[0];
+        double metersPerPixelRatio = screenWidth / widthInMeter;
+        
+        return metersPerPixelRatio * meters;
     }
 
 }
