@@ -16,10 +16,10 @@ public class Zoombar {
     public Zoombar(int zoombarIntervals, double zoomLevelMax, double zoomLevelMin) {
         this.zoomLevelMax = zoomLevelMax;
         this.zoomLevelMin = zoomLevelMin;
-        this.zoombarIntervals = zoombarIntervals+1;
+        this.zoombarIntervals = zoombarIntervals;
         
-        setZoombarScales(zoombarIntervals);
-        setZoombarMetersInterval(zoombarIntervals);
+        setZoombarScales(this.zoombarIntervals);
+        setZoombarMetersInterval(this.zoombarIntervals);
     }
 
     public void setRange(double zoomLevel){
@@ -32,23 +32,18 @@ public class Zoombar {
     }
 
     private void setZoombarScales(int n) {
-        double[] zoombarNumbers = new double[n];
+        
         double[] zoombarScales = new double[n];
         double frequency = (this.zoomLevelMax-this.zoomLevelMin)/n; 
 
         for (int i = 0; i < n; i++) {
-            zoombarNumbers[i] = i*frequency;
-        }
-
-        for (int i = 0; i < n; i++) {
-            zoombarScales[i] = hierarchyToZoomscale(zoombarNumbers[i]+1.25);
+            zoombarScales[i] = hierarchyToZoomscale((i*frequency)+1.2);
         }
 
         this.zoombarScales = zoombarScales;
     }
 
     private void setZoombarHierarchyLevel(double zoomLevel) {
-
         for (int i = 0; i < zoombarIntervals ; i++){
             if(zoomLevel > zoombarScales[i]){
                 this.zoombarHierarchy = i;
@@ -62,7 +57,7 @@ public class Zoombar {
         int[] zoomLevelMetersArray = new int[zoombarIntervals];
 
         for (int i = 0; i < zoombarIntervals; i++){
-            zoomLevelMetersArray[i] = roundToClosest(hierarchyLevelToMeters(i+1));
+            zoomLevelMetersArray[i] = roundToClosest(hierarchyLevelToMeters(i));
         }
 
         this.zoomLevelMetersArray = zoomLevelMetersArray;
