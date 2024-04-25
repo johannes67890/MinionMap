@@ -172,7 +172,6 @@ public class XMLReader {
                         break;
                     }
             }
-            nodes = null; // Free up memory
             reader.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -183,4 +182,12 @@ public class XMLReader {
             e.printStackTrace();
         }
     }
+
+    public static void clearTags(){
+        nodes = null;
+        ways = null;
+        relations = null;
+    }
+
+
 }

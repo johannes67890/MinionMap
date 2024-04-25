@@ -34,7 +34,7 @@ import parser.Tag;
 public class K3DTree {
     private Node root;
     private int size;
-    private HashMap<Point3D, ArrayList<Tag>> pointToTag;
+    private HashMap<Point3D, Tag> pointToTag;
     public float[] bounds = new float[6];
 
     /**
@@ -103,9 +103,7 @@ public class K3DTree {
             root = insert(root, p, 0, new float[] {-180, -180, 180, 180});
         }
         
-        ArrayList<Tag> list = pointToTag.getOrDefault(node, new ArrayList<>());
-        list.add(node);
-        pointToTag.put(p, list);
+        pointToTag.put(p, node);
     }
     
     private Node insert(Node n, Point3D p, int xyz, float[] coords) {
@@ -271,8 +269,8 @@ public class K3DTree {
             // Add contained points to our points stack
             if (rect.contains(tmp.p)){
                 //points.push(tmp.p);
-                ArrayList<Tag> temp = pointToTag.get(tmp.p);
-                returnList.addAll(temp);
+                //ArrayList<Tag> temp = pointToTag.get(tmp.p);
+                returnList.add(pointToTag.get(tmp.p));
             }
             /**
              * Add Nodes containing promising rectangles to our nodes stack.
@@ -387,7 +385,7 @@ public class K3DTree {
      * @param point the point from where the search starts from
      * @return a list of Tags thats is connected to the the nearest Point3D in the KDTree
      */
-    public ArrayList<Tag> nearestTags(Point3D point){
+    public Tag nearestTags(Point3D point){
         return pointToTag.get(nearest(point));
     }
     
@@ -396,7 +394,7 @@ public class K3DTree {
      * @param point is the point that you want the Tags related to
      * @return this return an ArrayList<Tag<?>> of all tags related to the given Point3D
      */
-    public ArrayList<Tag> getTagsFromPoint(Point3D point){
+    public Tag getTagsFromPoint(Point3D point){
         return pointToTag.get(point);
     }
     

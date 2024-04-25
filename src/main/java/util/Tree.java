@@ -9,6 +9,7 @@ import parser.Tag;
 import parser.TagNode;
 import parser.TagRelation;
 import parser.TagWay;
+import parser.XMLReader;
 import util.Point3D;
 import util.Rect3D;
 import util.K3DTree;
@@ -29,6 +30,7 @@ public class Tree {
             insertTagInTree(tag);
         }
         isLoaded = true;
+        XMLReader.clearTags();
     }
 
     /**
@@ -82,7 +84,7 @@ public class Tree {
      * @param point Point to search near
      * @return ArrayList of Tag-objects near the point
      */
-    public static ArrayList<Tag> getTagsNearPoint(Point3D point){
+    public static Tag getTagsNearPoint(Point3D point){
         return multiTree.nearestTags(point);
     }
 
@@ -109,7 +111,7 @@ public class Tree {
      * @param point Point to search near
      * @return ArrayList of tag-objects in the given bounds
      */
-    public static ArrayList<Tag> getTagsFromPoint(Point3D point){
+    public static Tag getTagsFromPoint(Point3D point){
         return multiTree.getTagsFromPoint(point);
     }
 
