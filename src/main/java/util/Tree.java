@@ -41,9 +41,9 @@ public class Tree {
             for (TagNode node : way.getNodes()){
                 Point3D temp;
                 if (way.getType() != null){
-                    temp = new Point3D(node.getLon(), node.getLat(), way.getType().getThisHierarchy());
+                    temp = new Point3D(node.getLon(), node.getLat(),(byte) way.getType().getThisHierarchy());
                 }else{
-                    temp = new Point3D(node.getLon(), node.getLat(), 0);
+                    temp = new Point3D(node.getLon(), node.getLat(), (byte) 0);
                 }
                 multiTree.insert(temp, tag);
             }
@@ -53,16 +53,16 @@ public class Tree {
                 for (TagNode node : way.getNodes()){
                     Point3D temp;
                     if (way.getType() != null){
-                        temp = new Point3D(node.getLon(), node.getLat(), way.getType().getThisHierarchy());
+                        temp = new Point3D(node.getLon(), node.getLat(), (byte) way.getType().getThisHierarchy());
                     }else{
-                        temp = new Point3D(node.getLon(), node.getLat(), 0);
+                        temp = new Point3D(node.getLon(), node.getLat(), (byte) 0);
                     }
                     multiTree.insert(temp, tag);
                 }
             }
         }else if (tag instanceof TagRelation){
             TagNode node = (TagNode) tag;
-            multiTree.insert(new Point3D(node.getLon(), node.getLat(), 0), tag);
+            multiTree.insert(new Point3D(node.getLon(), node.getLat(),(byte) 0), tag);
         }
     }
     

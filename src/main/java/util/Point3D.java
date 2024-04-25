@@ -52,7 +52,7 @@ public final class Point3D implements Comparable<Point3D> {
 
     private final float x; // x coordinate
     private final float y; // y coordinate
-    private final int z; // z coordinate
+    private final byte z; // z coordinate
 
     /**
      * Initializes a new point (x, y).
@@ -64,7 +64,7 @@ public final class Point3D implements Comparable<Point3D> {
      *                                  {@code Double.POSITIVE_INFINITY} or
      *                                  {@code Double.NEGATIVE_INFINITY}
      */
-    public Point3D(float x, float y, int z) {
+    public Point3D(float x, float y, byte z) {
         if (Float.isInfinite(x) || Float.isInfinite(y))
             throw new IllegalArgumentException("Coordinates must be finite");
         if (Float.isNaN(x) || Float.isNaN(y))
