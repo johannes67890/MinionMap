@@ -371,7 +371,8 @@ public class DrawingMap {
         mainView.draw();
     }
 
-    public void zoombarUpdater(Label label, ImageView imageView){
+    public void zoombarUpdater(Label label, ImageView imageView) {
+
         label.setText(String.valueOf(getRange()) + "m");
         imageView.setFitWidth(metersToPixels(getRange()));
     }
@@ -384,7 +385,6 @@ public class DrawingMap {
     public double metersToPixels(int meters){
         double[] bounds = getScreenBounds();
         double widthInMeter = bounds[2] - bounds[0];
-
         double metersPerPixelRatio = screenWidth / widthInMeter;
         
         return metersPerPixelRatio * meters;
@@ -392,14 +392,9 @@ public class DrawingMap {
 
     public int getRange(){
         int zoombarHierarchy = getZoomBarHierarchyLevel();
-        
-        int[] ranges = {10, 20, 50, 100, 200, 500, 1000, 2000,3000, 5000, 10000, 20000, 50000, 100000}; // 20m, 100m, 200m, 1km, 5km, 10km, 20km, 50km, 100km
-        
-        return ranges[zoombarHierarchy-1];
-    }
-
-    public int roundToClosest(int number, int closest){
-        return (int) Math.round(number / closest) * closest;
+        int[] ranges = zoomLevelMetersArray(); // 20m, 100m, 200m, 1km, 5km, 10km, 20km, 50km, 100km
+        //int[] ranges = {10, 20, 50, 100, 200, 500, 1000, 2000,3000, 5000, 10000, 20000, 50000, 100000}; // 20m, 100m, 200m, 1km, 5km, 10km, 20km, 50km, 100km
+        return ranges[zoombarHierarchy];
     }
 
     public int getZoomBarHierarchyLevel(){
@@ -408,10 +403,23 @@ public class DrawingMap {
                 return i;
             }
         }
+
         if(zoomLevel < zoombarScales[0]){
-            return 15;
+            return this.zoombarIntervals-1;
         }
+
         return 0;
+    }
+
+    public int[] zoomLevelMetersArray(){
+
+        int[] zoomLevelMetersArray = new int[zoombarScales.length];
+
+        for (int i = 0; i < zoombarIntervals; i++){
+            zoomLevelMetersArray[i] = roundToClosest(hierarchyLevelToMeters(i));
+        }
+
+        return zoomLevelMetersArray;
     }
 
     public double[] getZoombarScales(int n) {
@@ -435,5 +443,22 @@ public class DrawingMap {
         return zoomScale;
     }
 
-    
+    public double hierarchyLevelToMeters(int hierarchyLevel){
+        return 4.5925*Math.pow(Math.E, 0.7689*hierarchyLevel);
+    }
+
+    public int roundToClosest(double number){
+        int closest = getNumberScale(number);
+        return (int) Math.round(number / closest) * closest;
+    }
+
+    public int countDigits(double number){
+        return (int) Math.log10(number) + 1;
+    }
+
+    public int getNumberScale(double number){
+        int digits = countDigits(number);
+        int scale = (int) Math.pow(10, digits-1);
+        return scale;
+    }
 }
