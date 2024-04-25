@@ -37,7 +37,7 @@ public enum Type {
     PRIMARY_ROAD("highway", new String[]{"primary"}, 9, 9, Color.PEACHPUFF, 5,  true, 6, 100),
     MOTORWAY("highway", new String[]{"motorway"}, 9, 9, Color.DARKRED, 5, true, 6, 100),
     SECONDARY_ROAD("highway", new String[]{"secondary"}, 9, 9, Color.YELLOW.desaturate(), 5, true, 6, 75),
-    TERTIARY_ROAD("highway",new String[]{"tertiary", "tertiary_link"},9, 9, Color.WHITE, 4, true, 4, 50),
+    TERTIARY_ROAD("highway",new String[]{"tertiary", "tertiary_link"},9, 9, Color.DARKGRAY, 4, true, 4, 50),
     RAILWAY("railway",new String[]{"rail","light_rail","subway"}, 9, 9, Color.DARKGRAY, 2, true, 4, 1000),
     WATER("natural",new String[]{"water"}, 9, 9, Color.LIGHTBLUE, Color.LIGHTBLUE.darker(), 5, false),
     WATERWAY("waterway",new String[]{""},9, 8, Color.LIGHTBLUE, 3, true, 2, 25),
