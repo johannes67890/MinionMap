@@ -1,11 +1,15 @@
 package util;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 
 import util.Point3D;
 import util.Rect3D;
 import edu.princeton.cs.algs4.Stack;
+import gnu.trove.list.linked.TLinkedList;
+import gnu.trove.map.hash.TCustomHashMap;
 import parser.Tag;
 
 /*
@@ -252,12 +256,10 @@ public class K3DTree {
         if (rect == null) throw new java.lang.NullPointerException(
                 "called range() with a null Rect3D");
         
-        //Stack<Point3D> points = new Stack<>();
-        //ArrayList<Tag<?>> returnList = new ArrayList<>();
-        HashSet<Tag> returnList = new HashSet<>();
+        LinkedList<Tag> returnList = new LinkedList<>();
         
         // Handle KdTree without a root node yet
-        if (root == null) return returnList;
+        if (root == null) return new HashSet<>(returnList);
         
         Stack<Node> nodes = new Stack<>();
         nodes.push(root);
@@ -268,7 +270,6 @@ public class K3DTree {
             
             // Add contained points to our points stack
             if (rect.contains(tmp.p)){
-                //points.push(tmp.p);
                 //ArrayList<Tag> temp = pointToTag.get(tmp.p);
                 returnList.add(pointToTag.get(tmp.p));
             }
@@ -286,7 +287,7 @@ public class K3DTree {
                 nodes.push(tmp.rtf);
             }
         }
-        return returnList;
+        return new HashSet<>(returnList);
     }
     
     /**

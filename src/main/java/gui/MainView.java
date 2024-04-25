@@ -92,7 +92,7 @@ public class MainView {
 
     public void draw(){
 
-        // long time = System.currentTimeMillis();
+        long time = System.currentTimeMillis();
 
 
         gc = canvas.getGraphicsContext2D();
@@ -100,7 +100,7 @@ public class MainView {
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
         drawView.DrawMap(canvas);
 
-        // System.out.println(1000 / (System.currentTimeMillis() - time));
+        System.out.println("Draw: " + (System.currentTimeMillis() - time));
 
 
         

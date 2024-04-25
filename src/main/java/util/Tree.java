@@ -3,8 +3,6 @@ package util;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import edu.princeton.cs.algs4.Point2D;
-import edu.princeton.cs.algs4.RectHV;
 import parser.Tag;
 import parser.TagNode;
 import parser.TagRelation;
@@ -25,7 +23,7 @@ public class Tree {
 
     public static void initialize(ArrayList<Tag> tags){
         multiTree = new K3DTree();
-        multiTree.setBound(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
+        multiTree.setBound(Float.MIN_VALUE, Float.MIN_VALUE, Byte.MIN_VALUE, Float.MAX_VALUE, Float.MAX_VALUE, Byte.MAX_VALUE);
         for (Tag tag : tags){
             insertTagInTree(tag);
         }
