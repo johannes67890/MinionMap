@@ -16,6 +16,7 @@ import parser.XMLReader;
 import util.MathUtil;
 import util.MinPQ;
 import util.Tree;
+import util.Trie;
 
 
 /**
@@ -37,7 +38,7 @@ public class DrawingMap {
     private double[] zoomScales = {32, 16, 8, 4, 2, 1, 0.5, 0.1, 0.05, 0.015, 0.0001}; //
      //
 
-
+    private Trie trie;
     private Tag markedTag;
     private List<TagNode> nodes;
     private List<TagWay> ways;
@@ -58,6 +59,7 @@ public class DrawingMap {
         this.reader = reader;
         ways = XMLReader.getWays().valueCollection().stream().toList();
         relations = XMLReader.getRelations().valueCollection().stream().toList();
+        trie = new Trie();
     }
 
     /**
@@ -85,6 +87,10 @@ public class DrawingMap {
         pan(-minlon, minlat);
         zoom(canvas.getWidth() / (maxlon - minlon), 0, 0);
         DrawMap(canvas);
+    }
+
+    public Trie getTrie(){
+        return trie;
     }
 
     /**

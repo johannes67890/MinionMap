@@ -75,6 +75,10 @@ public class TagAddress extends Tag {
         return country;
     }
 
+    public String toString() {
+        return street + " " + house + ", " + postCode + " " + city;
+    }
+
     /**
      * Builder for a single address.
      * <p>
