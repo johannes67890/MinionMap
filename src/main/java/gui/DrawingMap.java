@@ -20,7 +20,8 @@ import parser.TagWay;
 import parser.XMLReader;
 import util.MathUtil;
 import util.MinPQ;
-import util.Tree;;
+import util.Tree;
+import util.Zoombar;;
 
 /**
  * 
@@ -39,9 +40,9 @@ public class DrawingMap {
     private int zoombarIntervals = 15;
     private final double zoomLevelMin = 0.0002, zoomLevelMax = 31.8; // These variables changes how much you can zoom in and out. Min is far out and max is closest in
     private double zoomScalerToMeter; // This is the world meters of how long the scaler in the bottom right corner is. Divide it with the zoomLevel
-    private double[] zoomScales = {32, 16, 8, 4, 2, 1, 0.5, 0.1, 0.05, 0.015, 0.0001}; //
-    //32, 16, 8, 4, 2, 1, 0.5, 0.1, 0.05, 0.015, 0.0001
-    private double[] zoombarScales = getZoombarScales(zoombarIntervals);
+    private double[] zoomScales = {32, 16, 8, 4, 2, 1, 0.5, 0.1, 0.05, 0.015, 0.0001}; // 32, 16, 8, 4, 2, 1, 0.5, 0.1, 0.05, 0.015, 0.0001
+    public Zoombar zoombar;
+    
     
     private double screenWidth;
 
@@ -89,7 +90,8 @@ public class DrawingMap {
         ArrayList<Tag<?>> tempList = new ArrayList<>(XMLReader.getNodes().values());
         tempList.addAll(XMLReader.getWays().values());
         tempList.addAll(XMLReader.getRelations().values());
-        Tree.initialize(tempList);;
+        Tree.initialize(tempList);
+        zoombar = new Zoombar(zoombarIntervals, zoomLevelMax, zoomLevelMin);
         pan(-minlon, minlat);
         zoom(canvas.getWidth() / (maxlon - minlon), 0, 0);
         DrawMap(canvas);
@@ -372,9 +374,9 @@ public class DrawingMap {
     }
 
     public void zoombarUpdater(Label label, ImageView imageView) {
-
-        label.setText(String.valueOf(getRange()) + "m");
-        imageView.setFitWidth(metersToPixels(getRange()));
+        zoombar.setRange(zoomLevel);
+        label.setText(String.valueOf(zoombar.getRange()) + "m");
+        imageView.setFitWidth(metersToPixels(zoombar.getRange()));
     }
 
     /**
@@ -390,75 +392,4 @@ public class DrawingMap {
         return metersPerPixelRatio * meters;
     }
 
-    public int getRange(){
-        int zoombarHierarchy = getZoomBarHierarchyLevel();
-        int[] ranges = zoomLevelMetersArray(); // 20m, 100m, 200m, 1km, 5km, 10km, 20km, 50km, 100km
-        //int[] ranges = {10, 20, 50, 100, 200, 500, 1000, 2000,3000, 5000, 10000, 20000, 50000, 100000}; // 20m, 100m, 200m, 1km, 5km, 10km, 20km, 50km, 100km
-        return ranges[zoombarHierarchy];
-    }
-
-    public int getZoomBarHierarchyLevel(){
-        for (int i = 0; i < zoombarScales.length ; i++){
-            if(zoomLevel > zoombarScales[i]){
-                return i;
-            }
-        }
-
-        if(zoomLevel < zoombarScales[0]){
-            return this.zoombarIntervals-1;
-        }
-
-        return 0;
-    }
-
-    public int[] zoomLevelMetersArray(){
-
-        int[] zoomLevelMetersArray = new int[zoombarScales.length];
-
-        for (int i = 0; i < zoombarIntervals; i++){
-            zoomLevelMetersArray[i] = roundToClosest(hierarchyLevelToMeters(i));
-        }
-
-        return zoomLevelMetersArray;
-    }
-
-    public double[] getZoombarScales(int n) {
-        double[] zoombarNumbers = new double[n];
-        double[] zoombarScales = new double[n];
-        double frequency = (zoomLevelMax-zoomLevelMin)/n; 
-
-        for (int i = 0; i < n; i++) {
-            zoombarNumbers[i] = i*frequency;
-        }
-
-        for (int i = 0; i < n; i++) {
-            zoombarScales[i] = hierarchyToZoomscale(zoombarNumbers[i]+1.25);
-        }
-
-        return zoombarScales;
-    }
-
-    public double hierarchyToZoomscale(double d){
-        double zoomScale = 48.748*Math.pow(Math.E, -0.348*d);
-        return zoomScale;
-    }
-
-    public double hierarchyLevelToMeters(int hierarchyLevel){
-        return 4.5925*Math.pow(Math.E, 0.7689*hierarchyLevel);
-    }
-
-    public int roundToClosest(double number){
-        int closest = getNumberScale(number);
-        return (int) Math.round(number / closest) * closest;
-    }
-
-    public int countDigits(double number){
-        return (int) Math.log10(number) + 1;
-    }
-
-    public int getNumberScale(double number){
-        int digits = countDigits(number);
-        int scale = (int) Math.pow(10, digits-1);
-        return scale;
-    }
 }
