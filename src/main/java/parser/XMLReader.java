@@ -156,9 +156,14 @@ public class XMLReader {
                                 tempBuilder = new XMLBuilder(); // Reset the builder
                                 break;
                             case "way":
-                                XMLWriter.appendToPool(new TagWay(tempBuilder));
-                                ways.put(tempBuilder.getId(), new TagWay(tempBuilder));
+                                TagWay way = new TagWay(tempBuilder);
+                                ways.put(tempBuilder.getId(), way);
+                                for (TagNode node : way.getRefNodes()) {
+                                    XMLWriter.appendToPool(node);   
+                                }
+                            
                                 tempBuilder = new XMLBuilder();
+                                break;
                             case "relation":
                                 // XMLWriter.appendToPool(new TagRelation(tempBuilder));
                                 relations.put(tempBuilder.getId(), new TagRelation(tempBuilder));
@@ -167,12 +172,12 @@ public class XMLReader {
                             default:
                                 break;
                         }
-                        break;
+                        break; 
                     default:
                         break;
                     }
             }
-            nodes = null; // Free up memory
+            // nodes = null; // Free up memory
             reader.close();
             XMLWriter.appendToBinary();
 

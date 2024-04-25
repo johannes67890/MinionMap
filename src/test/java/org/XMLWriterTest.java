@@ -4,6 +4,7 @@ package org;
 
 
 import parser.Tag;
+import parser.TagAddress;
 import parser.TagBound;
 import parser.TagNode;
 import parser.TagWay;
@@ -16,6 +17,7 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.ArrayList;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,6 +49,9 @@ public class XMLWriterTest {
     
    
     public static void tearDown() {
+        if(!directory.exists()){
+            directory.mkdirs();
+        }
         for (File file : directory.listFiles()) {
             file.delete();
         }
@@ -67,12 +72,51 @@ public class XMLWriterTest {
 
     @Test
     public void testGetContentFromBinaryFile(){
-        long totalAmountOfTags =  
-          XMLReader.getWays().valueCollection().size() 
-        + XMLReader.getRelations().valueCollection().size() 
-        + XMLReader.getAddresses().valueCollection().size();
+        ArrayList<Tag> dup = new ArrayList<Tag>();
 
+        long total_Addreses = XMLReader.getAddresses().size();
+        long total_Relations = XMLReader.getRelations().size();
+        long total_nodes = XMLReader.getNodes().size();
+        long total_ways = XMLReader.getWays().size();
+        Set<Tag> set = new HashSet<>();
 
+        assertDoesNotThrow(() -> {
+            XMLWriter.getAllTagsFromChunks();
+        });
+        List<Tag> tags = XMLWriter.getAllTagsFromChunks();
+        assertNotNull(tags);
+        List<Tag> test = new ArrayList<>();
+
+        for (Tag tag : tags) {
+            if (tag instanceof TagAddress) {
+                total_Addreses--;
+                continue;
+            }
+            if (tag instanceof TagNode) {
+                TagNode t = (TagNode) tag;
+                if(t.getId() == 6760379515l){
+                    test.add(t);
+                }
+                if(!set.contains(t)){
+                    set.add(t);
+                    total_nodes--;
+                }else{
+                    dup.add(t);
+                }
+                for (TagWay p : t.getParents()) {
+                    if(!set.contains(p)){
+                        set.add(p);
+                        total_ways--;
+                    }else{
+                        dup.add(p);
+                    }
+                }
+            }
+        }
+        // assertEquals(0, dup.size());
+        // assertEquals(0, total_ways);
+        // assertEquals(0, total_nodes);
+        // assertEquals(0, total_Addreses);
     }
 
     // @Test

@@ -120,6 +120,7 @@ public class XMLBuilder {
                     break;
                 case "nd":
                     TagNode node = XMLReader.getNodeById(getAttributeByLong(reader, "ref"));
+                    
                     wayBuilder.addNode(node);
                     break;
                 case "member":
