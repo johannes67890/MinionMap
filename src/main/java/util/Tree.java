@@ -49,13 +49,14 @@ public class Tree {
             }
         }else if (tag instanceof TagRelation){
             TagRelation relation = (TagRelation) tag;
+
             for (TagWay way : relation.getHandledOuter()){
                 for (TagNode node : way.getNodes()){
                     Point3D temp;
                     if (way.getType() != null){
-                        temp = new Point3D(node.getLon(), node.getLat(), (byte) way.getType().getThisHierarchy());
+                        temp = new Point3D(node.getLon(), node.getLat(), (byte) relation.getType().getThisHierarchy());
                     }else{
-                        temp = new Point3D(node.getLon(), node.getLat(), (byte) 0);
+                        temp = new Point3D(node.getLon(), node.getLat(), (byte) relation.getType().getThisHierarchy());
                     }
                     multiTree.insert(temp, tag);
                 }
