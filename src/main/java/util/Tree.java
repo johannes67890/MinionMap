@@ -50,16 +50,6 @@ public class Tree {
         }else if (tag instanceof TagRelation){
             TagRelation relation = (TagRelation) tag;
 
-            if (relation.getId() == 5175917){
-
-                System.out.println(relation.getId() + " Fyn " + relation.getHandledOuter().size());
-                System.out.println(relation.getHandledOuter().get(0).getNodes().length);
-                System.out.println(relation.getType());
-                System.out.println(relation.getHandledOuter().get(0).firsTagNode().getId() + " " +relation.getHandledOuter().get(0).lastTagNode().getId() );
-
-
-            } 
-
             for (TagWay way : relation.getHandledOuter()){
                 for (TagNode node : way.getNodes()){
                     Point3D temp;
