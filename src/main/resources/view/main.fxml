@@ -34,9 +34,9 @@
                         <ComboBox fx:id="searchBarDestination" editable="true" maxWidth="0.0" prefHeight="30.0" prefWidth="679.0" promptText="Destination..." visible="false" />
                         <Button fx:id="pointButton" minWidth="29.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="29.0" text="Search">
                            <graphic>
-                              <ImageView fitHeight="20.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fx:id="pointImage" fitHeight="20.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../visuals/pointofinterest.png" />
+                                    <Image url="@../visuals/pointofinterestpassive.png" />
                                  </image>
                               </ImageView>
                            </graphic></Button>

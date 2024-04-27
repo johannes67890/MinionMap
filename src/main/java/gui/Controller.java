@@ -1,10 +1,12 @@
 package gui;
 import java.net.URL;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 import gui.GraphicsHandler.GraphicStyle;
 import gui.MainView.StageSelect;
+import javafx.application.Preloader.StateChangeNotification.Type;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -14,6 +16,8 @@ import javafx.geometry.Point2D;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -21,6 +25,7 @@ import javafx.scene.layout.VBox;
 import parser.Tag;
 import parser.TagAddress;
 import parser.TagNode;
+import parser.TagWay;
 import parser.TagAddress.SearchAddress;
 import util.MecatorProjection;
 import util.Tree;
@@ -46,8 +51,13 @@ public class Controller implements Initializable, ControllerInterface{
     @FXML private HBox mainUIHBox;
     @FXML private BorderPane mainBorderPane;
     @FXML private ChoiceBox<String> styleChoiceBox;
+    @FXML private ImageView pointImage;
 
 
+    //private Image activePoint = new Image(getClass().getResourceAsStream("gui/resources/visual/pointofinterest.png"));
+
+    //System.out.println("HELO")
+    //src\main\java\gui\pointofinterestoff.png
 
 
     private boolean pointofInterestState = false;
@@ -158,7 +168,6 @@ public class Controller implements Initializable, ControllerInterface{
                     GraphicsHandler.setGraphicsStyle(GraphicStyle.DEFAULT);
                     mainView.draw();
 
-                    System.out.println("HELLO");
                     break;
                 }
                 case "dark" : {
@@ -208,8 +217,20 @@ public class Controller implements Initializable, ControllerInterface{
 
         });
         pointButton.setOnAction((ActionEvent e) ->{
-
             pointofInterestState = !pointofInterestState;
+
+            File filePassive = new File(System.getProperty("user.dir").toString() + "\\src\\main\\resources\\visuals\\pointofinterestpassive.png");
+            File fileActive = new File(System.getProperty("user.dir").toString() + "\\src\\main\\resources\\visuals\\pointofinterest.png");
+
+
+            Image imagePassive = new Image(filePassive.toURI().toString());
+            Image imageActive = new Image(fileActive.toURI().toString());
+            //Image otherImage = new Image(getClass().getResourceAsStream(selectedEndItem));
+            if (pointofInterestState){
+                pointImage.setImage(imageActive);
+            } else{
+                pointImage.setImage(imagePassive);
+            }
         });
 
         // TODO: remake this function so it registers everytime the value is changed!
@@ -323,7 +344,14 @@ public class Controller implements Initializable, ControllerInterface{
 
         //System.out.println(nearestTag.get(0).getId());
 
-        drawingMap.setMarkedTag(nearestTag.get(0));
+        Tag tag = nearestTag.get(0);
+
+        if(tag instanceof TagWay && ((TagWay)tag).getType() != null && ((TagWay)tag).getType().equals(parser.Type.BUILDING)){
+
+            drawingMap.setMarkedTag(nearestTag.get(0));
+        } else{
+            drawingMap.setMarkedTag(tagAddress);
+        }
 
         mainView.getDrawingMap().pan(-deltaX, deltaY);
 
