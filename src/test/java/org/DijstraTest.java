@@ -10,6 +10,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import parser.TagAddress;
+import parser.TagWay;
 import parser.Type;
 import parser.XMLReader;
 import util.FileDistributer;
@@ -25,19 +26,21 @@ public class DijstraTest {
         this.reader = new XMLReader("src/test/java/org/ressources/testMap.osm");
         assertNotNull(reader);
         assertDoesNotThrow(() -> this.reader);
+        Tree.initialize(new ArrayList<Tag>(XMLReader.getWays().valueCollection()));;
     }
 
     @Test
-    void testE() {
+    void testGetNearestRoad(){
         TagAddress start = XMLReader.getAddressById(1447913335l);
-        if(start instanceof TagAddress){
-            //new Tree(XMLReader.getWays());
-            Tree.initialize(new ArrayList<Tag>(XMLReader.getWays().valueCollection()));;
-            Tree.insertTagInTree(start);
-            KdTree tree = Tree.getKDTree();
-            Tag tag = tree.nearestOfType(new Point2D(start.getLon(), start.getLat()), Type.RESIDENTIAL_ROAD, 10);
-            assertEquals(26154396, tag.getId());
-          
-        }
+        Tree.insertTagInTree(start);
+        Tag road = Tree.getNearestOfType(start, Type.RESIDENTIAL_ROAD);
+        assertNotNull(road);
+        assertTrue(road instanceof TagWay);
+        assertEquals(27806594, road.getId());
+
+        Tag roads = Tree.getNearestOfType(start, Type.getAllRoads());
+        assertNotNull(road);
+        assertTrue(road instanceof TagWay);
+        assertEquals(27806594, road.getId());
     }
 }

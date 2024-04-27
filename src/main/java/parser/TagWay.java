@@ -115,6 +115,11 @@ public class TagWay extends Tag implements Comparable<TagWay>{
         return isLine;
     }
 
+    @Override
+    public String toString() {
+        return "Way: " + id + " " + name + " " + type + " " + speedLimit;
+    }
+
     public int compareTo(TagWay tW){
 
         int tWLayer = tW.getType().getLayer();

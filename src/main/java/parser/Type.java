@@ -5,6 +5,10 @@ import java.sql.Array;
 import gui.GraphicsHandler;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import java.util.*;
+import java.util.stream.Collectors;
+
+
 
 /**
  * Enum for the different types of tags.  
@@ -31,7 +35,6 @@ public enum Type  {
 
     REGION("place", new String[]{"island", ""}, 10, 2, Color.LIGHTYELLOW.desaturate(), Color.YELLOW, 5, false),
     BOUNDARY("boundary", new String[]{"administrative"}, 10, 2, Color.LIGHTYELLOW.desaturate(), Color.YELLOW, 5, false),
-
 
     // Natural, Landuse and main infrastructure (Hierarchy 9)
     PRIMARY_ROAD("highway", new String[]{"primary"}, 9, 9, Color.PEACHPUFF, 5,  true, 6, 100),
@@ -95,6 +98,7 @@ public enum Type  {
     UNKNOWN("", new String[]{""}, 0, 9, Color.BLACK, 5, true, 2, 7);
 
 
+
     private final String key; // key of the tag
     private final String[] value; // value of the tag
     private final int hierarchy; // hierarchy of the tag - How important is it to display
@@ -146,6 +150,21 @@ public enum Type  {
         this.polyLineColor = Color.BLACK;
     }
     
+    /**** Groups ****/
+    public static List<Type> getAllRoads() {
+        return Arrays.stream(Type.values())
+            .filter(type -> type.getKey().contains("highway"))
+            .collect(Collectors.toList());
+    }
+
+    public static List<Type> getTypesOfHierarchy(int i) {
+        if(i < 0 || i > 9) throw new IllegalArgumentException("Hierarchy must be between 0 and 9");
+        return Arrays.stream(Type.values())
+            .filter(type -> Type.getHierarchy(type) == i)
+            .collect(Collectors.toList());
+    }
+
+
     public String getKey() {
         return key;
     }
@@ -218,8 +237,6 @@ public enum Type  {
         return color;
     }
     public Color getColor(){
-
-
         switch (GraphicsHandler.getGraphicStyle()) {
             case DEFAULT:
                 return color;    

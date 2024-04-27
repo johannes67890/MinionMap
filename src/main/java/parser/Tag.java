@@ -3,6 +3,7 @@ package parser;
 import java.util.HashMap;
 import java.util.List;
 
+import edu.princeton.cs.algs4.MinPQ;
 import util.MecatorProjection;
 import java.util.List;
 import java.io.ByteArrayOutputStream;
@@ -107,52 +108,4 @@ public abstract class Tag implements Serializable{
 
         return distance;
     }
-
-    public TagNode shortestDistanceAndIntersection(TagWay way) {
-        TagNode[] nodes = way.getNodes();
-        TagNode closest1 = null, closest2 = null;
-        float minDist1 = Float.MAX_VALUE, minDist2 = Float.MAX_VALUE;
-    
-        for (TagNode node : nodes) {
-            float dist = (float) Math.sqrt(Math.pow(node.getLat() - this.getLat(), 2) + Math.pow(node.getLon() - this.getLon(), 2));
-            if (dist < minDist1) {
-                minDist2 = minDist1;
-                closest2 = closest1;
-                minDist1 = dist;
-                closest1 = node;
-            } else if (dist < minDist2) {
-                minDist2 = dist;
-                closest2 = node;
-            }
-        }
-    
-        // Now closest1 and closest2 are the two closest points
-        // You can now use these points to find the intersection point and shortest distance as before
-    
-        // Line equation coefficients for line formed by closest1 and closest2
-        float A1 = closest2.getLat() - closest1.getLat();
-        float B1 = closest1.getLon() - closest2.getLon();
-        float C1 = A1 * closest1.getLon() + B1 * closest1.getLat();
-    
-        // Line equation coefficients for line perpendicular to above line and passing through the point
-        float A2 = -B1;
-        float B2 = A1;
-        float C2 = A2 * this.getLon() + B2 * this.getLat();
-    
-        // Intersection point of the two lines
-        float det = A1 * B2 - A2 * B1;
-        float x = (B2 * C1 - B1 * C2) / det;
-        float y = (A1 * C2 - A2 * C1) / det;
-    
-        // Create new TagNode at intersection point
-        TagNode intersection = new TagNode(x, y);
-    
-        // Calculate shortest distance
-        float shortestDistance = Math.abs(A1 * this.getLon() + B1 * this.getLat() + C1) / (float) Math.sqrt(A1 * A1 + B1 * B1);
-    
-        System.out.println("Shortest distance: " + shortestDistance);
-        return intersection;
-    }
-
-
 }

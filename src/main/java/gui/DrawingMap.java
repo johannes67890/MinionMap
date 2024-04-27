@@ -211,14 +211,13 @@ public class DrawingMap {
             
             
 
-                for (TagNode n :  tagWay.getRefNodes()) {
-                    if(n.getNext() == null || n.getPrevious() == null) break;
-                        gc.lineTo(n.getLon(), -n.getLat());
-                        xPoints[counter] = n.getLon();
-                        yPoints[counter] = -n.getLat();
-                 
-                
+                for (TagNode n : tagWay.getRefNodes()) {
+                    gc.lineTo(n.getLon(), -n.getLat());
+                    xPoints[counter] = n.getLon();
+                    yPoints[counter] = -n.getLat();
                     counter++;
+                    
+                    if(n.getNext() == null) break;
                 }
 
             

@@ -1,6 +1,5 @@
 package util;
 
-import java.util.ArrayList;
 import java.util.*;
 
 import edu.princeton.cs.algs4.Point2D;
@@ -59,6 +58,7 @@ public class Tree {
             for (TagNode node : way.getRefNodes()){
                 Point2D temp = new Point2D(node.getLon(), node.getLat());
                 kdtree.insert(temp, tag);
+                if(node.getNext() == null) break;
             }
         }else if (tag instanceof TagRelation){
             TagRelation relation = (TagRelation) tag;
@@ -66,6 +66,7 @@ public class Tree {
                 for (TagNode node : way.getRefNodes()){
                     Point2D temp = new Point2D(node.getLon(), node.getLat());
                     kdtree.insert(temp, tag);
+                    if(node.getNext() == null) break;
                 }
             }
         }
@@ -139,8 +140,16 @@ public class Tree {
      * @param point Point to search near
      * @return ArrayList of tag-objects in the given bounds
      */
-    public ArrayList<Tag> getTagsFromPoint(Tag node){
+    public static ArrayList<Tag> getTagsFromPoint(Tag node){
         return kdtree.getTagsFromPoint(new Point2D(node.getLon(), node.getLat()));
+    }
+
+    public static Tag getNearestOfType(Tag tag, List<Type> searchTypes){
+        return kdtree.nearestOfType(new Point2D(tag.getLon(), tag.getLat()), searchTypes);
+    }
+
+    public static Tag getNearestOfType(Tag tag, Type searchType){
+        return kdtree.nearestOfType(new Point2D(tag.getLon(), tag.getLat()), searchType);
     }
 
     public static boolean isLoaded(){

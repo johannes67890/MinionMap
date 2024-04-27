@@ -11,7 +11,6 @@ import util.Tree;
 
 import java.util.*;
 
-import edu.princeton.cs.algs4.Point2D;
 import parser.Tag;
 import parser.TagAddress;
 
@@ -24,15 +23,15 @@ public class Dijsktra {
     Dijsktra(Tag start, Tag finish) {
         Digraph G = new Digraph();
 
-
-
+        if(!(start instanceof TagNode) || !(finish instanceof TagNode)) {
+            start = getNearestRoadPoint(start);
+            finish = getNearestRoadPoint(finish);
+        }
 
         for (DirectedEdge e : G.edges()) {
             if (e.weight() < 0)
                 throw new IllegalArgumentException("edge " + e + " has negative weight");
         }
-
-
 
         distTo = new HashMap<>();
         edgeTo = new HashMap<Tag, DirectedEdge>(G.V());
@@ -41,6 +40,7 @@ public class Dijsktra {
             distTo.put(v, Double.POSITIVE_INFINITY);   
         }
         distTo.put(start, 0.0);
+        distTo.put(finish, Double.POSITIVE_INFINITY);
 
         pq = new IndexMinPQ<Double>(G.V());
         pq.insert(start.getId(), distTo.get(start));
@@ -65,6 +65,24 @@ public class Dijsktra {
         }
     }
 
+    private Tag getNearestRoadPoint(Tag tag){
+        Tag nearestTag = Tree.getNearestOfType(tag, Type.getAllRoads());
+        if(nearestTag instanceof TagNode) return nearestTag;
+        TagWay tagWay = (TagWay) nearestTag;
+
+        TagNode closesNode = null;
+        for (TagNode n : tagWay.getRefNodes()) {
+            if (closesNode == null) {
+                closesNode = n;
+            } else {
+                if (closesNode.distance(n) < n.distance(n)) {
+                    closesNode = n;
+                }
+            }
+            if(n.getNext() == null) break;
+        } 
+        return closesNode;
+    }
     
       // relax edge e and update pq if changed
     private void relax(DirectedEdge e) {
@@ -116,22 +134,18 @@ public class Dijsktra {
         
 
         new XMLReader(FileDistributer.input.getFilePath());
+        Tree.initialize(new ArrayList<Tag>(XMLReader.getWays().valueCollection()));;
 
 
         TagAddress start = XMLReader.getAddressById(1447913335l);
-        TagAddress finish = XMLReader.getAddressById(1447911290l);
+        TagAddress finish = XMLReader.getAddressById(1447913335l);
   
-        Tree.initialize(new ArrayList<Tag>(XMLReader.getWays().valueCollection()));;
-        Tree.insertTagInTree(start);
-        Tree.insertTagInTree(finish);
-        KdTree tree = Tree.getKDTree();
-        TagWay t = tree.nearestOfType(new Point2D(finish.getLon(), finish.getLat()), Type.RESIDENTIAL_ROAD, 10);
-        TagNode test =  finish.shortestDistanceAndIntersection(t);
-        System.out.println("test: " + MecatorProjection.unproject(test));
+      
+        
         
 
-        System.out.println(t);
-        // new Dijsktra(a, f);
+
+        System.out.println(new Dijsktra(start, finish));
 
         
          
