@@ -56,14 +56,14 @@ public class Tree {
             kdtree.insert(temp, tag);
         }else if (tag instanceof TagWay){
             TagWay way = (TagWay) tag;
-            for (TagNode node : way.getNodes()){
+            for (TagNode node : way.getRefNodes()){
                 Point2D temp = new Point2D(node.getLon(), node.getLat());
                 kdtree.insert(temp, tag);
             }
         }else if (tag instanceof TagRelation){
             TagRelation relation = (TagRelation) tag;
             for (TagWay way : relation.getWays()){
-                for (TagNode node : way.getNodes()){
+                for (TagNode node : way.getRefNodes()){
                     Point2D temp = new Point2D(node.getLon(), node.getLat());
                     kdtree.insert(temp, tag);
                 }

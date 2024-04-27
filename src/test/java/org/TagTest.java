@@ -32,13 +32,13 @@ public class TagTest {
          */
         TagWay way = XMLReader.getWayById(26154396l);
         assertTrue(way.isInBounds(bound));
-        for (int i = 0; i < way.getNodes().length; i++) { 
+        for (int i = 0; i < way.getRefNodes().size(); i++) { 
             // Check if the first 8 nodes are not in bounds, but the last 2 nodes are
             if(i <= 1){
-                assertFalse(way.getNodes()[i].isInBounds(bound));
+                assertFalse(way.getRefNodes().get(i).isInBounds(bound));
             }
             else{
-                assertTrue(way.getNodes()[i].isInBounds(bound));
+                assertTrue(way.getRefNodes().get(i).isInBounds(bound));
             }
         }
 

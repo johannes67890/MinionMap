@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
+import gnu.trove.list.linked.TLinkedList;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
@@ -167,7 +168,7 @@ public class DrawingMap {
      */
     private void drawWays(MinPQ<TagWay> ways){
 
-        TagNode[] nodesRef;
+        TLinkedList<TagNode> nodesRef;
 
         double[] xPoints;
 
@@ -186,12 +187,10 @@ public class DrawingMap {
       
             TagWay tagWay = ways.delMin();
 
-            nodesRef = tagWay.getNodes();
-
             currentColor = tagWay.getType().getColor();
             int counter = 0;
-            xPoints = new double[nodesRef.length];
-            yPoints = new double[nodesRef.length];
+            xPoints = new double[tagWay.getRefNodes().size()];
+            yPoints = new double[tagWay.getRefNodes().size()];
 
             double min = tagWay.getType().getMinWidth();
             double max = tagWay.getType().getMaxWidth();
@@ -208,22 +207,23 @@ public class DrawingMap {
 
             
             gc.beginPath();
-            gc.moveTo(nodesRef[0].getLon(), -nodesRef[0].getLat());
+            gc.moveTo(tagWay.getRefNodes().getFirst().getLon(), -tagWay.getRefNodes().getFirst().getLat());
             
-            for (int i = 0; i < nodesRef.length ; i ++){
+            
+
+                for (TagNode n :  tagWay.getRefNodes()) {
+                    if(n.getNext() == null || n.getPrevious() == null) break;
+                        gc.lineTo(n.getLon(), -n.getLat());
+                        xPoints[counter] = n.getLon();
+                        yPoints[counter] = -n.getLat();
+                 
                 
-                ref = nodesRef[i];
-                currentLat = -ref.getLat();
-                currentLon = ref.getLon();
+                    counter++;
+                }
 
-                gc.lineTo(currentLon, currentLat);
-                xPoints[counter] = currentLon;
-                yPoints[counter] = currentLat;
-                counter++;
-                
-            }
-
-
+            
+            
+            
             //Fills polygons with color
             if (!tagWay.getType().getIsLine()){
                 gc.setFill(currentColor);

@@ -1,10 +1,8 @@
 package parser;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedList;
+
+import gnu.trove.list.linked.TLinkedList;
 
 enum Way {
     ID, REFS, NAME, TYPE, SPEEDLIMIT
@@ -24,7 +22,7 @@ public class TagWay extends Tag implements Comparable<TagWay>{
 
     long id;
     String name;
-    TagNode[] nodes;
+    TLinkedList<TagNode> nodes;
     int speedLimit;
     Type type;
 
@@ -33,12 +31,12 @@ public class TagWay extends Tag implements Comparable<TagWay>{
     public TagWay(XMLBuilder builder) {
         this.id = builder.getId();
         this.name = builder.getName();
-        this.nodes = builder.getWayBuilder().getRefNodesList();
         this.speedLimit = builder.getWayBuilder().getSpeedLimit();
         this.type = builder.getType();
+        this.nodes = builder.getWayBuilder().getRefNodes(this);
     }
 
-    public TagWay(long id, String name, TagNode[] nodes, int speedLimit, Type type) {
+    public TagWay(long id, String name, TLinkedList<TagNode> nodes, int speedLimit, Type type) {
         this.id = id;
         this.name = name;
         this.nodes = nodes;
@@ -52,14 +50,12 @@ public class TagWay extends Tag implements Comparable<TagWay>{
      * 
      * @param builder
      */
-    public TagWay(TagRelation relation, long id, TagNode[] nodes, int speedLimit) {
+    public TagWay(TagRelation relation, long id, TLinkedList<TagNode> nodes, int speedLimit) {
         this.id = id;
         this.name = relation.getName();
         this.nodes = nodes;
         this.speedLimit = speedLimit;
         this.type = relation.getType();
-
-
     }
 
     /**
@@ -77,10 +73,6 @@ public class TagWay extends Tag implements Comparable<TagWay>{
 
     public float getLon() {
         throw new UnsupportedOperationException("TagWay does not have a longitude value.");
-    }
-
-    public String toString(){
-        return "ID: " + id + " " + nodes[0].getLat() + " " + nodes[0].getLon() ;
     }
 
     public int getSpeedLimit(){
@@ -103,43 +95,21 @@ public class TagWay extends Tag implements Comparable<TagWay>{
     }
 
     public boolean loops(){
-        if (getNodes()[0] != null){
-
-            return getNodes()[0].getId() == getNodes()[size() - 1].getId();
+        if(getRefNodes().getFirst().getId() == getRefNodes().getLast().getId()){
+            return true;
         } else{
-            return false;}
-    }
-
-    public TagNode firsTagNode(){
-        if (getNodes()[0] == null){
-            System.out.println("HELLO");
+            return false;
         }
-        //System.out.println(getNodes()[0]);
-        return getNodes()[0];
-    }
-
-    public TagNode lastTagNode(){
-        if (getNodes()[size() - 1] == null){
-            System.out.println("HELLO");
-        }
-        return getNodes()[size() - 1];
     }
     
     /**
      * Get the refrerence nodes of the way.
      * @return Long[] of the reference nodes of the way.
      */
-    public TagNode[] getNodes() {
+    public TLinkedList<TagNode> getRefNodes() {
         return nodes;
     }
 
-    public boolean isEmpty() {
-        return getNodes().length == 0;
-    }
-
-    public int size() {
-        return getNodes().length;
-    }
 
     public boolean isLine(){
         return isLine;
@@ -168,8 +138,7 @@ public class TagWay extends Tag implements Comparable<TagWay>{
     * </p>
     */
     public static class WayBuilder {
-        private ArrayList<TagNode> refNodesList = new ArrayList<TagNode>();
-        private TagNode[] refNodes;
+        private TLinkedList<TagNode> refNodesList = new TLinkedList<TagNode>();
         private boolean isEmpty = true;
         private int speedLimit;
 
@@ -186,13 +155,6 @@ public class TagWay extends Tag implements Comparable<TagWay>{
             this.speedLimit = speedLimit;
         }
 
-        public void addNode(long ref) {
-            if (isEmpty) {
-                isEmpty = false;
-            }
-            refNodesList.add(XMLReader.getNodeById(ref));
-        }
-
         public void addNode(TagNode node) {
             if (isEmpty) {
                 isEmpty = false;
@@ -200,25 +162,10 @@ public class TagWay extends Tag implements Comparable<TagWay>{
             refNodesList.add(node);
         }
 
-        public void closeNodeList(){
-
-            refNodes = refNodesList.toArray(new TagNode[refNodesList.size()]);
-            refNodesList.clear();
+        public TLinkedList<TagNode> getRefNodes(TagWay way){
+            refNodesList.getFirst().setParent(way);
+            
+           return refNodesList;
         }
-
-        public TagNode[] getRefNodesList() {
-
-            closeNodeList();
-
-            return getRefNodes();
-        }
-
-        public TagNode[] getRefNodes(){
-
-            return refNodes;
-
-        }
-
-
     }
 }

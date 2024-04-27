@@ -2,6 +2,7 @@ package util;
 
 import java.lang.Math;
 
+import gnu.trove.list.linked.TLinkedList;
 import parser.TagBound;
 import parser.TagNode;
 import parser.TagRelation;
@@ -23,8 +24,8 @@ public class MecatorProjection {
             TagNode max = project(bound.getMaxLon(), bound.getMaxLat());
             TagNode min = project(bound.getMinLon(), bound.getMinLat());
             return new TagBound(
-                max.getLat(),
                 min.getLat(),
+                max.getLat(),
                 min.getLon(),
                 max.getLon()
             );
@@ -93,8 +94,8 @@ public class MecatorProjection {
             TagNode max = unproject(bound.getMaxLon(), bound.getMaxLat());
             TagNode min = unproject(bound.getMinLon(), bound.getMinLat());
             return new TagBound(
-                max.getLat(),
                 min.getLat(),
+                max.getLat(),
                 min.getLon(),
                 max.getLon()
             );
@@ -130,7 +131,7 @@ public class MecatorProjection {
             return new TagWay(
                 way.getId(),
                 way.getName(),
-                unproject(way.getNodes()),
+                unproject(way.getRefNodes()),
                 way.getSpeedLimit(),
                 way.getType()
             );
@@ -175,10 +176,10 @@ public class MecatorProjection {
          * @param nodes
          * @return
          */
-        private static TagNode[] unproject(TagNode[] nodes) {
-            TagNode[] unprojected = new TagNode[nodes.length];
-            for (int i = 0; i < nodes.length; i++) {
-                unprojected[i] = unproject(nodes[i]);
+        private static TLinkedList<TagNode> unproject(TLinkedList<TagNode> nodes) {
+            TLinkedList<TagNode> unprojected = new TLinkedList<>();
+            for (TagNode node : nodes) {
+                unprojected.add(unproject(node));
             }
             return unprojected;
         }

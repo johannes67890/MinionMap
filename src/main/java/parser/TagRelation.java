@@ -5,6 +5,8 @@ import java.util.HashMap;
 
 import javax.xml.stream.XMLStreamReader;
 
+import gnu.trove.list.linked.TLinkedList;
+
 enum Relation {
     ID, INNER, OUTER, WAYS, RELATIONS, NODES, TYPE, TYPEVALUE, NAME, RELATIONTYPE
 }
@@ -93,7 +95,7 @@ public class TagRelation extends Tag{
     public void constructOuterWays(){
 
 
-        ArrayList<TagNode> tempNodes = new ArrayList<>();
+        TLinkedList<TagNode> tempNodes = new TLinkedList<>();
         TagNode beginLastTagNode = null;
         TagNode beginFirstTagNode = null;
 
@@ -122,7 +124,7 @@ public class TagRelation extends Tag{
                 handledOuter.add(outer);
             } else{
 
-                currentFirstTagNode = outer.firsTagNode();
+                currentFirstTagNode = outer.getRefNodes().getFirst();
 
 
                 if (beginFirstTagNode == null){
@@ -131,22 +133,21 @@ public class TagRelation extends Tag{
 
                         TagWay other = getActualOuter().get(j + 1);
 
-                        if ((other.firsTagNode().equals(outer.lastTagNode())) || (other.lastTagNode().equals(outer.lastTagNode()))){
+                        if ((other.getRefNodes().getFirst().equals(outer.getRefNodes().getLast())) || (other.getRefNodes().getLast().equals(outer.getRefNodes().getLast()))){
 
-                            beginFirstTagNode = outer.firsTagNode();
+                            beginFirstTagNode = outer.getRefNodes().getFirst();
                             currentFirstTagNode = beginFirstTagNode;
-                            beginLastTagNode = outer.lastTagNode();
-                            prevLastTagNode = outer.firsTagNode();
+                            beginLastTagNode = outer.getRefNodes().getLast();
+                            prevLastTagNode = outer.getRefNodes().getFirst();
                         } 
                         // Starts from the opposite direction
                         else{
 
-                            beginFirstTagNode = outer.lastTagNode();
+                            beginFirstTagNode = outer.getRefNodes().getLast();
                             currentFirstTagNode = beginFirstTagNode;
-                            beginLastTagNode = outer.firsTagNode();
-                            prevLastTagNode = outer.firsTagNode();
+                            beginLastTagNode = outer.getRefNodes().getFirst();
+                            prevLastTagNode = outer.getRefNodes().getFirst();
                         }
-                    
                     }
                     else{
                         break;
@@ -157,13 +158,13 @@ public class TagRelation extends Tag{
 
                 if ((prevLastTagNode != null) && prevLastTagNode.equals(currentFirstTagNode)){
 
-                    for (TagNode node : outer.getNodes()){
+                    for (TagNode node : outer.getRefNodes()){
                         tempNodes.add(node);    
                     }
                 } else{
-                    for (int i = outer.getNodes().length - 1; i >= 0; i-- ){
+                    for (int i = outer.getRefNodes().size() - 1; i >= 0; i-- ){
 
-                        TagNode node = outer.getNodes()[i];
+                        TagNode node = outer.getRefNodes().get(i);
 
                         tempNodes.add(node);    
                     }
@@ -179,12 +180,10 @@ public class TagRelation extends Tag{
                     //System.out.println(beginLastTagNode.getId() + " " + outer.getId());
 
 
-                    TagNode[] nodes = tempNodes.toArray(new TagNode[tempNodes.size()]);
-
-                    TagWay newTagWay = new TagWay(this, id, nodes, speedLimit);
+                    TagWay newTagWay = new TagWay(this, id, tempNodes, speedLimit);
                     handledOuter.add(newTagWay);
                     tempNodes.clear();
-                    tempNodes = new ArrayList<>();
+                    tempNodes = new TLinkedList<>();
                     beginFirstTagNode = null;
                     beginLastTagNode = null;
                     success = true;
