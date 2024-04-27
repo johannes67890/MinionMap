@@ -113,10 +113,11 @@ public class XMLWriterTest {
                 }
             }
         }
-        // assertEquals(0, dup.size());
-        // assertEquals(0, total_ways);
-        // assertEquals(0, total_nodes);
-        // assertEquals(0, total_Addreses);
+        TagNode t = XMLReader.getNodeById(1682443859l);
+        assertEquals(0, dup.size());
+        assertEquals(0, total_ways);
+        assertEquals(0, total_nodes);
+        assertEquals(0, total_Addreses);
     }
 
     // @Test

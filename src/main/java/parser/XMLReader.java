@@ -159,6 +159,7 @@ public class XMLReader {
                                 TagWay way = new TagWay(tempBuilder);
                                 ways.put(tempBuilder.getId(), way);
                                 for (TagNode node : way.getRefNodes()) {
+                                    if(node.getNext() == null || node.getPrevious() == null) break;
                                     XMLWriter.appendToPool(node);   
                                 }
                             

@@ -173,20 +173,19 @@ public class DrawingMap {
             gc.beginPath();
             gc.moveTo(tagWay.getRefNodes().getFirst().getLon(), -tagWay.getRefNodes().getFirst().getLat());
             
-            for (int i = 0; i < tagWay.getRefNodes().size(); i++) {
-                if(tagWay.getRefNodes().get(i).getNext() == null 
-                || tagWay.getRefNodes().get(i).getPrevious() == null 
-                || tagWay.getRefNodes().get(i) == null) break;
-                TagNode n = tagWay.getRefNodes().get(i);
+            
 
-                currentLat = -n.getLat();
-                currentLon = n.getLon();
+                for (TagNode n :  tagWay.getRefNodes()) {
+                    if(n.getNext() == null || n.getPrevious() == null) break;
+                        gc.lineTo(n.getLon(), -n.getLat());
+                        xPoints[counter] = n.getLon();
+                        yPoints[counter] = -n.getLat();
+                 
                 
-                gc.lineTo(currentLon, currentLat);
-                xPoints[counter] = currentLon;
-                yPoints[counter] = currentLat;
-                counter++;
-            }
+                    counter++;
+                }
+
+            
             
             
             //Fills polygons with color

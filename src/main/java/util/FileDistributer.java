@@ -5,7 +5,6 @@ import java.net.URL;
 
 public enum FileDistributer {
     input("input.xml"),
-    bolm("bolm.xml"),
     // Views
     main("view/main.fxml"),
     start_screen("view/start.fxml");

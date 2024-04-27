@@ -18,8 +18,8 @@ public class TagNode extends Tag implements TLinkable<TagNode>  {
     private ArrayList<TagWay> parent = new ArrayList<>();
     private float lon;
     private float lat;
-    private TagNode next;
-    private TagNode prev;
+    private ArrayList<TagNode> next = new ArrayList<>();
+    private ArrayList<TagNode> prev = new ArrayList<>();
 
     public TagNode(long id, float lat, float lon) {
         this.id = id;
@@ -75,12 +75,16 @@ public class TagNode extends Tag implements TLinkable<TagNode>  {
 
     @Override
     public TagNode getNext() {
-       return next;
+        if(next.isEmpty()) return null;
+        return next.get(0);
+       
     }
 
     @Override
     public TagNode getPrevious() {
-        return prev;
+        if(prev.isEmpty()) return null;
+        return prev.get(0);
+       
     }
 
     public ArrayList<TagWay> getParents() {
@@ -89,12 +93,12 @@ public class TagNode extends Tag implements TLinkable<TagNode>  {
 
     @Override
     public void setNext(TagNode linkable) {
-        next = linkable;
+        next.add(linkable);
     }
 
     @Override
     public void setPrevious(TagNode linkable) {
-        prev = linkable;
+        prev.add(linkable);
     }
     
     public void setParent(TagWay linkable) {
