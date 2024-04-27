@@ -367,6 +367,7 @@ public class KdTree {
         if (p == null) throw new java.lang.NullPointerException(
                 "called contains() with a null Point2D");
         if (isEmpty()) return null;
+        // this.nearestOfType(p, Type.RESIDENTIAL_ROAD, 10);
         return nearest(root, p, root.p, true, searchType);
     }
     
@@ -374,7 +375,6 @@ public class KdTree {
         
         // Handle reaching the end of the tree
         if (n == null) return champion;
-        
         for (Tag tag : getTagsFromPoint(champion)) {     
             if(tag instanceof TagWay) {
                 if(tag.getType().equals(searchType)){
@@ -545,7 +545,7 @@ public class KdTree {
         return pointToTag.get(point);
     }
 
-    public Tag nearestOfType(Point2D point, Type searchType, int searchInterval){
+    public TagWay nearestOfType(Point2D point, Type searchType, int searchInterval){
         while (true && searchInterval > 0){
 
             HashSet<Tag> set = rangeNode(new RectHV(point.x() - searchInterval, point.y() - searchInterval, point.x() + searchInterval, point.y() + searchInterval));
@@ -556,7 +556,7 @@ public class KdTree {
                     TagWay way = (TagWay) t;
 
                     if (way.getType() != null && way.getType().equals(searchType)){
-                        return t;
+                       return way;
                     }
     
                 }

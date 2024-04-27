@@ -28,6 +28,12 @@ public class Tree {
         }    
     }
 
+    public Tree(Tag tag) {
+        kdtree = new KdTree();
+        kdtree.setBound(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
+         insertTagInTree(tag);
+    }
+
     public static void initialize(ArrayList<Tag> tags){
         kdtree = new KdTree();
         // TODO: Fix this line of code. get the min and max value of all nodes!

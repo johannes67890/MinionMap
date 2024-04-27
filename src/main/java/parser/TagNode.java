@@ -68,4 +68,13 @@ public class TagNode extends Tag implements Comparable<TagNode> {
         return Math.sqrt(Math.pow(node.getLat() - getLat(), 2) + (Math.pow(node.getLon() - getLon(), 2)));
     }
 
+    @Override
+    public String toString() {
+        return "TagNode{" +
+                "id=" + id +
+                ", lon=" + lon +
+                ", lat=" + lat +
+                '}';
+    }
+
 }

@@ -3,6 +3,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+
 import edu.princeton.cs.algs4.Point2D;
 
 import java.io.File;
@@ -35,9 +36,8 @@ public class DijstraTest {
             Tree.insertTagInTree(start);
             KdTree tree = Tree.getKDTree();
             Tag tag = tree.nearestOfType(new Point2D(start.getLon(), start.getLat()), Type.RESIDENTIAL_ROAD, 10);
-            ArrayList<Tag> t = Tree.getTagsNearTag(start, Type.RESIDENTIAL_ROAD);
-            
             assertEquals(26154396, tag.getId());
+          
         }
     }
 }

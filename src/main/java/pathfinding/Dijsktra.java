@@ -2,14 +2,16 @@ package pathfinding;
 
 import parser.TagNode;
 import parser.TagWay;
+import parser.Type;
 import parser.XMLReader;
 import util.FileDistributer;
+import util.KdTree;
+import util.MecatorProjection;
 import util.Tree;
 
-import java.util.HashMap;
-import java.util.Stack;
+import java.util.*;
 
-
+import edu.princeton.cs.algs4.Point2D;
 import parser.Tag;
 import parser.TagAddress;
 
@@ -17,10 +19,13 @@ public class Dijsktra {
     private HashMap<Tag, Double> distTo;          // distTo[v] = distance  of shortest s->v path
     private HashMap<Tag, DirectedEdge> edgeTo;    // edgeTo[v] = last edge on shortest s->v path
     private IndexMinPQ<Double> pq;    // priority queue of vertices
-    
        
 
-    Dijsktra(Digraph G, Tag start, Tag f) {
+    Dijsktra(Tag start, Tag finish) {
+        Digraph G = new Digraph();
+
+
+
 
         for (DirectedEdge e : G.edges()) {
             if (e.weight() < 0)
@@ -45,8 +50,22 @@ public class Dijsktra {
                 relax(e);
             }
         }
+
+        for (int t = 0; t < G.V(); t++) {
+            if (this.hasPathTo(finish)) {
+                System.out.println("Path exists" + start.toString() + finish.toString());
+                for (DirectedEdge edge : this.pathTo(finish)) {
+                    System.out.println(edge + "   ");
+                }
+                
+            }
+            else {
+                System.out.println("%d to %d         no path\n" + start + finish);
+            }
+        }
     }
 
+    
       // relax edge e and update pq if changed
     private void relax(DirectedEdge e) {
         TagNode v = e.from(), w = e.to();
@@ -69,7 +88,7 @@ public class Dijsktra {
      *         {@code s} to vertex {@code v}; {@code false} otherwise
      * @throws IllegalArgumentException unless {@code 0 <= v < V}
      */
-    public boolean hasPathTo(TagNode v) {
+    public boolean hasPathTo(Tag v) {
         return distTo.get(v) < Double.POSITIVE_INFINITY;
     }
 
@@ -81,7 +100,7 @@ public class Dijsktra {
      *         as an iterable of edges, and {@code null} if no such path
      * @throws IllegalArgumentException unless {@code 0 <= v < V}
      */
-    public Iterable<DirectedEdge> pathTo(TagNode v) {
+    public Iterable<DirectedEdge> pathTo(Tag v) {
         if (!hasPathTo(v)) return null;
         Stack<DirectedEdge> path = new Stack<DirectedEdge>();
         for (DirectedEdge e = edgeTo.get(v); e != null; e = edgeTo.get(e.from())) {
@@ -90,35 +109,31 @@ public class Dijsktra {
         return path;
     }
 
+
+
     public static void main(String[] args) {
-        Digraph G = new Digraph();
         
         
 
         new XMLReader(FileDistributer.input.getFilePath());
 
+
+        TagAddress start = XMLReader.getAddressById(1447913335l);
+        TagAddress finish = XMLReader.getAddressById(1447911290l);
+  
+        Tree.initialize(new ArrayList<Tag>(XMLReader.getWays().valueCollection()));;
+        Tree.insertTagInTree(start);
+        Tree.insertTagInTree(finish);
+        KdTree tree = Tree.getKDTree();
+        TagWay t = tree.nearestOfType(new Point2D(finish.getLon(), finish.getLat()), Type.RESIDENTIAL_ROAD, 10);
+        TagNode test =  finish.shortestDistanceAndIntersection(t);
+        System.out.println("test: " + MecatorProjection.unproject(test));
         
 
-        TagNode a = XMLReader.getNodeById(248419951l);
-        TagNode f = XMLReader.getNodeById(6339967586l);
-
-
-
-        Dijsktra sp = new Dijsktra(G, a, f);
+        System.out.println(t);
+        // new Dijsktra(a, f);
 
         
-         // print shortest path
-         for (int t = 0; t < G.V(); t++) {
-            if (sp.hasPathTo(f)) {
-                System.out.println("Path exists" + a.toString() + f.toString());
-                for (DirectedEdge edge : sp.pathTo(f)) {
-                    System.out.println(edge + "   ");
-                }
-                
-            }
-            else {
-                System.out.println("%d to %d         no path\n" + a + f);
-            }
-        }
+         
     }
 }
