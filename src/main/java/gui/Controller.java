@@ -26,6 +26,7 @@ import parser.Tag;
 import parser.TagAddress;
 import parser.TagNode;
 import parser.TagWay;
+import parser.XMLReader;
 import parser.TagAddress.SearchAddress;
 import util.MecatorProjection;
 import util.Tree;
@@ -236,6 +237,7 @@ public class Controller implements Initializable, ControllerInterface{
         // TODO: remake this function so it registers everytime the value is changed!
         
         searchBarStart.valueProperty().addListener((observable, oldValue, newValue) -> {
+            XMLReader.getTrie();
             search(newValue, true);
         });
 

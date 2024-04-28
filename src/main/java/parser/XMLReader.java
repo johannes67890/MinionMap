@@ -26,7 +26,7 @@ public class XMLReader {
     private static TLongObjectHashMap<TagAddress> addresses = new TLongObjectHashMap<TagAddress>();
     private static TLongObjectHashMap<TagRelation> relations = new TLongObjectHashMap<TagRelation>();
     private static TLongObjectHashMap<TagWay> ways = new TLongObjectHashMap<TagWay>();
-    private Trie trie = new Trie();
+    private static Trie trie = new Trie();
 
     /**
      * Get the {@link TagBound} of the XML file.
@@ -116,7 +116,7 @@ public class XMLReader {
         return ways;
     }
 
-    public Trie getTrie(){
+    public static Trie getTrie(){
         return trie;
     }
 
@@ -155,7 +155,7 @@ public class XMLReader {
                                 if(!tempBuilder.getAddressBuilder().isEmpty()){
                                     XMLWriter.appendToBinary(new TagAddress(tempBuilder));
                                     //TODO insert into trie instead of hashmap when it actually works
-                                    //trie.insert(new TagAddress(tempBuilder));
+                                    trie.insert(new TagAddress(tempBuilder));
                                     addresses.put(tempBuilder.getId(), new TagAddress(tempBuilder));
                                 } else {
                                     XMLWriter.appendToBinary(new TagNode(tempBuilder));
