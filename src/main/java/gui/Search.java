@@ -3,6 +3,7 @@ package gui;
 import java.util.ArrayList;
 
 import gnu.trove.map.hash.TLongObjectHashMap;
+import parser.Tag;
 import parser.TagAddress;
 import parser.TagAddress.SearchAddress;
 import parser.XMLReader;
@@ -169,5 +170,20 @@ public class Search {
             }
         }
         return best;
+    }
+
+
+    public static Tag getTagBySearchAddress(SearchAddress searchAddress){
+        
+        if (!searchAddress.house.isBlank()){
+            
+        }else if (!searchAddress.street.isBlank()){
+
+        }else if (!searchAddress.city.isBlank()){
+
+        }else{
+
+        }
+
     }
 }

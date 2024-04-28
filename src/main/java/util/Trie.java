@@ -80,7 +80,8 @@ public class Trie implements Serializable{
         if (currentNode.getBranches().isEmpty() || suggestionList.size() >= suggestionAmount) {
             return;
         }
-        for (TrieNode branch : currentNode.getBranches().values()) {
+        for (Object obj : currentNode.getBranches().values()) {
+            TrieNode branch = (TrieNode) obj;
             suggestionFinder(suggestionList, branch, suggestionAmount);
         }
     }

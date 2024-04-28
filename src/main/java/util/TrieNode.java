@@ -4,6 +4,8 @@ package util;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import gnu.trove.map.hash.TCharObjectHashMap;
 import parser.TagAddress;
 
 /**
@@ -15,12 +17,12 @@ import parser.TagAddress;
  */
 public class TrieNode implements Serializable {
     private boolean isEnd;
-    private HashMap<Character, TrieNode> branches;
+    private TCharObjectHashMap<TrieNode> branches;
     private HashMap<String, TagAddress> houseNumberToAddress = new HashMap<>();
     private String endAddress;
 
     public TrieNode(){
-        branches = new HashMap<>();
+        branches = new TCharObjectHashMap<>();
     }
 
     public void setIsEnd(boolean bool){
@@ -60,7 +62,7 @@ public class TrieNode implements Serializable {
         return houseNumberToAddress.get(house);
     }
 
-    public HashMap<Character, TrieNode> getBranches(){
+    public TCharObjectHashMap<TrieNode> getBranches(){
         return branches;
     }
 
