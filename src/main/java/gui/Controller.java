@@ -72,9 +72,6 @@ public class Controller implements Initializable, ControllerInterface{
     private String selectedItem;
     private String selectedEndItem;
 
-    private String oldInput;
-
-
 
     Search s = new Search();
 
@@ -249,27 +246,6 @@ public class Controller implements Initializable, ControllerInterface{
             }
         });
 
-        // TODO: remake this function so it registers everytime the value is changed!
-        
-        /*
-        searchBarStart.valueProperty().addListener((observable, oldValue, newValue) -> {
-            XMLReader.getTrie();
-            search(newValue, true);
-        });
-
-        searchBarStart.setOnAction((ActionEvent e) -> {
-            //System.out.println("selected: " + searchBarStart.getSelectionModel().getSelectedItem());
-        });
-        */
-        /*searchBarStart.setOnKeyPressed((KeyEvent e) -> {
-
-            //System.out.println("HELLO");
-
-            /*if (searchBarStart.isFocused()){
-                search(searchBarStart.getValue(), true);
-            }
-        });*/
-
         comboBoxListViewSkin.getPopupContent().addEventFilter(KeyEvent.ANY, (event) -> {
             if( event.getCode() == KeyCode.SPACE ) {
                 event.consume();
@@ -278,18 +254,7 @@ public class Controller implements Initializable, ControllerInterface{
         searchBarStart.setSkin(comboBoxListViewSkin);
 
         
-
-
         searchBarStart.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
-
-
-            
-
-
-            System.out.println("NEW VALUE: " + newValue + " OLD VALUE: " + oldValue);
-
-            oldInput = oldValue;
-
 
             if (searchBarStart.isFocused()){
                 search(newValue, true);
@@ -299,13 +264,9 @@ public class Controller implements Initializable, ControllerInterface{
                 searchBarStart.getEditor().textProperty().setValue(oldValue);
                 searchBarStart.hide();
             }
-
-            
         });        
 
     }
-
-     
 
     private void setEnableDestinationTextField(boolean isEnabled){
         if (isEnabled){
@@ -365,13 +326,7 @@ public class Controller implements Initializable, ControllerInterface{
                 searchBarStart.getItems().add(tagAddress.toString());
             }
             searchBarStart.show();
-        } else{
-
-            //searchBarStart.show();
-
         }
-
-
     }
 
     private void showAddress(String address){
