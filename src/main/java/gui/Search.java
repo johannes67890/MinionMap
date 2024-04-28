@@ -7,15 +7,18 @@ import parser.Tag;
 import parser.TagAddress;
 import parser.TagAddress.SearchAddress;
 import parser.XMLReader;
+import util.Trie;
 
 public class Search {
 
     private ArrayList<String> cityNames, streetNames, postCodes;
     private TLongObjectHashMap<TagAddress> addresses;
+    private Trie trie;
 
     public Search(){
         this.addresses = XMLReader.getAddresses();
         readFiles();
+        trie = XMLReader.getTrie();
     }
 
     /**
@@ -170,6 +173,10 @@ public class Search {
             }
         }
         return best;
+    }
+
+    public ArrayList<TagAddress> getSuggestions(String input){
+        return trie.getAddressSuggestions(input, 5);
     }
 
 

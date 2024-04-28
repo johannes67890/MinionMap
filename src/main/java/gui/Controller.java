@@ -1,5 +1,6 @@
 package gui;
 import java.net.URL;
+import java.beans.EventHandler;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -18,6 +19,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -236,6 +238,7 @@ public class Controller implements Initializable, ControllerInterface{
 
         // TODO: remake this function so it registers everytime the value is changed!
         
+        /*
         searchBarStart.valueProperty().addListener((observable, oldValue, newValue) -> {
             XMLReader.getTrie();
             search(newValue, true);
@@ -243,6 +246,12 @@ public class Controller implements Initializable, ControllerInterface{
 
         searchBarStart.setOnAction((ActionEvent e) -> {
             //System.out.println("selected: " + searchBarStart.getSelectionModel().getSelectedItem());
+        });
+        */
+        searchBarStart.setOnKeyPressed((KeyEvent e) -> {
+            if (searchBarStart.isFocused()){
+                search(searchBarStart.getValue(), true);
+            }
         });
 
         //Will be changed later
@@ -281,7 +290,7 @@ public class Controller implements Initializable, ControllerInterface{
     }
 
 
-    private void search(String address, boolean isStart){
+    private void search(String address, boolean isStart, boolean test){
         // Vi har skærmkoordinater i xy og canvas witdh and height
         SearchAddress addressObj = s.searchForAddress(address);
         //System.out.println("addressObj: " + addressObj.toString());
@@ -309,6 +318,14 @@ public class Controller implements Initializable, ControllerInterface{
             selectedEndItem = addressObj.toString();
         }
 
+    }
+
+    private void search(String address, boolean isStart){
+        ArrayList<TagAddress> tagAddresses = s.getSuggestions(address);
+        searchBarStart.getItems().clear();
+        for (TagAddress tagAddress : tagAddresses){
+            searchBarStart.getItems().add(tagAddress.toString());
+        }
     }
 
     private void showAddress(String address){

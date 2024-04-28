@@ -58,6 +58,10 @@ public class TrieNode implements Serializable {
         this.endAddress = address;
     }
 
+    public ArrayList<TagAddress> getTagAddresses(){
+        return new ArrayList<>(houseNumberToAddress.values());
+    }
+
     public String getEndAddress() {
         return endAddress;
     }

@@ -73,10 +73,10 @@ public class Trie implements Serializable {
      * @return a list of possible String addresses for the given input, empty if
      *         there are none
      */
-    public ArrayList<String> getAddressSuggestions(String searchInput, int suggestionAmount) {
+    public ArrayList<TagAddress> getAddressSuggestions(String searchInput, int suggestionAmount) {
         currentNode = root;
         searchInput = searchInput.toLowerCase().replaceAll(" ", "");
-        ArrayList<String> suggestionList = new ArrayList<>();
+        ArrayList<TagAddress> suggestionList = new ArrayList<>();
         if (moveThroughTree(searchInput)) {
             suggestionFinder(suggestionList, currentNode, suggestionAmount);
             return suggestionList;
@@ -85,11 +85,11 @@ public class Trie implements Serializable {
     }
 
     // recursive method for use in getAddressSuggestions()
-    private void suggestionFinder(ArrayList<String> suggestionList, TrieNode currentNode, int suggestionAmount) {
+    private void suggestionFinder(ArrayList<TagAddress> suggestionList, TrieNode currentNode, int suggestionAmount) {
         // the additional list size check is necessary for an extreme edge case, but is
         // otherwise not used
         if (currentNode.getIsEnd() && suggestionList.size() < suggestionAmount) {
-            suggestionList.add(currentNode.getEndAddress());
+            suggestionList.addAll(currentNode.getTagAddresses());
         }
         if (currentNode.getBranches().isEmpty() || suggestionList.size() >= suggestionAmount) {
             return;
