@@ -1,9 +1,11 @@
 package parser;
 import java.util.HashMap;
 
+
 import gnu.trove.list.TLinkable;
 import gnu.trove.list.linked.TLinkedList;
-import java.util.ArrayList;
+import java.util.*;
+
 
 /**
  * Class for storing a {@link HashMap} of a single node.
@@ -18,8 +20,8 @@ public class TagNode extends Tag implements TLinkable<TagNode>, Comparable<TagNo
     private ArrayList<TagWay> parent = new ArrayList<>();
     private float lon;
     private float lat;
-    private ArrayList<TagNode> next = new ArrayList<>();
-    private ArrayList<TagNode> prev = new ArrayList<>();
+    private TagNode next;
+    private TagNode prev;
 
     public TagNode(long id, float lat, float lon) {
         this.id = id;
@@ -43,6 +45,14 @@ public class TagNode extends Tag implements TLinkable<TagNode>, Comparable<TagNo
         this.id = builder.getId();
         this.lon = builder.getLon();
         this.lat = builder.getLat();
+    }
+    
+    public TagNode(TagNode other) {
+        this.id = other.id;
+        this.lat = other.lat;
+        this.lon = other.lon;
+        this.next = other.next;
+        this.prev = other.prev;
     }
 
    
@@ -91,18 +101,17 @@ public class TagNode extends Tag implements TLinkable<TagNode>, Comparable<TagNo
                 ", lat=" + lat +
                 '}';
     }
+
+    @Override
     public TagNode getNext() {
-        if(next.isEmpty()) return null;
-        return next.get(0);
-       
+        return next;
     }
 
     @Override
     public TagNode getPrevious() {
-        if(prev.isEmpty()) return null;
-        return prev.get(0);
-       
+        return prev;
     }
+
 
     public ArrayList<TagWay> getParents() {
         return parent;
@@ -110,15 +119,24 @@ public class TagNode extends Tag implements TLinkable<TagNode>, Comparable<TagNo
 
     @Override
     public void setNext(TagNode linkable) {
-        next.add(linkable);
+        next = linkable;
     }
 
     @Override
     public void setPrevious(TagNode linkable) {
-        prev.add(linkable);
+        prev = linkable;
     }
     
     public void setParent(TagWay linkable) {
         parent.add(linkable);
+    }
+
+    public boolean hasParent(TagWay way){
+        return parent.contains(way);
+    }
+
+    public void clearLinks(){
+        next = null;
+        prev = null;
     }
 }

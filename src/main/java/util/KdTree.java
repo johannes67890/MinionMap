@@ -348,6 +348,85 @@ public class KdTree {
         }
         return returnList;
     }
+
+    public Point2D nearest(Point2D p, List<Type> searchType) {
+        if (p == null) throw new java.lang.NullPointerException(
+                "called contains() with a null Point2D");
+        if (isEmpty()) return null;
+        return nearest(root, p, root.p, true, searchType);
+    }
+    
+    private Point2D nearest(Node n, Point2D p, Point2D champion, boolean evenLevel, List<Type> searchType) {
+        // Handle reaching the end of the tree
+        if (n == null) return champion;
+        for (Tag tag : getTagsFromPoint(champion)) {     
+            if(tag instanceof TagWay) {
+                if(searchType.contains(tag.getType()) && tag.getType() != null){
+                    return champion;
+                }
+            }
+        }
+
+
+        // Handle the given point exactly overlapping a point in the BST
+        if (n.p.equals(p)) return p;
+        
+        // Determine if the current Node's point beats the existing champion
+        if (n.p.distanceSquaredTo(p) < champion.distanceSquaredTo(p))
+            champion = n.p;
+        
+        /**
+         * Calculate the distance from the search point to the current
+         * Node's partition line.
+         * 
+         * Primarily, the sign of this calculation is useful in determining
+         * which side of the Node to traverse next.
+         * 
+         * Additionally, the magnitude to toPartitionLine is useful for pruning.
+         * 
+         * Specifically, if we find a champion whose distance is shorter than
+         * to a previous partition line, then we know we don't have to check any
+         * of the points on the other side of that partition line, because none
+         * can be closer.
+         */
+        double toPartitionLine = comparePoints(p, n, evenLevel);
+        
+        /**
+         * Handle the search point being to the left of or below
+         * the current Node's point.
+         */
+        if (toPartitionLine < 0) {
+            champion = nearest(n.lb, p, champion, !evenLevel);
+            
+            // Since champion may have changed, recalculate distance
+            if (champion.distanceSquaredTo(p) >=
+                    toPartitionLine * toPartitionLine) {
+                champion = nearest(n.rt, p, champion, !evenLevel);
+            }
+        }
+        
+        /**
+         * Handle the search point being to the right of or above
+         * the current Node's point.
+         * 
+         * Note that, since insert() above breaks point comparison ties
+         * by placing the inserted point on the right branch of the current
+         * Node, traversal must also break ties by going to the right branch
+         * of the current Node (i.e. to the right or top, depending on
+         * the level of the current Node).
+         */
+        else {
+            champion = nearest(n.rt, p, champion, !evenLevel);
+            
+            // Since champion may have changed, recalculate distance
+            if (champion.distanceSquaredTo(p) >=
+                    toPartitionLine * toPartitionLine) {
+                champion = nearest(n.lb, p, champion, !evenLevel);
+            }
+        }
+        
+        return champion;
+    }
     
     /**
      * A nearest neighbor in the set to point p; null if the set is empty.
@@ -370,7 +449,7 @@ public class KdTree {
         if (isEmpty()) return null;
         return nearest(root, p, root.p, true, searchType);
     }
-    
+
     private Point2D nearest(Node n, Point2D p, Point2D champion, boolean evenLevel, Type searchType) {
         
         // Handle reaching the end of the tree
@@ -516,6 +595,8 @@ public class KdTree {
         return champion;
     }
 
+
+
     /**
      * This method gets an ArrayList of tags (Tag<?>) which is associated with the nearest Point2D in relation to the {@link point}
      * in the parameters
@@ -533,6 +614,16 @@ public class KdTree {
      * @return a list of Tags thats is connected to the the nearest Point2D in the KDTree
      */
     public ArrayList<Tag> nearestTags(Point2D point, Type searchClass){
+        return pointToTag.get(nearest(point, searchClass));
+    }
+
+    /**
+     * This method gets an ArrayList of tags (Tag<?>) which is associated with the nearest Point2D in relation to the {@link point}
+     * in the parameters
+     * @param point the point from where the search starts from
+     * @return a list of Tags thats is connected to the the nearest Point2D in the KDTree
+     */
+    public ArrayList<Tag> nearestTags(Point2D point, List<Type> searchClass){
         return pointToTag.get(nearest(point, searchClass));
     }
     

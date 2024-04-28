@@ -56,8 +56,8 @@ public class DrawingMap {
     public DrawingMap(MainView mainView, XMLReader reader){
         this.mainView = mainView;
         this.reader = reader;
-        ways = XMLReader.getWays().valueCollection().stream().toList();
-        relations = XMLReader.getRelations().valueCollection().stream().toList();
+        ways = List.copyOf(XMLReader.getWays().valueCollection());
+        relations = List.copyOf(XMLReader.getRelations().valueCollection());
     }
 
     /**
@@ -79,8 +79,8 @@ public class DrawingMap {
         double minlat = bound.getMinLat();
 
         ArrayList<Tag> tempList = new ArrayList<>();
-        tempList.addAll(XMLReader.getWays().valueCollection());
-        tempList.addAll(XMLReader.getRelations().valueCollection());
+        tempList.addAll(List.copyOf(XMLReader.getWays().valueCollection()));
+        tempList.addAll(List.copyOf(XMLReader.getRelations().valueCollection()));
         Tree.initialize(tempList);
         pan(-minlon, minlat);
         zoom(canvas.getWidth() / (maxlon - minlon), 0, 0);

@@ -131,17 +131,18 @@ public class XMLReader {
             // start timer
             long start = System.currentTimeMillis();
             while (reader.hasNext()) {
+            
+                
                 reader.next();
                 switch (reader.getEventType()) {
                     case START_ELEMENT:
                         String element = reader.getLocalName().intern();
                         if(element.equals("bounds")) {
                             bound = MecatorProjection.project(new TagBound(reader));
-                            new XMLWriter(bound);
+                            // new XMLWriter(bound);
                         }else {
                             tempBuilder.parse(element, reader);
                         };
-                       
                         break;
                     case END_ELEMENT:
                         element = reader.getLocalName().intern();
@@ -149,7 +150,7 @@ public class XMLReader {
                             case "node":
                                 if(!tempBuilder.getAddressBuilder().isEmpty()){
                                     addresses.put(tempBuilder.getId(), new TagAddress(tempBuilder));
-                                    XMLWriter.appendToPool(new TagAddress(tempBuilder));
+                                    //XMLWriter.appendToPool(new TagAddress(tempBuilder));
                                 } else {
                                     nodes.put(tempBuilder.getId(), new TagNode(tempBuilder));
                                 }
@@ -157,16 +158,17 @@ public class XMLReader {
                                 break;
                             case "way":
                                 TagWay way = new TagWay(tempBuilder);
+                        
                                 ways.put(tempBuilder.getId(), way);
                                 for (TagNode node : way.getRefNodes()) {
-                                    if(node.getNext() == null || node.getPrevious() == null) break;
+                                    if(node.getNext() == null) break;
                                     XMLWriter.appendToPool(node);   
                                 }
-                            
+                                
                                 tempBuilder = new XMLBuilder();
                                 break;
                             case "relation":
-                                // XMLWriter.appendToPool(new TagRelation(tempBuilder));
+                                XMLWriter.appendToPool(new TagRelation(tempBuilder));
                                 relations.put(tempBuilder.getId(), new TagRelation(tempBuilder));
                                 tempBuilder = new XMLBuilder();
                                 break;
@@ -177,11 +179,11 @@ public class XMLReader {
                     default:
                         break;
                     }
-            }
+            }             
             // nodes = null; // Free up memory
             reader.close();
             XMLWriter.appendToBinary();
-
+      
             // end timer
             long end = System.currentTimeMillis();
             System.out.println("Time total: " + (end - start) + "ms");

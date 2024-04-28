@@ -11,6 +11,8 @@ import util.Tree;
 
 import java.util.*;
 
+import edu.princeton.cs.algs4.Stack;
+import edu.princeton.cs.algs4.StdOut;
 import parser.Tag;
 import parser.TagAddress;
 
@@ -18,14 +20,31 @@ public class Dijsktra {
     private HashMap<Tag, Double> distTo;          // distTo[v] = distance  of shortest s->v path
     private HashMap<Tag, DirectedEdge> edgeTo;    // edgeTo[v] = last edge on shortest s->v path
     private IndexMinPQ<Double> pq;    // priority queue of vertices
-       
+    
+    private Digraph G = new Digraph();
+    private static Stack<TagNode> shortestPath = new Stack<TagNode>();
 
     Dijsktra(Tag start, Tag finish) {
-        Digraph G = new Digraph();
 
-        if(!(start instanceof TagNode) || !(finish instanceof TagNode)) {
+        if(!(start instanceof TagNode)) {
             start = getNearestRoadPoint(start);
+        }
+        if(!(finish instanceof TagNode)){
             finish = getNearestRoadPoint(finish);
+        }
+
+        // TODO: getSurroundingRoads(start) is not working - get all roads surrounding start
+        List<TagWay> list = new ArrayList<>(){
+            {
+                add(XMLReader.getWayById(27806594l));
+                add(XMLReader.getWayById(26154395l));
+            }
+        
+        };
+
+        // for (TagWay way : getSurroundingRoads(start)) {
+        for (TagWay way : list) {
+            addWayEdges(way);
         }
 
         for (DirectedEdge e : G.edges()) {
@@ -51,18 +70,47 @@ public class Dijsktra {
             }
         }
 
-        for (int t = 0; t < G.V(); t++) {
-            if (this.hasPathTo(finish)) {
-                System.out.println("Path exists" + start.toString() + finish.toString());
-                for (DirectedEdge edge : this.pathTo(finish)) {
-                    System.out.println(edge + "   ");
-                }
-                
+        if (hasPathTo(finish)) {
+            StdOut.printf("%d to %d (%.2f)  ", start.getId(), finish.getId(), distTo.get(finish));
+            for (DirectedEdge e : pathTo(finish)) {
+                shortestPath.push(e.from());
             }
-            else {
-                System.out.println("%d to %d         no path\n" + start + finish);
-            }
+            StdOut.println();
         }
+        else {
+            StdOut.printf("%d to %d - no path\n", start.getId(), finish.getId());
+        }
+    }   
+
+    public Digraph getGraph(){
+        return G;
+    }
+
+    public static Stack<TagNode> getShortestPathofTags(){
+        return shortestPath;
+    }
+
+    private void addWayEdges(TagWay way){
+        for (TagNode node : way.getRefNodes()) {
+            if(node.getNext() == null) break;
+            if(!node.getParents().isEmpty() && !node.getParents().contains(way)) {
+                for (TagWay tagWay : node.getParents()) {
+                    if(tagWay.equals(way)) break;
+                    addWayEdges(tagWay);
+                }
+            }
+            addTwoWayEdges(node, way);
+            System.out.println("Added edge from " + node.getId() + " to " + node.getNext().getId() + " with speed limit " + way.getSpeedLimit());
+        }
+    }
+
+    private void addTwoWayEdges(TagNode node, TagWay way){
+            G.addEdge(new DirectedEdge(node, node.getNext(), way.getSpeedLimit()));
+            G.addEdge(new DirectedEdge(node.getNext(), node, way.getSpeedLimit()));
+    }
+
+    private void addOneWayEdge(TagNode node, TagWay way){
+            G.addEdge(new DirectedEdge(node, node.getNext(), way.getSpeedLimit()));
     }
 
     private Tag getNearestRoadPoint(Tag tag){
@@ -82,6 +130,16 @@ public class Dijsktra {
             if(n.getNext() == null) break;
         } 
         return closesNode;
+    }
+
+    private List<TagWay> getSurroundingRoads(Tag startTag){
+        List<TagWay> roads = new ArrayList<>();
+        for (Tag tag : Tree.getTagsNearTag(startTag, Type.getAllRoads())) {
+            if(tag instanceof TagWay) {
+                roads.add((TagWay) tag);
+            }
+        }
+        return roads;
     }
     
       // relax edge e and update pq if changed
@@ -136,18 +194,17 @@ public class Dijsktra {
         new XMLReader(FileDistributer.input.getFilePath());
         Tree.initialize(new ArrayList<Tag>(XMLReader.getWays().valueCollection()));;
 
+        
 
-        TagAddress start = XMLReader.getAddressById(1447913335l);
-        TagAddress finish = XMLReader.getAddressById(1447913335l);
+        TagNode start = XMLReader.getNodeById(248419951l);
+        TagNode finish = XMLReader.getNodeById(7798538748l);
   
       
         
         
 
-
-        System.out.println(new Dijsktra(start, finish));
-
-        
-         
+         new Dijsktra(start, finish);
+        System.out.println(Dijsktra.getShortestPathofTags());
+       
     }
 }

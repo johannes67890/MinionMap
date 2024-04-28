@@ -100,6 +100,15 @@ public class Tree {
     }
 
     /**
+     * Returns the tags near a {@link Tag}
+     * @param point Point to search near
+     * @return ArrayList of Tag-objects near the point
+     */
+    public static ArrayList<Tag> getTagsNearTag(Tag tag, List<Type> searchType){
+        return kdtree.nearestTags(new Point2D(tag.getLon(), tag.getLat()), searchType);
+    }
+
+    /**
      * Returns the nearest point in the tree to a given point
      * @param point Point to search near
      * @return Point2D object nearest to the given point

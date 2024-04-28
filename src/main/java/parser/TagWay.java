@@ -1,8 +1,10 @@
 package parser;
 
-import java.util.HashMap;
-
+import edu.princeton.cs.algs4.Stack;
 import gnu.trove.list.linked.TLinkedList;
+import javafx.print.Collation;
+
+import java.util.*;
 
 enum Way {
     ID, REFS, NAME, TYPE, SPEEDLIMIT
@@ -22,13 +24,14 @@ public class TagWay extends Tag implements Comparable<TagWay>{
 
     long id;
     String name;
-    TLinkedList<TagNode> nodes;
+    TLinkedList<TagNode> nodes = new TLinkedList<TagNode>();
     int speedLimit;
+    boolean isOneWay;
     Type type;
 
 
-
     public TagWay(XMLBuilder builder) {
+        TagWay x = XMLReader.getWayById(27806594l);
         this.id = builder.getId();
         this.name = builder.getName();
         this.speedLimit = builder.getWayBuilder().getSpeedLimit();
@@ -93,6 +96,9 @@ public class TagWay extends Tag implements Comparable<TagWay>{
     public void setType(Type t){
         type = t;     
     }
+    public boolean isOneWay(){
+        return isOneWay;
+    }
 
     public boolean loops(){
         if(getRefNodes().getFirst().getId() == getRefNodes().getLast().getId()){
@@ -109,7 +115,6 @@ public class TagWay extends Tag implements Comparable<TagWay>{
     public TLinkedList<TagNode> getRefNodes() {
         return nodes;
     }
-
 
     public boolean isLine(){
         return isLine;
@@ -143,6 +148,7 @@ public class TagWay extends Tag implements Comparable<TagWay>{
     * </p>
     */
     public static class WayBuilder {
+        private List<TagNode> refNodes = new ArrayList<TagNode>();
         private TLinkedList<TagNode> refNodesList = new TLinkedList<TagNode>();
         private boolean isEmpty = true;
         private int speedLimit;
@@ -164,12 +170,20 @@ public class TagWay extends Tag implements Comparable<TagWay>{
             if (isEmpty) {
                 isEmpty = false;
             }
-            refNodesList.add(node);
+            refNodes.add(node);
         }
 
-        public TLinkedList<TagNode> getRefNodes(TagWay way){
-            refNodesList.getFirst().setParent(way);
+        public TLinkedList<TagNode> getRefNodes(TagWay way) {
+            for (TagNode node : refNodes) {
+                TagNode newNode = new TagNode(node);
+                newNode.clearLinks();
+                refNodesList.add(newNode);
+            }
+
             
+            refNodesList.getFirst().setParent(way);
+            refNodes.clear();
+
            return refNodesList;
         }
     }

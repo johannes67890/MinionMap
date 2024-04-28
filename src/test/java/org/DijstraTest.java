@@ -38,9 +38,14 @@ public class DijstraTest {
         assertTrue(road instanceof TagWay);
         assertEquals(27806594, road.getId());
 
-        Tag roads = Tree.getNearestOfType(start, Type.getAllRoads());
+        road = Tree.getNearestOfType(start, Type.getAllRoads());
         assertNotNull(road);
         assertTrue(road instanceof TagWay);
         assertEquals(27806594, road.getId());
+    }
+
+    @Test
+    void testGetNearestRoadPoint(){
+        
     }
 }
