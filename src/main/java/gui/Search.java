@@ -173,10 +173,10 @@ public class Search {
     }
 
 
-    public static Tag getTagBySearchAddress(SearchAddress searchAddress){
+    public static void getTagBySearchAddress(SearchAddress searchAddress){
         
         if (!searchAddress.house.isBlank()){
-            
+
         }else if (!searchAddress.street.isBlank()){
 
         }else if (!searchAddress.city.isBlank()){
