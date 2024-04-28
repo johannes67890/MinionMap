@@ -17,9 +17,11 @@ import javafx.geometry.Point2D;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.skin.ComboBoxListViewSkin;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.InputMethodEvent;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -69,6 +71,11 @@ public class Controller implements Initializable, ControllerInterface{
     private static MainView mainView;
     private String selectedItem;
     private String selectedEndItem;
+
+    private String oldInput;
+
+
+
     Search s = new Search();
 
     double lastX;
@@ -156,6 +163,11 @@ public class Controller implements Initializable, ControllerInterface{
 
     @Override
     public void initialize(URL location, ResourceBundle resources) { // This runs when the fxml is loaded and the canvas is injected (before stage is shown)
+
+
+
+        ComboBoxListViewSkin<String> comboBoxListViewSkin = new ComboBoxListViewSkin<String>(searchBarStart);
+
 
         mainMenuVBox.setVisible(false);
         leftBurgerMenu.setVisible(false);
@@ -249,55 +261,47 @@ public class Controller implements Initializable, ControllerInterface{
             //System.out.println("selected: " + searchBarStart.getSelectionModel().getSelectedItem());
         });
         */
-        searchBarStart.setOnKeyPressed((KeyEvent e) -> {
+        /*searchBarStart.setOnKeyPressed((KeyEvent e) -> {
 
             //System.out.println("HELLO");
 
             /*if (searchBarStart.isFocused()){
                 search(searchBarStart.getValue(), true);
-            }*/
+            }
+        });*/
+
+        comboBoxListViewSkin.getPopupContent().addEventFilter(KeyEvent.ANY, (event) -> {
+            if( event.getCode() == KeyCode.SPACE ) {
+                event.consume();
+            }
         });
+        searchBarStart.setSkin(comboBoxListViewSkin);
 
-        searchBarStart.setOnAction((ActionEvent e) -> {
+        
 
-            //System.out.println("HELLO");
-
-            /*if (searchBarStart.isFocused()){
-                search(searchBarStart.getValue(), true);
-            }*/
-        });
 
         searchBarStart.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
 
-            System.out.println(newValue);
+
+            
+
+
+            System.out.println("NEW VALUE: " + newValue + " OLD VALUE: " + oldValue);
+
+            oldInput = oldValue;
+
 
             if (searchBarStart.isFocused()){
                 search(newValue, true);
             }
 
-        });
+            if (newValue.isEmpty() && !oldValue.isEmpty() && oldValue.length() > 1){
+                searchBarStart.getEditor().textProperty().setValue(oldValue);
+                searchBarStart.hide();
+            }
 
-
-        searchBarStart.setOnInputMethodTextChanged((InputMethodEvent e) -> {
-
-            //System.out.println("HELLO");
-
-        });
-
-        //Will be changed later
-        /*
-        searchBarDestination.setOnAction((ActionEvent e) -> {
-            System.out.println("Searching for destination: " + searchBarDestination.getValue());
-            search(searchBarDestination.getValue());
-        });
-
-        searchButton.setOnAction((ActionEvent e) -> {
-            System.out.println("Searching for destination: " + searchBarDestination.getValue());
-            search(searchBarStart.getValue());
-        });
-        */
-
-        
+            
+        });        
 
     }
 
@@ -351,11 +355,23 @@ public class Controller implements Initializable, ControllerInterface{
     }
 
     private void search(String address, boolean isStart){
-        ArrayList<TagAddress> tagAddresses = s.getSuggestions(address);
-        searchBarStart.getItems().clear();
-        for (TagAddress tagAddress : tagAddresses){
-            searchBarStart.getItems().add(tagAddress.toString());
+
+        if (!address.isEmpty() && address.charAt(address.length() - 1) != ' '){
+            ArrayList<TagAddress> tagAddresses = s.getSuggestions(address);
+            if (!searchBarStart.getItems().isEmpty()){
+                searchBarStart.getItems().clear();
+            }
+            for (TagAddress tagAddress : tagAddresses){
+                searchBarStart.getItems().add(tagAddress.toString());
+            }
+            searchBarStart.show();
+        } else{
+
+            //searchBarStart.show();
+
         }
+
+
     }
 
     private void showAddress(String address){
@@ -373,17 +389,7 @@ public class Controller implements Initializable, ControllerInterface{
         Point2D point = drawingMap.getTransform().transform(tagAddress.getLon(), tagAddress.getLat());
         double deltaX = point.getX() - pointCenter.getX();
         double deltaY = point.getY() - pointCenter.getY();
-        /*System.out.println( "X: CENTER: " + x + ", TAGADRESS: " + tagAddress.getLon());
-        System.out.println( "Y: CENTER: " + y + ", TAGADRESS: " + tagAddress.getLat());
-        System.out.println( "POINT: X: " + point.getX() + ", Y: " + point.getY());
-        System.out.println( "CENTERPOINT: X: " + pointCenter.getX() + ", Y: " + pointCenter.getY());
-        System.out.println( "TRANSFORM: TX: " + drawingMap.getTransform().getTx() + ", TY: " + drawingMap.getTransform().getTy());
-
-
-        System.out.println( "DELTA: X: " + deltaX + ", Y: " + deltaY);*/
-
-
-
+       
         edu.princeton.cs.algs4.Point2D point2d = new edu.princeton.cs.algs4.Point2D(tagAddress.getLon(), tagAddress.getLat());
 
 
@@ -391,7 +397,6 @@ public class Controller implements Initializable, ControllerInterface{
 
         ArrayList<Tag> nearestTag = Tree.getTagsFromPoint(nearest);
 
-        //System.out.println(nearestTag.get(0).getId());
 
         Tag tag = nearestTag.get(0);
 
