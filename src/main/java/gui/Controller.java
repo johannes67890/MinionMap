@@ -19,6 +19,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.InputMethodEvent;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -249,9 +250,38 @@ public class Controller implements Initializable, ControllerInterface{
         });
         */
         searchBarStart.setOnKeyPressed((KeyEvent e) -> {
-            if (searchBarStart.isFocused()){
+
+            //System.out.println("HELLO");
+
+            /*if (searchBarStart.isFocused()){
                 search(searchBarStart.getValue(), true);
+            }*/
+        });
+
+        searchBarStart.setOnAction((ActionEvent e) -> {
+
+            //System.out.println("HELLO");
+
+            /*if (searchBarStart.isFocused()){
+                search(searchBarStart.getValue(), true);
+            }*/
+        });
+
+        searchBarStart.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
+
+            System.out.println(newValue);
+
+            if (searchBarStart.isFocused()){
+                search(newValue, true);
             }
+
+        });
+
+
+        searchBarStart.setOnInputMethodTextChanged((InputMethodEvent e) -> {
+
+            //System.out.println("HELLO");
+
         });
 
         //Will be changed later
