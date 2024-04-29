@@ -1,13 +1,11 @@
 package gui;
-import java.net.URL;
-import java.beans.EventHandler;
 import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 import gui.GraphicsHandler.GraphicStyle;
 import gui.MainView.StageSelect;
-import javafx.application.Preloader.StateChangeNotification.Type;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -20,7 +18,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.skin.ComboBoxListViewSkin;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.InputMethodEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
@@ -29,11 +26,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import parser.Tag;
 import parser.TagAddress;
+import parser.TagAddress.SearchAddress;
 import parser.TagNode;
 import parser.TagWay;
-import parser.XMLReader;
-import parser.TagAddress.SearchAddress;
-import util.MecatorProjection;
 import util.Point3D;
 import util.Tree;
 
@@ -109,15 +104,15 @@ public class Controller implements Initializable, ControllerInterface{
             if (pointofInterestState){
 
 
-               DrawingMap drawingMap = mainView.getDrawingMap();
+                DrawingMap drawingMap = mainView.getDrawingMap();
 
-               float currentY =  (float) e.getY() ;
-               float currentX =  (float) e.getX() ;
+                float currentY =  (float) e.getY() ;
+                float currentX =  (float) e.getX() ;
 
-               float[] bounds = drawingMap.getScreenBounds();
+                float[] bounds = drawingMap.getScreenBounds();
               
-               double x = bounds[0] + e.getX() / drawingMap.getZoomLevel();
-               double y = bounds[1] - e.getY() / drawingMap.getZoomLevel();
+                double x = bounds[0] + e.getX() / drawingMap.getZoomLevel();
+                double y = bounds[3] - e.getY() / drawingMap.getZoomLevel();
        
 
                 Point2D clickedPoint = mainView.getDrawingMap().getTransform().transform(currentX, currentY);
