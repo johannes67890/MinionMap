@@ -1,8 +1,10 @@
 package util;
 
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.*;
 
+import edu.princeton.cs.algs4.Point2D;
+import edu.princeton.cs.algs4.RectHV;
+import gnu.trove.map.hash.TLongObjectHashMap;
 import parser.Tag;
 import parser.TagNode;
 import parser.TagRelation;
@@ -11,6 +13,7 @@ import parser.XMLReader;
 import util.Point3D;
 import util.Rect3D;
 import util.K3DTree;
+import parser.Type;
 
 public class Tree {
 
@@ -38,7 +41,7 @@ public class Tree {
     public static void insertTagInTree(Tag tag){
         if (tag instanceof TagWay){
             TagWay way = (TagWay) tag;
-            for (TagNode node : way.getNodes()){
+            for (TagNode node : way.getRefNodes()){
                 Point3D temp;
                 if (way.getType() != null){
                     temp = new Point3D(node.getLon(), node.getLat(),(byte) way.getType().getThisHierarchy());
@@ -46,12 +49,13 @@ public class Tree {
                     temp = new Point3D(node.getLon(), node.getLat(), (byte) 0);
                 }
                 multiTree.insert(temp, tag);
+                if(node.getNext() == null) break;
             }
         }else if (tag instanceof TagRelation){
             TagRelation relation = (TagRelation) tag;
 
             for (TagWay way : relation.getHandledOuter()){
-                for (TagNode node : way.getNodes()){
+                for (TagNode node : way.getRefNodes()){
                     Point3D temp;
                     if (relation.getType() != null){
                         temp = new Point3D(node.getLon(), node.getLat(), (byte) relation.getType().getThisHierarchy());
@@ -59,6 +63,7 @@ public class Tree {
                         temp = new Point3D(node.getLon(), node.getLat(), (byte) 0);
                     }
                     multiTree.insert(temp, tag);
+                    if(node.getNext() == null) break;
                 }
             }
         }else if (tag instanceof TagRelation){
@@ -77,12 +82,49 @@ public class Tree {
     }
 
     /**
+     * Returns the tags near a {@link Tag}
+     * @param point Point to search near
+     * @return ArrayList of Tag-objects near the point
+     */
+    public static Tag getTagsNearTag(Tag tag){
+        return multiTree.nearestTags(new Point3D(tag.getLon(), tag.getLat(), (byte) 0));
+    }
+
+    /**
+     * Returns the tags near a {@link Tag}
+     * @param point Point to search near
+     * @return ArrayList of Tag-objects near the point
+     */
+    public static Tag getTagsNearTag(Tag tag, List<Type> searchType){
+        return multiTree.nearestTags(new Point3D(tag.getLon(), tag.getLat(), (byte) 0), searchType);
+    }
+
+    // TODO:
+    /**
+     * Returns the tags near a {@link Tag}
+     * @param point Point to search near
+     * @return ArrayList of Tag-objects near the point
+     */
+    // public static ArrayList<Tag> getTagsNearTag(Tag tag, List<Type> searchType){
+    //     return kdtree.nearestTags(new Point2D(tag.getLon(), tag.getLat()), searchType);
+    // }
+
+    /**
      * Returns the nearest point in the tree to a given point
      * @param point Point to search near
      * @return Point2D object nearest to the given point
      */
     public static Point3D getNearestPoint(Point3D point){
         return multiTree.nearest(point);
+    }
+    
+    /**
+     * Returns the nearest point in the tree to a given point
+     * @param point Point to search near
+     * @return Point2D object nearest to the given point
+     */
+    public static Point3D getNearestTag(Tag tag){
+        return multiTree.nearest(new Point3D(tag.getLon(), tag.getLat(), (byte) 0));
     }
 
     /**
@@ -102,8 +144,29 @@ public class Tree {
     public static Tag getTagsFromPoint(Point3D point){
         return multiTree.getTagsFromPoint(point);
     }
+    /**
+     * Returns a list of tags containing objects in a given bounds
+     * @param point Point to search near
+     * @return ArrayList of tag-objects in the given bounds
+     */
+    public static Tag getTagFromPoint(Tag node){
+        return multiTree.getTagsFromPoint(new Point3D(node.getLon(), node.getLat(), (byte) 0));
+    }
+
+    // TODO:
+    // public static Tag getNearestOfType(Tag tag, List<Type> searchTypes){
+    //     return multiTree.nearestOfType(new Point3D(tag.getLon(), tag.getLat()), searchTypes);
+    // }
+
+    public static Tag getNearestOfType(Tag tag, List<Type> searchType){
+        return multiTree.nearestTags(new Point3D(tag.getLon(), tag.getLat(), (byte) 0), searchType);
+    }
 
     public static boolean isLoaded(){
         return isLoaded;
+    }
+
+    public static K3DTree getKDTree(){
+        return multiTree;
     }
 }

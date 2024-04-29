@@ -97,7 +97,10 @@ public class TagBound extends Tag implements Comparable<TagBound>{
             return false;
         }
         TagBound tag = (TagBound) obj;
-        return Double.valueOf(this.getMaxLat()).equals(Double.valueOf(tag.getMaxLat())) && Double.valueOf(this.getMinLat()).equals(Double.valueOf(tag.getMinLat())) && Double.valueOf(this.getMaxLon()).equals(Double.valueOf(tag.getMaxLon())) && Double.valueOf(this.getMinLon()).equals(Double.valueOf(tag.getMinLon()));
+        return Double.valueOf(
+        this.getMaxLat()).equals(Double.valueOf(tag.getMaxLat())) && Double.valueOf(this.getMinLat()).equals(Double.valueOf(tag.getMinLat())) && 
+        Double.valueOf(this.getMaxLon()).equals(Double.valueOf(tag.getMaxLon())) 
+        && Double.valueOf(this.getMinLon()).equals(Double.valueOf(tag.getMinLon()));
     }
 
     @Override
@@ -107,11 +110,15 @@ public class TagBound extends Tag implements Comparable<TagBound>{
 
     @Override
     public float getLat() {
-        throw new UnsupportedOperationException("TagWay does not have a latitude value.");
+        throw new UnsupportedOperationException("TagBound does not have a latitude value.");
     }
     @Override
     public float getLon() {
-        throw new UnsupportedOperationException("TagWay does not have a longitude value.");
+        throw new UnsupportedOperationException("TagBound does not have a longitude value.");
+    }
+    @Override
+    public Type getType() {
+        throw new UnsupportedOperationException("TagBound does not have a type.");
     }
     @Override
     public String toString(){

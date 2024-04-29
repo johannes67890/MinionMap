@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import edu.princeton.cs.algs4.RectHV;
+import gnu.trove.list.linked.TLinkedList;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
@@ -62,8 +63,8 @@ public class DrawingMap {
     public DrawingMap(MainView mainView, XMLReader reader){
         this.mainView = mainView;
         this.reader = reader;
-        ways = XMLReader.getWays().valueCollection().stream().toList();
-        relations = XMLReader.getRelations().valueCollection().stream().toList();
+        ways = List.copyOf(XMLReader.getWays().valueCollection());
+        relations = List.copyOf(XMLReader.getRelations().valueCollection());
         trie = new Trie();
     }
 
@@ -85,8 +86,8 @@ public class DrawingMap {
         double maxlon = bound.getMaxLon();
         double minlat = bound.getMinLat();
         ArrayList<Tag> tempList = new ArrayList<>();
-        tempList.addAll(XMLReader.getWays().valueCollection());
-        tempList.addAll(XMLReader.getRelations().valueCollection());
+        tempList.addAll(List.copyOf(XMLReader.getWays().valueCollection()));
+        tempList.addAll(List.copyOf(XMLReader.getRelations().valueCollection()));
         Tree.initialize(tempList);
         pan(-minlon, minlat);
         zoom(canvas.getWidth() / (maxlon - minlon), 0, 0);
@@ -215,67 +216,48 @@ public class DrawingMap {
     
     private void drawWay(TagWay way, boolean starting){
 
-        if (way.getType() != null){
+        double[] xPoints;
+        double[] yPoints;
 
-            TagNode[] nodesRef;
+        double defaultLineWidth = 1/Math.sqrt(transform.determinant());
+        
 
-            double[] xPoints;
-    
-            double[] yPoints;
-    
-            double defaultLineWidth = 1/Math.sqrt(transform.determinant());
-    
-            TagNode ref;
-    
-            double currentLon;
-            double currentLat;
-    
-    
-            nodesRef = way.getNodes();
-    
+            currentColor = way.getType().getColor();
             int counter = 0;
-            xPoints = new double[nodesRef.length];
-            yPoints = new double[nodesRef.length];
-    
-            
-    
+            xPoints = new double[way.getRefNodes().size()];
+            yPoints = new double[way.getRefNodes().size()];
+
             double min = way.getType().getMinWidth();
             double max = way.getType().getMaxWidth();
             double lineWidth = MathUtil.clamp(defaultLineWidth * way.getType().getWidth(), min, max);
             gc.setLineWidth(lineWidth);
-    
-    
+
             
             gc.beginPath();
-            gc.moveTo(nodesRef[0].getLon(), -nodesRef[0].getLat());
+            gc.moveTo(way.getRefNodes().getFirst().getLon(), -way.getRefNodes().getFirst().getLat());
             
-            for (int i = 0; i < nodesRef.length ; i ++){
-                
-                ref = nodesRef[i];
-                currentLat = -ref.getLat();
-                currentLon = ref.getLon();
-    
-                gc.lineTo(currentLon, currentLat);
-                xPoints[counter] = currentLon;
-                yPoints[counter] = currentLat;
-                counter++;
-    
-                
-            }
-    
-    
+            
+
+                for (TagNode n : way.getRefNodes()) {
+                    gc.lineTo(n.getLon(), -n.getLat());
+                    xPoints[counter] = n.getLon();
+                    yPoints[counter] = -n.getLat();
+                    counter++;
+                    
+                    if(n.getNext() == null) break;
+                }
+
+            
+            
+            
             //Fills polygons with color
             if (!way.getType().getIsLine()){
-                //gc.setFill(currentColor);
+                gc.setFill(currentColor);
                 gc.fillPolygon(xPoints, yPoints, counter);
             }
             
             gc.stroke();    
-
         }
-
-       
-    }
 
     /**
      * 
@@ -284,34 +266,19 @@ public class DrawingMap {
      * @param ways - the ways to be drawn
      */
     private void drawWays(MinPQ<TagWay> ways){
-
-        //System.out.println("MIN X: " + getScreenBounds()[0] + " MIN Y: " + getScreenBounds()[1] + " DETERMINANT: " + Math.sqrt(transform.determinant()));
-
-        TagNode[] nodesRef;
-
         double[] xPoints;
-
         double[] yPoints;
 
         double defaultLineWidth = 1/Math.sqrt(transform.determinant());
-
-        TagNode ref;
-
-        double currentLon;
-        double currentLat;
-
-        int count = 0;
         
         while (!ways.isEmpty()) {
       
             TagWay tagWay = ways.delMin();
 
-            nodesRef = tagWay.getNodes();
-
             currentColor = tagWay.getType().getColor();
             int counter = 0;
-            xPoints = new double[nodesRef.length];
-            yPoints = new double[nodesRef.length];
+            xPoints = new double[tagWay.getRefNodes().size()];
+            yPoints = new double[tagWay.getRefNodes().size()];
 
             double min = tagWay.getType().getMinWidth();
             double max = tagWay.getType().getMaxWidth();
@@ -320,7 +287,6 @@ public class DrawingMap {
 
 
             if(tagWay.getType().getIsLine()){
-               
                 gc.setStroke(tagWay.getType().getColor()); 
             } else{
                 gc.setStroke(tagWay.getType().getPolyLineColor()); 
@@ -328,22 +294,22 @@ public class DrawingMap {
 
             
             gc.beginPath();
-            gc.moveTo(nodesRef[0].getLon(), -nodesRef[0].getLat());
+            gc.moveTo(tagWay.getRefNodes().getFirst().getLon(), -tagWay.getRefNodes().getFirst().getLat());
             
-            for (int i = 0; i < nodesRef.length ; i ++){
-                
-                ref = nodesRef[i];
-                currentLat = -ref.getLat();
-                currentLon = ref.getLon();
+            
 
-                gc.lineTo(currentLon, currentLat);
-                xPoints[counter] = currentLon;
-                yPoints[counter] = currentLat;
-                counter++;
-                
-            }
+                for (TagNode n : tagWay.getRefNodes()) {
+                    gc.lineTo(n.getLon(), -n.getLat());
+                    xPoints[counter] = n.getLon();
+                    yPoints[counter] = -n.getLat();
+                    counter++;
+                    
+                    if(n.getNext() == null) break;
+                }
 
-
+            
+            
+            
             //Fills polygons with color
             if (!tagWay.getType().getIsLine()){
                 gc.setFill(currentColor);

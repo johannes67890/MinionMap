@@ -134,53 +134,68 @@ public class XMLReader {
         try {
             XMLInputFactory factory = XMLInputFactory.newInstance();
             XMLStreamReader reader = factory.createXMLStreamReader(new FileInputStream(filepath));
-            
+            // start timer
+            long start = System.currentTimeMillis();
             while (reader.hasNext()) {
+            
+                
                 reader.next();
                 switch (reader.getEventType()) {
                     case START_ELEMENT:
                         String element = reader.getLocalName().intern();
                         if(element.equals("bounds")) {
                             bound = MecatorProjection.project(new TagBound(reader));
-                            new XMLWriter(bound);
+                            // new XMLWriter(bound);
                         }else {
                             tempBuilder.parse(element, reader);
                         };
-                       
                         break;
                     case END_ELEMENT:
                         element = reader.getLocalName().intern();
                         switch (element) {
                             case "node":
                                 if(!tempBuilder.getAddressBuilder().isEmpty()){
-                                    XMLWriter.appendToBinary(new TagAddress(tempBuilder));
+                                    TagAddress address = new TagAddress(tempBuilder);
                                     //TODO insert into trie instead of hashmap when it actually works
-                                    trie.insert(new TagAddress(tempBuilder));
-                                    addresses.put(tempBuilder.getId(), new TagAddress(tempBuilder));
+                                    addresses.put(tempBuilder.getId(), address);
+                                    trie.insert(address);
+                                    XMLWriter.appendToPool(address);
                                 } else {
-                                    XMLWriter.appendToBinary(new TagNode(tempBuilder));
                                     nodes.put(tempBuilder.getId(), new TagNode(tempBuilder));
                                 }
                                 tempBuilder = new XMLBuilder(); // Reset the builder
                                 break;
                             case "way":
-                                // XMLWriter.appendToBinary(new TagWay(tempBuilder));
-                                ways.put(tempBuilder.getId(), new TagWay(tempBuilder));
+                                TagWay way = new TagWay(tempBuilder);
+                        
+                                ways.put(tempBuilder.getId(), way);
+                                for (TagNode node : way.getRefNodes()) {
+                                    if(node.getNext() == null) break;
+                                    XMLWriter.appendToPool(node);   
+                                }
+                                
                                 tempBuilder = new XMLBuilder();
+                                break;
                             case "relation":
-                                // XMLWriter.appendToBinary(new TagRelation(tempBuilder));
+                                XMLWriter.appendToPool(new TagRelation(tempBuilder));
                                 relations.put(tempBuilder.getId(), new TagRelation(tempBuilder));
                                 tempBuilder = new XMLBuilder();
                                 break;
                             default:
                                 break;
                         }
-                        break;
+                        break; 
                     default:
                         break;
                     }
-            }
+            }             
+            // nodes = null; // Free up memory
             reader.close();
+            XMLWriter.appendToBinary();
+      
+            // end timer
+            long end = System.currentTimeMillis();
+            System.out.println("Time total: " + (end - start) + "ms");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (XMLStreamException e) {

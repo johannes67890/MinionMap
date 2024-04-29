@@ -107,8 +107,10 @@ public class XMLBuilder {
                     this.lon = MecatorProjection.projectLon(getAttributeByFloat(reader, "lon"));
                     break;
                 case "way":
+                    this.id = getAttributeByLong(reader, "id");   
+                    break;      
                 case "relation":
-                    this.id = getAttributeByLong(reader, "id");                    
+                    this.id = getAttributeByLong(reader, "id");                  
                     break;
                 case "tag":
                     String k = reader.getAttributeValue(null, "k");
@@ -119,11 +121,12 @@ public class XMLBuilder {
                     }
                     break;
                 case "nd":
-                    long ref = getAttributeByLong(reader, "ref");
-                    wayBuilder.addNode(ref);
+                    TagNode node = XMLReader.getNodeById(getAttributeByLong(reader, "ref"));
+                    wayBuilder.addNode(node);
                     break;
                 case "member":
                     relationBuilder.parseMember(reader);
+                    break;
                 default:
                     break;
             }

@@ -4,13 +4,17 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 
 import util.Point3D;
 import util.Rect3D;
+import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.Stack;
 import gnu.trove.list.linked.TLinkedList;
 import gnu.trove.map.hash.TCustomHashMap;
 import parser.Tag;
+import parser.TagWay;
+import parser.Type;
 
 /*
  * Copyright (C) 2016 Michael <GrubenM@GMail.com>
@@ -381,6 +385,100 @@ public class K3DTree {
     }
 
     /**
+     * A nearest neighbor in the set to point p; null if the set is empty.
+     * 
+     * In the worst case, this implementation takes time
+     * proportional to the number of points in the set.
+     * 
+     * However, unlike PointSET.nearest(), in the best case, this
+     * implementation takes time proportional to the logarithm of
+     * the number of points in the set.
+     * 
+     * @param p the point from which to search for a neighbor
+     * @return the nearest neighbor to the given point p,
+     *         {@code null} otherwise.
+     * @throws NullPointerException if {@code p} is {@code null}
+     */
+    public Point3D nearest(Point3D p, List<Type> searchType) {
+        if (p == null) throw new java.lang.NullPointerException(
+                "called contains() with a null Point2D");
+        if (isEmpty()) return null;
+        return nearest(root, p, root.p, 0, searchType);
+    }
+
+    private Point3D nearest(Node n, Point3D p, Point3D champion, int xyz, List<Type> type) {
+        
+        // Handle reaching the end of the tree
+        if (n == null) return champion;
+        
+        // Handle the given point exactly overlapping a point in the BST
+        
+        if (n.p.equals(p) && type.contains(getTagsFromPoint(n.p).getType())) return p;
+
+        
+        // Determine if the current Node's point beats the existing champion
+        if (n.p.distanceSquaredTo(p) < champion.distanceSquaredTo(p) && type.contains(getTagsFromPoint(n.p).getType()))
+            champion = n.p;
+        
+        /**
+         * Calculate the distance from the search point to the current
+         * Node's partition line.
+         * 
+         * Primarily, the sign of this calculation is useful in determining
+         * which side of the Node to traverse next.
+         * 
+         * Additionally, the magnitude to toPartitionLine is useful for pruning.
+         * 
+         * Specifically, if we find a champion whose distance is shorter than
+         * to a previous partition line, then we know we don't have to check any
+         * of the points on the other side of that partition line, because none
+         * can be closer.
+         */
+        double toPartitionLine = comparePoints(p, n, xyz);
+        int temp = xyz + 1;
+        if (xyz > 2){
+            temp = 0;
+        }
+        /**
+         * Handle the search point being to the left of or below
+         * the current Node's point.
+         */
+        if (toPartitionLine < 0) {
+            champion = nearest(n.lbb, p, champion, temp);
+            
+            // Since champion may have changed, recalculate distance
+            if (champion.distanceSquaredTo(p) >=
+                    toPartitionLine * toPartitionLine) {
+                champion = nearest(n.rtf, p, champion, temp);
+            }
+        }
+        
+        /**
+         * Handle the search point being to the right of or above
+         * the current Node's point.
+         * 
+         * Note that, since insert() above breaks point comparison ties
+         * by placing the inserted point on the right branch of the current
+         * Node, traversal must also break ties by going to the right branch
+         * of the current Node (i.e. to the right or top, depending on
+         * the level of the current Node).
+         */
+        else {
+            champion = nearest(n.rtf, p, champion, temp);
+            
+            // Since champion may have changed, recalculate distance
+            if (champion.distanceSquaredTo(p) >=
+                    toPartitionLine * toPartitionLine) {
+                champion = nearest(n.lbb, p, champion, temp);
+            }
+        }
+        
+        return champion;
+    }
+
+    
+
+    /**
      * This method gets an ArrayList of tags (Tag<?>) which is associated with the nearest Point3D in relation to the {@link point}
      * in the parameters
      * @param point the point from where the search starts from
@@ -389,6 +487,29 @@ public class K3DTree {
     public Tag nearestTags(Point3D point){
         return pointToTag.get(nearest(point));
     }
+
+
+    /**
+     * This method gets an ArrayList of tags (Tag<?>) which is associated with the nearest Point2D in relation to the {@link point}
+     * in the parameters
+     * @param point the point from where the search starts from
+     * @return a list of Tags thats is connected to the the nearest Point2D in the KDTree
+     */
+    public Tag nearestTags(Point3D point, List<Type> searchClass){
+        return pointToTag.get(nearest(point, searchClass));
+    }
+
+
+    // TODO::
+    /**
+     * This method gets an ArrayList of tags (Tag<?>) which is associated with the nearest Point2D in relation to the {@link point}
+     * in the parameters
+     * @param point the point from where the search starts from
+     * @return a list of Tags thats is connected to the the nearest Point2D in the KDTree
+     */
+    // public ArrayList<Tag> nearestTags(Point3D point, List<Type> searchClass){
+    //     return pointToTag.get(nearest(point, searchClass));
+    // }
     
     /**
      * This method gets the Tags ({@link Tag}) related to the point given in the parameters
