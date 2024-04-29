@@ -10,8 +10,6 @@ import util.Point3D;
 import util.Rect3D;
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.Stack;
-import gnu.trove.list.linked.TLinkedList;
-import gnu.trove.map.hash.TCustomHashMap;
 import parser.Tag;
 import parser.TagRelation;
 import parser.TagWay;
@@ -43,7 +41,7 @@ import parser.Type;
 public class K3DTree {
     private Node root;
     private int size;
-    private HashMap<Point3D, ArrayList<Tag>> pointToTag;
+    private HashMap<Point2D, ArrayList<Tag>> pointToTag;
     public float[] bounds = new float[6];
 
     /**
@@ -112,9 +110,7 @@ public class K3DTree {
             root = insert(root, p, 0, new float[] {-180, -180, 180, 180});
         }
         
-        ArrayList<Tag> temp = pointToTag.getOrDefault(p, new ArrayList<>(1));
-        temp.add(node);
-        pointToTag.put(p, temp);
+        putMap(p, node);
     }
     
     private Node insert(Node n, Point3D p, int xyz, float[] coords) {
@@ -277,8 +273,8 @@ public class K3DTree {
             
             // Add contained points to our points stack
             if (rect.contains(tmp.p)){
-                //ArrayList<Tag> temp = pointToTag.get(tmp.p);
-                returnList.addAll(pointToTag.get(tmp.p));
+                //ArrayList<Tag> temp = getMap(tmp.p);
+                returnList.addAll(getMap(tmp.p));
             }
             /**
              * Add Nodes containing promising rectangles to our nodes stack.
@@ -483,7 +479,7 @@ public class K3DTree {
 
 
     private boolean isPointOfTypes(Point3D p, List<Type> types){
-        for (Tag tag : pointToTag.get(p)){
+        for (Tag tag : getMap(p)){
             if (tag instanceof TagWay){
                 if (types.contains(tag.getType())){
                     
@@ -507,7 +503,7 @@ public class K3DTree {
      * @return a list of Tags thats is connected to the the nearest Point3D in the KDTree
      */
     public ArrayList<Tag> nearestTags(Point3D point){
-        return pointToTag.get(nearest(point));
+        return getMap(nearest(point));
     }
 
 
@@ -518,7 +514,7 @@ public class K3DTree {
      * @return a list of Tags thats is connected to the the nearest Point2D in the KDTree
      */
     public ArrayList<Tag> nearestTags(Point3D point, List<Type> searchClass){
-        return pointToTag.get(nearest(point, searchClass));
+        return getMap(nearest(point, searchClass));
     }
 
 
@@ -530,7 +526,7 @@ public class K3DTree {
      * @return a list of Tags thats is connected to the the nearest Point2D in the KDTree
      */
     // public ArrayList<Tag> nearestTags(Point3D point, List<Type> searchClass){
-    //     return pointToTag.get(nearest(point, searchClass));
+    //     return getMap(nearest(point, searchClass));
     // }
     
     /**
@@ -539,7 +535,29 @@ public class K3DTree {
      * @return this return an ArrayList<Tag<?>> of all tags related to the given Point3D
      */
     public ArrayList<Tag> getTagsFromPoint(Point3D point){
-        return pointToTag.getOrDefault(point, null);
+        return getMap(point);
+    }
+
+    /**
+     * A method for putting elements into the hashmap with a point3D even when the map is point2D
+     * This is made because we don't care about the hierachy levels in the hashmap, only in the K3DTree
+     * @param point The given key point
+     * @param tag   The given tag that needs to be associated with the key
+     */
+    private void putMap(Point3D point, Tag tag){
+        ArrayList<Tag> tempList = pointToTag.getOrDefault(new Point2D(point.x(), point.y()), new ArrayList<>());
+        tempList.add(tag);
+        pointToTag.put(new Point2D(point.x(), point.y()), tempList);
+    }
+
+    /**
+     * A method for getting items from the map from a Point3D even when the map is Point2D based.
+     * This is made because we don't care about the hierachy levels in the hashmap, only in the K3DTree.
+     * @param point The given Point3D we need to find the element for
+     * @return      Returns a ArrayList<Tag> from the hashmap
+     */
+    private ArrayList<Tag> getMap(Point3D point){
+        return pointToTag.getOrDefault(new Point2D(point.x(), point.y()), new ArrayList<>(1));
     }
     
     /**
