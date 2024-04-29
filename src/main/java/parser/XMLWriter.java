@@ -14,7 +14,7 @@ import java.io.IOException;
 public class XMLWriter {
     private String directoryPath = "src/main/resources/chunks/";
     public static ChunkFiles chunkFiles = new ChunkFiles();
-    private static HashMap<TagBound, HashSet<Tag>> tagList = new HashMap<TagBound, HashSet<Tag>>();
+    private static HashMap<TagBound, ArrayList<Tag>> tagList = new HashMap<TagBound, ArrayList<Tag>>();
     private static int chunkId = 0;
 
     public XMLWriter(TagBound bounds) {
@@ -65,7 +65,7 @@ public class XMLWriter {
     public static void appendToPool(Tag node){
         for (TagBound bound : ChunkFiles.getChunkFiles().keySet()) {
             if(node.isInBounds(bound)){
-                tagList.computeIfAbsent(bound, k -> new HashSet<>()).add(node);
+                tagList.computeIfAbsent(bound, k -> new ArrayList<>()).add(node);
             }
         }
     }
@@ -73,7 +73,7 @@ public class XMLWriter {
     public static void appendToBinary() {
         ForkJoinPool pool = new ForkJoinPool();
 
-        for (Map.Entry<TagBound, HashSet<Tag>> entry : tagList.entrySet()) {
+        for (Map.Entry<TagBound, ArrayList<Tag>> entry : tagList.entrySet()) {
             String path = ChunkFiles.getChunkFilePath(entry.getKey());
             pool.submit(new WriteTagAction(entry.getValue(), path));
         }
@@ -93,10 +93,10 @@ public class XMLWriter {
      * 
      */
     private static class WriteTagAction extends RecursiveAction {
-        private final HashSet<? extends Tag> nodes;
+        private final ArrayList<? extends Tag> nodes;
         private final String path;
     
-        public WriteTagAction(HashSet<? extends Tag> nodes, String path) {
+        public WriteTagAction(ArrayList<? extends Tag> nodes, String path) {
             this.nodes = nodes;
             this.path = path;
         }
@@ -176,16 +176,9 @@ public class XMLWriter {
                 try {
                     Object o = stream.readObject();
                     if(o instanceof TagBound) continue;
-                    if (o instanceof TagRelation) {
-                        objectList.add((TagRelation) o);
+                    if (o instanceof Tag) {
+                        objectList.add((Tag) o);
                     }
-                    if(o instanceof TagAddress){
-                        objectList.add((TagAddress) o);
-                    }
-                    if(o instanceof TagWay){
-                        objectList.add((TagWay) o);
-                    }
-                
                 } catch (EOFException e) {
                     stream.close();
                     break; // end of stream
@@ -207,13 +200,13 @@ public class XMLWriter {
                         if(o instanceof TagBound) continue;
                         if(o instanceof Tag && ((Tag) o).getId() == id){
                             return (Tag) o;
-                        } else if(o instanceof TagWay) {
-                            for (TagNode n : ((TagWay) o).getRefNodes()) {
-                                if(n.getId() == id){
-                                    return n;
-                                }
-                            }
                         } 
+                        else if(o instanceof TagNode){
+                            TagNode n = (TagNode) o;
+                            if(n.getParent().getId() == id){
+                                return n.getParent();
+                            }
+                        }
                         //  else if(o instanceof TagRelation){
                         //     for (TagWay w : ((TagRelation) o).getWays()) {
                         //         for (TagNode n : w.getNodes()) {

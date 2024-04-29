@@ -93,11 +93,9 @@ public class Dijsktra {
     private void addWayEdges(TagWay way){
         for (TagNode node : way.getRefNodes()) {
             if(node.getNext() == null) break;
-            if(!node.getParents().isEmpty() && !node.getParents().contains(way)) {
-                for (TagWay tagWay : node.getParents()) {
-                    if(tagWay.equals(way)) break;
-                    addWayEdges(tagWay);
-                }
+            if(!node.getParent().getRefNodes().isEmpty() && node.getParent() != way) {
+                    if(node.getParent().equals(way)) break;
+                    addWayEdges(node.getParent());
             }
             addTwoWayEdges(node, way);
             System.out.println("Added edge from " + node.getId() + " to " + node.getNext().getId() + " with speed limit " + way.getSpeedLimit());

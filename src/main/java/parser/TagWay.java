@@ -31,7 +31,6 @@ public class TagWay extends Tag implements Comparable<TagWay>{
 
 
     public TagWay(XMLBuilder builder) {
-        TagWay x = XMLReader.getWayById(27806594l);
         this.id = builder.getId();
         this.name = builder.getName();
         this.speedLimit = builder.getWayBuilder().getSpeedLimit();
@@ -175,9 +174,14 @@ public class TagWay extends Tag implements Comparable<TagWay>{
 
         public TLinkedList<TagNode> getRefNodes(TagWay way) {
             for (TagNode node : refNodes) {
-                TagNode newNode = new TagNode(node);
-                newNode.clearLinks();
-                refNodesList.add(newNode);
+                if(node.getNext() != null || node.getPrevious() != null){
+                    TagNode newNode = new TagNode(node);
+                    newNode.clearLinks();
+                    refNodesList.add(newNode);
+                    continue;
+                }else{
+                    refNodesList.add(node);
+                }
             }
 
             
