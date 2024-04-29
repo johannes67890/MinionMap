@@ -1,9 +1,17 @@
 package parser;
 
 import java.util.HashMap;
+import java.util.List;
 
+import edu.princeton.cs.algs4.MinPQ;
 import util.MecatorProjection;
+import java.util.List;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import parser.XMLWriter.ChunkFiles;;
+
 /**
  * Abstract class for a tag.
  * <p>
@@ -53,6 +61,18 @@ public abstract class Tag implements Serializable{
      */
     public abstract float getLon();
 
+    public abstract Type getType();
+
+    /**
+     * Get the {@link TagBound} from the chunk, that the tag is in.
+     * @return
+     */
+    public TagBound getBoundFromChunk(){
+        return ChunkFiles.getBoundFromTag(this);
+    }
+
+
+
     /**
      * Check if a tag is within a specified {@link TagBound}.
      * <p>
@@ -61,28 +81,31 @@ public abstract class Tag implements Serializable{
      * @param bound - The {@link TagBound} to check if the tag is within.
      * @return True if the tag is within the {@link TagBound}, false otherwise.
      */
-    public boolean isInBounds(TagBound bound) {        
-        if(this instanceof TagWay) {
-            for (TagNode w  :((TagWay)this).getNodes()) {
-                if(w.isInBounds(bound)) return true;
-            }
-            return false; // if none of the nodes are in bounds
-        }
-        
-        // TODO: Implement this for TagRelation
-        // if(this instanceof TagRelation) {
-        //     for (TagWay r : ((TagRelation)this).getMembers()) {
-        //         if(r.isInBounds(bound)) return true;
-        //     }
-        //     return false; // if none of the members are in bounds
-        // }
-        
-        // float lat = MecatorProjection.unprojectLat(this.getLat());
-        // float lon = MecatorProjection.unprojectLon(this.getLon());
-        
-        
+    public boolean isInBounds(TagBound bound) { 
         return Float.valueOf(this.getLat()).compareTo(bound.getMinLat()) == 1 && Float.valueOf(this.getLat()).compareTo(bound.getMaxLat()) == -1
             && Float.valueOf(this.getLon()).compareTo(bound.getMinLon()) == 1 && Float.valueOf(this.getLon()).compareTo(bound.getMaxLon()) == -1;
     }
 
+    
+
+    /**
+     * Calculate the distance between two tags.
+     * <p>
+     * The distance is calculated using the Haversine formula.
+     * </p>
+     * @param a - The tag to calculate the distance to.
+     * @return The distance between the two tags.
+     */
+    public double distance(Tag a){
+        double lat1Rad = Math.toRadians(this.getLat());
+        double lat2Rad = Math.toRadians(a.getLat());
+        double lon1Rad = Math.toRadians(this.getLon());
+        double lon2Rad = Math.toRadians(a.getLon());
+
+        double x = (lon2Rad - lon1Rad) * Math.cos((lat1Rad + lat2Rad) / 2);
+        double y = (lat2Rad - lat1Rad);
+        double distance = Math.sqrt(x * x + y * y) * MecatorProjection.getEarthRadius();
+
+        return distance;
+    }
 }

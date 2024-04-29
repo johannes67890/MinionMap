@@ -5,6 +5,10 @@ import java.sql.Array;
 import gui.GraphicsHandler;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import java.util.*;
+import java.util.stream.Collectors;
+
+
 
 /**
  * Enum for the different types of tags.  
@@ -27,21 +31,22 @@ import javafx.scene.paint.Paint;
 *  <li>isLine ({@link Boolean}) - Determines to be drawn as a line or polygon</li> * </ul>
  * </p>
  */
-public enum Type {
+public enum Type  {
 
-    REGION("place", new String[]{"island", ""}, 10, 2, Color.LIGHTYELLOW.desaturate(), Color.YELLOW, 5, false),
-    BOUNDARY("boundary", new String[]{"administrative"}, 10, 2, Color.LIGHTYELLOW.desaturate(), Color.YELLOW, 5, false),
+    REGION("place", new String[]{"island"}, 10, 2, Color.LIGHTYELLOW.desaturate(), Color.PLUM, 1000, false),
+    //BOUNDARY("boundary", new String[]{"administrative"}, 10, 2, Color.LIGHTYELLOW.desaturate(), Color.YELLOW, 5, false),
+    BORDER("admin_level", new String[]{"9", "8", "7", "6", "5", "4", "3"}, 10, 2, Color.LIGHTYELLOW.desaturate(), Color.YELLOW, 5, false),
 
 
     // Natural, Landuse and main infrastructure (Hierarchy 9)
     PRIMARY_ROAD("highway", new String[]{"primary"}, 9, 9, Color.PEACHPUFF, 5,  true, 6, 100),
     MOTORWAY("highway", new String[]{"motorway"}, 9, 9, Color.DARKRED, 5, true, 6, 100),
     SECONDARY_ROAD("highway", new String[]{"secondary"}, 9, 9, Color.YELLOW.desaturate(), 5, true, 6, 75),
-    TERTIARY_ROAD("highway",new String[]{"tertiary", "tertiary_link"},9, 9, Color.WHITE, 4, true, 4, 50),
+    TERTIARY_ROAD("highway",new String[]{"tertiary", "tertiary_link"},9, 9, Color.DARKGRAY, 4, true, 4, 50),
     RAILWAY("railway",new String[]{"rail","light_rail","subway"}, 9, 9, Color.DARKGRAY, 2, true, 4, 1000),
     WATER("natural",new String[]{"water"}, 9, 9, Color.LIGHTBLUE, Color.LIGHTBLUE.darker(), 5, false),
     WATERWAY("waterway",new String[]{""},9, 8, Color.LIGHTBLUE, 3, true, 2, 25),
-    COASTLINE("natural", new String[]{"coastline"}, 10, 7, Color.PLUM, 5, true, 6, 100),
+    //COASTLINE("natural", new String[]{"coastline"}, 10, 1, Color.PLUM, 5, true, 6, 100),
     
     // Landuse (Hierarchy: 8)
     RESIDENTIAL("landuse", new String[]{"residential"}, 8, 7, Color.LIGHTGRAY.interpolate(Color.WHITE, 0.5), Color.LIGHTGRAY, 1, false),
@@ -82,8 +87,10 @@ public enum Type {
     AERIALWAY("aerialway", new String[]{"cable_car", "gondola", "mixed_lift", "chair_lift", "drag_lift", "t-bar", "j-bar", "platter", "rope_tow", "magic_carpet", "zip_line", "goods", "pylon"}, 
     4, 9, Color.LIGHTGRAY, 2, true, 4, 10),
     AERIALWAYSTATION("aerialway", new String[]{"station"},4, 8, Color.GRAY, Color.GRAY.darker(), 5, false),
-    OTHER_ROAD("highway",new String[]{"residential", "unclassified", "track", "footway", "cycleway", "path", 
+    OTHER_ROAD("highway",new String[]{"unclassified", "track", "footway", "cycleway", "path", 
     "service", "motorway_link", "steps", "living_street", "mini_roundabout", "pedestrian"}, 4, 9, Color.WHITE, 5, true, 2, 7),
+
+    RESIDENTIAL_ROAD("highway",new String[]{"residential"}, 4, 9, Color.WHITE, 5, true, 2, 7),
 
     // Relations (Hierarchy: 3)
     MULTIPOLYGON("type", new String[]{"multipolygon"}, 3, Color.BLACK, 0),
@@ -91,6 +98,7 @@ public enum Type {
     ROUTE("type", new String[]{"route"}, 3, Color.BLACK, 0),
     // Unknown (Hierarchy: 0)
     UNKNOWN("", new String[]{""}, 0, 9, Color.BLACK, 5, true, 2, 7);
+
 
 
     private final String key; // key of the tag
@@ -144,6 +152,21 @@ public enum Type {
         this.polyLineColor = Color.BLACK;
     }
     
+    /**** Groups ****/
+    public static List<Type> getAllRoads() {
+        return Arrays.stream(Type.values())
+            .filter(type -> type.getKey().contains("highway"))
+            .collect(Collectors.toList());
+    }
+
+    public static List<Type> getTypesOfHierarchy(int i) {
+        if(i < 0 || i > 9) throw new IllegalArgumentException("Hierarchy must be between 0 and 9");
+        return Arrays.stream(Type.values())
+            .filter(type -> Type.getHierarchy(type) == i)
+            .collect(Collectors.toList());
+    }
+
+
     public String getKey() {
         return key;
     }
@@ -216,8 +239,6 @@ public enum Type {
         return color;
     }
     public Color getColor(){
-
-
         switch (GraphicsHandler.getGraphicStyle()) {
             case DEFAULT:
                 return color;    
@@ -250,5 +271,12 @@ public enum Type {
         return maxWidth;
     }
 
+    /* 
+    public boolean equals(Type type) {
+        if(this instanceof Type){
+            return this.getKey().equals(type.getKey());   
+        }
+        return false;
+    }*/
 
 }

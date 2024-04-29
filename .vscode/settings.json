@@ -1,5 +1,31 @@
 {
     "java.compile.nullAnalysis.mode": "automatic",
     "java.debug.settings.onBuildFailureProceed": true,
-    "java.configuration.updateBuildConfiguration": "automatic"
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "graalvm.installations": [
+        "c:\\Users\\johan\\graalvm-jdk-17.0.11+7.1"
+    ],
+    "java.configuration.runtimes": [
+        {
+            "name": "JavaSE-17",
+            "path": "c:\\Users\\johan\\graalvm-jdk-17.0.11+7.1",
+            "default": true
+        }
+    ],
+    "graalvm.home": "c:\\Users\\johan\\graalvm-jdk-17.0.11+7.1",
+    "terminal.integrated.env.windows": {
+        "GRAALVM_HOME": "c:\\Users\\johan\\graalvm-jdk-17.0.11+7.1",
+        "JAVA_HOME": "c:\\Users\\johan\\graalvm-jdk-17.0.11+7.1",
+        "PATH": "c:\\Users\\johan\\graalvm-jdk-17.0.11+7.1\\bin;${env:PATH}"
+    },
+    "java.home": "c:\\Users\\johan\\graalvm-jdk-17.0.11+7.1",
+    "maven.terminal.customEnv": [
+        {
+            "environmentVariable": "JAVA_HOME",
+            "value": "c:\\Users\\johan\\graalvm-jdk-17.0.11+7.1"
+        }
+    ]
 }
+
+
+

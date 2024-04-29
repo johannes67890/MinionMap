@@ -88,22 +88,14 @@ public class MainView {
 
     public void loadDrawingMap(){
         drawView = new DrawingMap(this, xmlReader);
-        System.out.println(drawView);
     }
 
     public void draw(){
-
-        // long time = System.currentTimeMillis();
-
 
         gc = canvas.getGraphicsContext2D();
         gc.setFill(Color.RED);
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
         drawView.DrawMap(canvas);
-
-        // System.out.println(1000 / (System.currentTimeMillis() - time));
-
-
         
     }
 
@@ -139,16 +131,4 @@ public class MainView {
         return drawView;
     }
 
-    // A function for searching for an address. Called when the search button is pressed 
-    // or when the enter key is pressed in the search bar.
-    // The function makes a new AddressSearchPage object which takes the addresses from the XMLReader
-    // and then uses the searchForAdress method to search for the address
-    // See AddressSearchPage for more information
-
-    public void search(TextField searchBar){
-        // TODO: Unfinished
-        //Search search = new Search(XMLReader.getAddresses());
-        String text = searchBar.getText();
-        //search.searchForAdress(text);
-    }
 }
