@@ -1,6 +1,7 @@
 package pathfinding;
 
 import parser.TagNode;
+import parser.TagRelation;
 import parser.TagWay;
 import parser.Type;
 import parser.XMLReader;
@@ -11,6 +12,7 @@ import util.Tree;
 
 import java.util.*;
 
+import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.Stack;
 import edu.princeton.cs.algs4.StdOut;
 import parser.Tag;
@@ -113,23 +115,26 @@ public class Dijsktra {
             G.addEdge(new DirectedEdge(node, node.getNext(), way.getSpeedLimit()));
     }
 
-    private Tag getNearestRoadPoint(Tag tag){
-        Tag nearestTag = Tree.getNearestOfType(tag, Type.getAllRoads());
-        if(nearestTag instanceof TagNode) return nearestTag;
-        TagWay tagWay = (TagWay) nearestTag;
-
-        TagNode closesNode = null;
-        for (TagNode n : tagWay.getRefNodes()) {
-            if (closesNode == null) {
-                closesNode = n;
-            } else {
-                if (closesNode.distance(n) < n.distance(n)) {
-                    closesNode = n;
+    private TagNode getNearestRoadPoint(Tag tag){
+        ArrayList<Tag> tags = Tree.getNearestOfType(tag, Type.getAllRoads());
+        double bestDistance = Double.MAX_VALUE;
+        TagNode best = null;
+        for (Tag tempTag : tags){
+            if (tempTag instanceof TagWay){
+                TagWay way = (TagWay) tempTag;
+                if (Type.getAllRoads().contains(way.getType())){
+                    for (TagNode node : way.getRefNodes()){
+                        double distance = new Point2D(node.getLon(), node.getLat()).distanceSquaredTo(new Point2D(tag.getLon(), tag.getLat()));
+                        if (distance < bestDistance){
+                            best = node;
+                            bestDistance = distance;
+                        }
+                    }
                 }
             }
-            if(n.getNext() == null) break;
-        } 
-        return closesNode;
+        }
+
+        return best;
     }
 
     // TODO:

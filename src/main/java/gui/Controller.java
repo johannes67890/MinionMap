@@ -351,12 +351,12 @@ public class Controller implements Initializable, ControllerInterface{
 
         Point3D nearest = Tree.getNearestPoint(point2d);
 
-        Tag nearestTag = Tree.getTagsFromPoint(nearest);
+        ArrayList<Tag> nearestTag = Tree.getTagsFromPoint(nearest);
 
 
-        if(nearestTag instanceof TagWay && ((TagWay)nearestTag).getType() != null && ((TagWay)nearestTag).getType().equals(parser.Type.BUILDING)){
+        if(nearestTag.get(0) instanceof TagWay && ((TagWay)nearestTag.get(0)).getType() != null && ((TagWay)nearestTag.get(0)).getType().equals(parser.Type.BUILDING)){
 
-            drawingMap.setMarkedTag(nearestTag);
+            drawingMap.setMarkedTag(nearestTag.get(0));
         } else{
             drawingMap.setMarkedTag(tagAddress);
         }
