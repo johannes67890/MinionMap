@@ -31,7 +31,7 @@ public class Tree {
             insertTagInTree(tag);
         }
         isLoaded = true;
-        XMLReader.clearTags();
+       // XMLReader.clearTags();
     }
 
     /**

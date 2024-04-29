@@ -95,6 +95,17 @@ public class Dijsktra {
     private void addWayEdges(TagWay way){
         for (TagNode node : way.getRefNodes()) {
             if(node.getNext() == null) break;
+            ArrayList<Tag> intersections = Tree.getTagFromPoint(node);
+            if(intersections.size() > 1 && intersections != null){
+                for (Tag tag : intersections) {
+                    if(tag instanceof TagWay){
+                        if(tag.equals(way)) continue;
+                        System.out.println("here " + node.getId());
+                        
+                    }
+                }
+            }
+
             if(!node.getParents().isEmpty() && !node.getParents().contains(way)) {
                 for (TagWay tagWay : node.getParents()) {
                     if(tagWay.equals(way)) break;
@@ -199,14 +210,12 @@ public class Dijsktra {
 
         new XMLReader(FileDistributer.input.getFilePath());
         Tree.initialize(new ArrayList<Tag>(XMLReader.getWays().valueCollection()));;
-
         
 
         TagNode start = XMLReader.getNodeById(248419951l);
         TagNode finish = XMLReader.getNodeById(7798538748l);
   
       
-        
         
 
          new Dijsktra(start, finish);
