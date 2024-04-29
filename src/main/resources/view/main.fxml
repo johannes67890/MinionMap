@@ -99,6 +99,16 @@
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </padding>
             </Pane>
+             <VBox maxHeight="30.0" maxWidth="0.0" StackPane.alignment="BOTTOM_RIGHT">
+               <children>
+                  <Label fx:id="zoomLevelText" alignment="CENTER" maxWidth="2000000.0" text="100m" VBox.vgrow="ALWAYS" />
+                  <ImageView fx:id="zoomLevelImage" fitHeight="20.0" fitWidth="70.0" pickOnBounds="true" VBox.vgrow="ALWAYS">
+                     <image>
+                        <Image url="@../visuals/UnitRuler2.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </VBox>
          </children>
       </StackPane>
    </children>
