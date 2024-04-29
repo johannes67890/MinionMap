@@ -1,10 +1,9 @@
 package util;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import parser.TagAddress;
 
-public class Trie implements Serializable {
+public class Trie {
     private TrieNode root;
     private TrieNode currentNode;
 
@@ -53,7 +52,7 @@ public class Trie implements Serializable {
      */
     public ArrayList<String> getHouseNumberSuggestions(String searchInput, int suggestionAmount) {
         currentNode = root;
-        searchInput = searchInput.toLowerCase().replaceAll(" ", "");
+        searchInput = searchInput.toLowerCase().replaceAll("[ ,]", "");
         ArrayList<String> suggestionList = new ArrayList<>();
         if (moveThroughTree(searchInput) && currentNode.getIsEnd()) {
             ArrayList<String> nodeNumbers = currentNode.getHouseNumbers();
@@ -75,28 +74,46 @@ public class Trie implements Serializable {
      */
     public ArrayList<TagAddress> getAddressSuggestions(String searchInput, int suggestionAmount) {
         currentNode = root;
-        searchInput = searchInput.toLowerCase().replaceAll(" ", "");
-        ArrayList<TagAddress> suggestionList = new ArrayList<>();
-        if (moveThroughTree(searchInput)) {
-            suggestionFinder(suggestionList, currentNode, suggestionAmount);
-            return suggestionList;
+        String numbers = searchInput.toLowerCase().replaceAll("[ ,a-zA-Z]", "");
+        String searchInputLetters = searchInput.toLowerCase().replaceAll("[ ,0-9]", "");
+        ArrayList<TrieNode> suggestionList = new ArrayList<>();
+        ArrayList<TagAddress> returnList = new ArrayList<>();
+
+        if (moveThroughTree(searchInputLetters)) {
+            
+            suggestionFinder(suggestionList, currentNode, suggestionAmount, numbers, 0);
+
+            if (suggestionList.size() == 1){
+                returnList.addAll(suggestionList.get(0).getTagAddresses());
+            }else{
+                for (TrieNode node : suggestionList){
+                    TagAddress nodeAddress = node.getTagAddresses().get(0);
+                    TagAddress temp = new TagAddress(nodeAddress.getId(), nodeAddress.getLat(), nodeAddress.getLon(), nodeAddress.getStreet(), "", nodeAddress.getPostcode(), nodeAddress.getMunicipality(), nodeAddress.getCity(), nodeAddress.getCountry());
+                    returnList.add(temp);
+                }
+            }
+            return returnList;
         }
-        return suggestionList;
+        return returnList;
     }
 
     // recursive method for use in getAddressSuggestions()
-    private void suggestionFinder(ArrayList<TagAddress> suggestionList, TrieNode currentNode, int suggestionAmount) {
+    private void suggestionFinder(ArrayList<TrieNode> suggestionList, TrieNode currentNode, int suggestionAmount, String numbers, int iteration) {
         // the additional list size check is necessary for an extreme edge case, but is
         // otherwise not used
         if (currentNode.getIsEnd() && suggestionList.size() < suggestionAmount) {
-            suggestionList.addAll(currentNode.getTagAddresses());
+            suggestionList.add(currentNode);
+            
+            //TagAddress nodeAddress = currentNode.getTagAddresses().get(0);
+            //TagAddress temp = new TagAddress(nodeAddress.getId(), nodeAddress.getLat(), nodeAddress.getLon(), nodeAddress.getStreet(), "", nodeAddress.getPostcode(), nodeAddress.getMunicipality(), nodeAddress.getCity(), nodeAddress.getCountry());
+        
         }
         if (currentNode.getBranches().isEmpty() || suggestionList.size() >= suggestionAmount) {
             return;
         }
         for (Object obj : currentNode.getBranches().values()) {
             TrieNode branch = (TrieNode) obj;
-            suggestionFinder(suggestionList, branch, suggestionAmount);
+            suggestionFinder(suggestionList, branch, suggestionAmount, numbers, iteration + 1);
         }
     }
 

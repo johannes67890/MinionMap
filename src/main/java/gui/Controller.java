@@ -250,6 +250,10 @@ public class Controller implements Initializable, ControllerInterface{
         comboBoxListViewSkin.getPopupContent().addEventFilter(KeyEvent.ANY, (event) -> {
             if( event.getCode() == KeyCode.SPACE ) {
                 event.consume();
+            }else if (event.getCode() == KeyCode.DOWN){
+                event.consume();
+            }else if (event.getCode() == KeyCode.UP){
+                event.consume();
             }
         });
         searchBarStart.setSkin(comboBoxListViewSkin);

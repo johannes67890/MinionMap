@@ -38,7 +38,7 @@ public class TagAddress extends Tag  implements Comparable{
         country = builder.getAddressBuilder().country;
     }
 
-    TagAddress (long id, float lat, float lon, String street, String house, String postCode, String municipality, String city, String country){
+    public TagAddress (long id, float lat, float lon, String street, String house, String postCode, String municipality, String city, String country){
         this.id = id;
         this.lat = lat;
         this.lon = lon;
