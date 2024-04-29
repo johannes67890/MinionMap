@@ -12,6 +12,7 @@ import javax.xml.stream.XMLStreamReader;
 
 import gnu.trove.map.hash.TLongObjectHashMap;
 import util.MecatorProjection;
+import util.Trie;
 
 /**
  * Reader for a OSM XML file.
@@ -25,6 +26,7 @@ public class XMLReader {
     private static TLongObjectHashMap<TagAddress> addresses = new TLongObjectHashMap<TagAddress>();
     private static TLongObjectHashMap<TagRelation> relations = new TLongObjectHashMap<TagRelation>();
     private static TLongObjectHashMap<TagWay> ways = new TLongObjectHashMap<TagWay>();
+    private static Trie trie = new Trie();
 
     /**
      * Get the {@link TagBound} of the XML file.
@@ -114,6 +116,10 @@ public class XMLReader {
         return ways;
     }
 
+    public static Trie getTrie(){
+        return trie;
+    }
+
     private XMLBuilder tempBuilder = new XMLBuilder();
     
     /**
@@ -148,6 +154,8 @@ public class XMLReader {
                             case "node":
                                 if(!tempBuilder.getAddressBuilder().isEmpty()){
                                     XMLWriter.appendToBinary(new TagAddress(tempBuilder));
+                                    //TODO insert into trie instead of hashmap when it actually works
+                                    trie.insert(new TagAddress(tempBuilder));
                                     addresses.put(tempBuilder.getId(), new TagAddress(tempBuilder));
                                 } else {
                                     XMLWriter.appendToBinary(new TagNode(tempBuilder));

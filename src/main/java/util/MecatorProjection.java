@@ -80,6 +80,20 @@ public class MecatorProjection {
             );
         }
 
+        public static float projectX(float x){
+ 
+                
+                return projectLon(x);
+
+        }
+
+        public static float projectY(float y){
+ 
+        
+            return projectLat(y);
+
+         }
+
          /**
          * Projects a node to the mercator projection.
          * This takes the {@link TagNode} and turns lat and lon into x and y.

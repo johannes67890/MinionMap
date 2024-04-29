@@ -1,26 +1,26 @@
 package gui;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 
+import edu.princeton.cs.algs4.RectHV;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
+import parser.Tag;
+import parser.TagAddress;
 import parser.TagBound;
 import parser.TagNode;
 import parser.TagRelation;
 import parser.TagWay;
 import parser.XMLReader;
-import edu.princeton.cs.algs4.Point2D;
-import edu.princeton.cs.algs4.RectHV;
 import util.MathUtil;
 import util.MecatorProjection;
 import util.MinPQ;
 import util.Point3D;
 import util.Rect3D;
 import util.Tree;
-import parser.Tag;
+import util.Trie;
 
 
 /**
@@ -35,12 +35,15 @@ public class DrawingMap {
     public ResizableCanvas canvas;
     private XMLReader reader;
     private MainView mainView;
-    private double zoomLevel = 1;
+    public double zoomLevel = 1;
     private int hierarchyLevel = 9;
     private final double zoomLevelMin = 0.001, zoomLevelMax = 30; // These variables changes how much you can zoom in and out. Min is far out and max is closest in
     private double zoomScalerToMeter; // This is the world meters of how long the scaler in the bottom right corner is. Divide it with the zoomLevel
-    private double[] zoomScales = {32, 16, 8, 4, 2, 1, 0.5, 0.1, 0.05, 0.015, 0.0001}; // The zoom level at which given nodes will be shown (low index = farther away)
+    private double[] zoomScales = {32, 16, 8, 4, 2, 1, 0.5, 0.1, 0.05, 0.015, 0.0001}; //
+     //
 
+    private Trie trie;
+    private Tag markedTag;
     private List<TagNode> nodes;
     private List<TagWay> ways;
     private List<TagRelation> relations;
@@ -61,6 +64,7 @@ public class DrawingMap {
         this.reader = reader;
         ways = XMLReader.getWays().valueCollection().stream().toList();
         relations = XMLReader.getRelations().valueCollection().stream().toList();
+        trie = new Trie();
     }
 
     /**
@@ -88,6 +92,10 @@ public class DrawingMap {
         zoom(canvas.getWidth() / (maxlon - minlon), 0, 0);
         tempBounds = getScreenBounds();
         DrawMap(canvas);
+    }
+
+    public Trie getTrie(){
+        return trie;
     }
 
     /**
@@ -159,6 +167,114 @@ public class DrawingMap {
         }
  
         drawWays(sortedWaysToDraw);
+
+        
+        if (markedTag != null){
+
+            drawMarkedTag(markedTag);
+        }
+    }
+
+    public void setMarkedTag(Tag tag){
+
+        markedTag = tag;
+    }
+
+    private void drawMarkedTag(Tag tag){
+        gc.setFill(Color.PINK.interpolate(Color.RED, 0.5));
+        gc.setStroke(Color.RED);
+        
+        if (tag instanceof TagRelation){
+            drawRelation((TagRelation)tag);
+        }else if(tag instanceof TagWay){
+            drawWay((TagWay) tag, true);
+        }else if(tag instanceof TagNode || tag instanceof TagAddress){
+            drawPoint(tag);
+        }
+    }
+
+    private void drawPoint(Tag node){
+
+        
+        double radius = 25 * 1/Math.sqrt(transform.determinant());
+        gc.fillOval(node.getLon() - radius / 2, -(node.getLat()) - radius / 2, radius, radius);
+
+    }
+
+    private void drawRelation(TagRelation relation){
+        boolean isStarted = false;
+        for (TagWay way : relation.getWays()){
+            if (!isStarted){
+                drawWay(way, true);
+                isStarted = true;
+            }else{
+                drawWay(way, false);
+            }
+        }
+    }
+    
+    private void drawWay(TagWay way, boolean starting){
+
+        if (way.getType() != null){
+
+            TagNode[] nodesRef;
+
+            double[] xPoints;
+    
+            double[] yPoints;
+    
+            double defaultLineWidth = 1/Math.sqrt(transform.determinant());
+    
+            TagNode ref;
+    
+            double currentLon;
+            double currentLat;
+    
+    
+            nodesRef = way.getNodes();
+    
+            int counter = 0;
+            xPoints = new double[nodesRef.length];
+            yPoints = new double[nodesRef.length];
+    
+            
+    
+            double min = way.getType().getMinWidth();
+            double max = way.getType().getMaxWidth();
+            double lineWidth = MathUtil.clamp(defaultLineWidth * way.getType().getWidth(), min, max);
+            gc.setLineWidth(lineWidth);
+    
+    
+            
+            gc.beginPath();
+            gc.moveTo(nodesRef[0].getLon(), -nodesRef[0].getLat());
+            
+            for (int i = 0; i < nodesRef.length ; i ++){
+                
+                ref = nodesRef[i];
+                currentLat = -ref.getLat();
+                currentLon = ref.getLon();
+    
+                gc.lineTo(currentLon, currentLat);
+                xPoints[counter] = currentLon;
+                yPoints[counter] = currentLat;
+                counter++;
+    
+                
+            }
+    
+    
+            //Fills polygons with color
+            if (!way.getType().getIsLine()){
+                //gc.setFill(currentColor);
+                gc.fillPolygon(xPoints, yPoints, counter);
+            }
+            
+            gc.stroke();    
+
+        }
+
+       
     }
 
     /**
@@ -168,6 +284,8 @@ public class DrawingMap {
      * @param ways - the ways to be drawn
      */
     private void drawWays(MinPQ<TagWay> ways){
+
+        //System.out.println("MIN X: " + getScreenBounds()[0] + " MIN Y: " + getScreenBounds()[1] + " DETERMINANT: " + Math.sqrt(transform.determinant()));
 
         TagNode[] nodesRef;
 
@@ -365,6 +483,14 @@ public class DrawingMap {
         }
     }
 
+    public Affine getTransform(){
+        return transform;
+    }
+
+    public double getZoomLevel(){
+        return zoomLevel;
+    }
+
 
     /**
      * 
@@ -375,6 +501,11 @@ public class DrawingMap {
     public void pan(double dx, double dy) {
 
         transform.prependTranslation(dx, dy);
+        mainView.draw();
+    }
+
+    public void append(double dx, double dy) {
+        transform.appendTranslation(dx, dy);
         mainView.draw();
     }
 

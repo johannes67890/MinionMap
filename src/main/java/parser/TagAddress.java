@@ -15,7 +15,7 @@ enum Address{
  * {@link Address#ID}, {@link Address#LAT}, {@link Address#LON}, {@link Address#STREET}, {@link Address#HOUSENUMBER}, {@link Address#POSTCODE}, {@link Address#MUNICIPALITY}
  * </p>
 */
-public class TagAddress extends Tag {
+public class TagAddress extends Tag  implements Comparable{
     long id;
     float lat;
     float lon;
@@ -73,6 +73,10 @@ public class TagAddress extends Tag {
 
     public String getCountry() {
         return country;
+    }
+
+    public String toString() {
+        return street + " " + house + ", " + postCode + " " + city;
     }
 
     /**
@@ -136,7 +140,10 @@ public class TagAddress extends Tag {
         public SearchAddress(String input){
             final String REGEX = "(?<street>[A-Za-zØÆÅåæø ]+)? ?(?<house>[0-9]{1,3}[A-Za-z]{0,2})? ?(?<floor> st| [0-9]{1,3})? ?(?<side>tv|th|mf)?\\.? ?(?<postcode>[0-9]{4})? ?(?<city>[A-Za-ØÆÅåøæ ]+)?$";
             final Pattern PATTERN = Pattern.compile(REGEX);
-
+            
+            if (input == null){
+                throw new IllegalArgumentException("SearchAddress input is null");
+            }
             Matcher matcher = PATTERN.matcher(input);
 
             if(matcher.matches()){
@@ -181,14 +188,69 @@ public class TagAddress extends Tag {
                     this.city = "";
                 }
 
+                if (matcher.group("postcode") == null){
+                    this.postcode = "";
+                }
+                if (matcher.group("house") == null){
+                    this.house = "";
+                }
+
             } else{
-                throw new IllegalArgumentException("Invalid input");
+                throw new IllegalArgumentException("Invalid input: " + input);
             }
         }
 
         public String toString() {
-            return street + " " + house + ", " + floor + " " + side + "\n"
-                    + postcode + " " + city;
+            String output = "";
+            if (street != null && !street.isBlank()){
+                output += street;
+                if (house != null && !house.isBlank()){
+                    output += " " + house;
+
+                    if (floor != null && !floor.isBlank()){
+                        output += " " + floor;
+                    }
+                    if (side != null && !side.isBlank()){
+                        output += " " + side;
+                    }
+                }else{
+                    output += " ";
+                }
+                if (city != null && !city.isBlank()){
+                    if (postcode != null && !postcode.isBlank()){
+                        output += postcode + " ";
+                    }
+                    output += city;
+                }
+                
+            }
+            return output;
+            //return street + " " + house + ", " + floor + " " + side + "\n" + postcode + " " + city;
+        }
+    }
+
+    @Override
+    public int compareTo(Object object) {
+        if (object == null){
+            throw new IllegalArgumentException("Paramenter object is of null");
+        }else if (object instanceof TagAddress){
+            TagAddress tagAdress = (TagAddress) object;
+
+            int comparison = this.city.compareTo(tagAdress.city);
+
+            if (comparison == 0){
+                comparison = this.street.compareTo(tagAdress.street);
+                if (comparison == 0){
+                    return this.house.compareTo(tagAdress.house);
+                }else{
+                    return comparison;
+                }
+            }else{
+                return comparison;
+            }
+
+        }else{
+            throw new IllegalArgumentException("Parameter object is not of type TagAdress!");
         }
     }
 }

@@ -224,6 +224,12 @@ public class K2DTree {
          */
         return n;
     }
+
+    public void insertInMap(Point2D p, Tag tag){
+        ArrayList<Tag> list = pointToTag.getOrDefault(p, new ArrayList<>());
+        list.add(tag);
+        pointToTag.put(p, list);
+    }
     
     /**
      * Does the set contain point p?
