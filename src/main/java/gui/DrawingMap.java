@@ -3,7 +3,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import edu.princeton.cs.algs4.RectHV;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
@@ -15,9 +14,7 @@ import parser.TagRelation;
 import parser.TagWay;
 import parser.XMLReader;
 import util.MathUtil;
-import util.MecatorProjection;
 import util.MinPQ;
-import util.Point3D;
 import util.Rect3D;
 import util.Tree;
 import util.Trie;
@@ -195,7 +192,6 @@ public class DrawingMap {
 
     private void drawPoint(Tag node){
 
-        
         double radius = 25 * 1/Math.sqrt(transform.determinant());
         gc.fillOval(node.getLon() - radius / 2, -(node.getLat()) - radius / 2, radius, radius);
 
@@ -415,6 +411,7 @@ public class DrawingMap {
      * @return It returns the coordinates of the screen to map coordinates in an array (double[])
      */
     public float[] getScreenBounds(){
+        
         float[] bounds = new float[4]; // x_min ; y_min ; x_max ; y_max
         double width = ((canvas.getWidth()) / zoomLevel);
         double height = ((canvas.getHeight()) / zoomLevel);
