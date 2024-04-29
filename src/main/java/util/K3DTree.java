@@ -13,6 +13,7 @@ import edu.princeton.cs.algs4.Stack;
 import gnu.trove.list.linked.TLinkedList;
 import gnu.trove.map.hash.TCustomHashMap;
 import parser.Tag;
+import parser.TagRelation;
 import parser.TagWay;
 import parser.Type;
 
@@ -42,7 +43,7 @@ import parser.Type;
 public class K3DTree {
     private Node root;
     private int size;
-    private HashMap<Point3D, Tag> pointToTag;
+    private HashMap<Point3D, ArrayList<Tag>> pointToTag;
     public float[] bounds = new float[6];
 
     /**
@@ -111,7 +112,9 @@ public class K3DTree {
             root = insert(root, p, 0, new float[] {-180, -180, 180, 180});
         }
         
-        pointToTag.put(p, node);
+        ArrayList<Tag> temp = pointToTag.getOrDefault(p, new ArrayList<>(1));
+        temp.add(node);
+        pointToTag.put(p, temp);
     }
     
     private Node insert(Node n, Point3D p, int xyz, float[] coords) {
@@ -275,7 +278,7 @@ public class K3DTree {
             // Add contained points to our points stack
             if (rect.contains(tmp.p)){
                 //ArrayList<Tag> temp = pointToTag.get(tmp.p);
-                returnList.add(pointToTag.get(tmp.p));
+                returnList.addAll(pointToTag.get(tmp.p));
             }
             /**
              * Add Nodes containing promising rectangles to our nodes stack.
@@ -399,25 +402,27 @@ public class K3DTree {
      *         {@code null} otherwise.
      * @throws NullPointerException if {@code p} is {@code null}
      */
-    public Point3D nearest(Point3D p, List<Type> searchType) {
+    public Point3D nearest(Point3D p, List<Type> searchTypes) {
         if (p == null) throw new java.lang.NullPointerException(
                 "called contains() with a null Point2D");
         if (isEmpty()) return null;
-        return nearest(root, p, root.p, 0, searchType);
+        return nearest(root, p, root.p, 0, searchTypes);
     }
 
-    private Point3D nearest(Node n, Point3D p, Point3D champion, int xyz, List<Type> type) {
+    private Point3D nearest(Node n, Point3D p, Point3D champion, int xyz, List<Type> types) {
         
         // Handle reaching the end of the tree
         if (n == null) return champion;
         
         // Handle the given point exactly overlapping a point in the BST
         
-        if (n.p.equals(p) && type.contains(getTagsFromPoint(n.p).getType())) return p;
+        if (n.p.equals(p)){
+            return p;
+        }
 
         
         // Determine if the current Node's point beats the existing champion
-        if (n.p.distanceSquaredTo(p) < champion.distanceSquaredTo(p) && type.contains(getTagsFromPoint(n.p).getType()))
+        if (n.p.distanceSquaredTo(p) < champion.distanceSquaredTo(p) && isPointOfTypes(n.p, types))
             champion = n.p;
         
         /**
@@ -476,6 +481,23 @@ public class K3DTree {
         return champion;
     }
 
+
+    private boolean isPointOfTypes(Point3D p, List<Type> types){
+        for (Tag tag : pointToTag.get(p)){
+            if (tag instanceof TagWay){
+                if (types.contains(tag.getType())){
+                    
+                    return true;
+                }
+            }else if (tag instanceof TagRelation){
+                if (types.contains(tag.getType())){
+                    
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     
 
     /**
@@ -484,7 +506,7 @@ public class K3DTree {
      * @param point the point from where the search starts from
      * @return a list of Tags thats is connected to the the nearest Point3D in the KDTree
      */
-    public Tag nearestTags(Point3D point){
+    public ArrayList<Tag> nearestTags(Point3D point){
         return pointToTag.get(nearest(point));
     }
 
@@ -495,7 +517,7 @@ public class K3DTree {
      * @param point the point from where the search starts from
      * @return a list of Tags thats is connected to the the nearest Point2D in the KDTree
      */
-    public Tag nearestTags(Point3D point, List<Type> searchClass){
+    public ArrayList<Tag> nearestTags(Point3D point, List<Type> searchClass){
         return pointToTag.get(nearest(point, searchClass));
     }
 
@@ -516,8 +538,8 @@ public class K3DTree {
      * @param point is the point that you want the Tags related to
      * @return this return an ArrayList<Tag<?>> of all tags related to the given Point3D
      */
-    public Tag getTagsFromPoint(Point3D point){
-        return pointToTag.get(point);
+    public ArrayList<Tag> getTagsFromPoint(Point3D point){
+        return pointToTag.getOrDefault(point, null);
     }
     
     /**

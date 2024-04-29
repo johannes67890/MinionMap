@@ -33,15 +33,15 @@ public class DijstraTest {
     void testGetNearestRoad(){
         TagAddress start = XMLReader.getAddressById(1447913335l);
         Tree.insertTagInTree(start);
-        Tag road = Tree.getNearestOfType(start, Arrays.asList(Type.RESIDENTIAL_ROAD));
+        ArrayList<Tag> road = Tree.getNearestOfType(start, Arrays.asList(Type.RESIDENTIAL_ROAD));
         assertNotNull(road);
-        assertTrue(road instanceof TagWay);
-        assertEquals(27806594, road.getId());
+        assertTrue(road.get(0) instanceof TagWay);
+        assertEquals(27806594, road.get(0).getId());
 
         road = Tree.getNearestOfType(start, Type.getAllRoads());
         assertNotNull(road);
-        assertTrue(road instanceof TagWay);
-        assertEquals(27806594, road.getId());
+        assertTrue(road.get(0) instanceof TagWay);
+        assertEquals(27806594, road.get(0).getId());
     }
 
     @Test
