@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import parser.TagBound;
+import parser.TagNode;
 import parser.TagRelation;
 import parser.TagWay;
 import parser.XMLReader;
@@ -31,13 +32,13 @@ public class TagTest {
          */
         TagWay way = XMLReader.getWayById(26154396l);
         assertTrue(way.isInBounds(bound));
-        for (int i = 0; i < way.getNodes().length; i++) { 
+        for (int i = 0; i < way.getRefNodes().size(); i++) { 
             // Check if the first 8 nodes are not in bounds, but the last 2 nodes are
             if(i <= 1){
-                assertFalse(way.getNodes()[i].isInBounds(bound));
+                assertFalse(way.getRefNodes().get(i).isInBounds(bound));
             }
             else{
-                assertTrue(way.getNodes()[i].isInBounds(bound));
+                assertTrue(way.getRefNodes().get(i).isInBounds(bound));
             }
         }
 
@@ -47,5 +48,12 @@ public class TagTest {
         TagRelation relation = XMLReader.getRelationById(10343795l);
         // assertTrue(relation.isInBounds(bound));
 
+    }
+    @Test
+    public void testDistance(){
+        TagNode a0 = new TagNode(0, 55.6572603f, 12.4682648f);
+        TagNode a1 = new TagNode(1, 55.6572610f, 12.4685185f);
+
+        assertEquals(15.93, a0.distance(a1), 0.1);
     }
 }

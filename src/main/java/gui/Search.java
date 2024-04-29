@@ -2,20 +2,23 @@ package gui;
 
 import java.util.ArrayList;
 
-import javafx.scene.control.TextArea;
+import gnu.trove.map.hash.TLongObjectHashMap;
+import parser.Tag;
 import parser.TagAddress;
 import parser.TagAddress.SearchAddress;
 import parser.XMLReader;
+import util.Trie;
 
 public class Search {
 
-    ArrayList<String> cityNames, streetNames, postCodes;
-    ArrayList<TagAddress> addresses;
-    XMLReader reader;
+    private ArrayList<String> cityNames, streetNames, postCodes;
+    private TLongObjectHashMap<TagAddress> addresses;
+    private Trie trie;
 
-    public Search(ArrayList<TagAddress> addresses){
-        this.addresses = addresses;
+    public Search(){
+        this.addresses = XMLReader.getAddresses();
         readFiles();
+        trie = XMLReader.getTrie();
     }
 
     /**
@@ -23,44 +26,17 @@ public class Search {
      */
     public void readFiles(){
 
-
+        //TODO make these into a hashmap?
         cityNames = new ArrayList<>();
         streetNames = new ArrayList<>();
         postCodes = new ArrayList<>();
-        String current;
-        String[] splitCurrent;
 
         //Adding addresses from XMLReader into the lists
-        for (int i = 0; i < addresses.size(); i++){
-            cityNames.add(addresses.get(i).getCity());
-            streetNames.add(addresses.get(i).getStreet());
-            postCodes.add(addresses.get(i).getPostcode());
+        for (TagAddress a : addresses.valueCollection().stream().toList()){
+            cityNames.add(a.getCity());
+            streetNames.add(a.getStreet());
+            postCodes.add(a.getPostcode());
         }
-        
-        /*try{
-
-            BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/citynames.txt"));
-            while (reader.ready()) {
-                cityNames.add(reader.readLine());
-            }
-            reader.close();
-            reader = new BufferedReader(new FileReader("src/main/resources/streetnames.txt"));
-            while (reader.ready()){
-                streetNames.add(reader.readLine());
-            }
-            reader.close();
-            reader = new BufferedReader(new FileReader("src/main/resources/postnumre.txt"));
-            while (reader.ready()){
-                current = reader.readLine();
-                splitCurrent = current.split(" ");
-
-                postCodes.add(splitCurrent[0]);
-            }
-            reader.close();
-        
-        } catch(IOException e){
-            System.out.println("FILE NOT FOUND");
-        }*/
     }
 
 
@@ -71,38 +47,52 @@ public class Search {
      * 
      * @param input String that will be contructed into an address.
      */
-    public void searchForAdress(String input, TextArea output){
+    public SearchAddress searchForAddress(String input){
         SearchAddress a = new SearchAddress(input);
-            output.setText(a.toString());
+        String street = a.street;
+        String house = a.house;
+        String floor = a.floor;
+        String side = a.side;
+        String postcode = a.postcode;
+        String city = a.city;
+        long time = System.currentTimeMillis();
 
-            long time = System.currentTimeMillis();
+        if(cityNames.contains(a.city)){
+            city = a.city;
+            //System.out.println("CITY FOUND: " + a.city);
+        } else{
 
-            if(cityNames.contains(a.city)){
-                System.out.println("CITY FOUND: " + a.city);
+            String topString = findSimilar(cityNames, a.city);
+
+            if (topString != null){
+
+                //System.out.println("Mente du: " + topString + "?");
+                a.city = topString;
+
             } else{
-
-                String topString = findSimilar(cityNames, a.city);
-
-                if (topString != null){
-
-                    System.out.println("Mente du: " + topString + "?");
-
-                } else{System.out.println("This City: " + a.city + " does not exist");}
-
+                //System.out.println("This City: " + a.city + " does not exist");
             }
-            if(streetNames.contains(a.street)){
-                System.out.println("STREET FOUND: " + a.street);
+
+        }
+        if(streetNames.contains(a.street)){
+            street = a.street;
+            
+        } else{
+
+            String topString = findSimilar(streetNames, a.street);
+
+            if (topString != null){
+                //System.out.println("Mente du: " + topString + "?");
+                a.street = topString;
             } else{
+                //System.out.println("This City: " + a.street + " does not exist");
+            }
 
-                String topString = findSimilar(streetNames, a.street);
+        } 
+        //System.out.println(a.street);
 
-                if (topString != null){
-                    System.out.println("Mente du: " + topString + "?");
-                } else{System.out.println("This City: " + a.street + " does not exist");}
-
-            } 
-            System.out.println("Time: " + (System.currentTimeMillis() - time));
-            System.out.println(a.street);
+        a = new SearchAddress(street + " " + house + " " + floor + " " + side + " " + postcode + " " + city);
+        return a;
     }
 
     /**
@@ -116,19 +106,19 @@ public class Search {
      * @return a string in the list that resembles s the most
      */
     public String findSimilar(ArrayList<String> list, String s){
-        String topString = null;
+        String nearestWord = null;
 
         int maxSim = Integer.MAX_VALUE;
         int current;
 
-        for (String cityName : cityNames){
-            current = util.StringUtility.getLevenshteinDistance(cityName, s);
+        for (String comparatorString : list){
+            current = util.StringUtility.getLevenshteinDistance(comparatorString, s);
             if (current < maxSim){
                 maxSim = current;
-                topString = cityName;
+                nearestWord = comparatorString;
             }
         }
-        return topString;
+        return nearestWord;
     }
 
     public ArrayList<String> getCities(){
@@ -142,5 +132,65 @@ public class Search {
     }
 
 
+    //TODO: Only find the first instance of a street with the name. Turn into average lat and lon?
+    public double getLatitudeByStreet(String street){
+        for(TagAddress a : addresses.valueCollection().stream().toList()){
+            if(a.getStreet().equals(street)){
+                return a.getLat();
+            }
+        }
+        return 0;
+    }
 
+    public double getLongitudeByStreet(String street){
+        for(TagAddress a : addresses.valueCollection().stream().toList()){
+            if(a.getStreet().equals(street)){
+                return a.getLon();
+            }
+        }
+        return 0;
+    }
+
+    public TagAddress getTagAddressByAddress(SearchAddress searchAddress){
+        TagAddress best = null;
+        int depth = 0;
+        for(TagAddress tagAddress : addresses.valueCollection().stream().toList()){
+            if((searchAddress.city.isBlank() && searchAddress.postcode.isBlank())||tagAddress.getPostcode().equals(searchAddress.postcode) || tagAddress.getCity().equals(searchAddress.street)){
+                if(depth < 1){
+                    best = tagAddress;
+                    depth = 1;
+                }
+                if((searchAddress.street.isBlank())||tagAddress.getStreet().equals(searchAddress.street)){
+                    if(depth < 2){
+                        best = tagAddress;
+                        depth = 2;
+                    }
+                    if(tagAddress.getHouseNumber().equals(searchAddress.house)){
+                        System.out.println("THIS IS THE STREET " + tagAddress.getStreet());
+                        return tagAddress;
+                    }
+                }
+            }
+        }
+        return best;
+    }
+
+    public ArrayList<TagAddress> getSuggestions(String input){
+        return trie.getAddressSuggestions(input, 5);
+    }
+
+
+    public static void getTagBySearchAddress(SearchAddress searchAddress){
+        
+        if (!searchAddress.house.isBlank()){
+
+        }else if (!searchAddress.street.isBlank()){
+
+        }else if (!searchAddress.city.isBlank()){
+
+        }else{
+
+        }
+
+    }
 }

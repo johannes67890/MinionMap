@@ -34,14 +34,6 @@ public class Main extends Application {
                 f.delete();
             }
         }
-
-        String destDirChunks = System.getProperty("user.dir").toString() + "\\src\\main\\resources\\chunks\\";
-        File chunkFile = new File(destDirChunks);
-        if(chunkFile.isDirectory()){
-            for(File f : chunkFile.listFiles()){
-                f.delete();
-            }
-        }
     }
 
 }

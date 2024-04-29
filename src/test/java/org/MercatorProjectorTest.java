@@ -12,8 +12,8 @@ public class MercatorProjectorTest {
     public void MercatorProjectorBoundProjectTest(){
         TagBound bound = new TagBound(12, 55, 13, 56);
         TagBound nd = MecatorProjection.project(bound);
-        assertEquals(1345708.4, nd.getMaxLat(), 0.1E2);
-        assertEquals(7361866.0, nd.getMinLat(), 0.1E2);
+        assertEquals(1345708.4, nd.getMinLat(), 0.1E2);
+        assertEquals(7361866.0, nd.getMaxLat(), 0.1E2);
         assertEquals(1447153.3, nd.getMinLon(), 0.1E2);
         assertEquals(6233891.4, nd.getMaxLon(), 0.1E2);
     }
@@ -22,8 +22,8 @@ public class MercatorProjectorTest {
     public void MercatorProjectorBoundUnProjectTest(){
         TagBound bound = new TagBound(-1345708.4f, -7361866.0f, 1447153.3f, 6233891.4f);
         TagBound nd = MecatorProjection.unproject(bound);
-        assertEquals(-12, nd.getMaxLat(), 0.1);
-        assertEquals(-55, nd.getMinLat(), 0.1);
+        assertEquals(-12, nd.getMinLat(), 0.1);
+        assertEquals(-55, nd.getMaxLat(), 0.1);
         assertEquals(13, nd.getMinLon(), 0.1);
         assertEquals(56, nd.getMaxLon(), 0.1);
     }
