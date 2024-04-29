@@ -116,6 +116,8 @@ public class TagWay extends Tag implements Comparable<TagWay>{
         return nodes;
     }
 
+    
+
     public boolean isLine(){
         return isLine;
     }

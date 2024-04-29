@@ -97,29 +97,30 @@ public class Dijsktra {
             if(node.getNext() == null) break;
             ArrayList<Tag> intersections = Tree.getTagFromPoint(node);
             if(intersections.size() > 1 && intersections != null){
+               // System.out.println("Intersections: " + node.getId());
                 for (Tag tag : intersections) {
                     if(tag instanceof TagWay){
+                        TagWay w = (TagWay) tag;
                         if(tag.equals(way)) continue;
-                        System.out.println("here " + node.getId());
-                        
+                        for (TagNode tag2 : w.getRefNodes()) {
+                            if(tag2.getNext() == null) break;
+
+                            addTwoWayEdges(tag2, w);
+                        }
+                       // System.out.println("intersection done");
                     }
                 }
             }
 
-            if(!node.getParents().isEmpty() && !node.getParents().contains(way)) {
-                for (TagWay tagWay : node.getParents()) {
-                    if(tagWay.equals(way)) break;
-                    addWayEdges(tagWay);
-                }
-            }
             addTwoWayEdges(node, way);
-            System.out.println("Added edge from " + node.getId() + " to " + node.getNext().getId() + " with speed limit " + way.getSpeedLimit());
+            //System.out.println("Added edge from " + node.getId() + " to " + node.getNext().getId() + " with speed limit " + way.getSpeedLimit());
         }
     }
 
     private void addTwoWayEdges(TagNode node, TagWay way){
             G.addEdge(new DirectedEdge(node, node.getNext(), way.getSpeedLimit()));
             G.addEdge(new DirectedEdge(node.getNext(), node, way.getSpeedLimit()));
+            //System.out.println("Added edge from " + node.getId() + " to " + node.getNext().getId() + " with speed limit " + way.getSpeedLimit());
     }
 
     private void addOneWayEdge(TagNode node, TagWay way){
@@ -170,6 +171,7 @@ public class Dijsktra {
             } else {
                 pq.insert(w.getId(), distTo.get(w));
             }
+            System.out.println("Relaxed edge from " + v.getId() + " to " + w.getId() + " with weight " + e.weight() + " and new distance " + distTo.get(w));
         }
     }
 
