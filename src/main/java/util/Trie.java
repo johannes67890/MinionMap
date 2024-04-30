@@ -183,9 +183,24 @@ public class Trie {
      * @return an Address object
      */
     public TagAddress getAddressObject(String searchInput, String house) {
+
         currentNode = root;
-        if (moveThroughTree(searchInput) && currentNode.getIsEnd()) {
-            return currentNode.getAddressObject(house);
+        house = house.replaceAll(" ", "");
+        String numbers = searchInput.toLowerCase().replaceAll("[ ,a-zA-Z]", "");
+        String searchInputLetters = searchInput.toLowerCase().replaceAll("[ ,]", "");
+        ArrayList<TrieNode> suggestionList = new ArrayList<>();
+        ArrayList<TagAddress> returnList = new ArrayList<>();
+        searchInput = searchInput.toLowerCase().replaceAll("[ ,]", "");
+
+        currentNode = root;
+        if (moveThroughTree(searchInput)) {
+
+            suggestionFinder(suggestionList, currentNode, 5, numbers, 0);
+           
+            return suggestionList.get(0).getAddressObject(house);
+
+
+            //return currentNode.getAddressObject(house);
         } else {
             return null;
         }

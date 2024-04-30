@@ -3,7 +3,6 @@ package gui;
 import java.util.ArrayList;
 
 import gnu.trove.map.hash.TLongObjectHashMap;
-import parser.Tag;
 import parser.TagAddress;
 import parser.TagAddress.SearchAddress;
 import parser.XMLReader;
@@ -177,6 +176,10 @@ public class Search {
 
     public ArrayList<TagAddress> getSuggestions(String input){
         return trie.getAddressSuggestions(input, 5);
+    }
+
+    public TagAddress getAddress(String input, String houseNumber){
+        return trie.getAddressObject(input, houseNumber);
     }
 
 

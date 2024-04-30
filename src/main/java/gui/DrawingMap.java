@@ -2,12 +2,10 @@ package gui;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import javafx.scene.image.ImageView;
 
-import edu.princeton.cs.algs4.RectHV;
-import gnu.trove.list.linked.TLinkedList;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 import parser.Tag;
@@ -21,9 +19,8 @@ import util.MathUtil;
 import util.MinPQ;
 import util.Rect3D;
 import util.Tree;
-import util.Zoombar;
-import parser.Tag;
 import util.Trie;
+import util.Zoombar;
 
 
 /**
@@ -190,7 +187,6 @@ public class DrawingMap {
     private void drawMarkedTag(Tag tag){
         gc.setFill(Color.PINK.interpolate(Color.RED, 0.5));
         gc.setStroke(Color.RED);
-        
         if (tag instanceof TagRelation){
             drawRelation((TagRelation)tag);
         }else if(tag instanceof TagWay){

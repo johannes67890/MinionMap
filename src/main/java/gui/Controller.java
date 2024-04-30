@@ -2,6 +2,7 @@ package gui;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import gui.GraphicsHandler.GraphicStyle;
@@ -73,6 +74,7 @@ public class Controller implements Initializable, ControllerInterface{
     private String selectedEndItem;
     private ObservableList<String> searchList = FXCollections.observableArrayList();
 
+    private List<TagAddress> addresses = new ArrayList<>();
 
     Search s = new Search();
 
@@ -258,6 +260,23 @@ public class Controller implements Initializable, ControllerInterface{
         });
         searchBarStart.setSkin(comboBoxListViewSkin);
 
+        searchBarStart.setOnAction((ActionEvent e) ->{
+
+            String string = searchBarStart.getEditor().textProperty().getValue();
+
+            String[] split = string.split(",");
+
+
+            if (split.length == 3){
+                string = split[0] + split[2];
+
+                TagAddress address = s.getAddress(string, split[1]);
+                showAddress(address);
+
+            }
+
+
+        });
         
         searchBarStart.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
 
@@ -284,7 +303,7 @@ public class Controller implements Initializable, ControllerInterface{
 
     private void chooseDestination(String text, boolean isLeft){
         if (isLeft){
-            showAddress(text);
+            //showAddress(text);
         }else{
         }
     }
@@ -293,7 +312,6 @@ public class Controller implements Initializable, ControllerInterface{
     private void search(String address, boolean isStart, boolean test){
         // Vi har skærmkoordinater i xy og canvas witdh and height
         SearchAddress addressObj = s.searchForAddress(address);
-        //System.out.println("addressObj: " + addressObj.toString());
         if (isStart && (selectedItem == null || !selectedItem.equals(addressObj.toString()))){
             searchBarStart.getItems().add(0, addressObj.toString());
             if (!searchBarStart.isShowing() && searchBarStart.getItems().size() > 0){
@@ -330,9 +348,12 @@ public class Controller implements Initializable, ControllerInterface{
                 synchronized (searchList) {
                     if (!searchBarStart.getItems().isEmpty()) {
                         searchBarStart.getItems().clear();
+                        addresses.clear();
+
                     }
                     for (TagAddress tagAddress : tagAddresses) {
                         searchList.add(tagAddress.toString());
+                        addresses.add(tagAddress);
                     }
                     searchBarStart.getItems().setAll(searchList);
                     searchList.clear();
@@ -344,36 +365,44 @@ public class Controller implements Initializable, ControllerInterface{
         }
     }
 
-    private void showAddress(String address){
-        SearchAddress addressObj = s.searchForAddress(address);
+    private void showAddress(TagAddress tagAddress){
         DrawingMap drawingMap = mainView.getDrawingMap();
 
         float[] bounds = drawingMap.getScreenBounds();
         double x = ((bounds[2] - bounds[0]) / 2) + bounds[0];
-        double y = ((bounds[1] - bounds[3]) / 2) + bounds[1];
+        double y = ((bounds[3] - bounds[1]) / 2) + bounds[1];
 
         //drawingMap.getTransform().determinant()
         Point2D pointCenter = drawingMap.getTransform().transform(x, y);
-        TagAddress tagAddress = s.getTagAddressByAddress(addressObj);
         System.out.println(tagAddress.getMunicipality() + " " + tagAddress.getCity() + " " + tagAddress.getStreet() + " " + tagAddress.getHouseNumber());
         Point2D point = drawingMap.getTransform().transform(tagAddress.getLon(), tagAddress.getLat());
         double deltaX = point.getX() - pointCenter.getX();
         double deltaY = point.getY() - pointCenter.getY();
        
-        Point3D point2d = new Point3D(tagAddress.getLon(), tagAddress.getLat(), (byte) 0);
+        Point3D point2d = new Point3D(tagAddress.getLon(), tagAddress.getLat(), (byte) 8);
 
 
         Point3D nearest = Tree.getNearestPoint(point2d);
 
         ArrayList<Tag> nearestTag = Tree.getTagsFromPoint(nearest);
 
+        Tag tagToDraw = null;
+        for (Tag tag : nearestTag){
 
-        if(nearestTag.get(0) instanceof TagWay && ((TagWay)nearestTag.get(0)).getType() != null && ((TagWay)nearestTag.get(0)).getType().equals(parser.Type.BUILDING)){
-
-            drawingMap.setMarkedTag(nearestTag.get(0));
-        } else{
-            drawingMap.setMarkedTag(tagAddress);
+            if (tag instanceof TagWay && ((TagWay)tag).getType() != null && ((TagWay)tag).getType().equals(parser.Type.BUILDING)){
+                tagToDraw = tag;
+                break;
+            }
         }
+
+
+        if(tagToDraw != null){
+            //drawingMap.setMarkedTag(tagToDraw);
+        } else{
+            //drawingMap.setMarkedTag(tagAddress);
+        }
+
+        drawingMap.setMarkedTag(tagAddress);
 
         mainView.getDrawingMap().pan(-deltaX, deltaY);
 

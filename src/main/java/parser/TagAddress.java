@@ -93,7 +93,11 @@ public class TagAddress extends Tag  implements Comparable{
     }
 
     public String toString() {
-        return street + " " + house + ", " + postCode + " " + city;
+        if (!house.equals("")){
+            return street + ", " + house + ", " + postCode + " " + city;
+        } else{
+            return street + ", " + postCode + " " + city;
+        }
     }
 
     /**
