@@ -19,8 +19,8 @@ import parser.Tag;
 import parser.TagAddress;
 
 public class Dijsktra {
-    private HashMap<Tag, Double> distTo;          // distTo[v] = distance  of shortest s->v path
-    private HashMap<Tag, DirectedEdge> edgeTo;    // edgeTo[v] = last edge on shortest s->v path
+    private HashMap<Long, Double> distTo;          // distTo[v] = distance  of shortest s->v path
+    private HashMap<Long, DirectedEdge> edgeTo;    // edgeTo[v] = last edge on shortest s->v path
     private IndexMinPQ<Double> pq;    // priority queue of vertices
     
     private Digraph G = new Digraph();
@@ -38,14 +38,15 @@ public class Dijsktra {
         // TODO: getSurroundingRoads(start) is not working - get all roads surrounding start
         List<TagWay> list = new ArrayList<>(){
             {
-                // add(XMLReader.getWayById(27806594l));
+                add(XMLReader.getWayById(27806594l));
+                add(XMLReader.getWayById(27806594l));
                 add(XMLReader.getWayById(26154395l));
             }
         
         };
 
         // // for (TagWay way : getSurroundingRoads(start)) {
-        for (TagWay way : list) {
+        for (TagWay way : XMLReader.getWays().valueCollection()) {
             addWayEdges(way);
         }
 
@@ -55,34 +56,38 @@ public class Dijsktra {
         }
 
         distTo = new HashMap<>();
-        edgeTo = new HashMap<Tag, DirectedEdge>(G.V());
+        edgeTo = new HashMap<Long, DirectedEdge>(G.V());
        
         for (TagNode v : G.vertices()) {
             if(v.getId() == start.getId()) {
                 start = v;
-                distTo.put(v, 0.0);
+                distTo.put(v.getId(), 0.0);
                 continue;
             }
             if(v.getId() == finish.getId()) {
                 finish = v;
-                distTo.put(v, Double.POSITIVE_INFINITY);
+                distTo.put(v.getId(), Double.POSITIVE_INFINITY);
                 continue;
             }
-            else
-            distTo.put(v, Double.POSITIVE_INFINITY);   
+            else {
+                distTo.put(v.getId(), Double.POSITIVE_INFINITY);
+                continue;
+            }
         } 
 
         pq = new IndexMinPQ<Double>(G.V());
-        pq.insert(start.getId(), distTo.get(start));
+        pq.insert(start.getId(), distTo.get(start.getId()));
         while (!pq.isEmpty()) {
             TagNode v = G.getNode(pq.delMin());
+            
             for (DirectedEdge e : G.adj(v)) {
                 relax(e);
             }
         }
 
         if (hasPathTo(finish)) {
-            StdOut.printf("%d to %d (%.2f)  ", start.getId(), finish.getId(), distTo.get(finish));
+            StdOut.printf("%d to %d (%.2f)  ", start.getId(), finish.getId(), distTo.get(finish.getId()));
+            StdOut.println();
             for (DirectedEdge e : pathTo(finish)) {
                 System.out.println(e + "       ");
             }
@@ -102,40 +107,32 @@ public class Dijsktra {
     }
 
     private void addWayEdges(TagWay way){
-        TagNode to = null, from = null;
         for (TagNode node : way.getRefNodes()) {
-            // ArrayList<Tag> intersections = Tree.getTagFromPoint(node);
-            // if(intersections.size() > 1 && intersections != null){
-            //    System.out.println("Intersections: " + node.getId());
-            //     for (Tag tag : intersections) {
-            //         if(tag instanceof TagWay){
-            //             TagWay w = (TagWay) tag;
-            //             if(tag.equals(way)) continue;
-            //             for (TagNode tag2 : w.getRefNodes()) {
-            //                 if(tag2.getNext() == null) break;
-
-            //                 addTwoWayEdges(tag2, w);
-            //             }
-            //            System.out.println("intersection done");
-            //         }
-            //     }
-            // }
-            if(from == null){
-                from = node;
-            } else {
-                to = node;
-                G.addEdge(new DirectedEdge(from, to, 1));
-                from = to;
-            }
+            ArrayList<Tag> intersections = Tree.getTagFromPoint(node);
+            if(intersections.size() > 1 && intersections != null){
+               System.out.println("Intersections: " + node.getId());
+                for (Tag tag : intersections) {
+                    if(tag instanceof TagWay){
+                        TagWay w = (TagWay) tag;
+                        if(tag.equals(way)) continue;
+                        for (TagNode tag2 : w.getRefNodes()) {
+                            if(tag2.getNext() == null) break;
+                            addTwoWayEdges(tag2, w);
+                        }
+                       System.out.println("intersection done");
+                    }
+                }
+            }   
+          
             if(node.getNext() == null) break;
-            // addOneWayEdge(node, way);
+            addTwoWayEdges(node, way);
             System.out.println("Added edge from " + node.getId() + " to " + node.getNext().getId() + " with speed limit " + way.getSpeedLimit());
         }
     }
 
     private void addTwoWayEdges(TagNode node, TagWay way){
-            G.addEdge(new DirectedEdge(node, node.getNext(), way.getSpeedLimit()));
-            G.addEdge(new DirectedEdge(node.getNext(), node, way.getSpeedLimit()));
+            G.addEdge(new DirectedEdge(node, node.getNext(), 1));
+            G.addEdge(new DirectedEdge(node.getNext(), node, 1));
             System.out.println("Added edge from " + node.getId() + " to " + node.getNext().getId() + " with speed limit " + way.getSpeedLimit());
     }
 
@@ -178,17 +175,21 @@ public class Dijsktra {
     
       // relax edge e and update pq if changed
     private void relax(DirectedEdge e) {
-        TagNode v = e.from(), w = e.to();
+        long v = e.from().getId(), w = e.to().getId();
+
         // if(!distTo.containsKey(w)){
         //     distTo.put(w, Double.POSITIVE_INFINITY);
+        // }
+        // if(!distTo.containsKey(v)){
+        //     distTo.put(v, Double.POSITIVE_INFINITY);
         // }
         if(distTo.get(w) > distTo.get(v) + e.weight()) {
             distTo.put(w, distTo.get(v) + e.weight());
             edgeTo.put(w, e);
-            if(pq.contains(w.getId())){
-                pq.decreaseKey(w.getId(), distTo.get(w));
+            if(pq.contains(w)){
+                pq.decreaseKey(w, distTo.get(w));
             } else {
-                pq.insert(w.getId(), distTo.get(w));
+                pq.insert(w, distTo.get(w));
             }
         }
     }
@@ -202,7 +203,7 @@ public class Dijsktra {
      * @throws IllegalArgumentException unless {@code 0 <= v < V}
      */
     public boolean hasPathTo(Tag v) {
-        return distTo.get(v) < Double.POSITIVE_INFINITY;
+        return distTo.get(v.getId()) < Double.POSITIVE_INFINITY;
     }
 
     /**
@@ -216,7 +217,7 @@ public class Dijsktra {
     public Iterable<DirectedEdge> pathTo(Tag v) {
         if (!hasPathTo(v)) return null;
         Stack<DirectedEdge> path = new Stack<DirectedEdge>();
-        for (DirectedEdge e = edgeTo.get(v); e != null; e = edgeTo.get(e.from())) {
+        for (DirectedEdge e = edgeTo.get(v.getId()); e != null; e = edgeTo.get(e.from().getId())) {
             path.push(e);
         }
         return path;
@@ -232,9 +233,10 @@ public class Dijsktra {
         Tree.initialize(new ArrayList<Tag>(XMLReader.getWays().valueCollection()));;
         
 
-        TagNode start = XMLReader.getNodeById(10274392003l);
+        // TagNode start = XMLReader.getNodeById(286405539l);
+        // TagNode finish = XMLReader.getNodeById(286405326l);
+        TagNode start = XMLReader.getNodeById(6760379519l);
         TagNode finish = XMLReader.getNodeById(286405326l);
-  
       
         
 
