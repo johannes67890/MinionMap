@@ -6,6 +6,7 @@ import java.util.ResourceBundle;
 
 import gui.GraphicsHandler.GraphicStyle;
 import gui.MainView.StageSelect;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -72,6 +73,7 @@ public class Controller implements Initializable, ControllerInterface{
     private static MainView mainView;
     private String selectedItem;
     private String selectedEndItem;
+    private ObservableList<String> searchList = FXCollections.observableArrayList();
 
 
     Search s = new Search();
@@ -320,17 +322,25 @@ public class Controller implements Initializable, ControllerInterface{
 
     }
 
-    private void search(String address, boolean isStart){
-
-        if (!address.isEmpty() && address.charAt(address.length() - 1) != ' '){
+    private void search(String address, boolean isStart) {
+    if (!address.isEmpty() && address.charAt(address.length() - 1) != ' ') {
             ArrayList<TagAddress> tagAddresses = s.getSuggestions(address);
-            if (!searchBarStart.getItems().isEmpty()){
-                searchBarStart.getItems().clear();
-            }
-            for (TagAddress tagAddress : tagAddresses){
-                searchBarStart.getItems().add(tagAddress.toString());
-            }
-            searchBarStart.show();
+            //System.out.println("Number of suggestions: " + tagAddresses.size());
+            
+            // Update UI on JavaFX Application Thread
+            Platform.runLater(() -> {
+                synchronized (searchList) {
+                    if (!searchBarStart.getItems().isEmpty()) {
+                        searchBarStart.getItems().clear();
+                    }
+                    for (TagAddress tagAddress : tagAddresses) {
+                        searchList.add(tagAddress.toString());
+                    }
+                    searchBarStart.getItems().setAll(searchList);
+                    searchList.clear();
+                    searchBarStart.show();
+                }
+            });
         }
     }
 
