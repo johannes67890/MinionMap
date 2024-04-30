@@ -1,10 +1,8 @@
 package parser;
+import java.util.ArrayList;
 import java.util.HashMap;
 
-
 import gnu.trove.list.TLinkable;
-import gnu.trove.list.linked.TLinkedList;
-import java.util.*;
 
 
 /**
@@ -120,6 +118,16 @@ public class TagNode extends Tag implements TLinkable<TagNode>, Comparable<TagNo
     @Override
     public void setPrevious(TagNode linkable) {
         prev = linkable;
+    }
+
+    public void revertNextPrev(){
+        TagNode temp = getNext();
+
+
+        setNext(getPrevious());
+        setPrevious(temp);
+        
+    
     }
     
     public void setParent(TagWay linkable) {
