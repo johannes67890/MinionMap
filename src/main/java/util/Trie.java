@@ -1,6 +1,7 @@
 package util;
 
 import java.util.ArrayList;
+
 import parser.TagAddress;
 
 public class Trie {
@@ -75,7 +76,7 @@ public class Trie {
     public ArrayList<TagAddress> getAddressSuggestions(String searchInput, int suggestionAmount) {
         currentNode = root;
         String numbers = searchInput.toLowerCase().replaceAll("[ ,a-zA-Z]", "");
-        String searchInputLetters = searchInput.toLowerCase().replaceAll("[ ,0-9]", "");
+        String searchInputLetters = searchInput.toLowerCase().replaceAll("[ ,]", "");
         ArrayList<TrieNode> suggestionList = new ArrayList<>();
         ArrayList<TagAddress> returnList = new ArrayList<>();
 

@@ -15,10 +15,8 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.image.ImageView;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.skin.ComboBoxListViewSkin;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -298,13 +296,13 @@ public class Controller implements Initializable, ControllerInterface{
         //System.out.println("addressObj: " + addressObj.toString());
         if (isStart && (selectedItem == null || !selectedItem.equals(addressObj.toString()))){
             searchBarStart.getItems().add(0, addressObj.toString());
-            if (!searchBarStart.isShowing()){
+            if (!searchBarStart.isShowing() && searchBarStart.getItems().size() > 0){
                 searchBarStart.show();
             }
 
         }else if (!isStart && (selectedEndItem == null || !selectedEndItem.equals(addressObj.toString()))){
             searchBarDestination.getItems().add(0, addressObj.toString());
-            if (!searchBarDestination.isShowing()){
+            if (!searchBarDestination.isShowing() && searchBarStart.getItems().size() > 0){
                 searchBarDestination.show();
             }
         }else{
@@ -338,7 +336,9 @@ public class Controller implements Initializable, ControllerInterface{
                     }
                     searchBarStart.getItems().setAll(searchList);
                     searchList.clear();
-                    searchBarStart.show();
+                    if (!searchBarStart.isShowing() && searchBarStart.getItems().size() > 0){
+                        searchBarStart.show();
+                    }
                 }
             });
         }
