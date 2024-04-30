@@ -167,7 +167,7 @@ public class XMLBuilder {
                                         parseStreet(roadType);
                                     }
                                 }
-                            } else continue;
+                            }
                             
                             switch (currType) { 
                                 case ROUTE:

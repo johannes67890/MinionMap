@@ -39,7 +39,7 @@ public enum Type  {
 
 
     // Natural, Landuse and main infrastructure (Hierarchy 9)
-    MOTORWAY("highway", new String[]{"motorway"}, 9, 9, Color.DARKRED, 5, true, 6, 100),
+    MOTORWAY("highway", new String[]{"motorway", "motorway_link"}, 9, 9, Color.DARKRED, 5, true, 6, 100),
     PRIMARY_ROAD("highway", new String[]{"primary", "trunk"}, 9, 9, Color.PEACHPUFF, 5,  true, 6, 100),
     SECONDARY_ROAD("highway", new String[]{"secondary"}, 9, 9, Color.YELLOW.desaturate(), 5, true, 6, 75),
     TERTIARY_ROAD("highway",new String[]{"tertiary", "tertiary_link"},9, 9, Color.DARKGRAY, 4, true, 4, 50),
@@ -87,11 +87,10 @@ public enum Type  {
     AERIALWAY("aerialway", new String[]{"cable_car", "gondola", "mixed_lift", "chair_lift", "drag_lift", "t-bar", "j-bar", "platter", "rope_tow", "magic_carpet", "zip_line", "goods", "pylon"}, 
     4, 9, Color.LIGHTGRAY, 2, true, 4, 10),
     AERIALWAYSTATION("aerialway", new String[]{"station"},4, 8, Color.GRAY, Color.GRAY.darker(), 5, false),
-    OTHER_ROAD("highway",new String[]{"unclassified", "track", "footway", "cycleway", "path", 
-    "service", "motorway_link", "steps", "living_street", "mini_roundabout", "pedestrian"}, 4, 9, Color.WHITE, 5, true, 2, 7),
-
     RESIDENTIAL_ROAD("highway",new String[]{"residential"}, 4, 9, Color.WHITE, 5, true, 2, 7),
-
+    BIKE_ROAD("cycleway",new String[]{"lane", "oppisite", "opposite_lane", "track", "opposite_track", "share_busway", "shared_lane", "opposite_share_busway"}, 4, 9, Color.WHITE, 5, true, 2, 7),
+    PEDESTRIAN_ROAD("highway",new String[]{"cycleway", "footway", "path", "steps", "bridleway", "service", "living_street", "pedestrian", "unclassified"}, 4, 9, Color.WHITE, 5, true, 2, 7),
+    OTHER_ROAD("highway",new String[]{"road", "mini_roundabout"}, 4, 9, Color.WHITE, 5, true, 2, 7),
     // Relations (Hierarchy: 3)
     MULTIPOLYGON("type", new String[]{"multipolygon"}, 3, Color.BLACK, 0),
     RESTRICTION("type", new String[]{"restriction"}, 3, Color.BLACK, 0),
@@ -152,10 +151,41 @@ public enum Type  {
         this.polyLineColor = Color.BLACK;
     }
     
-    /**** Groups ****/
+
+    /**** Groups ****/    
     public static List<Type> getAllRoads() {
         return Arrays.stream(Type.values())
             .filter(type -> type.getKey().contains("highway"))
+            .collect(Collectors.toList());
+    }
+
+    public static List<String> getAllCarRoads() {
+        String[] unAllowed = {"footway", "steps", "cycleway", "bridleway", "path", "track", 
+        "pedestrian", "service", "living_street", "unclassified", "road", "mini_roundabout"};
+
+        return Arrays.stream(Type.values())
+            .filter(type -> type.getKey().contains("highway"))
+            .flatMap(type -> type.filteredType(unAllowed).stream())
+            .collect(Collectors.toList());
+    }
+
+    public static List<String> getAllBikeRoads() {
+        String[] unAllowed = {"motorway", "primary", "trunk", "footway", "steps"};
+        // A group that contains all types of roads that are for bikes
+        // The group is without motorways and primary roads
+        return Arrays.stream(Type.values())
+            .filter(type -> type.getKey().contains("highway") || type.getKey().contains("cycleway"))
+            .flatMap(type -> type.filteredType(unAllowed).stream())
+            .collect(Collectors.toList());
+    }
+
+    public static List<String> getAllPedestrianRoads() {
+        String[] unAllowed = {"motorway", "motorway_link", "primary", "primary_link", "trunk", "trunk_link", "cycleway"};
+        // A group that contains all types of roads that are for pedestrians
+        // The group is without motorways and primary roads
+        return Arrays.stream(Type.values())
+            .filter(type -> type.getKey().contains("highway"))
+            .flatMap(type -> type.filteredType(unAllowed).stream())
             .collect(Collectors.toList());
     }
 
@@ -166,6 +196,16 @@ public enum Type  {
             .collect(Collectors.toList());
     }
 
+    /* Utility Methods */
+    private List<String> filteredType(String[] unAllowed){
+        List<String> res = new ArrayList<>();
+            for (String str : this.getValue() ) {
+                if(!Arrays.asList(unAllowed).contains(str)){
+                    res.add(str);
+                }
+            }
+        return res;
+    }
 
     public String getKey() {
         return key;
