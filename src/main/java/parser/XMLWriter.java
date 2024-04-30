@@ -14,6 +14,7 @@ import java.io.IOException;
 public class XMLWriter {
     private String directoryPath = "src/main/resources/chunks/";
     public static ChunkFiles chunkFiles = new ChunkFiles();
+    // TODO: tagList - do we lose data if we use a hashset instead of a list?
     private static HashMap<TagBound, HashSet<Tag>> tagList = new HashMap<TagBound, HashSet<Tag>>();
     private static int chunkId = 0;
 
