@@ -25,6 +25,7 @@ public class TagWay extends Tag implements Comparable<TagWay>{
     long id;
     String name;
     TLinkedList<TagNode> nodes = new TLinkedList<TagNode>();
+    TagRelation relationParent;
     int speedLimit;
     boolean isOneWay;
     Type type;
@@ -83,6 +84,14 @@ public class TagWay extends Tag implements Comparable<TagWay>{
 
     public String getName(){
         return name;
+    }
+
+    public void setRelationParent(TagRelation relation){
+        relationParent = relation;
+    }
+
+    public TagRelation getRelationParent(){
+        return relationParent;
     }
 
     /**

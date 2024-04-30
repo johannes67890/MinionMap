@@ -176,8 +176,15 @@ public class XMLReader {
                                 tempBuilder = new XMLBuilder();
                                 break;
                             case "relation":
-                                relations.put(tempBuilder.getId(), new TagRelation(tempBuilder));
-                                // XMLWriter.appendToPool(new TagRelation(tempBuilder));
+                                TagRelation relation = new TagRelation(tempBuilder);
+                                relations.put(tempBuilder.getId(), relation);
+                                for (TagWay RelationWay : relation.getHandledOuter()) {
+                                    RelationWay.setRelationParent(relation);
+                                    for (TagNode node : RelationWay.getRefNodes()) {
+                                        XMLWriter.appendToPool(node);
+                                        if(node.getNext() == null) break;
+                                    }
+                                }
                                 tempBuilder = new XMLBuilder();
                                 break;
                             default:
