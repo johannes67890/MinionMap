@@ -25,6 +25,7 @@ public class TagWay extends Tag implements Comparable<TagWay>{
     long id;
     String name;
     TLinkedList<TagNode> nodes = new TLinkedList<TagNode>();
+    TagRelation relationParent;
     int speedLimit;
     boolean isOneWay;
     Type type;
@@ -84,6 +85,14 @@ public class TagWay extends Tag implements Comparable<TagWay>{
 
     public String getName(){
         return name;
+    }
+
+    public void setRelationParent(TagRelation relation){
+        relationParent = relation;
+    }
+
+    public TagRelation getRelationParent(){
+        return relationParent;
     }
 
     /**
@@ -187,9 +196,14 @@ public class TagWay extends Tag implements Comparable<TagWay>{
 
         public TLinkedList<TagNode> getRefNodes(TagWay way) {
             for (TagNode node : refNodes) {
-                TagNode newNode = new TagNode(node);
-                newNode.clearLinks();
-                refNodesList.add(newNode);
+                if(node.getNext() != null || node.getPrevious() != null){
+                    TagNode newNode = new TagNode(node);
+                    newNode.clearLinks();
+                    refNodesList.add(newNode);
+                    continue;
+                }else{
+                    refNodesList.add(node);
+                }
             }
 
             

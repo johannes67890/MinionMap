@@ -14,6 +14,7 @@ import java.io.IOException;
 public class XMLWriter {
     private String directoryPath = "src/main/resources/chunks/";
     public static ChunkFiles chunkFiles = new ChunkFiles();
+    // TODO: tagList - do we lose data if we use a hashset instead of a list?
     private static HashMap<TagBound, HashSet<Tag>> tagList = new HashMap<TagBound, HashSet<Tag>>();
     private static int chunkId = 0;
 
@@ -33,10 +34,10 @@ public class XMLWriter {
     }
 
     public void initChunkFiles(TagBound bounds) {   
-        // for (TagBound parentChunk : Chunk.getQuadrants(bounds).values()) {
+        for (TagBound parentChunk : Chunk.getQuadrants(bounds).values()) {
         //     for (TagBound midChunk : Chunk.getQuadrants(parentChunk).values()) {
         //         for (TagBound childChunk : Chunk.getQuadrants(midChunk).values()) {
-                    Chunk chunk = new Chunk(bounds); 
+                    Chunk chunk = new Chunk(parentChunk); 
                     for (int j = 0; j < 4; j++) {
                         // Get one of the four quadrants in the chunk
                         TagBound child = chunk.getQuadrant(j);
@@ -46,7 +47,7 @@ public class XMLWriter {
                     }
         //         }
         //     }
-        // }
+        }
     }
 
     private static void createBinaryChunkFile(String path, TagBound bound){
@@ -176,16 +177,9 @@ public class XMLWriter {
                 try {
                     Object o = stream.readObject();
                     if(o instanceof TagBound) continue;
-                    if (o instanceof TagRelation) {
-                        objectList.add((TagRelation) o);
+                    if (o instanceof Tag) {
+                        objectList.add((Tag) o);
                     }
-                    if(o instanceof TagAddress){
-                        objectList.add((TagAddress) o);
-                    }
-                    if(o instanceof TagWay){
-                        objectList.add((TagWay) o);
-                    }
-                
                 } catch (EOFException e) {
                     stream.close();
                     break; // end of stream
@@ -207,13 +201,13 @@ public class XMLWriter {
                         if(o instanceof TagBound) continue;
                         if(o instanceof Tag && ((Tag) o).getId() == id){
                             return (Tag) o;
-                        } else if(o instanceof TagWay) {
-                            for (TagNode n : ((TagWay) o).getRefNodes()) {
-                                if(n.getId() == id){
-                                    return n;
-                                }
-                            }
                         } 
+                        else if(o instanceof TagNode){
+                            TagNode n = (TagNode) o;
+                            if(n.getParent().getId() == id){
+                                return n.getParent();
+                            }
+                        }
                         //  else if(o instanceof TagRelation){
                         //     for (TagWay w : ((TagRelation) o).getWays()) {
                         //         for (TagNode n : w.getNodes()) {

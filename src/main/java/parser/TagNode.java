@@ -16,7 +16,7 @@ import util.Tree;
 public class TagNode extends Tag implements TLinkable<TagNode>, Comparable<TagNode>  {
 
     private long id;
-    private ArrayList<TagWay> parent = new ArrayList<>();
+    private TagWay parent;
     private float lon;
     private float lat;
     private TagNode next;
@@ -28,7 +28,7 @@ public class TagNode extends Tag implements TLinkable<TagNode>, Comparable<TagNo
         this.lon = lon;
     }
 
-    public TagNode(long id, float lat, float lon, ArrayList<TagWay> way) {
+    public TagNode(long id, float lat, float lon, TagWay way) {
         this.id = id;
         this.lat = lat;
         this.lon = lon;
@@ -120,11 +120,6 @@ public class TagNode extends Tag implements TLinkable<TagNode>, Comparable<TagNo
         return prev;
     }
 
-
-    public ArrayList<TagWay> getParents() {
-        return parent;
-    }
-
     @Override
     public void setNext(TagNode linkable) {
         next = linkable;
@@ -146,19 +141,49 @@ public class TagNode extends Tag implements TLinkable<TagNode>, Comparable<TagNo
     }
     
     public void setParent(TagWay linkable) {
-        parent.add(linkable);
+        parent = linkable;
+    }
+
+    public boolean hasParent(){
+        return this.parent != null;
     }
 
     public boolean hasParent(TagWay way){
-        return parent.contains(way);
+        return this.parent.equals(way);
     }
-
-    public boolean hasParents(){
-        return !parent.isEmpty();
-    }
-
+    
+    /**
+     * Clears the links of the node.
+     * <p>
+     * Sets the next and previous nodes to null.
+     * </p>
+     * @see TLinkable
+     */
     public void clearLinks(){
         next = null;
         prev = null;
+    }
+
+    /**
+     * Iterates backwards through the linked list of nodes to find the parent way.
+     * @return The {@link TagWay} parent of the node.
+     */
+    public TagWay getParent(){
+        TagWay p = null;
+        TagNode currN = this;
+
+        if(currN.hasParent()){
+            return currN.parent;
+        }else{
+            while(!currN.hasParent()){
+                currN = currN.getPrevious();
+                if(currN.hasParent()){
+                    p = currN.getParent();
+                    break;
+                }
+            }
+        }
+
+        return p;
     }
 }

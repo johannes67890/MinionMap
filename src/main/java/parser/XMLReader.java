@@ -145,7 +145,7 @@ public class XMLReader {
                         String element = reader.getLocalName().intern();
                         if(element.equals("bounds")) {
                             bound = MecatorProjection.project(new TagBound(reader));
-                            // new XMLWriter(bound);
+                            new XMLWriter(bound);
                         }else {
                             tempBuilder.parse(element, reader);
                         };
@@ -156,7 +156,6 @@ public class XMLReader {
                             case "node":
                                 if(!tempBuilder.getAddressBuilder().isEmpty()){
                                     TagAddress address = new TagAddress(tempBuilder);
-                                    //TODO insert into trie instead of hashmap when it actually works
                                     addresses.put(tempBuilder.getId(), address);
                                     trie.insert(address);
                                     XMLWriter.appendToPool(address);
@@ -170,15 +169,22 @@ public class XMLReader {
                         
                                 ways.put(tempBuilder.getId(), way);
                                 for (TagNode node : way.getRefNodes()) {
-                                    if(node.getNext() == null) break;
                                     XMLWriter.appendToPool(node);   
+                                    if(node.getNext() == null) break;
                                 }
                                 
                                 tempBuilder = new XMLBuilder();
                                 break;
                             case "relation":
-                                XMLWriter.appendToPool(new TagRelation(tempBuilder));
-                                relations.put(tempBuilder.getId(), new TagRelation(tempBuilder));
+                                TagRelation relation = new TagRelation(tempBuilder);
+                                relations.put(tempBuilder.getId(), relation);
+                                for (TagWay RelationWay : relation.getHandledOuter()) {
+                                    RelationWay.setRelationParent(relation);
+                                    for (TagNode node : RelationWay.getRefNodes()) {
+                                        XMLWriter.appendToPool(node);
+                                        if(node.getNext() == null) break;
+                                    }
+                                }
                                 tempBuilder = new XMLBuilder();
                                 break;
                             default:

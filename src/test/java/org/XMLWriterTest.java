@@ -7,6 +7,7 @@ import parser.Tag;
 import parser.TagAddress;
 import parser.TagBound;
 import parser.TagNode;
+import parser.TagRelation;
 import parser.TagWay;
 import parser.XMLReader;
 import parser.XMLWriter;
@@ -25,6 +26,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
+
+import gnu.trove.map.hash.TLongObjectHashMap;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -74,57 +77,55 @@ public class XMLWriterTest {
     public void testGetContentFromBinaryFile(){
         ArrayList<Tag> dup = new ArrayList<Tag>();
 
-        long total_Addreses = XMLReader.getAddresses().size();
-        long total_Relations = XMLReader.getRelations().size();
-        long total_nodes = XMLReader.getNodes().size();
-        long total_ways = XMLReader.getWays().size();
+        TLongObjectHashMap<TagAddress> total_Addreses = XMLReader.getAddresses();
+        TLongObjectHashMap<TagRelation> total_Relations = XMLReader.getRelations();
+        TLongObjectHashMap<TagNode> total_nodes = XMLReader.getNodes();
+
+        long total_ways = 0;
         Set<Tag> set = new HashSet<>();
 
-        assertDoesNotThrow(() -> {
-            XMLWriter.getAllTagsFromChunks();
-        });
         List<Tag> tags = XMLWriter.getAllTagsFromChunks();
         assertNotNull(tags);
-        List<Tag> test = new ArrayList<>();
 
         for (Tag tag : tags) {
             if (tag instanceof TagAddress) {
-                total_Addreses--;
+                total_Addreses.remove(tag.getId());
                 continue;
             }
             if (tag instanceof TagNode) {
                 TagNode t = (TagNode) tag;
-                if(t.getId() == 6760379515l){
-                    test.add(t);
-                }
                 if(!set.contains(t)){
+                    if(t.getParent() != null) total_ways++;
                     set.add(t);
-                    total_nodes--;
+                    total_nodes.remove(t.getId());
                 }else{
                     dup.add(t);
                 }
-                for (TagWay p : t.getParents()) {
-                    if(!set.contains(p)){
-                        set.add(p);
-                        total_ways--;
-                    }else{
-                        dup.add(p);
-                    }
-                }
+                   
             }
         }
-        TagNode t = XMLReader.getNodeById(1682443859l);
         assertEquals(0, dup.size());
-        assertEquals(0, total_ways);
-        assertEquals(0, total_nodes);
-        assertEquals(0, total_Addreses);
+        assertTrue(total_Addreses.isEmpty());
+        assertTrue(total_nodes.isEmpty());
+        assertEquals(211, total_ways);
+                
     }
 
-    // @Test
-    // public void testGetTagsFromChunk() {
-    //     // parser.Tag tag = XMLWriter.getTagByIdFromBinaryFile(286405322l);
-    //     // assertNotNull(tag);
-
-    // }
-
+    @Test
+    public void testGetTagsFromChunk() {
+        // Get tagNode and see its parent
+        Tag a = XMLWriter.getTagByIdFromBinaryFile(286405342l);
+        assertNotNull(a);
+        if(a instanceof TagNode){
+               TagNode t = (TagNode) a;
+               assertEquals(26154396,t.getParent().getId());
+        }
+        // Get tagWay directly from the chunk
+        Tag b = XMLWriter.getTagByIdFromBinaryFile(26154396l);
+        assertNotNull(b);
+        if(b instanceof TagWay){
+            TagWay t = (TagWay) b;
+            assertEquals(26154396, t.getId());
+       }
+    }
 }
