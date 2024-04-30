@@ -1,7 +1,6 @@
 package parser;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import javax.xml.stream.XMLStreamReader;
 
@@ -135,6 +134,11 @@ public class TagRelation extends Tag{
 
                         if ((other.getRefNodes().getFirst().equals(outer.getRefNodes().getLast())) || (other.getRefNodes().getLast().equals(outer.getRefNodes().getLast()))){
 
+                            if (this.id == 7699392 || this.id == 14507853){
+                                System.out.println("NOT REVERSED");
+                               // System.out.println(type.getKey() + " " + type.getValue() + " " + wayCount);
+            
+                            }
                             beginFirstTagNode = outer.getRefNodes().getFirst();
                             currentFirstTagNode = beginFirstTagNode;
                             beginLastTagNode = outer.getRefNodes().getLast();
@@ -143,6 +147,11 @@ public class TagRelation extends Tag{
                         // Starts from the opposite direction
                         else{
 
+                            if (this.id == 7699392 || this.id == 14507853){
+                                System.out.println("REVERSED");
+                               // System.out.println(type.getKey() + " " + type.getValue() + " " + wayCount);
+            
+                            }
                             beginFirstTagNode = outer.getRefNodes().getLast();
                             currentFirstTagNode = beginFirstTagNode;
                             beginLastTagNode = outer.getRefNodes().getFirst();
@@ -158,14 +167,37 @@ public class TagRelation extends Tag{
 
                 if ((prevLastTagNode != null) && prevLastTagNode.equals(currentFirstTagNode)){
 
-                    for (TagNode node : outer.getRefNodes()){
-                        tempNodes.add(node);    
+                    if (this.id == 7699392 || this.id == 14507853){
+                        System.out.println("NEXT NOT REVERSED");
+                       // System.out.println(type.getKey() + " " + type.getValue() + " " + wayCount);
+    
+                    }
+                    for (TagNode node : outer.getRefNodes()) {
+                        TagNode newNode = new TagNode(node);
+                        newNode.clearLinks();
+                        tempNodes.add(newNode);
                     }
                 } else{
-                    for (int i = outer.getRefNodes().size() - 1; i >= 0; i-- ){
 
-                        TagNode node = outer.getRefNodes().get(i);
+                    if (this.id == 7699392 || this.id == 14507853){
+                        System.out.println("NEXT REVERSED");
+                       // System.out.println(type.getKey() + " " + type.getValue() + " " + wayCount);
+    
+                    }
 
+                    TLinkedList<TagNode> tempToTempNodes = new TLinkedList<>();
+
+                    for (TagNode node : outer.getRefNodes()) {
+                        TagNode newNode = new TagNode(node);
+                        newNode.clearLinks();
+                        tempToTempNodes.add(newNode);
+                    }
+
+
+                    for (int i = tempToTempNodes.size() - 1; i >= 0; i-- ){
+
+                        TagNode node = new TagNode(tempToTempNodes.get(i)) ;
+                        node.clearLinks();
                         tempNodes.add(node);    
                     }
                 }
@@ -182,20 +214,19 @@ public class TagRelation extends Tag{
 
                     TagWay newTagWay = new TagWay(this, id, tempNodes, speedLimit);
                     handledOuter.add(newTagWay);
-                    tempNodes.clear();
                     tempNodes = new TLinkedList<>();
                     beginFirstTagNode = null;
                     beginLastTagNode = null;
                     success = true;
 
 
-                    if (name != null && name.equals("Bornholm")){
-                        System.out.println("Fyn");
-                        System.out.println(type.getKey() + " " + type.getValue() + " " + wayCount);
 
-
+                    if (this.id == 7699392 || this.id == 14507853){
+                        System.out.println(this.id);
+                       // System.out.println(type.getKey() + " " + type.getValue() + " " + wayCount);
+    
                     }
-
+                    
                     wayCount = 0;
 
 
