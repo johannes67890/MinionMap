@@ -31,7 +31,6 @@ public class TagWay extends Tag implements Comparable<TagWay>{
 
 
     public TagWay(XMLBuilder builder) {
-        TagWay x = XMLReader.getWayById(27806594l);
         this.id = builder.getId();
         this.name = builder.getName();
         this.speedLimit = builder.getWayBuilder().getSpeedLimit();
@@ -153,7 +152,7 @@ public class TagWay extends Tag implements Comparable<TagWay>{
         private List<TagNode> refNodes = new ArrayList<TagNode>();
         private TLinkedList<TagNode> refNodesList = new TLinkedList<TagNode>();
         private boolean isEmpty = true;
-        private int speedLimit;
+        private int speedLimit = 1; // Default speed limit is 1 to not break edge cases in pathfinding.
 
         public boolean isEmpty() {
             return isEmpty;

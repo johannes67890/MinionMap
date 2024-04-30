@@ -110,7 +110,6 @@ public class Dijsktra {
         for (TagNode node : way.getRefNodes()) {
             ArrayList<Tag> intersections = Tree.getTagFromPoint(node);
             if(intersections.size() > 1 && intersections != null){
-               System.out.println("Intersections: " + node.getId());
                 for (Tag tag : intersections) {
                     if(tag instanceof TagWay){
                         TagWay w = (TagWay) tag;
@@ -119,25 +118,22 @@ public class Dijsktra {
                             if(tag2.getNext() == null) break;
                             addTwoWayEdges(tag2, w);
                         }
-                       System.out.println("intersection done");
                     }
                 }
             }   
           
             if(node.getNext() == null) break;
             addTwoWayEdges(node, way);
-            System.out.println("Added edge from " + node.getId() + " to " + node.getNext().getId() + " with speed limit " + way.getSpeedLimit());
         }
     }
 
     private void addTwoWayEdges(TagNode node, TagWay way){
-            G.addEdge(new DirectedEdge(node, node.getNext(), 1));
-            G.addEdge(new DirectedEdge(node.getNext(), node, 1));
-            System.out.println("Added edge from " + node.getId() + " to " + node.getNext().getId() + " with speed limit " + way.getSpeedLimit());
+            G.addEdge(new DirectedEdge(node, node.getNext(), way.getSpeedLimit()));
+            G.addEdge(new DirectedEdge(node.getNext(), node, way.getSpeedLimit()));
     }
 
     private void addOneWayEdge(TagNode node, TagWay way){
-            G.addEdge(new DirectedEdge(node, node.getNext(), 1));
+            G.addEdge(new DirectedEdge(node, node.getNext(), way.getSpeedLimit()));
     }
 
     private TagNode getNearestRoadPoint(Tag tag){
