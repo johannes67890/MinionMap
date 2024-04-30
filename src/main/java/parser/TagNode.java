@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import gnu.trove.list.TLinkable;
+import util.Tree;
 
 
 /**
@@ -82,6 +83,15 @@ public class TagNode extends Tag implements TLinkable<TagNode>, Comparable<TagNo
 
     }
  
+    public boolean hasIntersection(){
+        return Tree.getTagFromPoint(this).size() > 1;
+    }
+
+    public ArrayList<Tag> getIntersectionTags(){
+        // System.out.println(Tree.getTagFromPoint(this));
+        return Tree.getTagFromPoint(this);
+    }
+
     @Override
     public int compareTo(TagNode o) {
         return Long.compare(this.id, o.getId());
@@ -141,6 +151,10 @@ public class TagNode extends Tag implements TLinkable<TagNode>, Comparable<TagNo
 
     public boolean hasParent(TagWay way){
         return parent.contains(way);
+    }
+
+    public boolean hasParents(){
+        return !parent.isEmpty();
     }
 
     public void clearLinks(){

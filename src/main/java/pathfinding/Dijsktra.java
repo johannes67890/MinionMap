@@ -1,16 +1,14 @@
 package pathfinding;
 
 import parser.TagNode;
-import parser.TagRelation;
 import parser.TagWay;
 import parser.Type;
 import parser.XMLReader;
 import util.FileDistributer;
-import util.K3DTree;
-import util.MecatorProjection;
 import util.Tree;
 
 import java.util.*;
+
 
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.Stack;
@@ -37,22 +35,19 @@ public class Dijsktra {
     private HashMap<Long, Double> distTo;          // distTo[v] = distance  of shortest s->v path
     private HashMap<Long, DirectedEdge> edgeTo;    // edgeTo[v] = last edge on shortest s->v path
     private IndexMinPQ<Double> pq;    // priority queue of vertices
-    
+    HashSet<Long> surroundingTags = new HashSet<Long>();
+
     private Digraph G = new Digraph();
     private static Stack<TagNode> shortestPath = new Stack<TagNode>();
 
-    Dijsktra(Tag start, Tag finish, TransportType transportType) {
-        if(!(start instanceof TagNode)) {
-            start = getNearestRoadPoint(start);
-        }
-        if(!(finish instanceof TagNode)){
-            finish = getNearestRoadPoint(finish);
-        }
+    Dijsktra(Tag _start, Tag _finish, TransportType transportType) {
+        System.out.println(_start);
+        TagNode start = (TagNode) _start;
+        TagNode finish = (TagNode) _finish;
+        // TagNode start = getNearestRoadPoint(_start);
+        // TagNode finish = getNearestRoadPoint(_finish);
 
-
-        for (TagWay way : getSurroundingRoads(start, transportType)) {
-            addWayEdges(way);
-        }
+        addSurroundingRoads(start, transportType);
 
         for (DirectedEdge e : G.edges()) {
             if (e.weight() < 0)
@@ -110,51 +105,49 @@ public class Dijsktra {
         return shortestPath;
     }
 
-    private void addWayEdges(TagWay way){
-        for (TagNode node : way.getRefNodes()) {
-            // Intersection of roads
-            ArrayList<Tag> intersections = Tree.getTagFromPoint(node);
-            if(intersections.size() > 1 && intersections != null){
-                addInterceptionEdges(node, way);
-            }   
-          
+    private void addSurroundingRoads(TagNode startTag, TransportType transportType){
+            if(startTag.hasIntersection()){
+                for (Tag tag : startTag.getIntersectionTags()) {
+                if(tag instanceof TagWay){
+                        TagWay way = (TagWay) tag;
+                        if(surroundingTags.contains(way.getId())) continue;
+                        surroundingTags.add(way.getId());
+                        addRoad(way);
+                        for (TagNode tagNode : way.getRefNodes()) {
 
-            if(node.getNext() == null) break;
-            if(!way.isOneWay()){
+                            if(tagNode.getNext() == null) continue;
+
+                            if(tagNode.hasIntersection()) addSurroundingRoads(tagNode, transportType);
+                        }
+                }
+                }
+            } 
+        }    
+
+    private void addRoad(TagWay way){
+        for (TagNode node : way.getRefNodes()) {
+            if(node.getNext() == null) return;
+            if(way.isOneWay()){
                 addOneWayEdge(node, way);
             } else {
                 addTwoWayEdges(node, way);
             }
         }
+
     }
 
     private void addTwoWayEdges(TagNode node, TagWay way){
             G.addEdge(new DirectedEdge(node, node.getNext(), way.getSpeedLimit()));
             G.addEdge(new DirectedEdge(node.getNext(), node, way.getSpeedLimit()));
+            System.out.println("Added edge from " + node.getId() + " to " + node.getNext().getId());
     }
 
     private void addOneWayEdge(TagNode node, TagWay way){
             G.addEdge(new DirectedEdge(node, node.getNext(), way.getSpeedLimit()));
     }
 
-    private void addInterceptionEdges(TagNode node, TagWay way){
-        for (Tag tag : Tree.getTagFromPoint(node)) {
-            if(tag instanceof TagWay){
-                TagWay w = (TagWay) tag;
-                if(tag.equals(way)) continue;
-                for (TagNode tag2 : w.getRefNodes()) {
-                    if(tag2.getNext() == null) break;
-                    if(w.isOneWay()){
-                        addOneWayEdge(tag2, w);
-                    } else {
-                        addTwoWayEdges(tag2, w);
-                    }
-                }
-            }
-        }
-    }
-
     private TagNode getNearestRoadPoint(Tag tag){
+        if(tag instanceof TagNode) return (TagNode) tag;
         ArrayList<Tag> tags = Tree.getNearestOfType(tag, Type.getAllRoads());
         double bestDistance = Double.MAX_VALUE;
         TagNode best = null;
@@ -174,25 +167,6 @@ public class Dijsktra {
         }
 
         return best;
-    }
-
-  
-    private List<TagWay> getSurroundingRoads(Tag startTag, TransportType transportType){
-        List<TagWay> roads = new ArrayList<>();
-
-        if(Tree.getTagFromPoint(startTag).size() > 1){
-            for (Tag tag : Tree.getTagFromPoint(startTag)) {
-                if(tag instanceof TagWay) {
-                    TagWay way = (TagWay) tag;
-                    System.out.println(way.toString());
-                    System.out.println(way.getType() + " " + transportType.getRoadTypes().contains(way.getType()));
-                    // if(transportType.getRoadTypes().contains(way.getType())){
-                        roads.add(way);
-                    // } else break;
-                }
-            }
-        }
-        return roads;
     }
     
       // relax edge e and update pq if changed
@@ -251,7 +225,7 @@ public class Dijsktra {
         // default
 
         TagNode start = XMLReader.getNodeById(286405539l);
-        TagNode finish = XMLReader.getNodeById(286405326l);
+        TagNode finish = XMLReader.getNodeById(1682443740l);
         // Default addresses
         // TagAddress start = XMLReader.getAddressById(1447913335l);
         // TagNode finish = XMLReader.getNodeById(1447911293l);
