@@ -39,8 +39,8 @@ public enum Type  {
 
 
     // Natural, Landuse and main infrastructure (Hierarchy 9)
-    PRIMARY_ROAD("highway", new String[]{"primary"}, 9, 9, Color.PEACHPUFF, 5,  true, 6, 100),
     MOTORWAY("highway", new String[]{"motorway"}, 9, 9, Color.DARKRED, 5, true, 6, 100),
+    PRIMARY_ROAD("highway", new String[]{"primary", "trunk"}, 9, 9, Color.PEACHPUFF, 5,  true, 6, 100),
     SECONDARY_ROAD("highway", new String[]{"secondary"}, 9, 9, Color.YELLOW.desaturate(), 5, true, 6, 75),
     TERTIARY_ROAD("highway",new String[]{"tertiary", "tertiary_link"},9, 9, Color.DARKGRAY, 4, true, 4, 50),
     RAILWAY("railway",new String[]{"rail","light_rail","subway"}, 9, 9, Color.DARKGRAY, 2, true, 4, 1000),

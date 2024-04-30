@@ -35,6 +35,7 @@ public class TagWay extends Tag implements Comparable<TagWay>{
         this.name = builder.getName();
         this.speedLimit = builder.getWayBuilder().getSpeedLimit();
         this.type = builder.getType();
+        this.isOneWay = builder.getWayBuilder().isOneWay();
         this.nodes = builder.getWayBuilder().getRefNodes(this);
     }
 
@@ -123,7 +124,7 @@ public class TagWay extends Tag implements Comparable<TagWay>{
 
     @Override
     public String toString() {
-        return "Way: " + id + " " + name + " " + type + " " + speedLimit;
+        return "Way: " + id + " name: " + name + " type " + type + " limit " + speedLimit + " oneway: " + isOneWay;
     }
 
     public int compareTo(TagWay tW){
@@ -152,10 +153,20 @@ public class TagWay extends Tag implements Comparable<TagWay>{
         private List<TagNode> refNodes = new ArrayList<TagNode>();
         private TLinkedList<TagNode> refNodesList = new TLinkedList<TagNode>();
         private boolean isEmpty = true;
+        private boolean isOneWay = false;
         private int speedLimit = 1; // Default speed limit is 1 to not break edge cases in pathfinding.
 
         public boolean isEmpty() {
             return isEmpty;
+        }
+
+        public void setOneWay(boolean isOneWay) {
+            isEmpty = false;
+            this.isOneWay = isOneWay;
+        }
+
+        public boolean isOneWay() {
+            return isOneWay;
         }
 
         public int getSpeedLimit() {

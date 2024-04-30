@@ -35,16 +35,6 @@ public class Dijsktra {
             finish = getNearestRoadPoint(finish);
         }
 
-        // TODO: getSurroundingRoads(start) is not working - get all roads surrounding start
-        List<TagWay> list = new ArrayList<>(){
-            {
-                add(XMLReader.getWayById(27806594l));
-                add(XMLReader.getWayById(27806594l));
-                add(XMLReader.getWayById(26154395l));
-            }
-        
-        };
-
         // // for (TagWay way : getSurroundingRoads(start)) {
         for (TagWay way : XMLReader.getWays().valueCollection()) {
             addWayEdges(way);
@@ -116,14 +106,23 @@ public class Dijsktra {
                         if(tag.equals(way)) continue;
                         for (TagNode tag2 : w.getRefNodes()) {
                             if(tag2.getNext() == null) break;
-                            addTwoWayEdges(tag2, w);
+                            if(w.isOneWay()){
+                                addOneWayEdge(tag2, w);
+                            } else {
+                                addTwoWayEdges(tag2, w);
+                            }
                         }
                     }
                 }
             }   
           
             if(node.getNext() == null) break;
-            addTwoWayEdges(node, way);
+
+            if(!way.isOneWay()){
+                addOneWayEdge(node, way);
+            } else {
+                addTwoWayEdges(node, way);
+            }
         }
     }
 
@@ -231,8 +230,8 @@ public class Dijsktra {
 
         // TagNode start = XMLReader.getNodeById(286405539l);
         // TagNode finish = XMLReader.getNodeById(286405326l);
-        TagNode start = XMLReader.getNodeById(6760379519l);
-        TagNode finish = XMLReader.getNodeById(286405326l);
+        TagNode finish = XMLReader.getNodeById(4688391719l);
+        TagNode start = XMLReader.getNodeById(251082482l);
       
         
 

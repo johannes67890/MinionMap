@@ -149,6 +149,11 @@ public class XMLBuilder {
                 }
             }
 
+            if(k.equals("oneway")){
+                wayBuilder.setOneWay(v.equals("yes") || v.equals("true"));
+                return;
+            }
+
 
             // check if the tag is a type tag and set the type
             for (Type currType : Type.getTypes()){
@@ -156,11 +161,13 @@ public class XMLBuilder {
                     for (String currVal : currType.getValue()) {
                         if (v.equals(currVal) || currVal.equals("")) {
                             
-                            for (Type roadType : Type.getAllRoads()) {
-                                if(currType.equals(roadType)){
-                                    parseStreet(roadType);
+                            if(wayBuilder.getSpeedLimit() != 1){
+                                for (Type roadType : Type.getAllRoads()) {
+                                    if(currType.equals(roadType)){
+                                        parseStreet(roadType);
+                                    }
                                 }
-                            }
+                            } else continue;
                             
                             switch (currType) { 
                                 case ROUTE:
@@ -220,7 +227,7 @@ public class XMLBuilder {
                     wayBuilder.setSpeedLimit(80);
                     break;
                 case RESIDENTIAL_ROAD:
-                    wayBuilder.setSpeedLimit(50);
+                    wayBuilder.setSpeedLimit(DEFAULT_SPEED);
                     break;
                 case OTHER_ROAD:
                     wayBuilder.setSpeedLimit(DEFAULT_SPEED);
