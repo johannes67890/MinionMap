@@ -97,6 +97,7 @@ public class DrawingMap {
         zoombar = new Zoombar(zoombarIntervals, zoomLevelMax, zoomLevelMin);
         pan(-minlon, minlat);
         zoom(canvas.getWidth() / (maxlon - minlon), 0, 0);
+        pan(0, canvas.getHeight() * 1.20);
         tempBounds = getScreenBounds();
         DrawMap(canvas);
     }

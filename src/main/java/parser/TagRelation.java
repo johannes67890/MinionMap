@@ -195,7 +195,6 @@ public class TagRelation extends Tag{
 
 
                     for (int i = tempToTempNodes.size() - 1; i >= 0; i-- ){
-
                         TagNode node = new TagNode(tempToTempNodes.get(i)) ;
                         node.clearLinks();
                         tempNodes.add(node);    
@@ -205,8 +204,6 @@ public class TagRelation extends Tag{
                 wayCount++;
 
                 prevLastTagNode = tempNodes.get(tempNodes.size() - 1);
-
-
                 if (tempNodes.get(tempNodes.size() - 1).equals(beginFirstTagNode)){
 
                     //System.out.println(beginLastTagNode.getId() + " " + outer.getId());
