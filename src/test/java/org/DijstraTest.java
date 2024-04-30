@@ -14,6 +14,7 @@ import parser.TagAddress;
 import parser.TagWay;
 import parser.Type;
 import parser.XMLReader;
+import pathfinding.Dijsktra;
 import util.FileDistributer;
 import util.Tree;
 import parser.Tag;
@@ -45,7 +46,12 @@ public class DijstraTest {
     }
 
     @Test
-    void testGetNearestRoadPoint(){
-        
+    void testAdj(){
+        TagWay way = XMLReader.getWayById(27806594l);
+        assertNotNull(way);
+        // Tree.insertTagInTree(way);
+        // assertEquals(2, adj.size());
+        // assertEquals(26154395, adj.get(0).getId());
+        // assertEquals(27806594, adj.get(1).getId());
     }
 }
