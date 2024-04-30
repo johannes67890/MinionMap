@@ -41,13 +41,16 @@ public class Dijsktra {
     private static Stack<TagNode> shortestPath = new Stack<TagNode>();
 
     Dijsktra(Tag _start, Tag _finish, TransportType transportType) {
+        //timer
+        long startTime = System.nanoTime();
+
         System.out.println(_start);
         TagNode start = (TagNode) _start;
         TagNode finish = (TagNode) _finish;
         // TagNode start = getNearestRoadPoint(_start);
         // TagNode finish = getNearestRoadPoint(_finish);
 
-        addSurroundingRoads(start, transportType);
+        addSurroundingRoads(start, finish, transportType);
 
         for (DirectedEdge e : G.edges()) {
             if (e.weight() < 0)
@@ -83,7 +86,10 @@ public class Dijsktra {
                 relax(e);
             }
         }
-
+        // timer ned
+        long endTime = System.nanoTime();
+        long duration = (endTime - startTime);
+        System.out.println("Time: " + duration + "ms");
         if (hasPathTo(finish)) {
             StdOut.printf("%d to %d (%.2f)  ", start.getId(), finish.getId(), distTo.get(finish.getId()));
             StdOut.println();
@@ -105,7 +111,7 @@ public class Dijsktra {
         return shortestPath;
     }
 
-    private void addSurroundingRoads(TagNode startTag, TransportType transportType){
+    private void addSurroundingRoads(TagNode startTag, TagNode finish, TransportType transportType){
             if(startTag.hasIntersection()){
                 for (Tag tag : startTag.getIntersectionTags()) {
                 if(tag instanceof TagWay){
@@ -114,14 +120,21 @@ public class Dijsktra {
                         surroundingTags.add(way.getId());
                         addRoad(way);
                         for (TagNode tagNode : way.getRefNodes()) {
-
+                            if(tagNode.getId() == finish.getId()) return;
                             if(tagNode.getNext() == null) continue;
 
-                            if(tagNode.hasIntersection()) addSurroundingRoads(tagNode, transportType);
+                            if(tagNode.hasIntersection()) addSurroundingRoads(tagNode, finish,transportType);
                         }
                 }
                 }
-            } 
+            }else{
+                addRoad(startTag.getParent());
+                for (TagNode tagNode : startTag.getParent().getRefNodes()) {
+                    if(tagNode.getNext() == null) continue;
+
+                    if(tagNode.hasIntersection()) addSurroundingRoads(tagNode,finish, transportType);
+                }
+            }
         }    
 
     private void addRoad(TagWay way){
@@ -139,7 +152,7 @@ public class Dijsktra {
     private void addTwoWayEdges(TagNode node, TagWay way){
             G.addEdge(new DirectedEdge(node, node.getNext(), way.getSpeedLimit()));
             G.addEdge(new DirectedEdge(node.getNext(), node, way.getSpeedLimit()));
-            System.out.println("Added edge from " + node.getId() + " to " + node.getNext().getId());
+            //System.out.println("Added edge from " + node.getId() + " to " + node.getNext().getId());
     }
 
     private void addOneWayEdge(TagNode node, TagWay way){
@@ -219,13 +232,13 @@ public class Dijsktra {
         
         
 
-        new XMLReader(FileDistributer.input.getFilePath());
+        new XMLReader(FileDistributer.bolm.getFilePath());
         Tree.initialize(new ArrayList<Tag>(XMLReader.getWays().valueCollection()));;
         
         // default
 
-        TagNode start = XMLReader.getNodeById(286405539l);
-        TagNode finish = XMLReader.getNodeById(1682443740l);
+        TagNode start = XMLReader.getNodeById(2719042782l);
+        TagNode finish = XMLReader.getNodeById(1519579184l);
         // Default addresses
         // TagAddress start = XMLReader.getAddressById(1447913335l);
         // TagNode finish = XMLReader.getNodeById(1447911293l);
