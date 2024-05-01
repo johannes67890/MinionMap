@@ -290,17 +290,14 @@ public class Controller implements Initializable, ControllerInterface{
 
             String[] split = string.split(",");
 
-
             if (split.length == 3){
                 string = split[0] + split[2];
 
                 TagAddress address = comboBoxAddress(searchBarStart);
                 showAddress(address);
-
             }
-
-
         });
+
         
         searchBarStart.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
 
@@ -418,7 +415,6 @@ public class Controller implements Initializable, ControllerInterface{
        
         Point3D point2d = new Point3D(tagAddress.getLon(), tagAddress.getLat(), (byte) 8);
 
-
         Point3D nearest = Tree.getNearestPoint(point2d);
 
         ArrayList<Tag> nearestTag = Tree.getTagsFromPoint(nearest);
@@ -431,7 +427,6 @@ public class Controller implements Initializable, ControllerInterface{
                 break;
             }
         }
-
 
         if(tagToDraw != null){
             //drawingMap.setMarkedTag(tagToDraw);

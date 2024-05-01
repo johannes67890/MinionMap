@@ -297,8 +297,6 @@ public class DrawingMap {
             gc.beginPath();
             gc.moveTo(tagWay.getRefNodes().getFirst().getLon(), -tagWay.getRefNodes().getFirst().getLat());
             
-            
-
                 for (TagNode n : tagWay.getRefNodes()) {
                     gc.lineTo(n.getLon(), -n.getLat());
                     xPoints[counter] = n.getLon();
@@ -307,10 +305,6 @@ public class DrawingMap {
                     
                     if(n.getNext() == null) break;
                 }
-
-            
-            
-            
             //Fills polygons with color
             if (!tagWay.getType().getIsLine()){
                 gc.setFill(currentColor);
