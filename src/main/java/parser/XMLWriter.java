@@ -157,7 +157,6 @@ public class XMLWriter {
                         }
                     } catch (EOFException e) {
                         stream.close();
-                        e.printStackTrace();
                         break; // end of stream
                     }
                 }

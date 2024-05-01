@@ -8,6 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
+import parser.Chunk;
 import parser.Tag;
 import parser.TagAddress;
 import parser.TagBound;
@@ -15,6 +16,8 @@ import parser.TagNode;
 import parser.TagRelation;
 import parser.TagWay;
 import parser.XMLReader;
+import parser.XMLWriter;
+import parser.XMLWriter.ChunkFiles;
 import util.MathUtil;
 import util.MinPQ;
 import util.Rect3D;
@@ -65,8 +68,6 @@ public class DrawingMap {
     public DrawingMap(MainView mainView, XMLReader reader){
         this.mainView = mainView;
         this.reader = reader;
-        ways = List.copyOf(XMLReader.getWays().valueCollection());
-        relations = List.copyOf(XMLReader.getRelations().valueCollection());
         trie = new Trie();
     }
 
@@ -87,10 +88,7 @@ public class DrawingMap {
         double maxlat = bound.getMaxLat();
         double maxlon = bound.getMaxLon();
         double minlat = bound.getMinLat();
-        ArrayList<Tag> tempList = new ArrayList<>();
-        tempList.addAll(List.copyOf(XMLReader.getWays().valueCollection()));
-        tempList.addAll(List.copyOf(XMLReader.getRelations().valueCollection()));
-        Tree.initialize(tempList);
+        
         zoombar = new Zoombar(zoombarIntervals, zoomLevelMax, zoomLevelMin);
         pan(-minlon, minlat);
         zoom(canvas.getWidth() / (maxlon - minlon), 0, 0);
@@ -112,9 +110,9 @@ public class DrawingMap {
 
         long preTime = System.currentTimeMillis();
         this.canvas = canvas;
-        if (!Tree.isLoaded()){
-            return;
-        }
+        // if (!Tree.isLoaded()){
+        //     return;
+        // }
 
 
         //Resfreshes the screen
@@ -138,23 +136,28 @@ public class DrawingMap {
         currentColor = Color.BLACK;
 
         float[] canvasBounds = getScreenBoundsBigger(0.2);
-        Rect3D rect = new Rect3D(canvasBounds[0], canvasBounds[1], hierarchyLevel, canvasBounds[2], canvasBounds[3], 100);
+        TagBound bound = new TagBound(canvasBounds[0], canvasBounds[1], canvasBounds[2], canvasBounds[3]);
+        //Rect3D rect = new Rect3D(canvasBounds[0], canvasBounds[1], hierarchyLevel, canvasBounds[2], canvasBounds[3], 100);
         nodes = new ArrayList<>();
         ways = new ArrayList<>();
         relations = new ArrayList<>();
 
-        HashSet<Tag> tags = Tree.getTagsInBounds(rect);
-        for(Tag tag : tags){
-            if (tag instanceof TagNode){
-                nodes.add((TagNode) tag);
-            }else if (tag instanceof TagWay){
-                TagWay way = (TagWay) tag;
-                ways.add(way);
-            }else if (tag instanceof TagRelation){
-                TagRelation relation = (TagRelation) tag;
-                relations.add(relation);
+        //HashSet<Tag> tags = Tree.getTagsInBounds(rect);
+        List<String> chunkDirs = ChunkFiles.getChunksFilesWithinBounds(bound);
+        for(String tag : chunkDirs){
+            List<Tag> tags = XMLWriter.getTagsFromChunkByBounds(ChunkFiles.getBound(tag));
+            System.out.println(bound.toString());
+            for(Tag t : tags){
+                if (t instanceof TagNode){
+                    nodes.add((TagNode) t);
+                } else if (t instanceof TagWay){
+                    ways.add((TagWay) t);
+                } else if (t instanceof TagRelation){
+                    relations.add((TagRelation) t);
+                }
             }
         }
+        System.out.println(ways.size());
 
         waysToDrawWithType = new ArrayList<>();
         waysToDrawWithoutType = new ArrayList<>();
