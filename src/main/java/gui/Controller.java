@@ -170,7 +170,7 @@ public class Controller implements Initializable, ControllerInterface{
     public void initialize(URL location, ResourceBundle resources) { // This runs when the fxml is loaded and the canvas is injected (before stage is shown)
 
 
-
+        setEnableDestinationComboBox(false);
         ComboBoxListViewSkin<String> comboBoxListViewSkin = new ComboBoxListViewSkin<String>(searchBarStart);
 
 
@@ -225,11 +225,10 @@ public class Controller implements Initializable, ControllerInterface{
 
 
         routeButton.setOnAction((ActionEvent e) -> {
-
+            
+            setEnableDestinationComboBox(!searchBarDestination.isVisible());
             if (startAddress == null){
-
                 
-
             }
             else if (endAddress == null){
 
