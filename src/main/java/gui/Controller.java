@@ -47,6 +47,7 @@ public class Controller implements Initializable, ControllerInterface{
     @FXML private Button layerButton;
     @FXML private Button searchButton;
     @FXML private Button pointButton;
+    @FXML private Button routeButton;
     @FXML private Pane leftBurgerMenu;
     @FXML private ComboBox<String> searchBarStart;
     @FXML private ComboBox<String> searchBarDestination;
@@ -75,6 +76,10 @@ public class Controller implements Initializable, ControllerInterface{
     private ObservableList<String> searchList = FXCollections.observableArrayList();
 
     private List<TagAddress> addresses = new ArrayList<>();
+
+    private TagAddress startAddress = null;
+    private TagAddress endAddress = null;
+
 
     Search s = new Search();
 
@@ -217,6 +222,25 @@ public class Controller implements Initializable, ControllerInterface{
             mainMenuVBox.setVisible(!isMenuOpen);
             isMenuOpen = !isMenuOpen;
         });
+
+
+        routeButton.setOnAction((ActionEvent e) -> {
+
+            if (startAddress == null){
+
+                
+
+            }
+            else if (endAddress == null){
+
+            }
+            else{
+
+            }
+
+
+        });
+
         menuButton2.setOnAction((ActionEvent e) -> {
             leftBurgerMenu.setVisible(!isMenuOpen);
             mainMenuVBox.setVisible(!isMenuOpen);
@@ -270,7 +294,7 @@ public class Controller implements Initializable, ControllerInterface{
             if (split.length == 3){
                 string = split[0] + split[2];
 
-                TagAddress address = s.getAddress(string, split[1]);
+                TagAddress address = comboBoxAddress(searchBarStart);
                 showAddress(address);
 
             }
@@ -281,7 +305,7 @@ public class Controller implements Initializable, ControllerInterface{
         searchBarStart.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
 
             if (searchBarStart.isFocused()){
-                search(newValue, true);
+                search(newValue, true, searchBarStart);
             }
 
             if (newValue.isEmpty() && !oldValue.isEmpty() && oldValue.length() > 1){
@@ -338,7 +362,21 @@ public class Controller implements Initializable, ControllerInterface{
 
     }
 
-    private void search(String address, boolean isStart) {
+    private TagAddress comboBoxAddress(ComboBox<String> searchBar){
+        String string = searchBar.getEditor().textProperty().getValue();
+
+            String[] split = string.split(",");
+
+            if (split.length == 3){
+                string = split[0] + split[2];
+
+                TagAddress address = s.getAddress(string, split[1]);
+                return address;
+            }
+            return null;
+    }
+
+    private void search(String address, boolean isStart, ComboBox<String> searchBar) {
     if (!address.isEmpty() && address.charAt(address.length() - 1) != ' ') {
             ArrayList<TagAddress> tagAddresses = s.getSuggestions(address);
             //System.out.println("Number of suggestions: " + tagAddresses.size());
@@ -346,8 +384,8 @@ public class Controller implements Initializable, ControllerInterface{
             // Update UI on JavaFX Application Thread
             Platform.runLater(() -> {
                 synchronized (searchList) {
-                    if (!searchBarStart.getItems().isEmpty()) {
-                        searchBarStart.getItems().clear();
+                    if (!searchBar.getItems().isEmpty()) {
+                        searchBar.getItems().clear();
                         addresses.clear();
 
                     }
@@ -355,10 +393,10 @@ public class Controller implements Initializable, ControllerInterface{
                         searchList.add(tagAddress.toString());
                         addresses.add(tagAddress);
                     }
-                    searchBarStart.getItems().setAll(searchList);
+                    searchBar.getItems().setAll(searchList);
                     searchList.clear();
-                    if (!searchBarStart.isShowing() && searchBarStart.getItems().size() > 0){
-                        searchBarStart.show();
+                    if (!searchBar.isShowing() && searchBar.getItems().size() > 0){
+                        searchBar.show();
                     }
                 }
             });
@@ -374,7 +412,6 @@ public class Controller implements Initializable, ControllerInterface{
 
         //drawingMap.getTransform().determinant()
         Point2D pointCenter = drawingMap.getTransform().transform(x, y);
-        System.out.println(tagAddress.getMunicipality() + " " + tagAddress.getCity() + " " + tagAddress.getStreet() + " " + tagAddress.getHouseNumber());
         Point2D point = drawingMap.getTransform().transform(tagAddress.getLon(), tagAddress.getLat());
         double deltaX = point.getX() - pointCenter.getX();
         double deltaY = point.getY() - pointCenter.getY();

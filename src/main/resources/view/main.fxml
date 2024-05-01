@@ -30,9 +30,18 @@
                               </ImageView>
                            </graphic>
                         </Button>
-                        <ComboBox fx:id="searchBarStart" editable="true" maxWidth="1000000.0" prefHeight="30.0" prefWidth="679.0" promptText="Address..." />
-                        <ComboBox fx:id="searchBarDestination" editable="true" maxWidth="0.0" prefHeight="30.0" prefWidth="679.0" promptText="Destination..." visible="false" />
-                        <Button fx:id="pointButton" minWidth="29.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="29.0" text="Search">
+                        <ComboBox fx:id="searchBarStart" editable="true" maxWidth="1000000.0" prefHeight="30.0" prefWidth="250.0" promptText="Address..." />
+                        <ComboBox fx:id="searchBarDestination" editable="true" maxWidth="1000000.0" prefHeight="30.0" prefWidth="250.0" promptText="Destination..." />
+                        <Button fx:id="routeButton" minWidth="29.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="29.0">
+                           <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../visuals/routeIcon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button fx:id="pointButton" minWidth="29.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="29.0">
                            <graphic>
                               <ImageView fx:id="pointImage" fitHeight="20.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
