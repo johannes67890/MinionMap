@@ -29,7 +29,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import parser.Tag;
 import parser.TagAddress;
-import parser.TagAddress.SearchAddress;
 import parser.TagNode;
 import parser.TagWay;
 import util.Point3D;
@@ -170,7 +169,7 @@ public class Controller implements Initializable, ControllerInterface{
     public void initialize(URL location, ResourceBundle resources) { // This runs when the fxml is loaded and the canvas is injected (before stage is shown)
 
 
-
+        setEnableDestinationComboBox(false);
         ComboBoxListViewSkin<String> comboBoxListViewSkin = new ComboBoxListViewSkin<String>(searchBarStart);
 
 
@@ -225,11 +224,10 @@ public class Controller implements Initializable, ControllerInterface{
 
 
         routeButton.setOnAction((ActionEvent e) -> {
-
+            
+            setEnableDestinationComboBox(!searchBarDestination.isVisible());
             if (startAddress == null){
-
                 
-
             }
             else if (endAddress == null){
 
@@ -285,17 +283,12 @@ public class Controller implements Initializable, ControllerInterface{
         searchBarStart.setSkin(comboBoxListViewSkin);
 
         searchBarStart.setOnAction((ActionEvent e) ->{
-
-            String string = searchBarStart.getEditor().textProperty().getValue();
-
-            String[] split = string.split(",");
-
-            if (split.length == 3){
-                string = split[0] + split[2];
-
-                TagAddress address = comboBoxAddress(searchBarStart);
-                showAddress(address);
+            TagAddress address = comboBoxAddress(searchBarStart);
+            if (address == null){
+                return;
             }
+            showAddress(address);
+
         });
 
         
@@ -313,50 +306,13 @@ public class Controller implements Initializable, ControllerInterface{
 
     }
 
-    private void setEnableDestinationTextField(boolean isEnabled){
+    private void setEnableDestinationComboBox(boolean isEnabled){
         if (isEnabled){
             searchBarDestination.setMaxWidth(1000000);
         }else{
             searchBarDestination.setMaxWidth(0);
         }
         searchBarDestination.setVisible(isEnabled);
-    }
-
-    private void chooseDestination(String text, boolean isLeft){
-        if (isLeft){
-            //showAddress(text);
-        }else{
-        }
-    }
-
-
-    private void search(String address, boolean isStart, boolean test){
-        // Vi har skærmkoordinater i xy og canvas witdh and height
-        SearchAddress addressObj = s.searchForAddress(address);
-        if (isStart && (selectedItem == null || !selectedItem.equals(addressObj.toString()))){
-            searchBarStart.getItems().add(0, addressObj.toString());
-            if (!searchBarStart.isShowing() && searchBarStart.getItems().size() > 0){
-                searchBarStart.show();
-            }
-
-        }else if (!isStart && (selectedEndItem == null || !selectedEndItem.equals(addressObj.toString()))){
-            searchBarDestination.getItems().add(0, addressObj.toString());
-            if (!searchBarDestination.isShowing() && searchBarStart.getItems().size() > 0){
-                searchBarDestination.show();
-            }
-        }else{
-            if (isStart){
-                chooseDestination(selectedItem, true);
-            }else{
-                chooseDestination(selectedEndItem, false);
-            }
-        }
-        if (isStart){
-            selectedItem = addressObj.toString();
-        }else{
-            selectedEndItem = addressObj.toString();
-        }
-
     }
 
     private TagAddress comboBoxAddress(ComboBox<String> searchBar){
