@@ -408,7 +408,9 @@ public class K3DTree {
     private Point3D nearest(Node n, Point3D p, Point3D champion, int xyz, List<Type> types) {
         
         // Handle reaching the end of the tree
-        if (n == null) return champion;
+        if (n == null){
+            return champion;
+        } 
         
         // Handle the given point exactly overlapping a point in the BST
         if (n.p.equals(p) && isPointOfTypes(p, types)){
@@ -416,8 +418,9 @@ public class K3DTree {
         }
         
         // Determine if the current Node's point beats the existing champion
-        if (n.p.distanceSquaredTo(p) < champion.distanceSquaredTo(p) && isPointOfTypes(n.p, types))
+        if (n.p.distanceSquaredTo(p) < champion.distanceSquaredTo(p) && isPointOfTypes(n.p, types)){
             champion = n.p;
+        }
         
         /**
          * Calculate the distance from the search point to the current
@@ -443,11 +446,11 @@ public class K3DTree {
          * the current Node's point.
          */
         if (toPartitionLine < 0) {
-            champion = nearest(n.lbb, p, champion, temp);
+            champion = nearest(n.lbb, p, champion, temp, types);
             
             // Since champion may have changed, recalculate distance
             if (champion.distanceSquaredTo(p) >= toPartitionLine * toPartitionLine) {
-                champion = nearest(n.rtf, p, champion, temp);
+                champion = nearest(n.rtf, p, champion, temp, types);
             }
         }
         
@@ -462,24 +465,23 @@ public class K3DTree {
          * the level of the current Node).
          */
         else {
-            champion = nearest(n.rtf, p, champion, temp);
+            champion = nearest(n.rtf, p, champion, temp, types);
             
             // Since champion may have changed, recalculate distance
             if (champion.distanceSquaredTo(p) >=
-                    toPartitionLine * toPartitionLine) {
-                champion = nearest(n.lbb, p, champion, temp);
+            toPartitionLine * toPartitionLine) {
+                champion = nearest(n.lbb, p, champion, temp, types);
             }
         }
         
         return champion;
     }
-
+    
 
     private boolean isPointOfTypes(Point3D p, List<Type> types){
         for (Tag tag : getMap(p)){
             if (tag instanceof TagWay){
                 if (types.contains(tag.getType())){
-                    
                     return true;
                 }
             }else if (tag instanceof TagRelation){
