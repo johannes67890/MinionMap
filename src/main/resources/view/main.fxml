@@ -30,8 +30,8 @@
                               </ImageView>
                            </graphic>
                         </Button>
-                        <ComboBox fx:id="searchBarStart" editable="true" maxWidth="1000000.0" prefHeight="30.0" prefWidth="250.0" promptText="Address..." />
-                        <ComboBox fx:id="searchBarDestination" editable="true" maxWidth="1000000.0" prefHeight="30.0" prefWidth="250.0" promptText="Destination..." />
+                        <ComboBox fx:id="searchBarStart" editable="true" maxWidth="1000000.0" prefHeight="30.0" promptText="Address..." HBox.hgrow="ALWAYS" />
+                        <ComboBox fx:id="searchBarDestination" editable="true" maxWidth="1000000.0" prefHeight="30.0" promptText="Destination..." HBox.hgrow="ALWAYS" />
                         <Button fx:id="routeButton" minWidth="29.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="29.0">
                            <graphic>
                               <ImageView fitHeight="20.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
