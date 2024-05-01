@@ -8,6 +8,7 @@ import parser.TagRelation;
 import parser.TagWay;
 import parser.XMLReader;
 import parser.XMLWriter;
+import parser.XMLWriter.ChunkFiles;
 import util.FileDistributer;
 import java.io.File;
 import java.util.HashSet;
@@ -42,7 +43,7 @@ public class XMLWriterTest {
     public void setUp() {
         tearDown();
         assertDoesNotThrow(() -> {
-            new XMLReader(FileDistributer.RebakSopark.getFilePath());
+            new XMLReader(FileDistributer.testMap.getFilePath());
         });
     }
     
@@ -56,47 +57,51 @@ public class XMLWriterTest {
         }
     }
 
-    // @Test
-    // public void testInitChunkFiles() {
-    //     TagBound bound = XMLReader.getBound();
+    @Test
+    public void testInitChunkFiles() {
+        int i = 0;
 
-    //     int i = 0;
-
-    //     for (int j = 0; j < directory.listFiles().length; j++) {
-    //         assertTrue(directory.listFiles()[i].getName().matches("chunk_\\d+.bin"));
-    //         assertEquals( "chunk_" + i + ".bin", directory.listFiles()[i].getName());
-    //     }
+        for (int j = 0; j < directory.listFiles().length; j++) {
+            assertTrue(directory.listFiles()[i].getName().matches("chunk_\\d+.bin"));
+            assertEquals( "chunk_" + i + ".bin", directory.listFiles()[i].getName());
+        }
         
-    // }
+    }
 
-    // @Test
-    // public void testGetContentFromBinaryFile(){
+    @Test
+    public void testGetContentFromBinaryFile(){
 
-    //     Set<Long> setOfWays = new HashSet<>();
-    //     Set<Long> setOfAddress = new HashSet<>();
-    //     Set<Long> setOfRelations = new HashSet<>();
+        Set<Long> setOfWays = new HashSet<>();
+        Set<Long> setOfAddress = new HashSet<>();
+        Set<Long> setOfRelations = new HashSet<>();
 
-    //     /*  */
-    //     Set<Tag> tags = XMLWriter.getAllTagsFromChunks();
-    //     assertNotNull(tags);
+        /*  */
+        Set<Tag> tags = XMLWriter.getAllTagsFromChunks();
+        assertNotNull(tags);
 
-    //     for (Tag tag : tags) {
-    //         if(tag instanceof TagNode){
-    //             TagNode t = (TagNode) tag;
-    //             setOfWays.add(t.getParent().getId());
-    //             if(t.getParent().getRelationParent() != null){
-    //                 setOfRelations.add(t.getParent().getRelationParent().getId());
-    //             }
-    //         } else if(tag instanceof TagAddress){
-    //             TagAddress t = (TagAddress) tag;
-    //             setOfAddress.add(t.getId());
-    //         } 
-    //     }
+        for (Tag tag : tags) {
+            if(tag instanceof TagNode){
+                TagNode t = (TagNode) tag;
+                setOfWays.add(t.getParent().getId());
+                if(t.getParent().getRelationParent() != null){
+                    setOfRelations.add(t.getParent().getRelationParent().getId());
+                }
+            } else if(tag instanceof TagAddress){
+                TagAddress t = (TagAddress) tag;
+                setOfAddress.add(t.getId());
+            } 
+        }
 
-    //     assertEquals(1217, tags.size(), 2);
-    //     assertEquals(211, setOfWays.size(), 1);   
-    //     assertEquals(46, setOfAddress.size());  
-    //     assertEquals(1, setOfRelations.size());        
-    // }
-
+        assertEquals(1167, tags.size(), 2);
+        assertEquals(211, setOfWays.size(), 1);   
+        assertEquals(46, setOfAddress.size(), 1);  
+        assertEquals(1, setOfRelations.size());        
+    }
+    @Test
+    public void testGetChunksWithinBoundaries(){
+        TagBound viewBound = new TagBound(55.65745f, 55.65916f, 12.46444f, 12.46918f);
+        assertTrue(viewBound.isInBounds(XMLReader.getBound()));
+        List<String> tags = ChunkFiles.getChunksFilesWithinBounds(viewBound);
+        assertEquals(1, tags.size());
+    }
 }

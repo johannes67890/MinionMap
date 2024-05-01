@@ -34,10 +34,10 @@ public class XMLWriter {
     }
 
     public void initChunkFiles(TagBound bounds) {   
-        // for (TagBound parentChunk : Chunk.getQuadrants(bounds).values()) {
-        //     for (TagBound midChunk : Chunk.getQuadrants(parentChunk).values()) {
-        //         for (TagBound childChunk : Chunk.getQuadrants(midChunk).values()) {
-                    Chunk chunk = new Chunk(bounds); 
+        for (TagBound parentChunk : Chunk.getQuadrants(bounds).values()) {
+            for (TagBound midChunk : Chunk.getQuadrants(parentChunk).values()) {
+                for (TagBound childChunk : Chunk.getQuadrants(midChunk).values()) {
+                    Chunk chunk = new Chunk(childChunk); 
                     for (int j = 0; j < 4; j++) {
                         // Get one of the four quadrants in the chunk
                         TagBound child = chunk.getQuadrant(j);
@@ -45,9 +45,9 @@ public class XMLWriter {
                         createBinaryChunkFile(directoryPath + "chunk_" + chunkId + ".bin", child);
                         chunkId++;
                     }
-        //         }
-        //     }
-        // }
+                }
+            }
+        }
     }
 
     private static void createBinaryChunkFile(String path, TagBound bound){
@@ -272,23 +272,24 @@ public class XMLWriter {
             return null;
         }
         
-        // /**
-        //  * Return all the chunk files within the bounds
-        //  * 
-        //  * @param bound
-        //  * @return
-        //  */
-        // public static List<String> getChunksFilesWithinBounds(TagBound bound){
-        //     List<String> paths = new ArrayList<String>();
+        /**
+         * Return all the chunk files within the bounds
+         * 
+         * @param bound
+         * @return
+         */
+        public static List<String> getChunksFilesWithinBounds(TagBound bound){
+            List<String> paths = new ArrayList<String>();
             
-        //     // for each chunk bound, is the bound within the bounds?
-        //     for (TagBound chunkBound : ChunkFiles.getChunkFiles().keySet()) {
-        //         if(bound.isInBounds(bound)){
-
-        //         }
+            // for each chunk bound, is the bound within the bounds?
+            for (TagBound chunkBound : ChunkFiles.getChunkFiles().keySet()) {
+                if(bound.isInBounds(bound)){
+                    paths.add(ChunkFiles.getChunkFilePath(chunkBound));
+                }
                 
-        //     }
-        // }
+            }
+            return paths;
+        }
 
         public static String getChunkFilePath(TagBound bound){
             if(chunkFiles.containsKey(bound)){
