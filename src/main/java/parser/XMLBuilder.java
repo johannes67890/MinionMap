@@ -85,7 +85,7 @@ public class XMLBuilder {
         }
 
         public String getName(){
-            return this.name;
+            return name;
         }
         public Type getType(){
             return this.type;
@@ -116,9 +116,7 @@ public class XMLBuilder {
                     String k = reader.getAttributeValue(null, "k");
                     String v = reader.getAttributeValue(null, "v");
 
-                    if (this.type == null){
                         parseTag(k, v);
-                    }
                     break;
                 case "nd":
                     TagNode node = XMLReader.getNodeById(getAttributeByLong(reader, "ref"));
@@ -142,18 +140,36 @@ public class XMLBuilder {
                 this.name = v; // set the name of the node
             }
 
+            if(k.contains("maxspeed")){
+                try {
+                    wayBuilder.setSpeedLimit(Integer.parseInt(v));
+                    return;
+                } catch (NumberFormatException e) {
+                   return;
+                }
+            }
+
+            if(k.equals("oneway")){
+                wayBuilder.setOneWay(v.equals("yes") || v.equals("true"));
+                return;
+            }
+
+
             // check if the tag is a type tag and set the type
             for (Type currType : Type.getTypes()){
                 if (k.equals(currType.getKey())){
                     for (String currVal : currType.getValue()) {
                         if (v.equals(currVal) || currVal.equals("")) {
+                            
+                            if(wayBuilder.getSpeedLimit() != 1){
+                                for (Type roadType : Type.getAllRoads()) {
+                                    if(currType.equals(roadType)){
+                                        parseStreet(roadType);
+                                    }
+                                }
+                            }
+                            
                             switch (currType) { 
-                                // Way types
-                                case PRIMARY_ROAD:
-                                case SECONDARY_ROAD:
-                                case TERTIARY_ROAD:
-                                case OTHER_ROAD:
-                                    parseStreet(currType);
                                 case ROUTE:
                                 case RESTRICTION:
                                 case MULTIPOLYGON:
@@ -210,10 +226,14 @@ public class XMLBuilder {
                 case TERTIARY_ROAD:
                     wayBuilder.setSpeedLimit(80);
                     break;
+                case RESIDENTIAL_ROAD:
+                    wayBuilder.setSpeedLimit(DEFAULT_SPEED);
+                    break;
                 case OTHER_ROAD:
                     wayBuilder.setSpeedLimit(DEFAULT_SPEED);
                     break;
                 default:
+                    wayBuilder.setSpeedLimit(DEFAULT_SPEED);
                     break;
             }
         }

@@ -25,17 +25,18 @@ public class TagWay extends Tag implements Comparable<TagWay>{
     long id;
     String name;
     TLinkedList<TagNode> nodes = new TLinkedList<TagNode>();
+    TagRelation relationParent;
     int speedLimit;
     boolean isOneWay;
     Type type;
 
 
     public TagWay(XMLBuilder builder) {
-        TagWay x = XMLReader.getWayById(27806594l);
         this.id = builder.getId();
         this.name = builder.getName();
         this.speedLimit = builder.getWayBuilder().getSpeedLimit();
         this.type = builder.getType();
+        this.isOneWay = builder.getWayBuilder().isOneWay();
         this.nodes = builder.getWayBuilder().getRefNodes(this);
     }
 
@@ -86,6 +87,14 @@ public class TagWay extends Tag implements Comparable<TagWay>{
         return name;
     }
 
+    public void setRelationParent(TagRelation relation){
+        relationParent = relation;
+    }
+
+    public TagRelation getRelationParent(){
+        return relationParent;
+    }
+
     /**
      * Get the type of the way.
      * @return The {@link Type} of the way.
@@ -116,13 +125,15 @@ public class TagWay extends Tag implements Comparable<TagWay>{
         return nodes;
     }
 
+    
+
     public boolean isLine(){
         return isLine;
     }
 
     @Override
     public String toString() {
-        return "Way: " + id + " " + name + " " + type + " " + speedLimit;
+        return "Way: " + id + " name: " + name + " type " + type + " limit " + speedLimit + " oneway: " + isOneWay;
     }
 
     public int compareTo(TagWay tW){
@@ -151,10 +162,20 @@ public class TagWay extends Tag implements Comparable<TagWay>{
         private List<TagNode> refNodes = new ArrayList<TagNode>();
         private TLinkedList<TagNode> refNodesList = new TLinkedList<TagNode>();
         private boolean isEmpty = true;
-        private int speedLimit;
+        private boolean isOneWay = false;
+        private int speedLimit = 1; // Default speed limit is 1 to not break edge cases in pathfinding.
 
         public boolean isEmpty() {
             return isEmpty;
+        }
+
+        public void setOneWay(boolean isOneWay) {
+            isEmpty = false;
+            this.isOneWay = isOneWay;
+        }
+
+        public boolean isOneWay() {
+            return isOneWay;
         }
 
         public int getSpeedLimit() {
@@ -175,9 +196,14 @@ public class TagWay extends Tag implements Comparable<TagWay>{
 
         public TLinkedList<TagNode> getRefNodes(TagWay way) {
             for (TagNode node : refNodes) {
-                TagNode newNode = new TagNode(node);
-                newNode.clearLinks();
-                refNodesList.add(newNode);
+                if(node.getNext() != null || node.getPrevious() != null){
+                    TagNode newNode = new TagNode(node);
+                    newNode.clearLinks();
+                    refNodesList.add(newNode);
+                    continue;
+                }else{
+                    refNodesList.add(node);
+                }
             }
 
             

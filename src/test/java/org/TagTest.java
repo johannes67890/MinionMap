@@ -9,6 +9,7 @@ import parser.TagNode;
 import parser.TagRelation;
 import parser.TagWay;
 import parser.XMLReader;
+import util.MecatorProjection;
 
 public class TagTest {
     private XMLReader reader;
@@ -51,9 +52,17 @@ public class TagTest {
     }
     @Test
     public void testDistance(){
-        TagNode a0 = new TagNode(0, 55.6572603f, 12.4682648f);
-        TagNode a1 = new TagNode(1, 55.6572610f, 12.4685185f);
+        TagNode a0 = MecatorProjection.project(new TagNode(0, 55.6572603f, 12.4682648f));
+        TagNode a1 = MecatorProjection.project(new TagNode(1, 55.6572610f, 12.4685185f));
 
         assertEquals(15.93, a0.distance(a1), 0.1);
+    }
+    
+    @Test
+    public void testGetParent(){
+        // Test of node with no intersections
+        TagNode node = XMLReader.getNodeById(3711179682l);
+        assertNotNull(node);
+        assertEquals(XMLReader.getWayById(27806594l), node.getParent());
     }
 }

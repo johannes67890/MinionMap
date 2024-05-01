@@ -72,6 +72,10 @@ public class Digraph {
         return adj.keySet();
     }
 
+    public void remove(TagNode v){
+        adj.remove(v);
+    }
+
     /**
      * Returns the number of edges in this edge-weighted graph.
      *
@@ -132,7 +136,6 @@ public class Digraph {
 
     public TagNode getNode(long id){
         for(DirectedEdge node : edges()){
-            //System.out.println("edges:" + node.either().getId() + " " + node.other(node.either()).getId() + " " + id);
             if(node.from().getId() == id){
                 return node.from();
             } else if(node.to().getId() == id){
