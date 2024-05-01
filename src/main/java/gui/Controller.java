@@ -185,7 +185,8 @@ public class Controller implements Initializable, ControllerInterface{
 
 
         setEnableDestinationComboBox(false);
-        ComboBoxListViewSkin<String> comboBoxListViewSkin = new ComboBoxListViewSkin<String>(searchBarStart);
+        ComboBoxListViewSkin<String> comboBoxListViewSkinStart = new ComboBoxListViewSkin<String>(searchBarStart);
+        ComboBoxListViewSkin<String> comboBoxListViewSkinDestination = new ComboBoxListViewSkin<>(searchBarDestination);
 
 
         mainMenuVBox.setVisible(false);
@@ -237,20 +238,9 @@ public class Controller implements Initializable, ControllerInterface{
         routeButton.setOnAction((ActionEvent e) -> {
             
             setEnableDestinationComboBox(!searchBarDestination.isVisible());
-
             routeTypeMenu.setVisible(!routeTypeMenu.isVisible());
 
-            if (startAddress == null){
-                
-            }
-            else if (endAddress == null){
-
-            }
-            else{
-
-            }
-
-
+            
         });
 
         menuButton2.setOnAction((ActionEvent e) -> {
@@ -298,7 +288,7 @@ public class Controller implements Initializable, ControllerInterface{
         });
 
 
-        comboBoxListViewSkin.getPopupContent().addEventFilter(KeyEvent.ANY, (event) -> {
+        comboBoxListViewSkinStart.getPopupContent().addEventFilter(KeyEvent.ANY, (event) -> {
             if( event.getCode() == KeyCode.SPACE ) {
                 event.consume();
             }else if (event.getCode() == KeyCode.DOWN){
@@ -307,30 +297,64 @@ public class Controller implements Initializable, ControllerInterface{
                 event.consume();
             }
         });
-        searchBarStart.setSkin(comboBoxListViewSkin);
+        comboBoxListViewSkinDestination.getPopupContent().addEventFilter(KeyEvent.ANY, (event) -> {
+            if( event.getCode() == KeyCode.SPACE ) {
+                event.consume();
+            }else if (event.getCode() == KeyCode.DOWN){
+                event.consume();
+            }else if (event.getCode() == KeyCode.UP){
+                event.consume();
+            }
+        });
+        searchBarStart.setSkin(comboBoxListViewSkinStart);
+        searchBarDestination.setSkin(comboBoxListViewSkinDestination);
 
         searchBarStart.setOnAction((ActionEvent e) ->{
-            TagAddress address = comboBoxAddress(searchBarStart);
-            if (address == null){
+            startAddress  = comboBoxAddress(searchBarStart);
+            if (startAddress == null){
                 return;
             }
-            showAddress(address);
+            if (endAddress == null){
+                showAddress(startAddress);
+            }else{
+                s.pathfindBetweenTagAddresses(startAddress, endAddress);
+            }
+
+        });
+
+        searchBarDestination.setOnAction((ActionEvent e) ->{
+            
+            endAddress = comboBoxAddress(searchBarDestination);
+            if (endAddress == null){
+                return;
+            }
+            if (startAddress == null){
+                showAddress(endAddress);
+            }else{
+                s.pathfindBetweenTagAddresses(startAddress, endAddress);
+            }
 
         });
 
         
         searchBarStart.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
+            showSuggestions(searchBarStart, oldValue, newValue);            
+        });
 
-            if (searchBarStart.isFocused()){
-                search(newValue, true, searchBarStart);
-            }
+        searchBarDestination.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
+            showSuggestions(searchBarDestination, oldValue, newValue);
+        });
+    }
 
-            if (newValue.isEmpty() && !oldValue.isEmpty() && oldValue.length() > 1){
-                searchBarStart.getEditor().textProperty().setValue(oldValue);
-                searchBarStart.hide();
-            }
-        });        
+    private void showSuggestions(ComboBox<String> searchBar, String oldValue, String newValue){
+        if (searchBar.isFocused()){
+            search(newValue, searchBar);
+        }
 
+        if (newValue.isEmpty() && !oldValue.isEmpty() && oldValue.length() > 1){
+            searchBar.getEditor().textProperty().setValue(oldValue);
+            searchBar.hide();
+        }
     }
 
     private void setEnableDestinationComboBox(boolean isEnabled){
@@ -356,18 +380,20 @@ public class Controller implements Initializable, ControllerInterface{
             return null;
     }
 
-    private void search(String address, boolean isStart, ComboBox<String> searchBar) {
+    private void search(String address, ComboBox<String> searchBar) {
     if (!address.isEmpty() && address.charAt(address.length() - 1) != ' ') {
             ArrayList<TagAddress> tagAddresses = s.getSuggestions(address);
-            //System.out.println("Number of suggestions: " + tagAddresses.size());
-            
+            if (searchBar.equals(searchBarStart) && startAddress != null){
+                startAddress = null;
+            }else if (searchBar.equals(searchBarDestination) && endAddress != null){
+                startAddress = null;
+            }
             // Update UI on JavaFX Application Thread
             Platform.runLater(() -> {
                 synchronized (searchList) {
                     if (!searchBar.getItems().isEmpty()) {
                         searchBar.getItems().clear();
                         addresses.clear();
-
                     }
                     for (TagAddress tagAddress : tagAddresses) {
                         searchList.add(tagAddress.toString());

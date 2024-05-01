@@ -182,18 +182,8 @@ public class Search {
         return trie.getAddressObject(input, houseNumber);
     }
 
-
-    public static void getTagBySearchAddress(SearchAddress searchAddress){
+    // TODO: Add difference between transport type in parameter
+    public void pathfindBetweenTagAddresses(TagAddress start, TagAddress end){
         
-        if (!searchAddress.house.isBlank()){
-
-        }else if (!searchAddress.street.isBlank()){
-
-        }else if (!searchAddress.city.isBlank()){
-
-        }else{
-
-        }
-
     }
 }
