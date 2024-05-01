@@ -24,7 +24,7 @@ public class XMLWriter {
         if (!directory.exists()) {
             directory.mkdirs();
         }
-        if(directory.listFiles().length > 256){
+        if(directory.listFiles().length  > 0){
             for (File file : directory.listFiles()) {
                 file.delete();
             }

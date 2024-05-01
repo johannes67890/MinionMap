@@ -250,7 +250,7 @@ public class Dijsktra {
         
         
 
-        new XMLReader(FileDistributer.input.getFilePath());
+        new XMLReader(FileDistributer.testMap.getFilePath());
         Tree.initialize(new ArrayList<Tag>(XMLReader.getWays().valueCollection()));;
         
         // default

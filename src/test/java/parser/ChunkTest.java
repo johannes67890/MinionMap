@@ -1,4 +1,4 @@
-package org;
+package parser;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,7 +25,7 @@ public class ChunkTest {
     @BeforeEach
     public void setUp() {
         assertDoesNotThrow(() -> {
-            new XMLReader(FileDistributer.input.getFilePath());
+            new XMLReader(FileDistributer.testMap.getFilePath());
         });       
         chunck = new Chunk(XMLReader.getBound()); 
     }
