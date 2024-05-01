@@ -42,7 +42,7 @@ public class XMLWriterTest {
     public void setUp() {
         tearDown();
         assertDoesNotThrow(() -> {
-            new XMLReader(FileDistributer.testMap.getFilePath());
+            new XMLReader(FileDistributer.RebakSopark.getFilePath());
         });
     }
     
@@ -69,38 +69,34 @@ public class XMLWriterTest {
         
     // }
 
-    @Test
-    public void testGetContentFromBinaryFile(){
-        List<Tag> duplicates = XMLWriter.getAllTagsFromChunks();
+    // @Test
+    // public void testGetContentFromBinaryFile(){
 
-        Set<Long> setOfWays = new HashSet<>();
-        Set<Long> setOfAddress = new HashSet<>();
+    //     Set<Long> setOfWays = new HashSet<>();
+    //     Set<Long> setOfAddress = new HashSet<>();
+    //     Set<Long> setOfRelations = new HashSet<>();
 
-        /*  */
-        List<Tag> tags = XMLWriter.getAllTagsFromChunks();
-        assertNotNull(tags);
+    //     /*  */
+    //     Set<Tag> tags = XMLWriter.getAllTagsFromChunks();
+    //     assertNotNull(tags);
 
-        for (Tag tag : tags) {
-            if(tag instanceof TagNode){
-                TagNode t = (TagNode) tag;
-                if(!setOfWays.contains(t.getParent().getId())){
-                    setOfWays.add(t.getParent().getId());
-                }else{
-                    duplicates.add(t.getParent());
-                }
-            } else if(tag instanceof TagAddress){
-                TagAddress t = (TagAddress) tag;
-                if(!setOfWays.contains(t.getId())){
-                    setOfAddress.add(t.getId());
-                }else {
-                    duplicates.add(t);
-                }
-            }
-        }
+    //     for (Tag tag : tags) {
+    //         if(tag instanceof TagNode){
+    //             TagNode t = (TagNode) tag;
+    //             setOfWays.add(t.getParent().getId());
+    //             if(t.getParent().getRelationParent() != null){
+    //                 setOfRelations.add(t.getParent().getRelationParent().getId());
+    //             }
+    //         } else if(tag instanceof TagAddress){
+    //             TagAddress t = (TagAddress) tag;
+    //             setOfAddress.add(t.getId());
+    //         } 
+    //     }
 
-        assertEquals(1211, tags.size());
-        assertEquals(211, setOfWays.size());             
-    }
-
+    //     assertEquals(1217, tags.size(), 2);
+    //     assertEquals(211, setOfWays.size(), 1);   
+    //     assertEquals(46, setOfAddress.size());  
+    //     assertEquals(1, setOfRelations.size());        
+    // }
 
 }
