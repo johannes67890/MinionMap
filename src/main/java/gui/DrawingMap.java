@@ -87,14 +87,16 @@ public class DrawingMap {
         double maxlat = bound.getMaxLat();
         double maxlon = bound.getMaxLon();
         double minlat = bound.getMinLat();
+        float[] screenBounds = getScreenBounds();
         ArrayList<Tag> tempList = new ArrayList<>();
         tempList.addAll(List.copyOf(XMLReader.getWays().valueCollection()));
         tempList.addAll(List.copyOf(XMLReader.getRelations().valueCollection()));
         Tree.initialize(tempList);
         zoombar = new Zoombar(zoombarIntervals, zoomLevelMax, zoomLevelMin);
-        pan(-minlon, minlat);
+        pan(-minlon, minlat + (screenBounds[3] - screenBounds[1]));
         zoom(canvas.getWidth() / (maxlon - minlon), 0, 0);
         tempBounds = getScreenBounds();
+        pan(0, screenBounds[3] - screenBounds[1]);
         DrawMap(canvas);
     }
 
@@ -172,7 +174,7 @@ public class DrawingMap {
  
         drawWays(sortedWaysToDraw);
 
-        drawInnerWays();
+        //drawInnerWays();
 
         
         if (markedTag != null){

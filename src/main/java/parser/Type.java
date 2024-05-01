@@ -82,8 +82,8 @@ public enum Type  {
     
     FARMYARD("landuse", new String[]{"farmyard", "farm"}, 8, 7, Color.web("#F5DCBA"), Color.BLANCHEDALMOND.darker(), 5, false),
     
-    ROCK("natural", new String[]{"arch", "bare_rock", "blockfield", "cave_entrance", "dune", "fumarole", "hill", "rock", "sand", "scree", "sinkhole", "stone"}, 8, 7, Color.web("#EEE5DC"), Color.LIGHTGRAY, 5, false),
-    ROCKLINE("natural", new String[]{"arete", "cliff", "earth_bank", "ridge", "valley"}, 8, 9, Color.web("#EEE5DC"), 5, true, 2, 50),
+    ROCK("natural", new String[]{"arch", "bare_rock", "blockfield", "cave_entrance", "dune", "fumarole", "hill", "rock", "sand", "scree", "sinkhole", "stone"}, 8, 7, Color.web("#DBD6D0"), Color.LIGHTGRAY, 5, false),
+    ROCKLINE("natural", new String[]{"arete", "cliff", "earth_bank", "ridge", "valley"}, 8, 9, Color.web("#DBD6D0"), 5, true, 2, 50),
     SAND("natural", new String[]{"sand", "dune"}, 8, 7, Color.web("#F7EDD1"), Color.SANDYBROWN, 5, false),
 
     PORT("industrial", new String[]{"port"}, 8, 0, Color.TRANSPARENT, Color.TRANSPARENT, 5, false),
