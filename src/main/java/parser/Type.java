@@ -176,7 +176,7 @@ public enum Type  {
         // A group that contains all types of roads that are for bikes
         // The group is without motorways and primary roads
         return Arrays.stream(Type.values())
-            .filter(type -> type.getKey().contains("cycleway"))
+            .filter(type -> type.getKey().contains("cycleway") || type.getKey().contains("highway"))
             .filter(type -> !Arrays.asList(unAllowed).contains(type.getValue()[0]))
             .collect(Collectors.toList());
     }
