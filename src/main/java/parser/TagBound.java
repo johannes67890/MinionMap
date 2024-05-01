@@ -75,6 +75,19 @@ public class TagBound extends Tag implements Comparable<TagBound>{
     }
 
     @Override
+    public boolean isInBounds(TagBound bound) {
+        TagNode tl = new TagNode(this.getMaxLat(), this.getMinLon());
+        TagNode tr = new TagNode(this.getMaxLat(), this.getMaxLon());
+        TagNode bl = new TagNode(this.getMinLat(), this.getMinLon());
+        TagNode br = new TagNode(this.getMinLat(), this.getMaxLon()); 
+        
+        if(tl.isInBounds(bound) || tr.isInBounds(bound) || bl.isInBounds(bound) || br.isInBounds(bound)) return true;
+        else if(this.getMinLat() > bound.getMaxLat() || this.getMaxLat() < bound.getMinLat()) return false;
+        else if(this.getMinLon() > bound.getMaxLon() || this.getMaxLon() < bound.getMinLon()) return false;
+        return true;
+    }
+
+    @Override
     public int compareTo(TagBound o) {
         if (Double.valueOf(this.getMaxLat()).compareTo(Double.valueOf(o.getMaxLat())) == 0) {
             if (Double.valueOf(this.getMinLat()).compareTo(Double.valueOf(o.getMinLat())) == 0) {
