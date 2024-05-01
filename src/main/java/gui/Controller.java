@@ -48,11 +48,18 @@ public class Controller implements Initializable, ControllerInterface{
     @FXML private Button pointButton;
     @FXML private Button routeButton;
     @FXML private Pane leftBurgerMenu;
+
+    @FXML private Pane routeTypeMenu;
+    @FXML private Button walkButton;
+    @FXML private Button bicycleButton;
+    @FXML private Button carButton;
+
     @FXML private ComboBox<String> searchBarStart;
     @FXML private ComboBox<String> searchBarDestination;
     @FXML private Button mainMenuButton;
     @FXML private VBox mainMenuVBox;
     @FXML private VBox graphicVBox;
+    
     @FXML private HBox mainUIHBox;
     @FXML private BorderPane mainBorderPane;
     @FXML private ChoiceBox<String> styleChoiceBox;
@@ -78,6 +85,14 @@ public class Controller implements Initializable, ControllerInterface{
 
     private TagAddress startAddress = null;
     private TagAddress endAddress = null;
+
+    enum RouteType {
+        WALKING,
+        CYCLING,
+        DRIVING
+    }
+
+    RouteType routeType = RouteType.DRIVING;
 
 
     Search s = new Search();
@@ -176,6 +191,7 @@ public class Controller implements Initializable, ControllerInterface{
         mainMenuVBox.setVisible(false);
         leftBurgerMenu.setVisible(false);
         graphicVBox.setVisible(false);
+        routeTypeMenu.setVisible(false);
 
         styleChoiceBox.setItems(style);
         styleChoiceBox.setValue("default");
@@ -203,14 +219,9 @@ public class Controller implements Initializable, ControllerInterface{
                     GraphicsHandler.setGraphicsStyle(GraphicStyle.GRAYSCALE);
                     mainView.draw();
                     break;
-
-
                 }
             }
-
-
         });
-
 
         mainMenuButton.setOnAction((ActionEvent e) -> {
             mainView.drawScene(StageSelect.MainMenu);
@@ -226,6 +237,9 @@ public class Controller implements Initializable, ControllerInterface{
         routeButton.setOnAction((ActionEvent e) -> {
             
             setEnableDestinationComboBox(!searchBarDestination.isVisible());
+
+            routeTypeMenu.setVisible(!routeTypeMenu.isVisible());
+
             if (startAddress == null){
                 
             }
@@ -270,6 +284,19 @@ public class Controller implements Initializable, ControllerInterface{
                 pointImage.setImage(imagePassive);
             }
         });
+
+        walkButton.setOnAction((ActionEvent e) -> {
+            routeType = RouteType.WALKING;
+        });
+
+        bicycleButton.setOnAction((ActionEvent e) ->{
+            routeType = RouteType.CYCLING;
+        });
+
+        carButton.setOnAction((ActionEvent e) ->{
+            routeType = RouteType.DRIVING;
+        });
+
 
         comboBoxListViewSkin.getPopupContent().addEventFilter(KeyEvent.ANY, (event) -> {
             if( event.getCode() == KeyCode.SPACE ) {
