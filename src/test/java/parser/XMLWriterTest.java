@@ -1,61 +1,48 @@
 package parser;
 
-import parser.Tag;
-import parser.TagAddress;
-import parser.TagBound;
-import parser.TagNode;
-import parser.TagRelation;
-import parser.TagWay;
-import parser.XMLReader;
-import parser.XMLWriter;
 import parser.XMLWriter.ChunkFiles;
 import util.FileDistributer;
+import util.MecatorProjection;
+
 import java.io.File;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.ArrayList;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import edu.princeton.cs.algs4.LSD;
-import gnu.trove.map.hash.TLongObjectHashMap;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * Warning: These test should be run one at a time, 
+ * else the tearDown cannot keep up with the creation of files.
+ */
 public class XMLWriterTest {
     final static String directoryPath = "src/main/resources/chunks/";
     static File directory = new File(directoryPath);
 
     @BeforeEach
-    public void setUp() {
-        tearDown();
+    public synchronized void setUp() {
         assertDoesNotThrow(() -> {
             new XMLReader(FileDistributer.testMap.getFilePath());
         });
+
     }
     
    
+    @AfterAll
     public static void tearDown() {
-        if(!directory.exists()){
-            directory.mkdirs();
-        }
+        File directory = new File(directoryPath);
         for (File file : directory.listFiles()) {
             file.delete();
         }
     }
+    
 
     @Test
     public void testInitChunkFiles() {
@@ -69,7 +56,7 @@ public class XMLWriterTest {
     }
 
     @Test
-    public void testGetContentFromBinaryFile(){
+    public synchronized void testGetContentFromBinaryFile(){
 
         Set<Long> setOfWays = new HashSet<>();
         Set<Long> setOfAddress = new HashSet<>();
@@ -97,11 +84,49 @@ public class XMLWriterTest {
         assertEquals(46, setOfAddress.size(), 1);  
         assertEquals(1, setOfRelations.size());        
     }
+
     @Test
-    public void testGetChunksWithinBoundaries(){
-        TagBound viewBound = new TagBound(55.65745f, 55.65916f, 12.46444f, 12.46918f);
+    public synchronized void testGetChunksWithinBoundaries(){
+        /**
+         * A bound where one of the corners only just hit the edge of the original bounds
+         */
+        TagBound viewBound = MecatorProjection.project(new TagBound(55.65786f, 55.65868f, 12.46626f, 12.46807f));
         assertTrue(viewBound.isInBounds(XMLReader.getBound()));
         List<String> tags = ChunkFiles.getChunksFilesWithinBounds(viewBound);
-        assertEquals(1, tags.size());
+        assertEquals(1, tags.size(), 1);
+        TagBound bound = ChunkFiles.getBound(tags.get(0));
+        assertTrue(viewBound.isInBounds(bound));
+        // test 2
+        viewBound = MecatorProjection.project(new TagBound(55.65799f, 55.65840f, 12.46738f, 12.46821f));
+        assertTrue(viewBound.isInBounds(XMLReader.getBound()));
+        tags = ChunkFiles.getChunksFilesWithinBounds(viewBound);
+        for (String string : tags) {
+            bound = ChunkFiles.getBound(string);
+            assertTrue(viewBound.isInBounds(bound));
+        }
+
+        /**
+         *  A bound where all of the corners are outside the original bounds
+         */
+        viewBound = MecatorProjection.project(new TagBound(55.65549f, 55.65879f, 12.46590f, 12.47558f));
+        assertTrue(viewBound.isInBounds(XMLReader.getBound()));
+        tags = ChunkFiles.getChunksFilesWithinBounds(viewBound);
+        assertEquals(256, tags.size());
+        for (String string : tags) {
+            bound = ChunkFiles.getBound(string);
+            assertTrue(viewBound.isInBounds(bound));
+        }
+
+        /**
+         * A bound where all of the corners are outside the original bounds
+         */
+        viewBound = MecatorProjection.project(new TagBound(55.65664f, 55.65811f, 12.46968f, 12.47234f));
+        assertTrue(viewBound.isInBounds(XMLReader.getBound()));
+        tags = ChunkFiles.getChunksFilesWithinBounds(viewBound);
+        assertTrue(tags.size() > 5); // should be around 70 chunks in this area
+        for (String string : tags) {
+            bound = ChunkFiles.getBound(string);
+            assertTrue(viewBound.isInBounds(bound));
+        }
     }
 }

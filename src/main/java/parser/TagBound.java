@@ -76,15 +76,22 @@ public class TagBound extends Tag implements Comparable<TagBound>{
 
     @Override
     public boolean isInBounds(TagBound bound) {
-        TagNode tl = new TagNode(this.getMaxLat(), this.getMinLon());
-        TagNode tr = new TagNode(this.getMaxLat(), this.getMaxLon());
-        TagNode bl = new TagNode(this.getMinLat(), this.getMinLon());
-        TagNode br = new TagNode(this.getMinLat(), this.getMaxLon()); 
+        TagNode tl = new TagNode(this.getMaxLat(), this.getMinLon()); // Top left
+        TagNode tr = new TagNode(this.getMaxLat(), this.getMaxLon()); // Top right
+        TagNode bl = new TagNode(this.getMinLat(), this.getMinLon()); // Bottom left
+        TagNode br = new TagNode(this.getMinLat(), this.getMaxLon());  // Bottom right
         
+        // Check if any of the corners are within the bounds
         if(tl.isInBounds(bound) || tr.isInBounds(bound) || bl.isInBounds(bound) || br.isInBounds(bound)) return true;
-        else if(this.getMinLat() > bound.getMaxLat() || this.getMaxLat() < bound.getMinLat()) return false;
-        else if(this.getMinLon() > bound.getMaxLon() || this.getMaxLon() < bound.getMinLon()) return false;
-        return true;
+        // Check if the bounds are within the corners
+        else if
+        (this.getMinLat() > bound.getMinLat() && this.getMaxLat() < bound.getMaxLat() &&
+         this.getMinLon() > bound.getMinLon() && this.getMaxLon() < bound.getMaxLon()) return true;
+        // Check if the bound are bigger than the corners
+        else if
+        (this.getMinLat() < bound.getMinLat() && this.getMaxLat() > bound.getMaxLat() &&
+         this.getMinLon() < bound.getMinLon() && this.getMaxLon() > bound.getMaxLon()) return true;
+        return false;
     }
 
     @Override

@@ -37,18 +37,28 @@ public class TagTest {
     public void testIsInBounds(){
         TagBound bound = XMLReader.getBound();
 
-        // testBound0 - A bound where one of the corners is in bounds
-        TagBound testBound0 = MecatorProjection.project(new TagBound(55.65409f, 55.65733f, 12.47029f, 12.47875f));
-        assertTrue(testBound0.isInBounds(bound));
-        // testBound1 - A bound where all corners are larger that the bounds
-        TagBound testBound1 = MecatorProjection.project(new TagBound(55.6555f, 55.6592f, 12.4657f, 12.4749f));
-        assertTrue(testBound1.isInBounds(bound));
-        // TestBound2 - A bound where all corners are smaller that the bounds
-        TagBound testBound2 = MecatorProjection.project(new TagBound(55.65667f, 55.65719f, 12.47077f, 12.47201f));
+        // A bound where one of the corners is in bounds
+        TagBound tl = MecatorProjection.project(new TagBound(55.65409f, 55.65733f, 12.47029f, 12.47875f));
+        assertTrue(tl.isInBounds(bound));
+        TagBound br = MecatorProjection.project(new TagBound(55.65745f, 55.65916f, 12.46444f, 12.46918f));
+        assertTrue(br.isInBounds(bound));
+        TagBound tr = MecatorProjection.project(new TagBound(55.65392f, 55.65716f, 12.46152f, 12.47049f));
+        assertTrue(tr.isInBounds(bound));
+        TagBound bl = MecatorProjection.project(new TagBound(55.6575f, 55.6611f, 12.4725f, 12.4799f));
+        assertTrue(bl.isInBounds(bound));
+
+
+        // A bound where all corners are larger that the bounds
+        TagBound testBound2 = MecatorProjection.project(new TagBound(55.6555f, 55.6592f, 12.4657f, 12.4749f));
         assertTrue(testBound2.isInBounds(bound));
-        // TestBound3 - A bound where all corners are outside the bounds
-        TagBound testBound3 = MecatorProjection.project(new TagBound(55.65601f, 55.65822f, 12.47536f, 12.47887f));
-        assertFalse(testBound3.isInBounds(bound));
+        
+        // A bound where all corners are smaller that the bounds
+        TagBound testBound3 = MecatorProjection.project(new TagBound(55.65667f, 55.65719f, 12.47077f, 12.47201f));
+        assertTrue(testBound3.isInBounds(bound));
+        
+        // A bound where all corners are outside the bounds
+        TagBound testBound4 = MecatorProjection.project(new TagBound(55.65601f, 55.65822f, 12.47536f, 12.47887f));
+        assertFalse(testBound4.isInBounds(bound));
 
         /**
          * Address

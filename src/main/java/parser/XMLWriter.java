@@ -283,7 +283,7 @@ public class XMLWriter {
             
             // for each chunk bound, is the bound within the bounds?
             for (TagBound chunkBound : ChunkFiles.getChunkFiles().keySet()) {
-                if(bound.isInBounds(bound)){
+                if(bound.isInBounds(chunkBound)){
                     paths.add(ChunkFiles.getChunkFilePath(chunkBound));
                 }
                 
