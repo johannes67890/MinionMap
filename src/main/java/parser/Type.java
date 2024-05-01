@@ -89,8 +89,8 @@ public enum Type  {
     AERIALWAYSTATION("aerialway", new String[]{"station"},4, 8, Color.GRAY, Color.GRAY.darker(), 5, false),
     RESIDENTIAL_ROAD("highway",new String[]{"residential"}, 4, 9, Color.WHITE, 5, true, 2, 7),
     BIKE_ROAD("cycleway",new String[]{"lane", "oppisite", "opposite_lane", "track", "opposite_track", "share_busway", "shared_lane", "opposite_share_busway"}, 4, 9, Color.WHITE, 5, true, 2, 7),
-    PEDESTRIAN_ROAD("highway",new String[]{"cycleway", "footway", "path", "steps", "bridleway", "service", "living_street", "pedestrian", "unclassified"}, 4, 9, Color.WHITE, 5, true, 2, 7),
-    OTHER_ROAD("highway",new String[]{"road", "mini_roundabout"}, 4, 9, Color.WHITE, 5, true, 2, 7),
+    PEDESTRIAN_ROAD("highway",new String[]{"footway", "path", "steps", "bridleway", "service", "living_street", "pedestrian", "unclassified"}, 4, 9, Color.WHITE, 5, true, 2, 7),
+    OTHER_ROAD("highway",new String[]{"cycleway", "road", "mini_roundabout"}, 4, 9, Color.WHITE, 5, true, 2, 7),
     // Relations (Hierarchy: 3)
     MULTIPOLYGON("type", new String[]{"multipolygon"}, 3, Color.BLACK, 0),
     RESTRICTION("type", new String[]{"restriction"}, 3, Color.BLACK, 0),
@@ -159,33 +159,35 @@ public enum Type  {
             .collect(Collectors.toList());
     }
 
-    public static List<String> getAllCarRoads() {
+    public static List<Type> getAllCarRoads() {
         String[] unAllowed = {"footway", "steps", "cycleway", "bridleway", "path", "track", 
         "pedestrian", "service", "living_street", "unclassified", "road", "mini_roundabout"};
 
+        // A group that contains all types of roads that are for cars
+        // But disallowing types with values from unAllowed
         return Arrays.stream(Type.values())
             .filter(type -> type.getKey().contains("highway"))
-            .flatMap(type -> type.filteredType(unAllowed).stream())
+            .filter(type -> !Arrays.asList(unAllowed).contains(type.getValue()[0]))
             .collect(Collectors.toList());
     }
 
-    public static List<String> getAllBikeRoads() {
-        String[] unAllowed = {"motorway", "primary", "trunk", "footway", "steps"};
+    public static List<Type> getAllBikeRoads() {
+        String[] unAllowed = {"motorway", "primary", "trunk"};
         // A group that contains all types of roads that are for bikes
         // The group is without motorways and primary roads
         return Arrays.stream(Type.values())
-            .filter(type -> type.getKey().contains("highway") || type.getKey().contains("cycleway"))
-            .flatMap(type -> type.filteredType(unAllowed).stream())
+            .filter(type -> type.getKey().contains("cycleway"))
+            .filter(type -> !Arrays.asList(unAllowed).contains(type.getValue()[0]))
             .collect(Collectors.toList());
     }
 
-    public static List<String> getAllPedestrianRoads() {
-        String[] unAllowed = {"motorway", "motorway_link", "primary", "primary_link", "trunk", "trunk_link", "cycleway"};
+    public static List<Type> getAllPedestrianRoads() {
+        String[] unAllowed = {"motorway", "motorway_link", "primary", "primary_link", "trunk", "trunk_link"};
         // A group that contains all types of roads that are for pedestrians
         // The group is without motorways and primary roads
         return Arrays.stream(Type.values())
             .filter(type -> type.getKey().contains("highway"))
-            .flatMap(type -> type.filteredType(unAllowed).stream())
+            .filter(type -> !Arrays.asList(unAllowed).contains(type.getValue()[0]))
             .collect(Collectors.toList());
     }
 
@@ -196,16 +198,16 @@ public enum Type  {
             .collect(Collectors.toList());
     }
 
-    /* Utility Methods */
-    private List<String> filteredType(String[] unAllowed){
-        List<String> res = new ArrayList<>();
-            for (String str : this.getValue() ) {
-                if(!Arrays.asList(unAllowed).contains(str)){
-                    res.add(str);
-                }
-            }
-        return res;
-    }
+    // /* Utility Methods */
+    // private List<String> filteredType(String[] unAllowed){
+    //     List<String> res = new ArrayList<>();
+    //         for (String str : this.getValue() ) {
+    //             if(!Arrays.asList(unAllowed).contains(str)){
+    //                 res.add(str);
+    //             }
+    //         }
+    //     return res;
+    // }
 
     public String getKey() {
         return key;

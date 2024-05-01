@@ -20,13 +20,13 @@ enum TransportType {
     FOOT(Type.getAllPedestrianRoads()),
     BIKE(Type.getAllBikeRoads());
 
-    private final List<String> roadTypes;
+    private final List<Type> roadTypes;
     
-    TransportType(List<String> roadTypes){
+    TransportType(List<Type> roadTypes){
         this.roadTypes = roadTypes;
     }
 
-    public List<String> getRoadTypes(){
+    public List<Type> getRoadTypes(){
         return roadTypes;
     }
 }
@@ -86,20 +86,34 @@ public class Dijsktra {
                 relax(e);
             }
         }
+        System.out.println("size of ways in tree: " + surroundingTags.size());
         // timer ned
         long endTime = System.nanoTime();
         long duration = (endTime - startTime);
-        System.out.println("Time: " + duration + "ms");
-        if (hasPathTo(finish)) {
-            StdOut.printf("%d to %d (%.2f)  ", start.getId(), finish.getId(), distTo.get(finish.getId()));
-            StdOut.println();
-            for (DirectedEdge e : pathTo(finish)) {
-                System.out.println(e + "       ");
+        System.out.println("Time: " + duration/100000 + "ms");
+
+        try {
+            if (hasPathTo(finish)) {
+                StdOut.printf("%d to %d (%.2f)  ", start.getId(), finish.getId(), distTo.get(finish.getId()));
+                StdOut.println();
+                for (DirectedEdge e : pathTo(finish)) {
+                    System.out.println(e + "       ");
+                }
+                StdOut.println();
             }
-            StdOut.println();
-        }
-        else {
-            StdOut.printf("%d to %d - no path\n", start.getId(), finish.getId());
+            else {
+                StdOut.printf("%d to %d - no path\n", start.getId(), finish.getId());
+            }
+        } catch (NullPointerException e) {
+            System.out.println("No path found\n");
+            if(!transportType.getRoadTypes().contains(start.getParent().getType())){
+                System.out.println("Your start point in on a road of type " + start.getParent().getType() + "\n" + 
+                "which is not allowed for the transport type of " + transportType);
+            }
+            if(!transportType.getRoadTypes().contains(finish.getParent().getType())){
+                System.out.println("Your end point in on a road of type " + finish.getParent().getType() + "\n" + 
+                "which is not allowed for the transport type of " + transportType);
+            }
         }
     }   
 
@@ -112,6 +126,8 @@ public class Dijsktra {
     }
 
     private void addSurroundingRoads(TagNode startTag, TagNode finish, TransportType transportType){
+        if(!transportType.getRoadTypes().contains(startTag.getParent().getType())) return;
+
             if(startTag.hasIntersection()){
                 for (Tag tag : startTag.getIntersectionTags()) {
                 if(tag instanceof TagWay){
@@ -186,6 +202,8 @@ public class Dijsktra {
     private void relax(DirectedEdge e) {
         long v = e.from().getId(), w = e.to().getId();
 
+        double distance = G.getNode(v).distance(G.getNode(w));
+        System.out.println("Distance: " + distance + " between " + v + " and " + w);
         if(distTo.get(w) > distTo.get(v) + e.weight()) {
             distTo.put(w, distTo.get(v) + e.weight());
             edgeTo.put(w, e);
@@ -232,13 +250,13 @@ public class Dijsktra {
         
         
 
-        new XMLReader(FileDistributer.bolm.getFilePath());
+        new XMLReader(FileDistributer.input.getFilePath());
         Tree.initialize(new ArrayList<Tag>(XMLReader.getWays().valueCollection()));;
         
         // default
 
-        TagNode start = XMLReader.getNodeById(2719042782l);
-        TagNode finish = XMLReader.getNodeById(1519579184l);
+        TagNode start = XMLReader.getNodeById(248419951l);
+        TagNode finish = XMLReader.getNodeById(1682443913l);
         // Default addresses
         // TagAddress start = XMLReader.getAddressById(1447913335l);
         // TagNode finish = XMLReader.getNodeById(1447911293l);
@@ -247,11 +265,11 @@ public class Dijsktra {
         // TagNode finish = XMLReader.getNodeById(5351948945l);
         // TagNode start = XMLReader.getNodeById(379686625l);
       
+        Type par = finish.getParent().getType();
+        System.out.println(par);
 
-        
-
-        new Dijsktra(start, finish, TransportType.CAR);
-        System.out.println(Dijsktra.getShortestPathofTags());
+        new Dijsktra(start, finish, TransportType.BIKE);
+       // System.out.println(Dijsktra.getShortestPathofTags());
        
     }
 }
