@@ -411,11 +411,9 @@ public class K3DTree {
         if (n == null) return champion;
         
         // Handle the given point exactly overlapping a point in the BST
-        
-        if (n.p.equals(p)){
+        if (n.p.equals(p) && isPointOfTypes(p, types)){
             return p;
         }
-
         
         // Determine if the current Node's point beats the existing champion
         if (n.p.distanceSquaredTo(p) < champion.distanceSquaredTo(p) && isPointOfTypes(n.p, types))
@@ -448,8 +446,7 @@ public class K3DTree {
             champion = nearest(n.lbb, p, champion, temp);
             
             // Since champion may have changed, recalculate distance
-            if (champion.distanceSquaredTo(p) >=
-                    toPartitionLine * toPartitionLine) {
+            if (champion.distanceSquaredTo(p) >= toPartitionLine * toPartitionLine) {
                 champion = nearest(n.rtf, p, champion, temp);
             }
         }
