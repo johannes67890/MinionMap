@@ -223,42 +223,44 @@ public class DrawingMap {
         double defaultLineWidth = 1/Math.sqrt(transform.determinant());
         
 
-            currentColor = way.getType().getColor();
-            int counter = 0;
-            xPoints = new double[way.getRefNodes().size()];
-            yPoints = new double[way.getRefNodes().size()];
+        currentColor = way.getType().getColor();
+        int counter = 0;
+        xPoints = new double[way.getRefNodes().size()];
+        yPoints = new double[way.getRefNodes().size()];
 
-            double min = way.getType().getMinWidth();
-            double max = way.getType().getMaxWidth();
-            double lineWidth = MathUtil.clamp(defaultLineWidth * way.getType().getWidth(), min, max);
-            gc.setLineWidth(lineWidth);
+        double min = way.getType().getMinWidth();
+        double max = way.getType().getMaxWidth();
+        double lineWidth = MathUtil.clamp(defaultLineWidth * way.getType().getWidth(), min, max);
+        gc.setLineWidth(lineWidth);
 
-            
-            gc.beginPath();
-            gc.moveTo(way.getRefNodes().getFirst().getLon(), -way.getRefNodes().getFirst().getLat());
-            
-            
+        
+        gc.beginPath();
+        gc.moveTo(way.getRefNodes().getFirst().getLon(), -way.getRefNodes().getFirst().getLat());
+        
+        
 
-                for (TagNode n : way.getRefNodes()) {
-                    gc.lineTo(n.getLon(), -n.getLat());
-                    xPoints[counter] = n.getLon();
-                    yPoints[counter] = -n.getLat();
-                    counter++;
-                    
-                    if(n.getNext() == null) break;
-                }
-
-            
-            
-            
-            //Fills polygons with color
-            if (!way.getType().getIsLine()){
-                gc.setFill(currentColor);
-                gc.fillPolygon(xPoints, yPoints, counter);
+            for (TagNode n : way.getRefNodes()) {
+                gc.lineTo(n.getLon(), -n.getLat());
+                xPoints[counter] = n.getLon();
+                yPoints[counter] = -n.getLat();
+                counter++;
+                
+                if(n.getNext() == null) break;
             }
-            
-            gc.stroke();    
+
+        
+        
+        
+        //Fills polygons with color
+        if (!way.getType().getIsLine()){
+            gc.setFill(currentColor);
+            gc.fillPolygon(xPoints, yPoints, counter);
         }
+        
+        gc.stroke();    
+    }
+
+    
 
     /**
      * 

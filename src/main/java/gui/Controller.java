@@ -31,6 +31,7 @@ import parser.Tag;
 import parser.TagAddress;
 import parser.TagNode;
 import parser.TagWay;
+import parser.TransportType;
 import util.Point3D;
 import util.Tree;
 
@@ -85,17 +86,9 @@ public class Controller implements Initializable, ControllerInterface{
 
     private TagAddress startAddress = null;
     private TagAddress endAddress = null;
+    private Search s;
 
-    enum RouteType {
-        WALKING,
-        CYCLING,
-        DRIVING
-    }
-
-    RouteType routeType = RouteType.DRIVING;
-
-
-    Search s = new Search();
+    TransportType routeType = TransportType.CAR;
 
     double lastX;
     double lastY;
@@ -114,7 +107,7 @@ public class Controller implements Initializable, ControllerInterface{
         mainView.loadDrawingMap();
         c.widthProperty().bind(p.widthProperty());
         c.heightProperty().bind(p.heightProperty());
-
+        s = new Search(mw);
         System.out.println("DRAWING MAP");
 
         panZoomInitialize();
@@ -276,15 +269,15 @@ public class Controller implements Initializable, ControllerInterface{
         });
 
         walkButton.setOnAction((ActionEvent e) -> {
-            routeType = RouteType.WALKING;
+            routeType = TransportType.FOOT;
         });
 
         bicycleButton.setOnAction((ActionEvent e) ->{
-            routeType = RouteType.CYCLING;
+            routeType = TransportType.BIKE;
         });
 
         carButton.setOnAction((ActionEvent e) ->{
-            routeType = RouteType.DRIVING;
+            routeType = TransportType.CAR;
         });
 
 
@@ -317,7 +310,7 @@ public class Controller implements Initializable, ControllerInterface{
             if (endAddress == null){
                 showAddress(startAddress);
             }else{
-                s.pathfindBetweenTagAddresses(startAddress, endAddress);
+                s.pathfindBetweenTagAddresses(startAddress, endAddress, routeType);
             }
 
         });
@@ -331,7 +324,7 @@ public class Controller implements Initializable, ControllerInterface{
             if (startAddress == null){
                 showAddress(endAddress);
             }else{
-                s.pathfindBetweenTagAddresses(startAddress, endAddress);
+                s.pathfindBetweenTagAddresses(startAddress, endAddress, routeType);
             }
 
         });

@@ -101,7 +101,7 @@ public class TagRelation extends Tag{
         TagNode prevLastTagNode = null;
 
         boolean success = false;
-        int speedLimit = 0;
+        short speedLimit = 0;
         long id = 0;
 
         int wayCount = 0;

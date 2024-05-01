@@ -2,10 +2,16 @@ package gui;
 
 import java.util.ArrayList;
 
+import edu.princeton.cs.algs4.Stack;
+import gnu.trove.list.linked.TLinkedList;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import parser.TagAddress;
+import parser.TransportType;
 import parser.TagAddress.SearchAddress;
+import parser.TagNode;
+import parser.TagWay;
 import parser.XMLReader;
+import pathfinding.Dijsktra;
 import util.Trie;
 
 public class Search {
@@ -13,8 +19,10 @@ public class Search {
     private ArrayList<String> cityNames, streetNames, postCodes;
     private TLongObjectHashMap<TagAddress> addresses;
     private Trie trie;
+    private MainView mainView;
 
-    public Search(){
+    public Search(MainView mw){
+        mainView = mw;
         this.addresses = XMLReader.getAddresses();
         readFiles();
         trie = XMLReader.getTrie();
@@ -182,8 +190,16 @@ public class Search {
         return trie.getAddressObject(input, houseNumber);
     }
 
-    // TODO: Add difference between transport type in parameter
-    public void pathfindBetweenTagAddresses(TagAddress start, TagAddress end){
-        
+    /**
+     * A method to generate a dijsktra object and pathfind between the two addresses
+     * @param start         The start address of pathfinding
+     * @param end           The end address of pathfinding
+     * @param transportType The type of transportation used to pathfind
+     */
+    public void pathfindBetweenTagAddresses(TagAddress start, TagAddress end, TransportType transportType){
+        // Dijsktra djiktra = new Dijsktra(start, end, transportType);
+        // TLinkedList<TagNode> nodes = new TLinkedList<>();
+        // TagWay way = new TagWay(0, "Route", nodes, (short)0, null);
+        // mainView.getDrawingMap().setMarkedTag(way);
     }
 }
