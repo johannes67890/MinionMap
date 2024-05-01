@@ -122,13 +122,13 @@ public class DrawingMap {
         gc.setTransform(new Affine());
         switch (GraphicsHandler.getGraphicStyle()) {
             case DEFAULT:
-                gc.setFill(Color.LIGHTSKYBLUE);
+                gc.setFill(Color.web("#AAD3DF"));
                 break;
             case DARKMODE:
                 gc.setFill(Color.BLACK);
                 break;
             case GRAYSCALE:
-                gc.setFill(Color.LIGHTSKYBLUE.grayscale());
+                gc.setFill(Color.web("#AAD3DF").grayscale());
                 break;
             default:
                 break;
@@ -172,6 +172,8 @@ public class DrawingMap {
  
         drawWays(sortedWaysToDraw);
 
+        drawInnerWays();
+
         
         if (markedTag != null){
 
@@ -194,6 +196,33 @@ public class DrawingMap {
         }else if(tag instanceof TagNode || tag instanceof TagAddress){
             drawPoint(tag);
         }
+    }
+
+    private void drawInnerWays(){
+
+
+        waysToDrawWithType = new ArrayList<>();
+
+        ways = new ArrayList<>();
+
+        for (TagRelation relation : relations){
+
+            if (relation.getId() == 12332811){
+                System.out.println(relation.getActualInner().get(0).getType());
+            }
+
+            handleWays(relation.getActualInner());
+        }
+
+        MinPQ<TagWay> sortedWaysToDraw = new MinPQ<>(waysToDrawWithType.size());
+
+
+        for (TagWay way : waysToDrawWithType){
+            sortedWaysToDraw.insert(way);
+        }
+
+        drawWays(sortedWaysToDraw);
+
     }
 
     private void drawPoint(Tag node){
