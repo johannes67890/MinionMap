@@ -35,9 +35,9 @@ public class XMLWriter {
 
     public void initChunkFiles(TagBound bounds) {   
         for (TagBound parentChunk : Chunk.getQuadrants(bounds).values()) {
-            // for (TagBound midChunk : Chunk.getQuadrants(parentChunk).values()) {
-            //     for (TagBound childChunk : Chunk.getQuadrants(midChunk).values()) {
-                    Chunk chunk = new Chunk(parentChunk); 
+            for (TagBound midChunk : Chunk.getQuadrants(parentChunk).values()) {
+                for (TagBound childChunk : Chunk.getQuadrants(midChunk).values()) {
+                    Chunk chunk = new Chunk(childChunk); 
                     for (int j = 0; j < 4; j++) {
                         // Get one of the four quadrants in the chunk
                         TagBound child = chunk.getQuadrant(j);
@@ -46,8 +46,8 @@ public class XMLWriter {
                         chunkId++;
                     }
                 }
-        //     }
-        // }
+            }
+        }
     }
 
     private static void createBinaryChunkFile(String path, TagBound bound){
@@ -110,12 +110,7 @@ public class XMLWriter {
                     // TODO: if tags is written to bytes as array - do data get lost?
                     for (Tag tag : nodes) {
                         oos.writeObject(tag);
-                    }    
-                    /*
-                     * Write the nodes to the file - is this better? 
-                     * It is for sure faster, but does it work?
-                     */
-                    // oos.writeObject(nodes); 
+                    } 
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -161,6 +156,7 @@ public class XMLWriter {
                     }
                 }
             } catch (Exception e) {
+                // System.out.println("ooff");
                 e.printStackTrace();
             }
         }
@@ -185,7 +181,8 @@ public class XMLWriter {
                 }
             }
         }catch (Exception e){
-            e.printStackTrace();
+            System.out.println("ooof");
+           e.printStackTrace();
         }
         return objectList;
         }
@@ -207,15 +204,6 @@ public class XMLWriter {
                                 return n.getParent();
                             }
                         }
-                        //  else if(o instanceof TagRelation){
-                        //     for (TagWay w : ((TagRelation) o).getWays()) {
-                        //         for (TagNode n : w.getNodes()) {
-                        //             if(n.getId() == id){
-                        //                 return n;
-                        //             }
-                        //         }
-                        //     }
-                        // }
 
                     } catch (EOFException e) {
                         stream.close();

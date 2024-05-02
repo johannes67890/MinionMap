@@ -89,9 +89,9 @@ public class DrawingMap {
         Tree.initialize(new ArrayList<>(ChunkFiles.getChunkFiles().keySet()));
         
         zoombar = new Zoombar(zoombarIntervals, zoomLevelMax, zoomLevelMin);
+        
         pan(-minlon, minlat);
         zoom(canvas.getWidth() / (maxlon - minlon), 0, 0);
-        DrawMap(canvas);
     }
 
     public Trie getTrie(){
@@ -139,7 +139,6 @@ public class DrawingMap {
         for (Tag f : Tree.getTagsInBounds(rect)) {
             if(f instanceof TagBound){
                 TagBound b = (TagBound) f;
-                System.out.println(f.toString());
                 List<Tag> tags = XMLWriter.getTagsFromChunkByBounds(b);
                 for(Tag t : tags){
                     if (t instanceof TagNode){
@@ -148,6 +147,8 @@ public class DrawingMap {
                         relations.add((TagRelation) node.getParent().getRelationParent());
                     } 
                 }
+              
+
             }
         }
 

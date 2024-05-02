@@ -3,8 +3,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import gnu.trove.list.TLinkable;
+import gnu.trove.list.linked.TLinkedList;
+import parser.XMLWriter.ChunkFiles;
 import util.Tree;
-
+import java.util.*;
 
 /**
  * Class for storing a {@link HashMap} of a single node.
@@ -17,6 +19,7 @@ public class TagNode extends Tag implements TLinkable<TagNode>, Comparable<TagNo
 
     private long id;
     private TagWay parent;
+    private Type type;
     private float lon;
     private float lat;
     private TagNode next;
@@ -71,7 +74,11 @@ public class TagNode extends Tag implements TLinkable<TagNode>, Comparable<TagNo
 
     @Override
     public Type getType() {
-        throw new UnsupportedOperationException("TagNode does not have a type.");
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
     }
 
     public boolean equals(TagNode tN){
@@ -139,7 +146,8 @@ public class TagNode extends Tag implements TLinkable<TagNode>, Comparable<TagNo
         
     
     }
-    
+ 
+
     public void setParent(TagWay linkable) {
         parent = linkable;
     }
@@ -172,14 +180,24 @@ public class TagNode extends Tag implements TLinkable<TagNode>, Comparable<TagNo
         TagWay p = null;
         TagNode currN = this;
 
-        if(currN.hasParent()){
+        if(currN.hasParent()){  
             return currN.parent;
         }else{
             while(!currN.hasParent()){
-                currN = currN.getPrevious();
-                if(currN.hasParent()){
-                    p = currN.getParent();
+                if(currN.getPrevious() == null){
+                    TLinkedList<TagNode> nodes = new TLinkedList<TagNode>();
+                    while (currN.getNext() != null) {
+                        nodes.add(currN);
+                        currN = currN.getNext();
+                    }
+                    p = new TagWay(0, null, nodes, 0, this.getType());
                     break;
+                } else {
+                    currN = currN.getPrevious();
+                    if(currN.hasParent()){
+                        p = currN.getParent();
+                        break;
+                    }
                 }
             }
         }
