@@ -108,9 +108,9 @@ public enum Type  {
     4, 9, Color.LIGHTGRAY, 2, true, 4, 10),
     AERIALWAYSTATION("aerialway", new String[]{"station"},5, 8, Color.GRAY, Color.GRAY.darker(), 5, false),
     OTHER_ROAD("highway",new String[]{"unclassified", "track", "footway", "cycleway", "path", 
-    "service", "motorway_link", "steps", "living_street", "mini_roundabout", "pedestrian"}, 5, 9, Color.WHITE, 5, true, 2, 7),
+    "service", "motorway_link", "steps", "living_street", "mini_roundabout", "pedestrian"}, 6, 9, Color.WHITE, 5, true, 2, 7),
 
-    RESIDENTIAL_ROAD("highway",new String[]{"residential"}, 4, 9, Color.WHITE, 5, true, 2, 7),
+    RESIDENTIAL_ROAD("highway",new String[]{"residential"}, 7, 9, Color.WHITE, 5, true, 2, 7),
 
     // Relations (Hierarchy: 3)
     MULTIPOLYGON("type", new String[]{"multipolygon"}, 3, Color.BLACK, 0),
