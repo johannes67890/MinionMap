@@ -30,9 +30,8 @@ public class Dijsktra {
     public Dijsktra(Tag _start, Tag _finish, TransportType transportType) {
         //timer
 
-        TagNode start = getNearestRoadPoint(_start);
-        TagNode finish = getNearestRoadPoint(_finish);
-        System.out.println(start);
+        TagNode start = getNearestRoadPoint(_start, transportType);
+        TagNode finish = getNearestRoadPoint(_finish, transportType);
 
         addSurroundingRoads(start, finish, transportType);
 
@@ -158,9 +157,9 @@ public class Dijsktra {
             G.addEdge(new DirectedEdge(node, node.getNext(), way.getSpeedLimit()));
     }
 
-    public TagNode getNearestRoadPoint(Tag tag){
+    public TagNode getNearestRoadPoint(Tag tag, TransportType transportType){
         if(tag instanceof TagNode) return (TagNode) tag;
-        ArrayList<Tag> tags = Tree.getNearestOfType(tag, Type.getAllCarRoads());
+        ArrayList<Tag> tags = Tree.getNearestOfType(tag, transportType.getRoadTypes());
         double bestDistance = Double.MAX_VALUE;
         TagNode best = null;
         for (Tag tempTag : tags){

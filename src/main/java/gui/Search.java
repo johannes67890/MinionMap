@@ -199,8 +199,7 @@ public class Search {
      */
     public void pathfindBetweenTagAddresses(TagAddress start, TagAddress end, TransportType transportType){
         Dijsktra djiktra = new Dijsktra(start, end, transportType);
-        TagNode startNode = djiktra.getNearestRoadPoint(start);
-        TagNode endNode = djiktra.getNearestRoadPoint(end);
+        TagNode endNode = djiktra.getNearestRoadPoint(end, transportType);
         TLinkedList<TagNode> nodes = djiktra.pathToTagInNodes(endNode);
         if (nodes == null) return;
         System.out.println("Path size: " + nodes.size());
