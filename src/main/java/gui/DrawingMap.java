@@ -136,7 +136,7 @@ public class DrawingMap {
         currentColor = Color.BLACK;
 
         float[] canvasBounds = getScreenBoundsBigger(0.2);
-        TagBound bound = new TagBound(canvasBounds[0], canvasBounds[1], canvasBounds[2], canvasBounds[3]);
+        TagBound bound = new TagBound(canvasBounds[1], canvasBounds[3], canvasBounds[0], canvasBounds[2]);
         //Rect3D rect = new Rect3D(canvasBounds[0], canvasBounds[1], hierarchyLevel, canvasBounds[2], canvasBounds[3], 100);
         nodes = new ArrayList<>();
         ways = new ArrayList<>();
