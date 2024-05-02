@@ -131,6 +131,10 @@ public class TagWay extends Tag implements Comparable<TagWay>{
         return isLine;
     }
 
+    public void setIsLine(boolean isLine){
+        this.isLine = isLine;
+    }
+
     @Override
     public String toString() {
         return "Way: " + id + " name: " + name + " type " + type + " limit " + speedLimit + " oneway: " + isOneWay;

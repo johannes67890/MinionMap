@@ -174,7 +174,6 @@ public class DrawingMap {
 
         
         if (markedTag != null){
-
             drawMarkedTag(markedTag);
         }
     }
@@ -182,6 +181,7 @@ public class DrawingMap {
     public void setMarkedTag(Tag tag){
 
         markedTag = tag;
+        mainView.draw();
     }
 
     private void drawMarkedTag(Tag tag){
@@ -216,7 +216,6 @@ public class DrawingMap {
     }
     
     private void drawWay(TagWay way, boolean starting){
-        System.out.println("Drawing WAY!!!");
         double[] xPoints;
         double[] yPoints;
 

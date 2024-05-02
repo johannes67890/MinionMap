@@ -207,6 +207,9 @@ public class Dijsktra {
      * @throws IllegalArgumentException unless {@code 0 <= v < V}
      */
     public boolean hasPathTo(Tag v) {
+        if (distTo.get(v.getId()) == null){
+            return false;
+        }
         return distTo.get(v.getId()) < Double.POSITIVE_INFINITY;
     }
 

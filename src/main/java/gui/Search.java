@@ -7,6 +7,7 @@ import gnu.trove.list.linked.TLinkedList;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import parser.TagAddress;
 import parser.TransportType;
+import parser.Type;
 import parser.TagAddress.SearchAddress;
 import parser.TagNode;
 import parser.TagWay;
@@ -201,8 +202,9 @@ public class Search {
         TagNode startNode = djiktra.getNearestRoadPoint(start);
         TagNode endNode = djiktra.getNearestRoadPoint(end);
         TLinkedList<TagNode> nodes = djiktra.pathToTagInNodes(endNode);
-        System.out.println(nodes.size());
-        TagWay way = new TagWay(0, "Route", nodes, (short)0, null);
+        if (nodes == null) return;
+        System.out.println("Path size: " + nodes.size());
+        TagWay way = new TagWay(0, "Route", nodes, (short)0, Type.PATHWAY);
         mainView.getDrawingMap().setMarkedTag(way);
     }
 }

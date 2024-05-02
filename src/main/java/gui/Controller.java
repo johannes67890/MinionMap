@@ -379,7 +379,7 @@ public class Controller implements Initializable, ControllerInterface{
             if (searchBar.equals(searchBarStart) && startAddress != null){
                 startAddress = null;
             }else if (searchBar.equals(searchBarDestination) && endAddress != null){
-                startAddress = null;
+                endAddress = null;
             }
             // Update UI on JavaFX Application Thread
             Platform.runLater(() -> {
@@ -428,12 +428,6 @@ public class Controller implements Initializable, ControllerInterface{
                 tagToDraw = tag;
                 break;
             }
-        }
-
-        if(tagToDraw != null){
-            //drawingMap.setMarkedTag(tagToDraw);
-        } else{
-            //drawingMap.setMarkedTag(tagAddress);
         }
 
         drawingMap.setMarkedTag(tagAddress);
