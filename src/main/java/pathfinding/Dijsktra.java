@@ -64,8 +64,7 @@ public class Dijsktra {
         // timer start
         startTime = System.currentTimeMillis();
         while (!pq.isEmpty()) {
-            long l = pq.delMin();
-            TagNode v = G.getNode(l);
+            TagNode v = G.getNode(pq.delMin());
             
             for (DirectedEdge e : G.adj(v)) {
                 relax(e);
@@ -192,14 +191,14 @@ public class Dijsktra {
         long v = e.from().getId(), w = e.to().getId();
 
         double distance = G.getNode(v).distance(G.getNode(w));
-        //System.out.println("Distance: " + distance + " between " + v + " and " + w);
+        // System.out.println("Distance: " + distance + " between " + v + " and " + w);
         if(distTo.get(w) > distTo.get(v) + e.weight()) {
             distTo.put(w, distTo.get(v) + e.weight());
             edgeTo.put(w, e);
             if(pq.contains(w)){
-                pq.decreaseKey(w, distTo.get(w));
+                pq.decreaseKey(w, distTo.get(w) + distance);
             } else {
-                pq.insert(w, distTo.get(w));
+                pq.insert(w, distTo.get(w)+ distance);
             }
         }
     }
