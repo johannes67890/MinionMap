@@ -3,7 +3,6 @@ package gui;
 import java.util.ArrayList;
 
 import gnu.trove.map.hash.TLongObjectHashMap;
-import parser.Tag;
 import parser.TagAddress;
 import parser.TagAddress.SearchAddress;
 import parser.XMLReader;
@@ -179,18 +178,12 @@ public class Search {
         return trie.getAddressSuggestions(input, 5);
     }
 
+    public TagAddress getAddress(String input, String houseNumber){
+        return trie.getAddressObject(input, houseNumber);
+    }
 
-    public static void getTagBySearchAddress(SearchAddress searchAddress){
+    // TODO: Add difference between transport type in parameter
+    public void pathfindBetweenTagAddresses(TagAddress start, TagAddress end){
         
-        if (!searchAddress.house.isBlank()){
-
-        }else if (!searchAddress.street.isBlank()){
-
-        }else if (!searchAddress.city.isBlank()){
-
-        }else{
-
-        }
-
     }
 }

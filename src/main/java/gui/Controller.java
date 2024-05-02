@@ -2,10 +2,12 @@ package gui;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import gui.GraphicsHandler.GraphicStyle;
 import gui.MainView.StageSelect;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -14,10 +16,8 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.image.ImageView;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.skin.ComboBoxListViewSkin;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -29,7 +29,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import parser.Tag;
 import parser.TagAddress;
-import parser.TagAddress.SearchAddress;
 import parser.TagNode;
 import parser.TagWay;
 import util.Point3D;
@@ -47,12 +46,20 @@ public class Controller implements Initializable, ControllerInterface{
     @FXML private Button layerButton;
     @FXML private Button searchButton;
     @FXML private Button pointButton;
+    @FXML private Button routeButton;
     @FXML private Pane leftBurgerMenu;
+
+    @FXML private Pane routeTypeMenu;
+    @FXML private Button walkButton;
+    @FXML private Button bicycleButton;
+    @FXML private Button carButton;
+
     @FXML private ComboBox<String> searchBarStart;
     @FXML private ComboBox<String> searchBarDestination;
     @FXML private Button mainMenuButton;
     @FXML private VBox mainMenuVBox;
     @FXML private VBox graphicVBox;
+    
     @FXML private HBox mainUIHBox;
     @FXML private BorderPane mainBorderPane;
     @FXML private ChoiceBox<String> styleChoiceBox;
@@ -72,6 +79,20 @@ public class Controller implements Initializable, ControllerInterface{
     private static MainView mainView;
     private String selectedItem;
     private String selectedEndItem;
+    private ObservableList<String> searchList = FXCollections.observableArrayList();
+
+    private List<TagAddress> addresses = new ArrayList<>();
+
+    private TagAddress startAddress = null;
+    private TagAddress endAddress = null;
+
+    enum RouteType {
+        WALKING,
+        CYCLING,
+        DRIVING
+    }
+
+    RouteType routeType = RouteType.DRIVING;
 
 
     Search s = new Search();
@@ -163,13 +184,15 @@ public class Controller implements Initializable, ControllerInterface{
     public void initialize(URL location, ResourceBundle resources) { // This runs when the fxml is loaded and the canvas is injected (before stage is shown)
 
 
-
-        ComboBoxListViewSkin<String> comboBoxListViewSkin = new ComboBoxListViewSkin<String>(searchBarStart);
+        setEnableDestinationComboBox(false);
+        ComboBoxListViewSkin<String> comboBoxListViewSkinStart = new ComboBoxListViewSkin<String>(searchBarStart);
+        ComboBoxListViewSkin<String> comboBoxListViewSkinDestination = new ComboBoxListViewSkin<>(searchBarDestination);
 
 
         mainMenuVBox.setVisible(false);
         leftBurgerMenu.setVisible(false);
         graphicVBox.setVisible(false);
+        routeTypeMenu.setVisible(false);
 
         styleChoiceBox.setItems(style);
         styleChoiceBox.setValue("default");
@@ -197,14 +220,9 @@ public class Controller implements Initializable, ControllerInterface{
                     GraphicsHandler.setGraphicsStyle(GraphicStyle.GRAYSCALE);
                     mainView.draw();
                     break;
-
-
                 }
             }
-
-
         });
-
 
         mainMenuButton.setOnAction((ActionEvent e) -> {
             mainView.drawScene(StageSelect.MainMenu);
@@ -215,6 +233,16 @@ public class Controller implements Initializable, ControllerInterface{
             mainMenuVBox.setVisible(!isMenuOpen);
             isMenuOpen = !isMenuOpen;
         });
+
+
+        routeButton.setOnAction((ActionEvent e) -> {
+            
+            setEnableDestinationComboBox(!searchBarDestination.isVisible());
+            routeTypeMenu.setVisible(!routeTypeMenu.isVisible());
+
+            
+        });
+
         menuButton2.setOnAction((ActionEvent e) -> {
             leftBurgerMenu.setVisible(!isMenuOpen);
             mainMenuVBox.setVisible(!isMenuOpen);
@@ -247,29 +275,89 @@ public class Controller implements Initializable, ControllerInterface{
             }
         });
 
-        comboBoxListViewSkin.getPopupContent().addEventFilter(KeyEvent.ANY, (event) -> {
+        walkButton.setOnAction((ActionEvent e) -> {
+            routeType = RouteType.WALKING;
+        });
+
+        bicycleButton.setOnAction((ActionEvent e) ->{
+            routeType = RouteType.CYCLING;
+        });
+
+        carButton.setOnAction((ActionEvent e) ->{
+            routeType = RouteType.DRIVING;
+        });
+
+
+        comboBoxListViewSkinStart.getPopupContent().addEventFilter(KeyEvent.ANY, (event) -> {
             if( event.getCode() == KeyCode.SPACE ) {
+                event.consume();
+            }else if (event.getCode() == KeyCode.DOWN){
+                event.consume();
+            }else if (event.getCode() == KeyCode.UP){
                 event.consume();
             }
         });
-        searchBarStart.setSkin(comboBoxListViewSkin);
+        comboBoxListViewSkinDestination.getPopupContent().addEventFilter(KeyEvent.ANY, (event) -> {
+            if( event.getCode() == KeyCode.SPACE ) {
+                event.consume();
+            }else if (event.getCode() == KeyCode.DOWN){
+                event.consume();
+            }else if (event.getCode() == KeyCode.UP){
+                event.consume();
+            }
+        });
+        searchBarStart.setSkin(comboBoxListViewSkinStart);
+        searchBarDestination.setSkin(comboBoxListViewSkinDestination);
+
+        searchBarStart.setOnAction((ActionEvent e) ->{
+            startAddress  = comboBoxAddress(searchBarStart);
+            if (startAddress == null){
+                return;
+            }
+            if (endAddress == null){
+                showAddress(startAddress);
+            }else{
+                s.pathfindBetweenTagAddresses(startAddress, endAddress);
+            }
+
+        });
+
+        searchBarDestination.setOnAction((ActionEvent e) ->{
+            
+            endAddress = comboBoxAddress(searchBarDestination);
+            if (endAddress == null){
+                return;
+            }
+            if (startAddress == null){
+                showAddress(endAddress);
+            }else{
+                s.pathfindBetweenTagAddresses(startAddress, endAddress);
+            }
+
+        });
 
         
         searchBarStart.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
+            showSuggestions(searchBarStart, oldValue, newValue);            
+        });
 
-            if (searchBarStart.isFocused()){
-                search(newValue, true);
-            }
-
-            if (newValue.isEmpty() && !oldValue.isEmpty() && oldValue.length() > 1){
-                searchBarStart.getEditor().textProperty().setValue(oldValue);
-                searchBarStart.hide();
-            }
-        });        
-
+        searchBarDestination.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
+            showSuggestions(searchBarDestination, oldValue, newValue);
+        });
     }
 
-    private void setEnableDestinationTextField(boolean isEnabled){
+    private void showSuggestions(ComboBox<String> searchBar, String oldValue, String newValue){
+        if (searchBar.isFocused()){
+            search(newValue, searchBar);
+        }
+
+        if (newValue.isEmpty() && !oldValue.isEmpty() && oldValue.length() > 1){
+            searchBar.getEditor().textProperty().setValue(oldValue);
+            searchBar.hide();
+        }
+    }
+
+    private void setEnableDestinationComboBox(boolean isEnabled){
         if (isEnabled){
             searchBarDestination.setMaxWidth(1000000);
         }else{
@@ -278,88 +366,84 @@ public class Controller implements Initializable, ControllerInterface{
         searchBarDestination.setVisible(isEnabled);
     }
 
-    private void chooseDestination(String text, boolean isLeft){
-        if (isLeft){
-            showAddress(text);
-        }else{
-        }
+    private TagAddress comboBoxAddress(ComboBox<String> searchBar){
+        String string = searchBar.getEditor().textProperty().getValue();
+
+            String[] split = string.split(",");
+
+            if (split.length == 3){
+                string = split[0] + split[2];
+
+                TagAddress address = s.getAddress(string, split[1]);
+                return address;
+            }
+            return null;
     }
 
-
-    private void search(String address, boolean isStart, boolean test){
-        // Vi har skærmkoordinater i xy og canvas witdh and height
-        SearchAddress addressObj = s.searchForAddress(address);
-        //System.out.println("addressObj: " + addressObj.toString());
-        if (isStart && (selectedItem == null || !selectedItem.equals(addressObj.toString()))){
-            searchBarStart.getItems().add(0, addressObj.toString());
-            if (!searchBarStart.isShowing()){
-                searchBarStart.show();
-            }
-
-        }else if (!isStart && (selectedEndItem == null || !selectedEndItem.equals(addressObj.toString()))){
-            searchBarDestination.getItems().add(0, addressObj.toString());
-            if (!searchBarDestination.isShowing()){
-                searchBarDestination.show();
-            }
-        }else{
-            if (isStart){
-                chooseDestination(selectedItem, true);
-            }else{
-                chooseDestination(selectedEndItem, false);
-            }
-        }
-        if (isStart){
-            selectedItem = addressObj.toString();
-        }else{
-            selectedEndItem = addressObj.toString();
-        }
-
-    }
-
-    private void search(String address, boolean isStart){
-
-        if (!address.isEmpty() && address.charAt(address.length() - 1) != ' '){
+    private void search(String address, ComboBox<String> searchBar) {
+    if (!address.isEmpty() && address.charAt(address.length() - 1) != ' ') {
             ArrayList<TagAddress> tagAddresses = s.getSuggestions(address);
-            if (!searchBarStart.getItems().isEmpty()){
-                searchBarStart.getItems().clear();
+            if (searchBar.equals(searchBarStart) && startAddress != null){
+                startAddress = null;
+            }else if (searchBar.equals(searchBarDestination) && endAddress != null){
+                startAddress = null;
             }
-            for (TagAddress tagAddress : tagAddresses){
-                searchBarStart.getItems().add(tagAddress.toString());
-            }
-            searchBarStart.show();
+            // Update UI on JavaFX Application Thread
+            Platform.runLater(() -> {
+                synchronized (searchList) {
+                    if (!searchBar.getItems().isEmpty()) {
+                        searchBar.getItems().clear();
+                        addresses.clear();
+                    }
+                    for (TagAddress tagAddress : tagAddresses) {
+                        searchList.add(tagAddress.toString());
+                        addresses.add(tagAddress);
+                    }
+                    searchBar.getItems().setAll(searchList);
+                    searchList.clear();
+                    if (!searchBar.isShowing() && searchBar.getItems().size() > 0){
+                        searchBar.show();
+                    }
+                }
+            });
         }
     }
 
-    private void showAddress(String address){
-        SearchAddress addressObj = s.searchForAddress(address);
+    private void showAddress(TagAddress tagAddress){
         DrawingMap drawingMap = mainView.getDrawingMap();
 
         float[] bounds = drawingMap.getScreenBounds();
         double x = ((bounds[2] - bounds[0]) / 2) + bounds[0];
-        double y = ((bounds[1] - bounds[3]) / 2) + bounds[1];
+        double y = ((bounds[3] - bounds[1]) / 2) + bounds[1];
 
         //drawingMap.getTransform().determinant()
         Point2D pointCenter = drawingMap.getTransform().transform(x, y);
-        TagAddress tagAddress = s.getTagAddressByAddress(addressObj);
-        System.out.println(tagAddress.getMunicipality() + " " + tagAddress.getCity() + " " + tagAddress.getStreet() + " " + tagAddress.getHouseNumber());
         Point2D point = drawingMap.getTransform().transform(tagAddress.getLon(), tagAddress.getLat());
         double deltaX = point.getX() - pointCenter.getX();
         double deltaY = point.getY() - pointCenter.getY();
        
-        Point3D point2d = new Point3D(tagAddress.getLon(), tagAddress.getLat(), (byte) 0);
-
+        Point3D point2d = new Point3D(tagAddress.getLon(), tagAddress.getLat(), (byte) 8);
 
         Point3D nearest = Tree.getNearestPoint(point2d);
 
-        Tag nearestTag = Tree.getTagsFromPoint(nearest);
+        ArrayList<Tag> nearestTag = Tree.getTagsFromPoint(nearest);
 
+        Tag tagToDraw = null;
+        for (Tag tag : nearestTag){
 
-        if(nearestTag instanceof TagWay && ((TagWay)nearestTag).getType() != null && ((TagWay)nearestTag).getType().equals(parser.Type.BUILDING)){
-
-            drawingMap.setMarkedTag(nearestTag);
-        } else{
-            drawingMap.setMarkedTag(tagAddress);
+            if (tag instanceof TagWay && ((TagWay)tag).getType() != null && ((TagWay)tag).getType().equals(parser.Type.BUILDING)){
+                tagToDraw = tag;
+                break;
+            }
         }
+
+        if(tagToDraw != null){
+            //drawingMap.setMarkedTag(tagToDraw);
+        } else{
+            //drawingMap.setMarkedTag(tagAddress);
+        }
+
+        drawingMap.setMarkedTag(tagAddress);
 
         mainView.getDrawingMap().pan(-deltaX, deltaY);
 
