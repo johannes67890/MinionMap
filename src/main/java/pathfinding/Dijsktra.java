@@ -67,36 +67,14 @@ public class Dijsktra {
             TagNode v = G.getNode(pq.delMin());
             
             for (DirectedEdge e : G.adj(v)) {
-                relax(e);
+                relax(e, finish);
+            
             }
         }
         // timer end
         endTime = System.currentTimeMillis();
         System.out.println("Time to find shortest path: " + (endTime - startTime) + "ms");
-
-        try {
-            if (hasPathTo(finish)) {
-                StdOut.printf("%d to %d (%.2f)  ", start.getId(), finish.getId(), distTo.get(finish.getId()));
-                StdOut.println();
-                for (DirectedEdge e : pathTo(finish)) {
-                    System.out.println(e + "       ");
-                }
-                StdOut.println();
-            }
-            else {
-                StdOut.printf("%d to %d - no path\n", start.getId(), finish.getId());
-            }
-        } catch (NullPointerException e) {
-            System.out.println("No path found\n");
-            if(!transportType.getRoadTypes().contains(start.getParent().getType())){
-                System.out.println("Your start point in on a road of type " + start.getParent().getType() + "\n" + 
-                "which is not allowed for the transport type of " + transportType);
-            }
-            if(!transportType.getRoadTypes().contains(finish.getParent().getType())){
-                System.out.println("Your end point in on a road of type " + finish.getParent().getType() + "\n" + 
-                "which is not allowed for the transport type of " + transportType);
-            }
-        }
+        printPath(start, finish);
     }   
 
     public Digraph getGraph(){
@@ -105,10 +83,6 @@ public class Dijsktra {
 
     public static Stack<TagNode> getShortestPathofTags(){
         return shortestPath;
-    }
-
-    private double heuristic(TagNode start, TagNode end){
-        return start.distance(end);
     }
 
     private void addSurroundingRoads(TagNode startTag, TagNode finish, TransportType transportType){
@@ -156,7 +130,6 @@ public class Dijsktra {
     private void addTwoWayEdges(TagNode node, TagWay way){
             G.addEdge(new DirectedEdge(node, node.getNext(), way.getSpeedLimit()));
             G.addEdge(new DirectedEdge(node.getNext(), node, way.getSpeedLimit()));
-            //System.out.println("Added edge from " + node.getId() + " to " + node.getNext().getId());
     }
 
     private void addOneWayEdge(TagNode node, TagWay way){
@@ -187,18 +160,18 @@ public class Dijsktra {
     }
     
       // relax edge e and update pq if changed
-    private void relax(DirectedEdge e) {
+    private void relax(DirectedEdge e, TagNode finisNode) {
         long v = e.from().getId(), w = e.to().getId();
 
-        double distance = G.getNode(v).distance(G.getNode(w));
-        // System.out.println("Distance: " + distance + " between " + v + " and " + w);
+        double distance = G.getNode(w).distance(finisNode);
+
         if(distTo.get(w) > distTo.get(v) + e.weight()) {
             distTo.put(w, distTo.get(v) + e.weight());
             edgeTo.put(w, e);
             if(pq.contains(w)){
                 pq.decreaseKey(w, distTo.get(w) + distance);
             } else {
-                pq.insert(w, distTo.get(w)+ distance);
+                pq.insert(w, distTo.get(w) + distance);
             }
         }
     }
@@ -241,6 +214,23 @@ public class Dijsktra {
             nodes.addLast(e.from());
         }
         return nodes;
+    }
+
+    private void printPath(TagNode start, TagNode finish){
+        Stack<TagNode> path = new Stack<>();
+        if(!hasPathTo(finish)) {
+            System.out.println("No path found");
+            return;
+        }
+        for (DirectedEdge e : pathTo(finish)) {
+            if(e.to() == null) break;
+            path.push(e.from());
+        }
+        path.push(finish);
+        System.out.println("Shortest path from " + start.getId() + " to " + finish.getId() + " is: ");
+        while (!path.isEmpty()) {
+            System.out.print(path.pop().getId() + " -> ");
+        }
     }
 
 
