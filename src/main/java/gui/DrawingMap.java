@@ -86,6 +86,7 @@ public class DrawingMap {
         double maxlat = bound.getMaxLat();
         double maxlon = bound.getMaxLon();
         double minlat = bound.getMinLat();
+        Tree.initialize(new ArrayList<>(ChunkFiles.getChunkFiles().keySet()));
         
         zoombar = new Zoombar(zoombarIntervals, zoomLevelMax, zoomLevelMin);
         pan(-minlon, minlat);
@@ -106,6 +107,10 @@ public class DrawingMap {
     public void DrawMap(ResizableCanvas canvas){
 
         this.canvas = canvas;
+
+        if(!Tree.isLoaded()){
+            return;
+        }
 
         //Resfreshes the screen
         gc = canvas.getGraphicsContext2D();
@@ -128,24 +133,23 @@ public class DrawingMap {
         currentColor = Color.BLACK;
 
         float[] canvasBounds = getScreenBoundsBigger(0.2);
-        TagBound bound = new TagBound(canvasBounds[1], canvasBounds[3], canvasBounds[0], canvasBounds[2]);
-        //Rect3D rect = new Rect3D(canvasBounds[0], canvasBounds[1], hierarchyLevel, canvasBounds[2], canvasBounds[3], 100);
+        Rect3D rect = new Rect3D(canvasBounds[0], canvasBounds[1], hierarchyLevel, canvasBounds[2], canvasBounds[3], 100);
         ways = new HashSet<>();
         relations = new HashSet<>();
-
-        List<String> chunkDirs = ChunkFiles.getChunksFilesWithinBounds(bound);
-        for(String tag : chunkDirs){
-            List<Tag> tags = XMLWriter.getTagsFromChunkByBounds(ChunkFiles.getBound(tag));
-
-            for(Tag t : tags){
-                if (t instanceof TagNode){
-                    TagNode node = (TagNode) t;
-                    ways.add((TagWay) node.getParent());
-                    relations.add((TagRelation) node.getParent().getRelationParent());
-                } 
+        for (Tag f : Tree.getTagsInBounds(rect)) {
+            if(f instanceof TagBound){
+                TagBound b = (TagBound) f;
+                System.out.println(f.toString());
+                List<Tag> tags = XMLWriter.getTagsFromChunkByBounds(b);
+                for(Tag t : tags){
+                    if (t instanceof TagNode){
+                        TagNode node = (TagNode) t;
+                        ways.add((TagWay) node.getParent());
+                        relations.add((TagRelation) node.getParent().getRelationParent());
+                    } 
+                }
             }
         }
-        // System.out.println(ways.size());
 
         waysToDrawWithType = new ArrayList<>();
         waysToDrawWithoutType = new ArrayList<>();

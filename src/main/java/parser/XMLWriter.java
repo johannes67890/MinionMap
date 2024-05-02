@@ -35,9 +35,9 @@ public class XMLWriter {
 
     public void initChunkFiles(TagBound bounds) {   
         for (TagBound parentChunk : Chunk.getQuadrants(bounds).values()) {
-            for (TagBound midChunk : Chunk.getQuadrants(parentChunk).values()) {
-                for (TagBound childChunk : Chunk.getQuadrants(midChunk).values()) {
-                    Chunk chunk = new Chunk(childChunk); 
+            // for (TagBound midChunk : Chunk.getQuadrants(parentChunk).values()) {
+            //     for (TagBound childChunk : Chunk.getQuadrants(midChunk).values()) {
+                    Chunk chunk = new Chunk(parentChunk); 
                     for (int j = 0; j < 4; j++) {
                         // Get one of the four quadrants in the chunk
                         TagBound child = chunk.getQuadrant(j);
@@ -46,8 +46,8 @@ public class XMLWriter {
                         chunkId++;
                     }
                 }
-            }
-        }
+        //     }
+        // }
     }
 
     private static void createBinaryChunkFile(String path, TagBound bound){
@@ -284,8 +284,7 @@ public class XMLWriter {
             for (TagBound chunkBound : ChunkFiles.getChunkFiles().keySet()) {
                 if(bound.isInBounds(chunkBound)){
                     paths.add(ChunkFiles.getChunkFilePath(chunkBound));
-                }
-                
+                }  
             }
             return paths;
         }
