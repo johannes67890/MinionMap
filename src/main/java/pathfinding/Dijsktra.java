@@ -13,6 +13,7 @@ import java.util.*;
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.Stack;
 import edu.princeton.cs.algs4.StdOut;
+import gnu.trove.list.linked.TLinkedList;
 import parser.Tag;
 import parser.TagAddress;
 import parser.TransportType;
@@ -28,17 +29,12 @@ public class Dijsktra {
 
     public Dijsktra(Tag _start, Tag _finish, TransportType transportType) {
         //timer
-        long startTime = System.currentTimeMillis();
 
         TagNode start = getNearestRoadPoint(_start);
         TagNode finish = getNearestRoadPoint(_finish);
+        System.out.println(start);
 
         addSurroundingRoads(start, finish, transportType);
-
-        for (DirectedEdge e : G.edges()) {
-            if (e.weight() < 0)
-                throw new IllegalArgumentException("edge " + e + " has negative weight");
-        }
 
         distTo = new HashMap<>();
         edgeTo = new HashMap<Long, DirectedEdge>(G.V());
@@ -60,23 +56,18 @@ public class Dijsktra {
             }
         } 
 
-        System.out.println("Size of DiGraph" + G.V());
+        System.out.println("Size of DiGraph: " + G.V());
 
         pq = new IndexMinPQ<Double>(G.V());
         pq.insert(start.getId(), distTo.get(start.getId()));
         while (!pq.isEmpty()) {
-            TagNode v = G.getNode(pq.delMin());
-            
-            
+            long l = pq.delMin();
+            TagNode v = G.getNode(l);
             
             for (DirectedEdge e : G.adj(v)) {
                 relax(e);
             }
         }
-        System.out.println("size of ways in tree: " + surroundingTags.size());
-        // timer ned
-        long endTime = System.currentTimeMillis();
-        System.out.println("Time: " + (endTime - startTime) + "ms");
 
         try {
             if (hasPathTo(finish)) {
@@ -116,6 +107,7 @@ public class Dijsktra {
     }
 
     private void addSurroundingRoads(TagNode startTag, TagNode finish, TransportType transportType){
+        
         
         if(startTag.hasIntersection()){
             for (Tag tag : startTag.getIntersectionTags()) {
@@ -166,9 +158,9 @@ public class Dijsktra {
             G.addEdge(new DirectedEdge(node, node.getNext(), way.getSpeedLimit()));
     }
 
-    private TagNode getNearestRoadPoint(Tag tag){
+    public TagNode getNearestRoadPoint(Tag tag){
         if(tag instanceof TagNode) return (TagNode) tag;
-        ArrayList<Tag> tags = Tree.getNearestOfType(tag, Type.getAllRoads());
+        ArrayList<Tag> tags = Tree.getNearestOfType(tag, Type.getAllCarRoads());
         double bestDistance = Double.MAX_VALUE;
         TagNode best = null;
         for (Tag tempTag : tags){
@@ -235,9 +227,9 @@ public class Dijsktra {
         return path;
     }
 
-    public ArrayList<TagNode> pathToTagInNodes(Tag v){
+    public TLinkedList<TagNode> pathToTagInNodes(Tag v){
         if (!hasPathTo(v)) return null;
-        ArrayList<TagNode> nodes = new ArrayList<>();
+        TLinkedList<TagNode> nodes = new TLinkedList<>();
         int number = 0;
         for (DirectedEdge e = edgeTo.get(v.getId()); e != null; e = edgeTo.get(e.from().getId())) {
             if (number == 0){

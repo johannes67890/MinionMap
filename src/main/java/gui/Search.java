@@ -197,9 +197,12 @@ public class Search {
      * @param transportType The type of transportation used to pathfind
      */
     public void pathfindBetweenTagAddresses(TagAddress start, TagAddress end, TransportType transportType){
-        // Dijsktra djiktra = new Dijsktra(start, end, transportType);
-        // TLinkedList<TagNode> nodes = new TLinkedList<>();
-        // TagWay way = new TagWay(0, "Route", nodes, (short)0, null);
-        // mainView.getDrawingMap().setMarkedTag(way);
+        Dijsktra djiktra = new Dijsktra(start, end, transportType);
+        TagNode startNode = djiktra.getNearestRoadPoint(start);
+        TagNode endNode = djiktra.getNearestRoadPoint(end);
+        TLinkedList<TagNode> nodes = djiktra.pathToTagInNodes(endNode);
+        System.out.println(nodes.size());
+        TagWay way = new TagWay(0, "Route", nodes, (short)0, null);
+        mainView.getDrawingMap().setMarkedTag(way);
     }
 }

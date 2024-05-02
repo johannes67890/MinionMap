@@ -216,12 +216,11 @@ public class DrawingMap {
     }
     
     private void drawWay(TagWay way, boolean starting){
-
+        System.out.println("Drawing WAY!!!");
         double[] xPoints;
         double[] yPoints;
 
         double defaultLineWidth = 1/Math.sqrt(transform.determinant());
-        
 
         currentColor = way.getType().getColor();
         int counter = 0;
@@ -236,8 +235,6 @@ public class DrawingMap {
         
         gc.beginPath();
         gc.moveTo(way.getRefNodes().getFirst().getLon(), -way.getRefNodes().getFirst().getLat());
-        
-        
 
             for (TagNode n : way.getRefNodes()) {
                 gc.lineTo(n.getLon(), -n.getLat());
@@ -248,9 +245,6 @@ public class DrawingMap {
                 if(n.getNext() == null) break;
             }
 
-        
-        
-        
         //Fills polygons with color
         if (!way.getType().getIsLine()){
             gc.setFill(currentColor);

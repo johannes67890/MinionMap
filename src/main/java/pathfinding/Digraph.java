@@ -95,6 +95,10 @@ public class Digraph {
         TagNode v = e.from();
         TagNode w = e.to();
 
+        if (e.weight() < 0){
+            throw new IllegalArgumentException("Directed edge " + e + " has a negative weight");
+        }
+
         if (adj.containsKey(v)) {
             adj.get(v).add(e);
         } else {
@@ -134,7 +138,7 @@ public class Digraph {
 
     
 
-    public TagNode getNode(long id){
+    public TagNode getNode2(long id){
         for(DirectedEdge node : edges()){
             if(node.from().getId() == id){
                 return node.from();
@@ -144,6 +148,15 @@ public class Digraph {
 
         }
         throw new NoSuchElementException("Node not found in graph");
+    }
+
+    public TagNode getNode(long id){
+        for (TagNode node : vertices()){
+            if (node.getId() == id){
+                return node;
+            }
+        }
+        throw new NoSuchElementException("Node not found in graph!");
     }
 
     /**
