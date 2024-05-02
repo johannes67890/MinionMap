@@ -95,7 +95,6 @@ public class DrawingMap {
         pan(-minlon, minlat);
         zoom(canvas.getWidth() / (maxlon - minlon), 0, 0);
         tempBounds = getScreenBounds();
-        DrawMap(canvas);
     }
 
     public Trie getTrie(){
@@ -172,15 +171,29 @@ public class DrawingMap {
  
         drawWays(sortedWaysToDraw);
 
-        
-        if (markedTag != null){
-            drawMarkedTag(markedTag);
-        }
+        drawMarkedTag(markedTag);
+            
     }
 
     public void setMarkedTag(Tag tag){
-
         markedTag = tag;
+    
+        mainView.draw();
+    }
+
+    public void setMarkedTags(List<TagWay> tag){
+        gc.setFill(Color.PINK.interpolate(Color.RED, 0.5));
+        gc.setStroke(Color.RED);
+        handleWays(tag);
+        //TODO: why is tags size 0?
+        MinPQ<TagWay> waysToDraw = new MinPQ<TagWay>(tag.size());
+                
+        for (TagWay way : waysToDrawWithType){
+            waysToDraw.insert(way);
+        }
+         
+        drawWays(waysToDraw);
+        
         mainView.draw();
     }
 
@@ -458,7 +471,6 @@ public class DrawingMap {
      * @param dy - Distance to pan on the y-axis
      */
     public void pan(double dx, double dy) {
-
         transform.prependTranslation(dx, dy);
         mainView.draw();
     }

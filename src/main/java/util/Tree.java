@@ -153,11 +153,6 @@ public class Tree {
         return multiTree.getTagsFromPoint(new Point3D(node.getLon(), node.getLat(), (byte) 0));
     }
 
-    // TODO:
-    // public static Tag getNearestOfType(Tag tag, List<Type> searchTypes){
-    //     return multiTree.nearestOfType(new Point3D(tag.getLon(), tag.getLat()), searchTypes);
-    // }
-
     public static ArrayList<Tag> getNearestOfType(Tag tag, List<Type> searchType){
         return multiTree.nearestTags(new Point3D(tag.getLon(), tag.getLat(), (byte) 0), searchType);
     }

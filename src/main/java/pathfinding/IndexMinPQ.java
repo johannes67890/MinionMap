@@ -7,7 +7,6 @@ import parser.TagNode;
 import java.util.HashMap;
 
 public class IndexMinPQ<Key extends Comparable<Key>>  {
-    private long maxN;
     private long n;
     private HashMap<Long, Long> qp;
     private HashMap<Long, Long> pq;
@@ -20,13 +19,11 @@ public class IndexMinPQ<Key extends Comparable<Key>>  {
      *         {@code maxN - 1}
      * @throws IllegalArgumentException if {@code maxN < 0}
      */
-    public IndexMinPQ(int maxN) {
-        if (maxN < 0) throw new IllegalArgumentException();
-        this.maxN = maxN;
+    public IndexMinPQ() {
         n = 0;
-        keys = new HashMap<>(maxN + 1);
-        pq = new HashMap<>(maxN + 1);
-        qp = new HashMap<>(maxN + 1);
+        keys = new HashMap<>();
+        pq = new HashMap<>();
+        qp = new HashMap<>();
         
     }
      /**

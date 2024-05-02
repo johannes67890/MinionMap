@@ -1,6 +1,7 @@
 package gui;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import edu.princeton.cs.algs4.Stack;
 import gnu.trove.list.linked.TLinkedList;
@@ -11,6 +12,7 @@ import parser.Type;
 import parser.TagAddress.SearchAddress;
 import parser.TagNode;
 import parser.TagWay;
+import parser.Tag;
 import parser.XMLReader;
 import pathfinding.Dijsktra;
 import util.Trie;
@@ -198,12 +200,13 @@ public class Search {
      * @param transportType The type of transportation used to pathfind
      */
     public void pathfindBetweenTagAddresses(TagAddress start, TagAddress end, TransportType transportType){
-        Dijsktra djiktra = new Dijsktra(start, end, transportType);
-        TagNode endNode = djiktra.getNearestRoadPoint(end, transportType);
-        TLinkedList<TagNode> nodes = djiktra.pathToTagInNodes(endNode);
+        TagNode _start = XMLReader.getNodeById(1259354245l);
+        TagNode _finish = XMLReader.getNodeById(1612922840l);
+        Dijsktra djiktra = new Dijsktra(_start, _finish, transportType);
+        //TagNode endNode = djiktra.getNearestRoadPoint(end, transportType);
+        List<TagWay> nodes = djiktra.allVisitedsPaths();
+        // TLinkedList<TagNode> nodes = djiktra.allVisitedsPaths();
         if (nodes == null) return;
-        System.out.println("Path size: " + nodes.size());
-        TagWay way = new TagWay(0, "Route", nodes, (short)0, Type.PATHWAY);
-        mainView.getDrawingMap().setMarkedTag(way);
+        mainView.getDrawingMap().setMarkedTags(nodes);
     }
 }

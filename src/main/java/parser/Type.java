@@ -162,7 +162,7 @@ public enum Type  {
 
     public static List<Type> getAllCarRoads() {
         String[] unAllowed = {"footway", "steps", "cycleway", "bridleway", "path", "track", 
-        "pedestrian", "service", "living_street", "unclassified", "road", "mini_roundabout"};
+        "pedestrian", "unclassified", "road", "mini_roundabout"};
 
         // A group that contains all types of roads that are for cars
         // But disallowing types with values from unAllowed
