@@ -19,7 +19,7 @@
          <children>
             <BorderPane fx:id="mainBorderPane">
                <top>
-                  <HBox fx:id="mainUIHBox" spacing="10.0" style="-fx-background-color: #CCCCCC;" BorderPane.alignment="CENTER">
+                  <HBox fx:id="mainUIHBox" prefWidth="807.0" spacing="10.0" style="-fx-background-color: #CCCCCC;" BorderPane.alignment="CENTER">
                      <children>
                         <Button fx:id="menuButton2" mnemonicParsing="false" stylesheets="@style.css">
                            <graphic>
@@ -30,9 +30,18 @@
                               </ImageView>
                            </graphic>
                         </Button>
-                        <ComboBox fx:id="searchBarStart" editable="true" maxWidth="1000000.0" prefHeight="30.0" prefWidth="679.0" promptText="Address..." />
-                        <ComboBox fx:id="searchBarDestination" editable="true" maxWidth="0.0" prefHeight="30.0" prefWidth="679.0" promptText="Destination..." visible="false" />
-                        <Button fx:id="pointButton" minWidth="29.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="29.0" text="Search">
+                        <ComboBox fx:id="searchBarStart" editable="true" maxWidth="1000000.0" prefHeight="30.0" promptText="Address..." HBox.hgrow="ALWAYS" />
+                        <ComboBox fx:id="searchBarDestination" editable="true" maxWidth="1000000.0" prefHeight="30.0" promptText="Destination..." HBox.hgrow="ALWAYS" />
+                        <Button fx:id="routeButton" minWidth="29.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="29.0">
+                           <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../visuals/routeIcon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button fx:id="pointButton" minWidth="29.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="29.0">
                            <graphic>
                               <ImageView fx:id="pointImage" fitHeight="20.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -48,6 +57,44 @@
                   </HBox>
                </top>
             </BorderPane>
+            <Pane fx:id="routeTypeMenu" maxHeight="125.0" maxWidth="70.0" stylesheets="@style.css" StackPane.alignment="BOTTOM_LEFT">
+               <children>
+                  <VBox alignment="BOTTOM_LEFT" maxHeight="200.0" maxWidth="70.0" prefHeight="125.0" spacing="10.0" style="-fx-background-color: #CCCCCC;">
+                     <children>
+                        <Button fx:id="walkButton" alignment="TOP_LEFT" maxHeight="29.0" maxWidth="29.0" minWidth="29.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="29.0">
+                           <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../visuals/Walking.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button fx:id="bicycleButton" maxHeight="29.0" maxWidth="29.0" minWidth="29.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="29.0">
+                           <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../visuals/Bicycle.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button fx:id="carButton" maxHeight="29.0" maxWidth="29.0" minWidth="29.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="29.0">
+                           <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../visuals/carIcon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                     </children>
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                  </VBox>
+               </children>
+            </Pane>
             <Pane fx:id="leftBurgerMenu" maxWidth="300.0" style="-fx-background-color: #999999;" styleClass="leftmenu" stylesheets="@style.css" visible="false" StackPane.alignment="CENTER_LEFT">
                <children>
                   <VBox fx:id="mainMenuVBox" maxWidth="300.0" prefHeight="555.0" prefWidth="300.0" spacing="20.0" stylesheets="@style.css" visible="false">

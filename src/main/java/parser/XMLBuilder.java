@@ -142,7 +142,7 @@ public class XMLBuilder {
 
             if(k.contains("maxspeed")){
                 try {
-                    wayBuilder.setSpeedLimit(Integer.parseInt(v));
+                    wayBuilder.setSpeedLimit(Short.parseShort(v));
                     return;
                 } catch (NumberFormatException e) {
                    return;
@@ -215,16 +215,16 @@ public class XMLBuilder {
         }
 
         public void parseStreet(Type type){
-            final int DEFAULT_SPEED = 50;
+            final short DEFAULT_SPEED = 50;
 
             switch (type) {
                 case MOTORWAY:
-                    wayBuilder.setSpeedLimit(130);
+                    wayBuilder.setSpeedLimit((short) 130);
                     break;
                 case PRIMARY_ROAD:
                 case SECONDARY_ROAD:
                 case TERTIARY_ROAD:
-                    wayBuilder.setSpeedLimit(80);
+                    wayBuilder.setSpeedLimit((short) 80);
                     break;
                 case RESIDENTIAL_ROAD:
                     wayBuilder.setSpeedLimit(DEFAULT_SPEED);

@@ -26,7 +26,7 @@ public class TagWay extends Tag implements Comparable<TagWay>{
     String name;
     TLinkedList<TagNode> nodes = new TLinkedList<TagNode>();
     TagRelation relationParent;
-    int speedLimit;
+    short speedLimit;
     boolean isOneWay;
     Type type;
 
@@ -40,7 +40,7 @@ public class TagWay extends Tag implements Comparable<TagWay>{
         this.nodes = builder.getWayBuilder().getRefNodes(this);
     }
 
-    public TagWay(long id, String name, TLinkedList<TagNode> nodes, int speedLimit, Type type) {
+    public TagWay(long id, String name, TLinkedList<TagNode> nodes, short speedLimit, Type type) {
         this.id = id;
         this.name = name;
         this.nodes = nodes;
@@ -54,7 +54,7 @@ public class TagWay extends Tag implements Comparable<TagWay>{
      * 
      * @param builder
      */
-    public TagWay(TagRelation relation, long id, TLinkedList<TagNode> nodes, int speedLimit) {
+    public TagWay(TagRelation relation, long id, TLinkedList<TagNode> nodes, short speedLimit) {
         this.id = id;
         this.name = relation.getName();
         this.nodes = nodes;
@@ -79,7 +79,7 @@ public class TagWay extends Tag implements Comparable<TagWay>{
         throw new UnsupportedOperationException("TagWay does not have a longitude value.");
     }
 
-    public int getSpeedLimit(){
+    public short getSpeedLimit(){
         return speedLimit;
     }
 
@@ -163,7 +163,7 @@ public class TagWay extends Tag implements Comparable<TagWay>{
         private TLinkedList<TagNode> refNodesList = new TLinkedList<TagNode>();
         private boolean isEmpty = true;
         private boolean isOneWay = false;
-        private int speedLimit = 1; // Default speed limit is 1 to not break edge cases in pathfinding.
+        private short speedLimit = 1; // Default speed limit is 1 to not break edge cases in pathfinding.
 
         public boolean isEmpty() {
             return isEmpty;
@@ -178,11 +178,11 @@ public class TagWay extends Tag implements Comparable<TagWay>{
             return isOneWay;
         }
 
-        public int getSpeedLimit() {
+        public short getSpeedLimit() {
             return speedLimit;
         }
 
-        public void setSpeedLimit(int speedLimit) {
+        public void setSpeedLimit(short speedLimit) {
             isEmpty = false;
             this.speedLimit = speedLimit;
         }

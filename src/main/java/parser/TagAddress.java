@@ -38,6 +38,18 @@ public class TagAddress extends Tag  implements Comparable{
         country = builder.getAddressBuilder().country;
     }
 
+    public TagAddress (long id, float lat, float lon, String street, String house, String postCode, String municipality, String city, String country){
+        this.id = id;
+        this.lat = lat;
+        this.lon = lon;
+        this.street = street;
+        this.house = house;
+        this.postCode = postCode;
+        this.municipality = municipality;
+        this.city = city;
+        this.country = country;
+    }
+
     @Override
     public long getId() {
         return id;
@@ -81,7 +93,11 @@ public class TagAddress extends Tag  implements Comparable{
     }
 
     public String toString() {
-        return street + " " + house + ", " + postCode + " " + city;
+        if (!house.equals("")){
+            return street + ", " + house + ", " + postCode + " " + city;
+        } else{
+            return street + ", " + postCode + " " + city;
+        }
     }
 
     /**

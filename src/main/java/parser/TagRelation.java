@@ -25,7 +25,6 @@ public class TagRelation extends Tag{
     String name;
     Type type, relationType;
 
-
     public TagRelation(){}
 
     public TagRelation(XMLBuilder builder){
@@ -92,8 +91,6 @@ public class TagRelation extends Tag{
      * 
      */
     public void constructOuterWays(){
-
-
         TLinkedList<TagNode> tempNodes = new TLinkedList<>();
         TagNode beginLastTagNode = null;
         TagNode beginFirstTagNode = null;
@@ -104,7 +101,7 @@ public class TagRelation extends Tag{
         TagNode prevLastTagNode = null;
 
         boolean success = false;
-        int speedLimit = 0;
+        short speedLimit = 0;
         long id = 0;
 
         int wayCount = 0;
@@ -133,12 +130,6 @@ public class TagRelation extends Tag{
                         TagWay other = getActualOuter().get(j + 1);
 
                         if ((other.getRefNodes().getFirst().equals(outer.getRefNodes().getLast())) || (other.getRefNodes().getLast().equals(outer.getRefNodes().getLast()))){
-
-                            if (this.id == 7699392 || this.id == 14507853){
-                                System.out.println("NOT REVERSED");
-                               // System.out.println(type.getKey() + " " + type.getValue() + " " + wayCount);
-            
-                            }
                             beginFirstTagNode = outer.getRefNodes().getFirst();
                             currentFirstTagNode = beginFirstTagNode;
                             beginLastTagNode = outer.getRefNodes().getLast();
@@ -146,12 +137,6 @@ public class TagRelation extends Tag{
                         } 
                         // Starts from the opposite direction
                         else{
-
-                            if (this.id == 7699392 || this.id == 14507853){
-                                System.out.println("REVERSED");
-                               // System.out.println(type.getKey() + " " + type.getValue() + " " + wayCount);
-            
-                            }
                             beginFirstTagNode = outer.getRefNodes().getLast();
                             currentFirstTagNode = beginFirstTagNode;
                             beginLastTagNode = outer.getRefNodes().getFirst();
@@ -166,24 +151,12 @@ public class TagRelation extends Tag{
                 //Checks whether way should be read in reverse
 
                 if ((prevLastTagNode != null) && prevLastTagNode.equals(currentFirstTagNode)){
-
-                    if (this.id == 7699392 || this.id == 14507853){
-                        System.out.println("NEXT NOT REVERSED");
-                       // System.out.println(type.getKey() + " " + type.getValue() + " " + wayCount);
-    
-                    }
                     for (TagNode node : outer.getRefNodes()) {
                         TagNode newNode = new TagNode(node);
                         newNode.clearLinks();
                         tempNodes.add(newNode);
                     }
                 } else{
-
-                    if (this.id == 7699392 || this.id == 14507853){
-                        System.out.println("NEXT REVERSED");
-                       // System.out.println(type.getKey() + " " + type.getValue() + " " + wayCount);
-    
-                    }
 
                     TLinkedList<TagNode> tempToTempNodes = new TLinkedList<>();
 
@@ -218,14 +191,6 @@ public class TagRelation extends Tag{
                     beginFirstTagNode = null;
                     beginLastTagNode = null;
                     success = true;
-
-
-
-                    if (this.id == 7699392 || this.id == 14507853){
-                        System.out.println(this.id);
-                       // System.out.println(type.getKey() + " " + type.getValue() + " " + wayCount);
-    
-                    }
                     
                     wayCount = 0;
 

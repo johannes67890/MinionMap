@@ -2,12 +2,10 @@ package gui;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import javafx.scene.image.ImageView;
 
-import edu.princeton.cs.algs4.RectHV;
-import gnu.trove.list.linked.TLinkedList;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 import parser.Tag;
@@ -21,9 +19,8 @@ import util.MathUtil;
 import util.MinPQ;
 import util.Rect3D;
 import util.Tree;
-import util.Zoombar;
-import parser.Tag;
 import util.Trie;
+import util.Zoombar;
 
 
 /**
@@ -190,7 +187,6 @@ public class DrawingMap {
     private void drawMarkedTag(Tag tag){
         gc.setFill(Color.PINK.interpolate(Color.RED, 0.5));
         gc.setStroke(Color.RED);
-        
         if (tag instanceof TagRelation){
             drawRelation((TagRelation)tag);
         }else if(tag instanceof TagWay){
@@ -227,42 +223,44 @@ public class DrawingMap {
         double defaultLineWidth = 1/Math.sqrt(transform.determinant());
         
 
-            currentColor = way.getType().getColor();
-            int counter = 0;
-            xPoints = new double[way.getRefNodes().size()];
-            yPoints = new double[way.getRefNodes().size()];
+        currentColor = way.getType().getColor();
+        int counter = 0;
+        xPoints = new double[way.getRefNodes().size()];
+        yPoints = new double[way.getRefNodes().size()];
 
-            double min = way.getType().getMinWidth();
-            double max = way.getType().getMaxWidth();
-            double lineWidth = MathUtil.clamp(defaultLineWidth * way.getType().getWidth(), min, max);
-            gc.setLineWidth(lineWidth);
+        double min = way.getType().getMinWidth();
+        double max = way.getType().getMaxWidth();
+        double lineWidth = MathUtil.clamp(defaultLineWidth * way.getType().getWidth(), min, max);
+        gc.setLineWidth(lineWidth);
 
-            
-            gc.beginPath();
-            gc.moveTo(way.getRefNodes().getFirst().getLon(), -way.getRefNodes().getFirst().getLat());
-            
-            
+        
+        gc.beginPath();
+        gc.moveTo(way.getRefNodes().getFirst().getLon(), -way.getRefNodes().getFirst().getLat());
+        
+        
 
-                for (TagNode n : way.getRefNodes()) {
-                    gc.lineTo(n.getLon(), -n.getLat());
-                    xPoints[counter] = n.getLon();
-                    yPoints[counter] = -n.getLat();
-                    counter++;
-                    
-                    if(n.getNext() == null) break;
-                }
-
-            
-            
-            
-            //Fills polygons with color
-            if (!way.getType().getIsLine()){
-                gc.setFill(currentColor);
-                gc.fillPolygon(xPoints, yPoints, counter);
+            for (TagNode n : way.getRefNodes()) {
+                gc.lineTo(n.getLon(), -n.getLat());
+                xPoints[counter] = n.getLon();
+                yPoints[counter] = -n.getLat();
+                counter++;
+                
+                if(n.getNext() == null) break;
             }
-            
-            gc.stroke();    
+
+        
+        
+        
+        //Fills polygons with color
+        if (!way.getType().getIsLine()){
+            gc.setFill(currentColor);
+            gc.fillPolygon(xPoints, yPoints, counter);
         }
+        
+        gc.stroke();    
+    }
+
+    
 
     /**
      * 
@@ -301,8 +299,6 @@ public class DrawingMap {
             gc.beginPath();
             gc.moveTo(tagWay.getRefNodes().getFirst().getLon(), -tagWay.getRefNodes().getFirst().getLat());
             
-            
-
                 for (TagNode n : tagWay.getRefNodes()) {
                     gc.lineTo(n.getLon(), -n.getLat());
                     xPoints[counter] = n.getLon();
@@ -311,10 +307,6 @@ public class DrawingMap {
                     
                     if(n.getNext() == null) break;
                 }
-
-            
-            
-            
             //Fills polygons with color
             if (!tagWay.getType().getIsLine()){
                 gc.setFill(currentColor);

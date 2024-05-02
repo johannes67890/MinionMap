@@ -15,22 +15,7 @@ import edu.princeton.cs.algs4.Stack;
 import edu.princeton.cs.algs4.StdOut;
 import parser.Tag;
 import parser.TagAddress;
-
-enum TransportType {
-    CAR(Type.getAllCarRoads()),
-    FOOT(Type.getAllPedestrianRoads()),
-    BIKE(Type.getAllBikeRoads());
-
-    private final List<Type> roadTypes;
-    
-    TransportType(List<Type> roadTypes){
-        this.roadTypes = roadTypes;
-    }
-
-    public List<Type> getRoadTypes(){
-        return roadTypes;
-    }
-}
+import parser.TransportType;
 
 public class Dijsktra {
     private HashMap<Long, Double> distTo;          // distTo[v] = distance  of shortest s->v path
@@ -41,7 +26,7 @@ public class Dijsktra {
     private Digraph G = new Digraph();
     private static Stack<TagNode> shortestPath = new Stack<TagNode>();
 
-    Dijsktra(Tag _start, Tag _finish, TransportType transportType) {
+    public Dijsktra(Tag _start, Tag _finish, TransportType transportType) {
         //timer
         long startTime = System.currentTimeMillis();
 
