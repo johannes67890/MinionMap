@@ -75,10 +75,14 @@ public class Dijsktra {
             }
         } 
 
+        System.out.println("Size of DiGraph" + G.V());
+
         pq = new IndexMinPQ<Double>(G.V());
         pq.insert(start.getId(), distTo.get(start.getId()));
         while (!pq.isEmpty()) {
             TagNode v = G.getNode(pq.delMin());
+            
+            
             
             for (DirectedEdge e : G.adj(v)) {
                 relax(e);
@@ -122,22 +126,26 @@ public class Dijsktra {
         return shortestPath;
     }
 
+    private double heuristic(TagNode start, TagNode end){
+        return start.distance(end);
+    }
+
     private void addSurroundingRoads(TagNode startTag, TagNode finish, TransportType transportType){
         
         if(startTag.hasIntersection()){
             for (Tag tag : startTag.getIntersectionTags()) {
                 if(tag instanceof TagWay){
-                        TagWay way = (TagWay) tag;
-                        if(!transportType.getRoadTypes().contains(tag.getType()) || tag.getType() == null) return;
-                        if(surroundingTags.contains(way.getId())) continue;
-                        surroundingTags.add(way.getId());
-                        addRoad(way);
-                        for (TagNode tagNode : way.getRefNodes()) {
-                            if(tagNode.getId() == finish.getId()) return;
-                            if(tagNode.getNext() == null) continue;
-        
-                            if(tagNode.hasIntersection()) addSurroundingRoads(tagNode, finish,transportType);
-                        } 
+                    TagWay way = (TagWay) tag;
+                    if(!transportType.getRoadTypes().contains(tag.getType()) || tag.getType() == null) return;
+                    if(surroundingTags.contains(way.getId())) continue;
+                    surroundingTags.add(way.getId());
+                    addRoad(way);
+                    for (TagNode tagNode : way.getRefNodes()) {
+                        if(tagNode.getId() == finish.getId()) return;
+                        if(tagNode.getNext() == null) continue;
+    
+                        if(tagNode.hasIntersection()) addSurroundingRoads(tagNode, finish,transportType);
+                    } 
                 }
             }
         } else{
@@ -149,8 +157,6 @@ public class Dijsktra {
                 if(tagNode.hasIntersection()) addSurroundingRoads(tagNode,finish, transportType);
             }
         }
-        
-
     }    
 
     private void addRoad(TagWay way){
@@ -242,6 +248,20 @@ public class Dijsktra {
             path.push(e);
         }
         return path;
+    }
+
+    public ArrayList<TagNode> pathToTagInNodes(Tag v){
+        if (!hasPathTo(v)) return null;
+        ArrayList<TagNode> nodes = new ArrayList<>();
+        int number = 0;
+        for (DirectedEdge e = edgeTo.get(v.getId()); e != null; e = edgeTo.get(e.from().getId())) {
+            if (number == 0){
+                nodes.add(e.from());
+            }
+            nodes.add(e.to());
+            number++;
+        }
+        return nodes;
     }
 
 
