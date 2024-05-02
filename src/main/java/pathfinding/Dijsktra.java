@@ -32,9 +32,11 @@ public class Dijsktra {
 
         TagNode start = getNearestRoadPoint(_start, transportType);
         TagNode finish = getNearestRoadPoint(_finish, transportType);
-
+        //start timer
+        long startTime = System.currentTimeMillis();
         addSurroundingRoads(start, finish, transportType);
-
+        long endTime = System.currentTimeMillis();
+        System.out.println("Time to add surrounding roads: " + (endTime - startTime) + "ms");
         distTo = new HashMap<>();
         edgeTo = new HashMap<Long, DirectedEdge>(G.V());
        
@@ -59,6 +61,8 @@ public class Dijsktra {
 
         pq = new IndexMinPQ<Double>(G.V());
         pq.insert(start.getId(), distTo.get(start.getId()));
+        // timer start
+        startTime = System.currentTimeMillis();
         while (!pq.isEmpty()) {
             long l = pq.delMin();
             TagNode v = G.getNode(l);
@@ -67,6 +71,9 @@ public class Dijsktra {
                 relax(e);
             }
         }
+        // timer end
+        endTime = System.currentTimeMillis();
+        System.out.println("Time to find shortest path: " + (endTime - startTime) + "ms");
 
         try {
             if (hasPathTo(finish)) {
@@ -112,7 +119,7 @@ public class Dijsktra {
             for (Tag tag : startTag.getIntersectionTags()) {
                 if(tag instanceof TagWay){
                     TagWay way = (TagWay) tag;
-                    if(!transportType.getRoadTypes().contains(tag.getType()) || tag.getType() == null) return;
+                    //if(!transportType.getRoadTypes().contains(tag.getType()) || tag.getType() == null) return;
                     if(surroundingTags.contains(way.getId())) continue;
                     surroundingTags.add(way.getId());
                     addRoad(way);
@@ -227,15 +234,12 @@ public class Dijsktra {
     }
 
     public TLinkedList<TagNode> pathToTagInNodes(Tag v){
-        if (!hasPathTo(v)) return null;
         TLinkedList<TagNode> nodes = new TLinkedList<>();
-        int number = 0;
-        for (DirectedEdge e = edgeTo.get(v.getId()); e != null; e = edgeTo.get(e.from().getId())) {
-            if (number == 0){
-                nodes.add(e.from());
-            }
-            nodes.add(e.to());
-            number++;
+        if (!hasPathTo(v)) return null;
+
+        for (DirectedEdge e : pathTo(v)) {
+            if(e.to() == null) break;
+            nodes.addLast(e.from());
         }
         return nodes;
     }
