@@ -38,6 +38,28 @@ public class TagWay extends Tag implements Comparable<TagWay>{
         this.speedLimit = builder.getWayBuilder().getSpeedLimit();
         this.type = builder.getType();
         this.nodes = builder.getWayBuilder().getRefNodes(this);
+
+        if (this.type != null){
+
+            switch (this.type) {
+                case RESIDENTIAL:
+                    constructGrid();
+                    break;
+                case FOREST:
+                    constructGrid();
+                    break;
+                case INDUSTRIAL:
+                    constructGrid();
+                    break;
+            
+                default:
+                    break;
+            }
+    
+
+        }
+       
+
     }
 
     public TagWay(long id, String name, TLinkedList<TagNode> nodes, int speedLimit, Type type) {
@@ -167,9 +189,8 @@ public class TagWay extends Tag implements Comparable<TagWay>{
 
         int counter = 0;
 
-
-        for (float i = minLon; i < maxLon; i += 100){
-            for (float j = minLat; j < maxlat; j += 100){
+        for (float i = minLon; i < maxLon; i += 250){
+            for (float j = minLat; j < maxlat; j += 250){
                 grid.add(new TagGrid(j, i));
             }
 

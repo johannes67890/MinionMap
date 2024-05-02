@@ -191,8 +191,6 @@ public class TagRelation extends Tag{
                     success = true;
                     
                     wayCount = 0;
-
-
                 }
             }
         }
