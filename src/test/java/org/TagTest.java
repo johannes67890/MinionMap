@@ -52,10 +52,15 @@ public class TagTest {
     }
     @Test
     public void testDistance(){
-        TagNode a0 = MecatorProjection.project(new TagNode(0, 55.6572603f, 12.4682648f));
-        TagNode a1 = MecatorProjection.project(new TagNode(1, 55.6572610f, 12.4685185f));
+        TagNode a0 = new TagNode(0, 55.6572603f, 12.4682648f);
+        TagNode a1 = new TagNode(1, 55.6572610f, 12.4685185f);
 
         assertEquals(15.93, a0.distance(a1), 0.1);
+        a0 = MecatorProjection.project(new TagNode(0, 55.6572603f, 12.4682648f));
+        a1 = MecatorProjection.project(new TagNode(1, 55.6572610f, 12.4685185f));
+        assertEquals(15.93, a0.distance(a1), 0.1);
+        assertThrows(UnsupportedOperationException.class, () -> 
+        new TagNode(0,0f,0f).distance(new TagBound(55.6572603f, 12.4682648f, 55.6572610f, 12.4685185f)));
     }
     
     @Test

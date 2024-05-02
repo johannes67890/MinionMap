@@ -97,9 +97,6 @@ public class TagNode extends Tag implements TLinkable<TagNode>, Comparable<TagNo
         return Long.compare(this.id, o.getId());
     }
 
-    public double distance(TagNode node){
-        return Math.sqrt(Math.pow(node.getLat() - getLat(), 2) + (Math.pow(node.getLon() - getLon(), 2)));
-    }
 
     @Override
     public String toString() {
