@@ -34,6 +34,7 @@ import parser.TagWay;
 import parser.TransportType;
 import util.Point3D;
 import util.Tree;
+import util.AddressComparator;
 
 public class Controller implements Initializable, ControllerInterface{
     
@@ -376,6 +377,8 @@ public class Controller implements Initializable, ControllerInterface{
     private void search(String address, ComboBox<String> searchBar) {
     if (!address.isEmpty() && address.charAt(address.length() - 1) != ' ') {
             ArrayList<TagAddress> tagAddresses = s.getSuggestions(address);
+            //sorts the addresses before they are put into the combobox
+            tagAddresses.sort(new AddressComparator());
             if (searchBar.equals(searchBarStart) && startAddress != null){
                 startAddress = null;
             }else if (searchBar.equals(searchBarDestination) && endAddress != null){
