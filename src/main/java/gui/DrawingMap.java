@@ -2,6 +2,7 @@ package gui;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
@@ -50,9 +51,8 @@ public class DrawingMap {
 
     private Trie trie;
     private Tag markedTag;
-    private List<TagNode> nodes;
-    private List<TagWay> ways;
-    private List<TagRelation> relations;
+    private Set<TagWay> ways;
+    private Set<TagRelation> relations;
 
     private Color currentColor;
 
@@ -60,8 +60,6 @@ public class DrawingMap {
 
     private List<TagWay> waysToDrawWithType;
     private List<TagWay> waysToDrawWithoutType;
-
-    private float[] tempBounds = new float[4];
 
 
 
@@ -92,7 +90,6 @@ public class DrawingMap {
         zoombar = new Zoombar(zoombarIntervals, zoomLevelMax, zoomLevelMin);
         pan(-minlon, minlat);
         zoom(canvas.getWidth() / (maxlon - minlon), 0, 0);
-        tempBounds = getScreenBounds();
         DrawMap(canvas);
     }
 
@@ -108,12 +105,7 @@ public class DrawingMap {
 
     public void DrawMap(ResizableCanvas canvas){
 
-        long preTime = System.currentTimeMillis();
         this.canvas = canvas;
-        // if (!Tree.isLoaded()){
-        //     return;
-        // }
-
 
         //Resfreshes the screen
         gc = canvas.getGraphicsContext2D();
@@ -138,33 +130,30 @@ public class DrawingMap {
         float[] canvasBounds = getScreenBoundsBigger(0.2);
         TagBound bound = new TagBound(canvasBounds[1], canvasBounds[3], canvasBounds[0], canvasBounds[2]);
         //Rect3D rect = new Rect3D(canvasBounds[0], canvasBounds[1], hierarchyLevel, canvasBounds[2], canvasBounds[3], 100);
-        nodes = new ArrayList<>();
-        ways = new ArrayList<>();
-        relations = new ArrayList<>();
+        ways = new HashSet<>();
+        relations = new HashSet<>();
 
-        //HashSet<Tag> tags = Tree.getTagsInBounds(rect);
         List<String> chunkDirs = ChunkFiles.getChunksFilesWithinBounds(bound);
         for(String tag : chunkDirs){
             List<Tag> tags = XMLWriter.getTagsFromChunkByBounds(ChunkFiles.getBound(tag));
-            System.out.println(bound.toString());
+
             for(Tag t : tags){
                 if (t instanceof TagNode){
-                    nodes.add((TagNode) t);
-                } else if (t instanceof TagWay){
-                    ways.add((TagWay) t);
-                } else if (t instanceof TagRelation){
-                    relations.add((TagRelation) t);
-                }
+                    TagNode node = (TagNode) t;
+                    ways.add((TagWay) node.getParent());
+                    relations.add((TagRelation) node.getParent().getRelationParent());
+                } 
             }
         }
-        System.out.println(ways.size());
+        // System.out.println(ways.size());
 
         waysToDrawWithType = new ArrayList<>();
         waysToDrawWithoutType = new ArrayList<>();
 
         long time = System.currentTimeMillis();
 
-        handleWays(ways);
+        ArrayList<TagWay> w = new ArrayList<>(ways);
+        handleWays(w);
         handleRelations();
 
         MinPQ<TagWay> sortedWaysToDraw = new MinPQ<>(waysToDrawWithType.size());
@@ -346,8 +335,9 @@ public class DrawingMap {
 
     public void handleRelations(){
         for (TagRelation relation : relations){
-
+            if(relation == null) continue;
             handleWays(relation.getWays());
+
             
             for (TagWay way : relation.getHandledOuter()){
                 if (!way.loops()){
