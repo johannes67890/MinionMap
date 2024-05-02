@@ -16,14 +16,11 @@ import parser.TagAddress;
  *                             up the structure of the Trie
  * @param houseNumberToAddress is a HashMap mapping String keys to Address
  *                             objects
- * @param endAddress           is a String of the full address contained in the
- *                             Trie, not including the housenumber
  */
 public class TrieNode implements Serializable {
     private boolean isEnd;
     private TCharObjectHashMap<TrieNode> branches;
     private HashMap<String, TagAddress> houseNumberToAddress = new HashMap<>();
-    private String endAddress;
 
     public TrieNode() {
         branches = new TCharObjectHashMap<>();
@@ -49,21 +46,8 @@ public class TrieNode implements Serializable {
         houseNumberToAddress.put(houseNumber, address);
     }
 
-    public ArrayList<String> getHouseNumbers() {
-        ArrayList<String> houseNumberList = new ArrayList<>(houseNumberToAddress.keySet());
-        return houseNumberList;
-    }
-
-    public void setEndAddress(String address) {
-        this.endAddress = address;
-    }
-
     public ArrayList<TagAddress> getTagAddresses(){
         return new ArrayList<>(houseNumberToAddress.values());
-    }
-
-    public String getEndAddress() {
-        return endAddress;
     }
 
     public TagAddress getAddressObject(String house) {
