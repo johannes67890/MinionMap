@@ -1,19 +1,16 @@
 package util;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
-import edu.princeton.cs.algs4.Point2D;
-import edu.princeton.cs.algs4.RectHV;
-import gnu.trove.map.hash.TLongObjectHashMap;
 import parser.Tag;
+import parser.TagGrid;
 import parser.TagNode;
 import parser.TagRelation;
 import parser.TagWay;
-import parser.XMLReader;
-import util.Point3D;
-import util.Rect3D;
-import util.K3DTree;
 import parser.Type;
+import parser.XMLReader;
 
 public class Tree {
 
@@ -51,6 +48,17 @@ public class Tree {
                 multiTree.insert(temp, tag);
                 if(node.getNext() == null) break;
             }
+            for (TagGrid gridPoint : way.getGrid()){
+
+                Point3D temp;
+                if (way.getType() != null){
+                    temp = new Point3D(gridPoint.getLon(), gridPoint.getLat(),(byte) way.getType().getThisHierarchy());
+                }else{
+                    temp = new Point3D(gridPoint.getLon(), gridPoint.getLat(), (byte) 0);
+                }
+                multiTree.insert(temp, tag);
+            }
+           
         }else if (tag instanceof TagRelation){
             TagRelation relation = (TagRelation) tag;
 
@@ -64,6 +72,16 @@ public class Tree {
                     }
                     multiTree.insert(temp, tag);
                     if(node.getNext() == null) break;
+                }
+                for (TagGrid gridPoint : way.getGrid()){
+
+                    Point3D temp;
+                    if (way.getType() != null){
+                        temp = new Point3D(gridPoint.getLon(), gridPoint.getLat(),(byte) way.getType().getThisHierarchy());
+                    }else{
+                        temp = new Point3D(gridPoint.getLon(), gridPoint.getLat(), (byte) 0);
+                    }
+                    multiTree.insert(temp, tag);
                 }
             }
         }else if (tag instanceof TagRelation){

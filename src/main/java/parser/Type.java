@@ -50,7 +50,7 @@ public enum Type  {
     //COASTLINE("natural", new String[]{"coastline"}, 10, 1, Color.PLUM, 5, true, 6, 100),
     
     // Landuse (Hierarchy: 8)
-    RESIDENTIAL("landuse", new String[]{"residential"}, 8, 7, Color.web("#E0DFDF"), Color.LIGHTGRAY, 1, false),
+    RESIDENTIAL("landuse", new String[]{"residential"}, 8, 6, Color.web("#E0DFDF"), Color.LIGHTGRAY, 1, false),
     INDUSTRIAL("landuse", new String[]{"industrial"}, 8, 8, Color.web("#EBDBE8"), Color.PLUM.darker(), 1, false),
     AEROWAY("aeroway", new String[]{"apron", "hangar", "spaceport", "terminal"}, 8, 8, Color.web("#DADAE0"), Color.LIGHTGRAY.darker(), 5, false),
     AEROWAYLINE("aeroway", new String[]{"taxiway", "runway"}, 8, 9, Color.web("#BDBDCE"), 5, true, 6, 75),

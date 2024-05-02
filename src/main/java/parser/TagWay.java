@@ -1,10 +1,10 @@
 package parser;
 
-import edu.princeton.cs.algs4.Stack;
-import gnu.trove.list.linked.TLinkedList;
-import javafx.print.Collation;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
-import java.util.*;
+import gnu.trove.list.linked.TLinkedList;
 
 enum Way {
     ID, REFS, NAME, TYPE, SPEEDLIMIT
@@ -25,6 +25,7 @@ public class TagWay extends Tag implements Comparable<TagWay>{
     long id;
     String name;
     TLinkedList<TagNode> nodes = new TLinkedList<TagNode>();
+    List<TagGrid> grid = new ArrayList<>();
     int speedLimit;
     boolean isOneWay;
     Type type;
@@ -59,6 +60,8 @@ public class TagWay extends Tag implements Comparable<TagWay>{
         this.nodes = nodes;
         this.speedLimit = speedLimit;
         this.type = relation.getType();
+
+        constructGrid();
     }
 
     /**
@@ -138,6 +141,45 @@ public class TagWay extends Tag implements Comparable<TagWay>{
             return -1;
         }
     }
+
+    public void constructGrid(){
+
+        float minLon = Float.MAX_VALUE;
+        float maxLon = Float.MIN_VALUE;
+        float minLat = Float.MAX_VALUE;
+        float maxlat = Float.MIN_VALUE;
+
+        for (TagNode tag : nodes){
+
+            if (tag.getLon() > maxLon){
+                maxLon = tag.getLon();
+            }
+            if (tag.getLon() < minLon){
+                minLon = tag.getLon();
+            }
+            if (tag.getLat() > maxlat){
+                maxlat = tag.getLat();
+            }
+            if (tag.getLat() < minLat){
+                minLat = tag.getLat();
+            }
+        }
+
+        int counter = 0;
+
+
+        for (float i = minLon; i < maxLon; i += 100){
+            for (float j = minLat; j < maxlat; j += 100){
+                grid.add(new TagGrid(j, i));
+            }
+
+        }
+    }
+
+    public List<TagGrid> getGrid(){
+        return grid;
+    }
+
 
 
 
