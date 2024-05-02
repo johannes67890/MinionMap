@@ -77,7 +77,7 @@ public class Tree {
      * @param point Point to search near
      * @return ArrayList of Tag-objects near the point
      */
-    public static Tag getTagsNearPoint(Point3D point){
+    public static ArrayList<Tag> getTagsNearPoint(Point3D point){
         return multiTree.nearestTags(point);
     }
 
@@ -86,7 +86,7 @@ public class Tree {
      * @param point Point to search near
      * @return ArrayList of Tag-objects near the point
      */
-    public static Tag getTagsNearTag(Tag tag){
+    public static ArrayList<Tag> getTagsNearTag(Tag tag){
         return multiTree.nearestTags(new Point3D(tag.getLon(), tag.getLat(), (byte) 0));
     }
 
@@ -95,7 +95,7 @@ public class Tree {
      * @param point Point to search near
      * @return ArrayList of Tag-objects near the point
      */
-    public static Tag getTagsNearTag(Tag tag, List<Type> searchType){
+    public static ArrayList<Tag> getTagsNearTag(Tag tag, List<Type> searchType){
         return multiTree.nearestTags(new Point3D(tag.getLon(), tag.getLat(), (byte) 0), searchType);
     }
 
@@ -141,7 +141,7 @@ public class Tree {
      * @param point Point to search near
      * @return ArrayList of tag-objects in the given bounds
      */
-    public static Tag getTagsFromPoint(Point3D point){
+    public static ArrayList<Tag> getTagsFromPoint(Point3D point){
         return multiTree.getTagsFromPoint(point);
     }
     /**
@@ -149,7 +149,7 @@ public class Tree {
      * @param point Point to search near
      * @return ArrayList of tag-objects in the given bounds
      */
-    public static Tag getTagFromPoint(Tag node){
+    public static ArrayList<Tag> getTagFromPoint(Tag node){
         return multiTree.getTagsFromPoint(new Point3D(node.getLon(), node.getLat(), (byte) 0));
     }
 
@@ -158,7 +158,7 @@ public class Tree {
     //     return multiTree.nearestOfType(new Point3D(tag.getLon(), tag.getLat()), searchTypes);
     // }
 
-    public static Tag getNearestOfType(Tag tag, List<Type> searchType){
+    public static ArrayList<Tag> getNearestOfType(Tag tag, List<Type> searchType){
         return multiTree.nearestTags(new Point3D(tag.getLon(), tag.getLat(), (byte) 0), searchType);
     }
 

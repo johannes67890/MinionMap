@@ -2,12 +2,11 @@ package gui;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import javafx.scene.image.ImageView;
 
-import edu.princeton.cs.algs4.RectHV;
-import gnu.trove.list.linked.TLinkedList;
+import gui.GraphicsHandler.GraphicStyle;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 import parser.Tag;
@@ -21,9 +20,8 @@ import util.MathUtil;
 import util.MinPQ;
 import util.Rect3D;
 import util.Tree;
-import util.Zoombar;
-import parser.Tag;
 import util.Trie;
+import util.Zoombar;
 
 
 /**
@@ -90,14 +88,17 @@ public class DrawingMap {
         double maxlat = bound.getMaxLat();
         double maxlon = bound.getMaxLon();
         double minlat = bound.getMinLat();
+        float[] screenBounds = getScreenBounds();
         ArrayList<Tag> tempList = new ArrayList<>();
         tempList.addAll(List.copyOf(XMLReader.getWays().valueCollection()));
         tempList.addAll(List.copyOf(XMLReader.getRelations().valueCollection()));
         Tree.initialize(tempList);
         zoombar = new Zoombar(zoombarIntervals, zoomLevelMax, zoomLevelMin);
-        pan(-minlon, minlat);
+        pan(-minlon, minlat + (screenBounds[3] - screenBounds[1]));
         zoom(canvas.getWidth() / (maxlon - minlon), 0, 0);
+        pan(0, canvas.getHeight() * 1.20);
         tempBounds = getScreenBounds();
+        pan(0, screenBounds[3] - screenBounds[1]);
         DrawMap(canvas);
         
     }
@@ -126,13 +127,13 @@ public class DrawingMap {
         gc.setTransform(new Affine());
         switch (GraphicsHandler.getGraphicStyle()) {
             case DEFAULT:
-                gc.setFill(Color.LIGHTSKYBLUE);
+                gc.setFill(Color.web("#AAD3DF"));
                 break;
             case DARKMODE:
                 gc.setFill(Color.BLACK);
                 break;
             case GRAYSCALE:
-                gc.setFill(Color.LIGHTSKYBLUE.grayscale());
+                gc.setFill(Color.web("#AAD3DF").grayscale());
                 break;
             default:
                 break;
@@ -176,6 +177,8 @@ public class DrawingMap {
  
         drawWays(sortedWaysToDraw);
 
+        //drawInnerWays();
+
         
         if (markedTag != null){
 
@@ -191,7 +194,6 @@ public class DrawingMap {
     private void drawMarkedTag(Tag tag){
         gc.setFill(Color.PINK.interpolate(Color.RED, 0.5));
         gc.setStroke(Color.RED);
-        
         if (tag instanceof TagRelation){
             drawRelation((TagRelation)tag);
         }else if(tag instanceof TagWay){
@@ -199,6 +201,33 @@ public class DrawingMap {
         }else if(tag instanceof TagNode || tag instanceof TagAddress){
             drawPoint(tag);
         }
+    }
+
+    private void drawInnerWays(){
+
+
+        waysToDrawWithType = new ArrayList<>();
+
+        ways = new ArrayList<>();
+
+        for (TagRelation relation : relations){
+
+            if (relation.getId() == 12332811){
+                System.out.println(relation.getActualInner().get(0).getType());
+            }
+
+            handleWays(relation.getActualInner());
+        }
+
+        MinPQ<TagWay> sortedWaysToDraw = new MinPQ<>(waysToDrawWithType.size());
+
+
+        for (TagWay way : waysToDrawWithType){
+            sortedWaysToDraw.insert(way);
+        }
+
+        drawWays(sortedWaysToDraw);
+
     }
 
     private void drawPoint(Tag node){
@@ -289,21 +318,30 @@ public class DrawingMap {
             double min = tagWay.getType().getMinWidth();
             double max = tagWay.getType().getMaxWidth();
             double lineWidth = MathUtil.clamp(defaultLineWidth * tagWay.getType().getWidth(), min, max);
+            if (GraphicsHandler.getGraphicStyle() == GraphicStyle.DARKMODE){
+                if (!tagWay.getType().getIsLine()){
+                    lineWidth = lineWidth * 2;
+                }
+                gc.setStroke(Color.GRAY.interpolate(Color.LIGHTGRAY, 0.5));
+            }
+            else{
+
+                if(tagWay.getType().getIsLine()){
+                    gc.setStroke(tagWay.getType().getColor()); 
+                } else{
+                    gc.setStroke(tagWay.getType().getPolyLineColor()); 
+                }
+            }
+
+
+           
             gc.setLineWidth(lineWidth);
 
-
-            if(tagWay.getType().getIsLine()){
-                gc.setStroke(tagWay.getType().getColor()); 
-            } else{
-                gc.setStroke(tagWay.getType().getPolyLineColor()); 
-            }
 
             
             gc.beginPath();
             gc.moveTo(tagWay.getRefNodes().getFirst().getLon(), -tagWay.getRefNodes().getFirst().getLat());
             
-            
-
                 for (TagNode n : tagWay.getRefNodes()) {
                     gc.lineTo(n.getLon(), -n.getLat());
                     xPoints[counter] = n.getLon();
@@ -312,10 +350,6 @@ public class DrawingMap {
                     
                     if(n.getNext() == null) break;
                 }
-
-            
-            
-            
             //Fills polygons with color
             if (!tagWay.getType().getIsLine()){
                 gc.setFill(currentColor);

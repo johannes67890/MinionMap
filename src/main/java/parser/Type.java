@@ -1,12 +1,13 @@
 package parser;
 
 import java.sql.Array;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import gui.GraphicsHandler;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import java.util.*;
-import java.util.stream.Collectors;
 
 
 
@@ -39,43 +40,62 @@ public enum Type  {
 
 
     // Natural, Landuse and main infrastructure (Hierarchy 9)
-    PRIMARY_ROAD("highway", new String[]{"primary"}, 9, 9, Color.PEACHPUFF, 5,  true, 6, 100),
-    MOTORWAY("highway", new String[]{"motorway"}, 9, 9, Color.DARKRED, 5, true, 6, 100),
-    SECONDARY_ROAD("highway", new String[]{"secondary"}, 9, 9, Color.YELLOW.desaturate(), 5, true, 6, 75),
+    PRIMARY_ROAD("highway", new String[]{"primary"}, 9, 9, Color.web("#FCD6A4"), 5,  true, 6, 100),
+    MOTORWAY("highway", new String[]{"motorway"}, 9, 9, Color.web("#E892A2"), 5, true, 6, 100),
+    SECONDARY_ROAD("highway", new String[]{"secondary"}, 9, 9, Color.web("#F3F6B9"), 5, true, 6, 75),
     TERTIARY_ROAD("highway",new String[]{"tertiary", "tertiary_link"},9, 9, Color.DARKGRAY, 4, true, 4, 50),
     RAILWAY("railway",new String[]{"rail","light_rail","subway"}, 9, 9, Color.DARKGRAY, 2, true, 4, 1000),
-    WATER("natural",new String[]{"water"}, 9, 9, Color.LIGHTBLUE, Color.LIGHTBLUE.darker(), 5, false),
-    WATERWAY("waterway",new String[]{""},9, 8, Color.LIGHTBLUE, 3, true, 2, 25),
+    WATER("natural",new String[]{"water"}, 9, 9, Color.web("#AAD3DF"), Color.LIGHTBLUE.darker(), 5, false),
+    WATERWAY("waterway",new String[]{""},9, 8, Color.web("#AAD3DF"), 3, true, 2, 25),
     //COASTLINE("natural", new String[]{"coastline"}, 10, 1, Color.PLUM, 5, true, 6, 100),
     
     // Landuse (Hierarchy: 8)
-    RESIDENTIAL("landuse", new String[]{"residential"}, 8, 7, Color.LIGHTGRAY.interpolate(Color.WHITE, 0.5), Color.LIGHTGRAY, 1, false),
-    INDUSTRIAL("landuse", new String[]{"industrial"}, 8, 8, Color.PLUM.brighter().desaturate().interpolate(Color.WHITE, 0.5), Color.PLUM.darker(), 1, false),
-    AEROWAY("aeroway", new String[]{"aerodome", "apron", "hangar", "helipad", "heliport", "spaceport", "terminal"}, 8, 8, Color.LIGHTGRAY, Color.LIGHTGRAY.darker(), 5, false),
-    FARMFIELD("landuse", new String[]{"farmland"}, 8, 6, Color.KHAKI.brighter(), Color.KHAKI.darker(), 5, false),
+    RESIDENTIAL("landuse", new String[]{"residential"}, 8, 7, Color.web("#E0DFDF"), Color.LIGHTGRAY, 1, false),
+    INDUSTRIAL("landuse", new String[]{"industrial"}, 8, 8, Color.web("#EBDBE8"), Color.PLUM.darker(), 1, false),
+    AEROWAY("aeroway", new String[]{"apron", "hangar", "spaceport", "terminal"}, 8, 8, Color.web("#DADAE0"), Color.LIGHTGRAY.darker(), 5, false),
+    AEROWAYLINE("aeroway", new String[]{"taxiway", "runway"}, 8, 9, Color.web("#BDBDCE"), 5, true, 6, 75),
+    FARMFIELD("landuse", new String[]{"farmland"}, 8, 6, Color.web("#EEF0D5"), Color.web("#EEF0D5").darker(), 5, false),
+    HELIPAD("aeroway", new String[]{"helipad", "heliport"}, 8, 9, Color.web("#E9E7E2"), Color.LIGHTGRAY.darker(), 5, false),
+    AERODROME("aerodrome", new String[]{""}, 8, 3, Color.web("#E9E7E2"), Color.LIGHTGRAY.darker(), 5, false),
 
-    BEACH("natural",new String[]{"beach"}, 8, 3, Color.YELLOW, Color.YELLOW.darker(), 5, false),
-    FOREST("landuse",new String[]{"forest"}, 8, 4, Color.GREEN.brighter().desaturate(), Color.GREEN.darker(), 5, false),
-    GRASS("landuse",new String[]{"meadow","grass"}, 8, 5, Color.GREEN.brighter().desaturate().brighter(), Color.GREEN.darker(), 5, false),
+
+    BEACH("natural",new String[]{"beach"}, 8, 3, Color.web("#FBEDB7"), Color.YELLOW.darker(), 5, false),
+    FOREST("landuse",new String[]{"forest"}, 8, 4, Color.web("#ADD19E"), Color.GREEN.darker(), 5, false),
+    GRASS("landuse",new String[]{"meadow","grass"}, 8, 5, Color.web("#CDEBB0"), Color.web("#CDEBB0").darker(), 5, false),
  
-    NATURALS("natural",new String[]{"scrub","grassland","heath", "wood"}, 8, 5, Color.GREENYELLOW, Color.GREENYELLOW.darker(), 5, false),
-    WETLAND("natural",new String[]{"wetland"}, 8, 5, Color.DARKKHAKI, Color.DARKKHAKI, 5, false), 
-    LANDUSE("landuse", new String[]{"commercial","construction","brownfield","greenfield","allotments","basin",
+    NATURALS("natural",new String[]{"scrub","grassland","heath", "wood"}, 8, 5, Color.web("#C8D7AB"), Color.GREENYELLOW.darker(), 5, false),
+    WETLAND("natural",new String[]{"wetland"}, 8, 5, Color.web("#D6D99F"), Color.DARKKHAKI, 5, false), 
+    LANDUSE("landuse", new String[]{"commercial","construction","brownfield","greenfield","basin",
     "cemetery","depot","garages","greenhouse_horticulture","landfill","orchard","plant_nursery",
-    "quarry","railway","recreation_ground","religious","reservoir","retail","salt_pond","village_green","vineyard",
-    "winter_sports","farmyard","farm"}, 8, 7, Color.BLANCHEDALMOND, Color.BLANCHEDALMOND.darker(), 5, false),
-    ROCK("natural", new String[]{"arch", "bare_rock", "blockfield", "cave_entrance", "dune", "fumarole", "hill", "rock", "sand", "scree", "sinkhole", "stone"}, 8, 7, Color.LIGHTGREY, Color.LIGHTGRAY, 5, false),
-    ROCKLINE("natural", new String[]{"arete", "cliff", "earth_bank", "ridge", "valley"}, 8, 7, Color.LIGHTGRAY, 5, true, 2, 50),
-    SAND("natural", new String[]{"sand", "dune"}, 8, 7, Color.SANDYBROWN.brighter(), Color.SANDYBROWN, 5, false),
+    "railway","religious","reservoir","retail","salt_pond","village_green","vineyard",
+    "winter_sports"}, 8, 7, Color.web("#EBDBE8"), Color.BLANCHEDALMOND.darker(), 5, false),
+    ALLOTMENTS("landuse", new String[]{"allotments"}, 8, 8, Color.web("#C9E1BF"), Color.BLANCHEDALMOND.darker(), 5, false),
+    TENTS("tents",new String[]{""}, 8, 5, Color.web("#CDEBB0"), Color.GREEN.darker(), 5, false),
+    GRAVEYARD("amenity", new String[]{"grave_yard"}, 8, 7, Color.web("#AACBAF"), Color.BLANCHEDALMOND.darker(), 5, false),
+    PARKING("amenity", new String[]{"parking"}, 8, 7, Color.web("#EEEEEE"), Color.BLANCHEDALMOND.darker(), 5, false),
+    RECREATIONGROUND("landuse", new String[]{"recreation_ground"}, 8, 7, Color.web("#DFFCE2"), Color.BLANCHEDALMOND.darker(), 5, false),
+    HOSPITAL("amenity", new String[]{"hospital"}, 8, 8, Color.web("#FFFFE5"), Color.web("#FFFFE5").darker(), 5, false),
+    
+
+
+    QUARRY("landuse", new String[]{"quarry"}, 8, 7, Color.web("#C5C3C3"), Color.BLANCHEDALMOND.darker(), 5, false),
+    
+    FARMYARD("landuse", new String[]{"farmyard", "farm"}, 8, 7, Color.web("#F5DCBA"), Color.BLANCHEDALMOND.darker(), 5, false),
+    
+    ROCK("natural", new String[]{"arch", "bare_rock", "blockfield", "cave_entrance", "dune", "fumarole", "hill", "rock", "sand", "scree", "sinkhole", "stone"}, 8, 7, Color.web("#DBD6D0"), Color.LIGHTGRAY, 5, false),
+    ROCKLINE("natural", new String[]{"arete", "cliff", "earth_bank", "ridge", "valley"}, 8, 9, Color.web("#DBD6D0"), 5, true, 2, 50),
+    SAND("natural", new String[]{"sand", "dune"}, 8, 7, Color.web("#F7EDD1"), Color.SANDYBROWN, 5, false),
 
     PORT("industrial", new String[]{"port"}, 8, 0, Color.TRANSPARENT, Color.TRANSPARENT, 5, false),
 
 
     // Urban and natural (Hierarchy: 7)
     ABANDONEDRAIL("railway",new String[]{"abandoned"}, 5, 9, Color.DARKGRAY, 2, true, 4, 1000),
-    MILITARY("landuse", new String[]{"military"}, 7, 9, Color.SALMON.interpolate(Color.WHITE.TRANSPARENT, 0.5), Color.SALMON.interpolate(Color.WHITE, 0.5).darker(), 5, false),
-    BUILDING("building",new String[]{"", "yes"},7, 9, Color.LIGHTGRAY, Color.LIGHTGRAY.darker(), 5, false),
-    LEISURE("leisure",new String[]{"park"},7, 8, Color.LIGHTGREEN, Color.LIGHTGREEN.darker(), 5, false),
+    MILITARY("landuse", new String[]{"military"}, 7, 10, Color.SALMON.interpolate(Color.WHITE.TRANSPARENT, 0.5), Color.SALMON.interpolate(Color.WHITE, 0.5).darker(), 5, false),
+    BUILDING("building",new String[]{"", "yes"},7, 9, Color.web("#D9D0C9"), Color.web("#D9D0C9").darker(), 5, false),
+    LEISURE("leisure",new String[]{"park", "dog_park", "garden", "horse_riding", "miniature_golf", 
+    "pitch", "playground", "resort", "stadium", "summer_camp", "track", "sports_centre", "fitness_station", "disc_golf_course"},7, 8, Color.web("#C8FACC"), Color.web("#C8FACC").darker(), 5, false),
+    GOLF("leisure",new String[]{"golf_course"},7, 8, Color.web("#DEF6C0"), Color.web("#DEF6C0").darker(), 5, false),
 
     // Man made objects (Hierarchy: 6)
     BRIDGE("man_made", new String[]{"bridge"},6, 9, Color.WHITE, 5, true, 4, 5),
@@ -86,11 +106,11 @@ public enum Type  {
     // Other roads (Hierarchy: 4)
     AERIALWAY("aerialway", new String[]{"cable_car", "gondola", "mixed_lift", "chair_lift", "drag_lift", "t-bar", "j-bar", "platter", "rope_tow", "magic_carpet", "zip_line", "goods", "pylon"}, 
     4, 9, Color.LIGHTGRAY, 2, true, 4, 10),
-    AERIALWAYSTATION("aerialway", new String[]{"station"},4, 8, Color.GRAY, Color.GRAY.darker(), 5, false),
+    AERIALWAYSTATION("aerialway", new String[]{"station"},5, 8, Color.GRAY, Color.GRAY.darker(), 5, false),
     OTHER_ROAD("highway",new String[]{"unclassified", "track", "footway", "cycleway", "path", 
-    "service", "motorway_link", "steps", "living_street", "mini_roundabout", "pedestrian"}, 4, 9, Color.WHITE, 5, true, 2, 7),
+    "service", "motorway_link", "steps", "living_street", "mini_roundabout", "pedestrian"}, 6, 9, Color.WHITE, 5, true, 2, 7),
 
-    RESIDENTIAL_ROAD("highway",new String[]{"residential"}, 4, 9, Color.WHITE, 5, true, 2, 7),
+    RESIDENTIAL_ROAD("highway",new String[]{"residential"}, 7, 9, Color.WHITE, 5, true, 2, 7),
 
     // Relations (Hierarchy: 3)
     MULTIPOLYGON("type", new String[]{"multipolygon"}, 3, Color.BLACK, 0),

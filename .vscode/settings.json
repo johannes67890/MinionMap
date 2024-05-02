@@ -1,7 +1,0 @@
-{
-    "graalvm.installations": [
-        "c:\\Graal\\graalvm-jdk-17.0.11+7.1"
-    ],
-    "graalvm.home": "c:\\Graal\\graalvm-jdk-17.0.11+7.1",
-    "java.home": "c:\\Graal\\graalvm-jdk-17.0.11+7.1"
-}
