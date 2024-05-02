@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import gui.GraphicsHandler.GraphicStyle;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
@@ -315,14 +316,25 @@ public class DrawingMap {
             double min = tagWay.getType().getMinWidth();
             double max = tagWay.getType().getMaxWidth();
             double lineWidth = MathUtil.clamp(defaultLineWidth * tagWay.getType().getWidth(), min, max);
+            if (GraphicsHandler.getGraphicStyle() == GraphicStyle.DARKMODE){
+                if (!tagWay.getType().getIsLine()){
+                    lineWidth = lineWidth * 2;
+                }
+                gc.setStroke(Color.GRAY.interpolate(Color.LIGHTGRAY, 0.5));
+            }
+            else{
+
+                if(tagWay.getType().getIsLine()){
+                    gc.setStroke(tagWay.getType().getColor()); 
+                } else{
+                    gc.setStroke(tagWay.getType().getPolyLineColor()); 
+                }
+            }
+
+
+           
             gc.setLineWidth(lineWidth);
 
-
-            if(tagWay.getType().getIsLine()){
-                gc.setStroke(tagWay.getType().getColor()); 
-            } else{
-                gc.setStroke(tagWay.getType().getPolyLineColor()); 
-            }
 
             
             gc.beginPath();
