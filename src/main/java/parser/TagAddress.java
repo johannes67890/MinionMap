@@ -15,7 +15,7 @@ enum Address{
  * {@link Address#ID}, {@link Address#LAT}, {@link Address#LON}, {@link Address#STREET}, {@link Address#HOUSENUMBER}, {@link Address#POSTCODE}, {@link Address#MUNICIPALITY}
  * </p>
 */
-public class TagAddress extends Tag  implements Comparable{
+public class TagAddress extends Tag  implements Comparable<TagAddress>{
     long id;
     float lat;
     float lon;
@@ -251,18 +251,17 @@ public class TagAddress extends Tag  implements Comparable{
     }
 
     @Override
-    public int compareTo(Object object) {
-        if (object == null){
+    public int compareTo(TagAddress tagAddress) {
+        if (tagAddress == null){
             throw new IllegalArgumentException("Paramenter object is of null");
-        }else if (object instanceof TagAddress){
-            TagAddress tagAdress = (TagAddress) object;
+        }else if (tagAddress instanceof TagAddress){
 
-            int comparison = this.city.compareTo(tagAdress.city);
+            int comparison = this.city.compareTo(tagAddress.city);
 
             if (comparison == 0){
-                comparison = this.street.compareTo(tagAdress.street);
+                comparison = this.street.compareTo(tagAddress.street);
                 if (comparison == 0){
-                    return this.house.compareTo(tagAdress.house);
+                    return this.house.compareTo(tagAddress.house);
                 }else{
                     return comparison;
                 }

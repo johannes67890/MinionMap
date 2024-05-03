@@ -340,6 +340,12 @@ public class Controller implements Initializable, ControllerInterface{
         });
     }
 
+    /**
+     * Shows suggestions in the combobox
+     * @param searchBar The combobox to show suggestions in
+     * @param oldValue The old value of the combobox
+     * @param newValue The new value of the combobox
+     */
     private void showSuggestions(ComboBox<String> searchBar, String oldValue, String newValue){
         if (searchBar.isFocused()){
             search(newValue, searchBar);
@@ -351,6 +357,10 @@ public class Controller implements Initializable, ControllerInterface{
         }
     }
 
+    /**
+     * Sets the visibility of the destination combobox
+     * @param isEnabled If the combobox should be enabled
+     */
     private void setEnableDestinationComboBox(boolean isEnabled){
         if (isEnabled){
             searchBarDestination.setMaxWidth(1000000);
@@ -360,6 +370,11 @@ public class Controller implements Initializable, ControllerInterface{
         searchBarDestination.setVisible(isEnabled);
     }
 
+    /**
+     * Returns the TagAddress object from the combobox
+     * @param searchBar The combobox to get the address from
+     * @return The TagAddress object from the combobox
+     */
     private TagAddress comboBoxAddress(ComboBox<String> searchBar){
         String string = searchBar.getEditor().textProperty().getValue();
 
@@ -374,6 +389,11 @@ public class Controller implements Initializable, ControllerInterface{
             return null;
     }
 
+    /**
+     * Searches for addresses in the combobox
+     * @param address The address to search for
+     * @param searchBar The combobox to search in
+     */
     private void search(String address, ComboBox<String> searchBar) {
     if (!address.isEmpty() && address.charAt(address.length() - 1) != ' ') {
             ArrayList<TagAddress> tagAddresses = s.getSuggestions(address);
@@ -405,6 +425,10 @@ public class Controller implements Initializable, ControllerInterface{
         }
     }
 
+    /**
+     * Shows the address on the map
+     * @param tagAddress The address to show
+     */
     private void showAddress(TagAddress tagAddress){
         DrawingMap drawingMap = mainView.getDrawingMap();
 

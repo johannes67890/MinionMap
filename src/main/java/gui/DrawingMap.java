@@ -159,8 +159,6 @@ public class DrawingMap {
         waysToDrawWithType = new ArrayList<>();
         waysToDrawWithoutType = new ArrayList<>();
 
-        long time = System.currentTimeMillis();
-
         handleWays(ways);
         handleRelations();
 
@@ -179,11 +177,19 @@ public class DrawingMap {
         }
     }
 
+    /**
+     * Sets the marked tag
+     * @param tag - the tag to be marked
+     */
     public void setMarkedTag(Tag tag){
 
         markedTag = tag;
     }
 
+    /**
+     * Draws a specified tag with a different color to mark it on the map
+     * @param tag the tag to be marked
+     */
     private void drawMarkedTag(Tag tag){
         gc.setFill(Color.PINK.interpolate(Color.RED, 0.5));
         gc.setStroke(Color.RED);
@@ -320,7 +326,7 @@ public class DrawingMap {
 
     /**
      * 
-     * Handles ways by checking if their connected to a type.
+     * Handles ways by checking if they are connected to a type.
      * If they are not connected, ways will be put into a list of ways without type.
      * 
      */
@@ -371,11 +377,15 @@ public class DrawingMap {
      * Calculates the coordinates the screen sees and returns a array of coordinates.
      * A bit weird. If you draw with this calculation it draws perfect, but if you need the nodes within the screen the Y value needs to be negated
      * This method is primarily made for the KdTree
+     * <p>
      * Index 0: X - Minimum
+     * <p>
      * Index 1: Y - Minimum
+     * <p>
      * Index 2: X - Maximum
+     * <p>
      * Index 3: Y - Maximum
-     * @return It returns the coordinates of the screen to map coordinates in an array (double[])
+     * @return It returns the coordinates of the screen to map coordinates in an array (float[])
      */
     public float[] getScreenBounds(){
         
@@ -389,6 +399,13 @@ public class DrawingMap {
         return bounds;
     }
 
+    /**
+     * Like the getScreenBounds() method, but returns a bigger area so
+     * the screen can be panned without the map disappearing
+     * @param multiplier - The multiplier of the screen bounds
+     * @return It returns the coordinates of the screen to map coordinates in an array (float[])
+     * @see getScreenBounds()
+     */
     public float[] getScreenBoundsBigger(double multiplier){
         float[] bounds = getScreenBounds();
         double width = bounds[2] - bounds[0];

@@ -22,11 +22,14 @@ public class Search {
     private MainView mainView;
 
     public Search(MainView mw){
+        //mainview to be used with dijsktra
         mainView = mw;
         this.addresses = XMLReader.getAddresses();
         readFiles();
         trie = XMLReader.getTrie();
     }
+
+    //TODO: delete everything from here to line 185?
 
     /**
      * Reads files used later in {@link Main its class}
