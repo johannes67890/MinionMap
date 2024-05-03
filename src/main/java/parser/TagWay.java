@@ -51,6 +51,9 @@ public class TagWay extends Tag implements Comparable<TagWay>{
                 case INDUSTRIAL:
                     constructGrid();
                     break;
+                case FARMFIELD:
+                    constructGrid();
+                    break;
             
                 default:
                     break;
@@ -83,7 +86,20 @@ public class TagWay extends Tag implements Comparable<TagWay>{
         this.speedLimit = speedLimit;
         this.type = relation.getType();
 
-        constructGrid();
+        if (this.type != null){
+            switch (this.type) {
+                case BORDER:
+                    break;  
+                case REGION:
+                    break;          
+                default:
+                    constructGrid();
+                    break;
+            }
+        }
+    
+
+
     }
 
     /**
@@ -189,8 +205,8 @@ public class TagWay extends Tag implements Comparable<TagWay>{
 
         int counter = 0;
 
-        for (float i = minLon; i < maxLon; i += 250){
-            for (float j = minLat; j < maxlat; j += 250){
+        for (float i = minLon; i < maxLon; i += 200){
+            for (float j = minLat; j < maxlat; j += 200){
                 grid.add(new TagGrid(j, i));
             }
 

@@ -34,15 +34,15 @@ import javafx.scene.paint.Paint;
  */
 public enum Type  {
 
-    REGION("place", new String[]{"island"}, 10, 2, Color.LIGHTYELLOW.desaturate(), Color.PLUM, 1000, false),
+    REGION("place", new String[]{"island"}, 10, 2, Color.web("#F2EFE9"), Color.PLUM, 1000, false),
     //BOUNDARY("boundary", new String[]{"administrative"}, 10, 2, Color.LIGHTYELLOW.desaturate(), Color.YELLOW, 5, false),
-    BORDER("admin_level", new String[]{"9", "8", "7", "6", "5", "4", "3"}, 10, 2, Color.LIGHTYELLOW.desaturate(), Color.YELLOW, 5, false),
+    BORDER("admin_level", new String[]{"9", "8", "7", "6", "5", "4", "3"}, 10, 2, Color.web("#F2EFE9"), Color.YELLOW, 5, false),
 
 
     // Natural, Landuse and main infrastructure (Hierarchy 9)
     PRIMARY_ROAD("highway", new String[]{"primary"}, 9, 9, Color.web("#FCD6A4"), 5,  true, 6, 100),
     MOTORWAY("highway", new String[]{"motorway"}, 9, 9, Color.web("#E892A2"), 5, true, 6, 100),
-    SECONDARY_ROAD("highway", new String[]{"secondary"}, 9, 9, Color.web("#F3F6B9"), 5, true, 6, 75),
+    SECONDARY_ROAD("highway", new String[]{"secondary"}, 9, 9, Color.web("#F3F6B9").interpolate(Color.web("#F3F6B9").darker(), 0.2), 5, true, 6, 75),
     TERTIARY_ROAD("highway",new String[]{"tertiary", "tertiary_link"},9, 9, Color.DARKGRAY, 4, true, 4, 50),
     RAILWAY("railway",new String[]{"rail","light_rail","subway"}, 9, 9, Color.DARKGRAY, 2, true, 4, 1000),
     WATER("natural",new String[]{"water"}, 9, 9, Color.web("#AAD3DF"), Color.LIGHTBLUE.darker(), 5, false),
@@ -108,9 +108,9 @@ public enum Type  {
     4, 9, Color.LIGHTGRAY, 2, true, 4, 10),
     AERIALWAYSTATION("aerialway", new String[]{"station"},5, 8, Color.GRAY, Color.GRAY.darker(), 5, false),
     OTHER_ROAD("highway",new String[]{"unclassified", "track", "footway", "cycleway", "path", 
-    "service", "motorway_link", "steps", "living_street", "mini_roundabout", "pedestrian"}, 6, 9, Color.WHITE, 5, true, 2, 7),
+    "service", "motorway_link", "steps", "living_street", "mini_roundabout", "pedestrian"}, 6, 9, Color.WHITE, 3, true, 2, 2),
 
-    RESIDENTIAL_ROAD("highway",new String[]{"residential"}, 7, 9, Color.WHITE, 5, true, 2, 7),
+    RESIDENTIAL_ROAD("highway",new String[]{"residential"}, 7, 9, Color.WHITE, 5, true, 5, 10),
 
     // Relations (Hierarchy: 3)
     MULTIPOLYGON("type", new String[]{"multipolygon"}, 3, Color.BLACK, 0),
