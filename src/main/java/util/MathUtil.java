@@ -110,6 +110,11 @@ public final class MathUtil {
         / Math.sqrt(Math.pow(l2.getLon() - l1.getLon(), 2) + Math.pow(l2.getLat() - l1.getLon(), 2));
     }
 
+    public static double round (double value, int precision) {
+        int scale = (int) Math.pow(10, precision);
+        return (double) Math.round(value * scale) / scale;
+    }
+
         
 
     

@@ -6,9 +6,11 @@ import parser.XMLReader;
 import structures.IndexMinPQ;
 import structures.KDTree.Tree;
 import util.FileDistributer;
+import util.MathUtil;
 import util.TransportType;
 import util.Type;
 
+import java.text.DecimalFormat;
 import java.util.*;
 
 
@@ -258,7 +260,14 @@ public class Dijsktra {
         
     }
 
-    
+    public double getTotalDistance(){
+        Double totalDistance = 0.0;
+        for (Double length : printPath().values()) {
+            totalDistance += length;
+        }
+
+        return MathUtil.round(totalDistance, 2);
+    }
 
     public LinkedHashMap<TagWay, Double> printPath(){        
         LinkedHashMap<TagWay, Double> distToWay = new LinkedHashMap<>();
@@ -307,6 +316,7 @@ public class Dijsktra {
        Dijsktra d = new Dijsktra(start, finish, TransportType.CAR);
        System.out.println(d.shortestPath().toString() + "\n");
         d.printPath().forEach((k, v) -> System.out.println(k.getId() + " " + v));
+        System.out.println("Total distance: " + d.getTotalDistance());
        
     }
 }
