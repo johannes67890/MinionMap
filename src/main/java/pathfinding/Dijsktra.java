@@ -23,9 +23,12 @@ import parser.TagAddress;
 
 public class Dijsktra {
     private HashMap<Long, Double> distTo;          // distTo[v] = distance  of shortest s->v path
+    private HashMap<Long, Double> costTo;
     private HashMap<Long, DirectedEdge> edgeTo;    // edgeTo[v] = last edge on shortest s->v path
     private IndexMinPQ<Double> pq;    // priority queue of vertices
     private HashSet<Long> surroundingTags = new HashSet<Long>();
+
+    private double distanceBetweenEndPoints;
 
     private TagNode start;
     private TagNode finish;
@@ -37,6 +40,7 @@ public class Dijsktra {
     public Dijsktra(Tag _start, Tag _finish, TransportType transportType) {
         distTo = new HashMap<>();
         edgeTo = new HashMap<Long, DirectedEdge>(G.V());
+        costTo = new HashMap<>();
 
         this.start = getNearestRoadPoint(_start, transportType);
         this.finish = getNearestRoadPoint(_finish, transportType);
@@ -46,21 +50,24 @@ public class Dijsktra {
         addSurroundingRoads(start, finish, transportType);
         long endTime = System.currentTimeMillis();
         System.out.println("Time to add surrounding roads: " + (endTime - startTime) + "ms");
-        
+        distanceBetweenEndPoints = start.distance(finish);
        
         for (TagNode v : G.vertices()) {
             if(v.getId() == start.getId()) {
                 this.start = v;
                 distTo.put(v.getId(), 0.0);
+                costTo.put(v.getId(), 0.0);
                 continue;
             }
             if(v.getId() == finish.getId()) {
                 this.finish = v;
                 distTo.put(v.getId(), Double.POSITIVE_INFINITY);
+                costTo.put(v.getId(), distanceBetweenEndPoints);
                 continue;
             }
             else {
                 distTo.put(v.getId(), Double.POSITIVE_INFINITY);
+                costTo.put(v.getId(), distanceBetweenEndPoints);
                 continue;
             }
         } 
@@ -176,13 +183,30 @@ public class Dijsktra {
     private void relax(DirectedEdge e) {
         long v = e.from().getId(), w = e.to().getId();
 
-        double distance = G.getNode(w).distance(this.finish) / e.weight();
+        double distance = (G.getNode(w).distance(G.getNode(v))); // Length of the edge in meters
 
         if(distTo.get(w) > distTo.get(v) + distance) {
             distTo.put(w, distTo.get(v) + distance);
             edgeTo.put(w, e);
             if(pq.contains(w)){
                 pq.decreaseKey(w, distTo.get(w));
+            } else {
+                pq.insert(w, distTo.get(w));
+            }
+        }
+    }
+
+    private void relax2(DirectedEdge e){
+        long v = e.from().getId(), w = e.to().getId();
+
+        double distance = (G.getNode(w).distance(G.getNode(v))); // Length of the edge in meters
+
+        if(distTo.get(w) + costTo.get(w) > distTo.get(v) + distance + costTo.get(v)) {
+            distTo.put(w, distTo.get(v) + distance);
+            edgeTo.put(w, e);
+            System.out.println(e);
+            if(pq.contains(w)){
+                pq.decreaseKey(w, distTo.get(w) + costTo.get(w));
             } else {
                 pq.insert(w, distTo.get(w));
             }
@@ -221,6 +245,7 @@ public class Dijsktra {
     public TLinkedList<TagNode> shortestPath(){
         TLinkedList<TagNode> nodes = new TLinkedList<>();
         if (!hasPathTo(this.finish)) return null;
+        System.out.println("Minutes: " + distTo.get(finish.getId()));
 
         for (DirectedEdge e : pathTo(this.finish)) {
             if(e.to() == null) break;
@@ -231,7 +256,6 @@ public class Dijsktra {
         }
         return nodes;
     }
-
     /**
      * This method is for debugging purposes only. It returns all TagWays visited through pathfinding
      * @return All TagWays visited through pathfinding
@@ -255,9 +279,27 @@ public class Dijsktra {
                 tags.add(new TagWay(0, "PartOfRoute", temp, (short) 0, Type.PATHGRID));
             }
         }
+        return tags;
+    }
+
+    /**
+     * This method is for debugging purposes only. It returns all edges in the graph
+     * @return All TagWays in the graph
+     */
+    public ArrayList<Tag> allPathsInGraph(){
+        ArrayList<Tag> tags = new ArrayList<>();
+
+        for (DirectedEdge edge : G.edges()){
+            if (edge == null || edge.from() == null || edge.to() == null){
+                //continue;
+            }
+            TLinkedList<TagNode> temp = new TLinkedList<>();
+            temp.add(edge.from());
+            temp.add(edge.to());
+            tags.add(new TagWay(0, "PartOfRoute", temp, (short) 0, Type.PATHGRID));
+        }
 
         return tags;
-        
     }
 
     public double getTotalDistance(){

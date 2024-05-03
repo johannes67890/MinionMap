@@ -203,7 +203,7 @@ public class Search {
         TagNode _start = XMLReader.getNodeById(1259354245l);
         TagNode _finish = XMLReader.getNodeById(1612922840l);
         Dijsktra djiktra = new Dijsktra(start, end, transportType);
-        ArrayList<Tag> nodes = djiktra.allVisitedPaths2();
+        ArrayList<Tag> nodes = djiktra.allVisitedPaths();
         System.out.println("Size of markedtag: " + nodes.size());
         //ArrayList<Tag> nodes = new ArrayList<>();
         TagWay way = new TagWay((long)0, "Route", djiktra.shortestPath(), (short)0, Type.PATHWAY);
