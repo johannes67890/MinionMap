@@ -117,7 +117,8 @@ public class TagRelation extends Tag{
 
             if(outer.loops()){
                 success = true;
-                handledOuter.add(outer);
+                TagWay newTagWay = new TagWay(this, id, outer.getRefNodes(), speedLimit);
+                handledOuter.add(newTagWay);
             } else{
 
                 currentFirstTagNode = outer.getRefNodes().getFirst();
@@ -190,8 +191,6 @@ public class TagRelation extends Tag{
                     success = true;
                     
                     wayCount = 0;
-
-
                 }
             }
         }

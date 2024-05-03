@@ -15,6 +15,7 @@ import parser.TagBound;
 import parser.TagNode;
 import parser.TagRelation;
 import parser.TagWay;
+import parser.Type;
 import parser.XMLReader;
 import util.MathUtil;
 import util.MinPQ;
@@ -53,6 +54,8 @@ public class DrawingMap {
     private List<TagRelation> relations;
 
     private Color currentColor;
+    private Color backGroundColor;
+    private boolean backGroundSet;
 
     private GraphicsContext gc;
 
@@ -94,17 +97,22 @@ public class DrawingMap {
         tempList.addAll(List.copyOf(XMLReader.getRelations().valueCollection()));
         Tree.initialize(tempList);
         zoombar = new Zoombar(zoombarIntervals, zoomLevelMax, zoomLevelMin);
+        setBackGroundColor(Color.web("#F2EFE9"));
         pan(-minlon, minlat + (screenBounds[3] - screenBounds[1]));
         zoom(canvas.getWidth() / (maxlon - minlon), 0, 0);
-        pan(0, canvas.getHeight() * 1.20);
+        //pan(0, canvas.getHeight() * 1.20);
         tempBounds = getScreenBounds();
-        pan(0, screenBounds[3] - screenBounds[1]);
+        //pan(0, screenBounds[3] - screenBounds[1]);
         DrawMap(canvas);
         
     }
 
     public Trie getTrie(){
         return trie;
+    }
+
+    public void setBackGroundColor(Color c){
+        backGroundColor = c;
     }
 
     /**
@@ -125,21 +133,7 @@ public class DrawingMap {
         //Resfreshes the screen
         gc = canvas.getGraphicsContext2D();
         gc.setTransform(new Affine());
-        switch (GraphicsHandler.getGraphicStyle()) {
-            case DEFAULT:
-                gc.setFill(Color.web("#AAD3DF"));
-                break;
-            case DARKMODE:
-                gc.setFill(Color.BLACK);
-                break;
-            case GRAYSCALE:
-                gc.setFill(Color.web("#AAD3DF").grayscale());
-                break;
-            default:
-                break;
-        }
-        gc.fillRect(0,0,canvas.getWidth(), canvas.getHeight());
-        gc.setTransform(transform);
+     
         currentColor = Color.BLACK;
 
         float[] canvasBounds = getScreenBoundsBigger(0.2);
@@ -149,6 +143,7 @@ public class DrawingMap {
         relations = new ArrayList<>();
 
         HashSet<Tag> tags = Tree.getTagsInBounds(rect);
+        backGroundSet = false;
         for(Tag tag : tags){
             if (tag instanceof TagNode){
                 nodes.add((TagNode) tag);
@@ -158,8 +153,32 @@ public class DrawingMap {
             }else if (tag instanceof TagRelation){
                 TagRelation relation = (TagRelation) tag;
                 relations.add(relation);
+                if (relation.getType() == Type.BORDER || relation.getType() == Type.REGION){
+                    setBackGroundColor(Color.web("#AAD3DF"));
+                    backGroundSet = true;
+                }
             }
         }
+
+        if (!backGroundSet){
+            setBackGroundColor(Color.web("#F2EFE9"));
+        }
+
+        switch (GraphicsHandler.getGraphicStyle()) {
+            case DEFAULT:
+                gc.setFill(backGroundColor);
+                break;
+            case DARKMODE:
+                gc.setFill(Color.BLACK);
+                break;
+            case GRAYSCALE:
+                gc.setFill(backGroundColor.grayscale());
+                break;
+            default:
+                break;
+        }
+        gc.fillRect(0,0,canvas.getWidth(), canvas.getHeight());
+        gc.setTransform(transform);
 
         waysToDrawWithType = new ArrayList<>();
         waysToDrawWithoutType = new ArrayList<>();
