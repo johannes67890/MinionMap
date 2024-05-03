@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+
 import gui.GraphicsHandler.GraphicStyle;
 import gui.MainView.StageSelect;
 import javafx.application.Platform;
@@ -105,15 +106,19 @@ public class Controller implements Initializable, ControllerInterface{
         mainBorderPane.setCenter(p);
         mainView.setCanvas(c);
         mainView.loadDrawingMap();
+
         c.widthProperty().bind(p.widthProperty());
         c.heightProperty().bind(p.heightProperty());
         s = new Search(mw);
         System.out.println("DRAWING MAP");
-
+        mainView.getDrawingMap().setZoomImage(zoomLevelImage);
+        mainView.getDrawingMap().setZoomLabel(zoomLevelText);
         panZoomInitialize();
     }
 
     private void panZoomInitialize(){ 
+
+        
         mainView.canvas.setOnMousePressed(e -> {
             lastX = e.getX();
             lastY = e.getY();
@@ -153,9 +158,6 @@ public class Controller implements Initializable, ControllerInterface{
             }
 
             mainView.getDrawingMap().zoom(Math.pow(zoomMultiplier,event.getDeltaY()), event.getX(), event.getY());
-
-            mainView.getDrawingMap().zoombarUpdater(zoomLevelText, zoomLevelImage);
-            
         });
 
         mainView.canvas.setOnMouseDragged(e -> {
