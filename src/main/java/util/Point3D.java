@@ -207,16 +207,6 @@ public final class Point3D implements Comparable<Point3D> {
     }
 
     /**
-     * Compares two points by atan2() angle (between –&pi; and &pi;) with respect to
-     * this point.
-     *
-     * @return the comparator
-     */
-    public Comparator<Point3D> atan2Order() {
-        return new Atan2Order();
-    }
-
-    /**
      * Compares two points by distance to this point.
      *
      * @return the comparator
@@ -270,20 +260,7 @@ public final class Point3D implements Comparable<Point3D> {
         }
     }
 
-    // compare other points relative to atan2 angle (bewteen -pi/2 and pi/2) they
-    // make with this Point
-    private class Atan2Order implements Comparator<Point3D> {
-        public int compare(Point3D q1, Point3D q2) {
-            double angle1 = angleTo(q1);
-            double angle2 = angleTo(q2);
-            if (angle1 < angle2)
-                return -1;
-            else if (angle1 > angle2)
-                return +1;
-            else
-                return 0;
-        }
-    }
+
 
     // compare other points relative to polar angle (between 0 and 2pi) they make
     // with this Point
