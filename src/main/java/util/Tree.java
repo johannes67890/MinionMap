@@ -6,6 +6,7 @@ import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import parser.Tag;
+import parser.TagBound;
 import parser.TagNode;
 import parser.TagRelation;
 import parser.TagWay;
@@ -39,7 +40,14 @@ public class Tree {
      * @param tag Tag to be inserted in the tree
      */
     public static void insertTagInTree(Tag tag){
-        if (tag instanceof TagWay){
+        if (tag instanceof TagBound){
+            TagBound bound = (TagBound) tag;
+            
+            multiTree.insert(new Point3D(bound.getMinLon(), bound.getMinLat(),(byte) 10), tag);
+            multiTree.insert(new Point3D(bound.getMinLon(), bound.getMaxLat(),(byte) 10), tag);
+            multiTree.insert(new Point3D(bound.getMaxLon(), bound.getMinLat(),(byte) 10), tag);
+            multiTree.insert(new Point3D(bound.getMaxLon(), bound.getMaxLat(),(byte) 10), tag);
+        }else if (tag instanceof TagWay){
             TagWay way = (TagWay) tag;
             for (TagNode node : way.getRefNodes()){
                 Point3D temp;
@@ -66,9 +74,6 @@ public class Tree {
                     if(node.getNext() == null) break;
                 }
             }
-        }else if (tag instanceof TagRelation){
-            TagNode node = (TagNode) tag;
-            multiTree.insert(new Point3D(node.getLon(), node.getLat(),(byte) 0), tag);
         }
     }
     

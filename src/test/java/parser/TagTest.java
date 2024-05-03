@@ -1,14 +1,9 @@
-package org;
+package parser;
 
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import parser.TagBound;
-import parser.TagNode;
-import parser.TagRelation;
-import parser.TagWay;
-import parser.XMLReader;
 import util.MecatorProjection;
 
 public class TagTest {

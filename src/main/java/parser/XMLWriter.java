@@ -24,7 +24,7 @@ public class XMLWriter {
         if (!directory.exists()) {
             directory.mkdirs();
         }
-        if(directory.listFiles().length > 256){
+        if(directory.listFiles().length  > 0){
             for (File file : directory.listFiles()) {
                 file.delete();
             }
@@ -35,9 +35,9 @@ public class XMLWriter {
 
     public void initChunkFiles(TagBound bounds) {   
         for (TagBound parentChunk : Chunk.getQuadrants(bounds).values()) {
-        //     for (TagBound midChunk : Chunk.getQuadrants(parentChunk).values()) {
-        //         for (TagBound childChunk : Chunk.getQuadrants(midChunk).values()) {
-                    Chunk chunk = new Chunk(parentChunk); 
+            for (TagBound midChunk : Chunk.getQuadrants(parentChunk).values()) {
+                for (TagBound childChunk : Chunk.getQuadrants(midChunk).values()) {
+                    Chunk chunk = new Chunk(childChunk); 
                     for (int j = 0; j < 4; j++) {
                         // Get one of the four quadrants in the chunk
                         TagBound child = chunk.getQuadrant(j);
@@ -45,8 +45,8 @@ public class XMLWriter {
                         createBinaryChunkFile(directoryPath + "chunk_" + chunkId + ".bin", child);
                         chunkId++;
                     }
-        //         }
-        //     }
+                }
+            }
         }
     }
 
@@ -110,12 +110,7 @@ public class XMLWriter {
                     // TODO: if tags is written to bytes as array - do data get lost?
                     for (Tag tag : nodes) {
                         oos.writeObject(tag);
-                    }    
-                    /*
-                     * Write the nodes to the file - is this better? 
-                     * It is for sure faster, but does it work?
-                     */
-                    // oos.writeObject(nodes); 
+                    } 
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -141,8 +136,8 @@ public class XMLWriter {
         }
       }
 
-    public static List<Tag> getAllTagsFromChunks(){
-        List<Tag> objectList = new ArrayList<>();
+    public static Set<Tag> getAllTagsFromChunks(){
+        Set<Tag> objectList = new HashSet<>();
 
         if(ChunkFiles.getChunkFilePaths().isEmpty()) throw new IllegalArgumentException("No chunk files found");
 
@@ -157,18 +152,18 @@ public class XMLWriter {
                         }
                     } catch (EOFException e) {
                         stream.close();
-                        e.printStackTrace();
                         break; // end of stream
                     }
                 }
             } catch (Exception e) {
+                // System.out.println("ooff");
                 e.printStackTrace();
             }
         }
         return objectList;
     }
 
-    public static List<Tag> getTagsFromChunk(TagBound bound){ {
+    public static List<Tag> getTagsFromChunkByBounds(TagBound bound){ {
         String path = ChunkFiles.getChunkFilePath(bound);
         List<Tag> objectList = new ArrayList<>();
 
@@ -186,7 +181,8 @@ public class XMLWriter {
                 }
             }
         }catch (Exception e){
-            e.printStackTrace();
+            System.out.println("ooof");
+           e.printStackTrace();
         }
         return objectList;
         }
@@ -208,15 +204,6 @@ public class XMLWriter {
                                 return n.getParent();
                             }
                         }
-                        //  else if(o instanceof TagRelation){
-                        //     for (TagWay w : ((TagRelation) o).getWays()) {
-                        //         for (TagNode n : w.getNodes()) {
-                        //             if(n.getId() == id){
-                        //                 return n;
-                        //             }
-                        //         }
-                        //     }
-                        // }
 
                     } catch (EOFException e) {
                         stream.close();
@@ -272,6 +259,24 @@ public class XMLWriter {
             return null;
         }
         
+        /**
+         * Return all the chunk files within the bounds
+         * 
+         * @param bound
+         * @return
+         */
+        public static List<String> getChunksFilesWithinBounds(TagBound bound){
+            List<String> paths = new ArrayList<String>();
+            
+            // for each chunk bound, is the bound within the bounds?
+            for (TagBound chunkBound : ChunkFiles.getChunkFiles().keySet()) {
+                if(bound.isInBounds(chunkBound)){
+                    paths.add(ChunkFiles.getChunkFilePath(chunkBound));
+                }  
+            }
+            return paths;
+        }
+
         public static String getChunkFilePath(TagBound bound){
             if(chunkFiles.containsKey(bound)){
                 return chunkFiles.get(bound);

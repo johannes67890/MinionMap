@@ -1,4 +1,4 @@
-package org;
+package parser;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -13,6 +13,7 @@ import java.io.FileNotFoundException;
 import org.junit.jupiter.api.*;
 import org.opentest4j.AssertionFailedError;
 import util.MecatorProjection;
+import util.FileDistributer;
 import parser.TagAddress;
 import parser.TagBound;
 import parser.TagNode;
@@ -24,7 +25,7 @@ public class XMLReaderTest {
 
     @BeforeEach
     void testXMLReaderStartup() {
-        this.reader = new XMLReader("src/test/java/org/ressources/testMap.osm");
+        this.reader = new XMLReader(FileDistributer.testMap.getFilePath());
         assertNotNull(reader);
         assertDoesNotThrow(() -> this.reader);
     }

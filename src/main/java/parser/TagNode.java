@@ -3,8 +3,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import gnu.trove.list.TLinkable;
+import gnu.trove.list.linked.TLinkedList;
+import parser.XMLWriter.ChunkFiles;
 import util.Tree;
-
+import java.util.*;
 
 /**
  * Class for storing a {@link HashMap} of a single node.
@@ -17,6 +19,7 @@ public class TagNode extends Tag implements TLinkable<TagNode>, Comparable<TagNo
 
     private long id;
     private TagWay parent;
+    private Type type;
     private float lon;
     private float lat;
     private TagNode next;
@@ -71,7 +74,11 @@ public class TagNode extends Tag implements TLinkable<TagNode>, Comparable<TagNo
 
     @Override
     public Type getType() {
-        throw new UnsupportedOperationException("TagNode does not have a type.");
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
     }
 
     public boolean equals(TagNode tN){
@@ -136,7 +143,8 @@ public class TagNode extends Tag implements TLinkable<TagNode>, Comparable<TagNo
         
     
     }
-    
+ 
+
     public void setParent(TagWay linkable) {
         parent = linkable;
     }
@@ -180,7 +188,6 @@ public class TagNode extends Tag implements TLinkable<TagNode>, Comparable<TagNo
                 }
             }
         }
-
         return p;
     }
 }

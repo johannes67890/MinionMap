@@ -200,6 +200,7 @@ public class TagWay extends Tag implements Comparable<TagWay>{
 
         public TLinkedList<TagNode> getRefNodes(TagWay way) {
             for (TagNode node : refNodes) {
+                node.setType(way.getType());
                 if(node.getNext() != null || node.getPrevious() != null){
                     TagNode newNode = new TagNode(node);
                     newNode.clearLinks();
