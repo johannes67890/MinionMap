@@ -8,6 +8,9 @@ import util.Point3D;
 
 public class Point3DTest {
 
+
+    
+
     @Test
     public void distanceTo(){
         
