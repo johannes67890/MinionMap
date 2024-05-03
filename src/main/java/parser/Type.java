@@ -34,9 +34,9 @@ import javafx.scene.paint.Paint;
  */
 public enum Type  {
 
-    REGION("place", new String[]{"island"}, 10, 2, Color.web("#F2EFE9"), Color.PLUM, 1000, false),
+    REGION("place", new String[]{"island"}, 10, 2, Color.web("#F2EFE9"), Color.web("#F2EFE9").darker(), 1000, false),
     //BOUNDARY("boundary", new String[]{"administrative"}, 10, 2, Color.LIGHTYELLOW.desaturate(), Color.YELLOW, 5, false),
-    BORDER("admin_level", new String[]{"9", "8", "7", "6", "5", "4", "3"}, 10, 2, Color.web("#F2EFE9"), Color.YELLOW, 5, false),
+    BORDER("admin_level", new String[]{"9", "8", "7", "6", "5", "4", "3"}, 10, 2, Color.web("#F2EFE9"), Color.web("#F2EFE9").darker(), 5, false),
 
 
     // Natural, Landuse and main infrastructure (Hierarchy 9)
