@@ -48,7 +48,6 @@ public class Dijsktra {
        
         for (TagNode v : G.vertices()) {
             if(v.getId() == start.getId()) {
-                System.out.println("Start: " + v.getId());
                 this.start = v;
                 distTo.put(v.getId(), 0.0);
                 continue;
@@ -73,6 +72,9 @@ public class Dijsktra {
             
             for (DirectedEdge e : G.adj(v)) {
                 relax(e);
+            }
+            if (hasPathTo(finish)){
+                break;
             }
         }
         
@@ -180,15 +182,15 @@ public class Dijsktra {
     private void relax(DirectedEdge e) {
         long v = e.from().getId(), w = e.to().getId();
 
-        double distance = G.getNode(w).distance(this.finish);
+        double distance = G.getNode(w).distance(this.finish) / e.weight();
 
-        if(distTo.get(w) > distTo.get(v) + e.weight()) {
-            distTo.put(w, distTo.get(v) + e.weight());
+        if(distTo.get(w) > distTo.get(v) + distance) {
+            distTo.put(w, distTo.get(v) + distance);
             edgeTo.put(w, e);
             if(pq.contains(w)){
-                pq.decreaseKey(w, distTo.get(w) + distance);
+                pq.decreaseKey(w, distTo.get(w));
             } else {
-                pq.insert(w, distTo.get(w) + distance);
+                pq.insert(w, distTo.get(w));
             }
         }
     }
@@ -250,6 +252,30 @@ public class Dijsktra {
             tempWay.add(tagNode);
         }
         return nodes;
+    }
+
+    /**
+     * This method is for debugging purposes only. It returns all TagWays visited through pathfinding
+     * @return All TagWays visited through pathfinding
+     */
+    public ArrayList<Tag> allVisitedPaths2(){
+        ArrayList<Tag> tags = new ArrayList<>();
+
+        for (long key : distTo.keySet()){
+            if (distTo.get(key) < Double.POSITIVE_INFINITY){
+                DirectedEdge edge = edgeTo.get(key);
+                if (edge == null){
+                    continue;
+                }
+                TLinkedList<TagNode> temp = new TLinkedList<>();
+                temp.add(edge.from());
+                temp.add(edge.to());
+                tags.add(new TagWay(0, "PartOfRoute", temp, (short) 0, Type.PATHGRID));
+            }
+        }
+
+        return tags;
+        
     }
 
     private void printPath(){

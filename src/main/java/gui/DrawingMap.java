@@ -45,7 +45,7 @@ public class DrawingMap {
      //
 
     private Trie trie;
-    private Tag markedTag;
+    private List<Tag> markedTag;
     private List<TagNode> nodes;
     private List<TagWay> ways;
     private List<TagRelation> relations;
@@ -170,29 +170,16 @@ public class DrawingMap {
  
         drawWays(sortedWaysToDraw);
 
-        drawMarkedTag(markedTag);
+        if (markedTag == null) return;
+        for (Tag tag : markedTag){
+            drawMarkedTag(tag);
+        }
             
     }
 
-    public void setMarkedTag(Tag tag){
+    public void setMarkedTag(ArrayList<Tag> tag){
         markedTag = tag;
     
-        mainView.draw();
-    }
-
-    public void setMarkedTags(List<TagWay> tag){
-        gc.setFill(Color.PINK.interpolate(Color.RED, 0.5));
-        gc.setStroke(Color.RED);
-        handleWays(tag);
-        //TODO: why is tags size 0?
-        MinPQ<TagWay> waysToDraw = new MinPQ<TagWay>(tag.size());
-                
-        for (TagWay way : waysToDrawWithType){
-            waysToDraw.insert(way);
-        }
-         
-        drawWays(waysToDraw);
-        
         mainView.draw();
     }
 
@@ -243,7 +230,10 @@ public class DrawingMap {
         double lineWidth = MathUtil.clamp(defaultLineWidth * way.getType().getWidth(), min, max);
         gc.setLineWidth(lineWidth);
 
-        
+        if (way.getType() != null){
+            gc.setStroke(way.getType().getColor());
+        }
+
         gc.beginPath();
         gc.moveTo(way.getRefNodes().getFirst().getLon(), -way.getRefNodes().getFirst().getLat());
 

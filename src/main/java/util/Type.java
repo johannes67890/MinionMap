@@ -47,6 +47,7 @@ public enum Type  {
     WATER("natural",new String[]{"water"}, 9, 9, Color.LIGHTBLUE, Color.LIGHTBLUE.darker(), 5, false),
     WATERWAY("waterway",new String[]{""},9, 8, Color.LIGHTBLUE, 3, true, 2, 25),
     PATHWAY("thisisnotused", new String[]{"thisisnotused"}, 9, 9, Color.RED, 5, true, 6, 100),
+    PATHGRID("thisisnotused", new String[]{"thisisnotused"}, 9, 9, Color.BLUE, 5, true, 6, 100),
     //COASTLINE("natural", new String[]{"coastline"}, 10, 1, Color.PLUM, 5, true, 6, 100),
     
     // Landuse (Hierarchy: 8)

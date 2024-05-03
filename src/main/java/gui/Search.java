@@ -202,11 +202,13 @@ public class Search {
     public void pathfindBetweenTagAddresses(TagAddress start, TagAddress end, TransportType transportType){
         TagNode _start = XMLReader.getNodeById(1259354245l);
         TagNode _finish = XMLReader.getNodeById(1612922840l);
-        Dijsktra djiktra = new Dijsktra(_start, _finish, transportType);
-        //TagNode endNode = djiktra.getNearestRoadPoint(end, transportType);
-        List<TagWay> nodes = djiktra.allVisitedsPaths();
-        // TLinkedList<TagNode> nodes = djiktra.allVisitedsPaths();
-        if (nodes == null) return;
-        mainView.getDrawingMap().setMarkedTags(nodes);
+        Dijsktra djiktra = new Dijsktra(start, end, transportType);
+        ArrayList<Tag> nodes = djiktra.allVisitedPaths2();
+        System.out.println("Size of markedtag: " + nodes.size());
+        //ArrayList<Tag> nodes = new ArrayList<>();
+        TagWay way = new TagWay((long)0, "Route", djiktra.shortestPath(), (short)0, Type.PATHWAY);
+        nodes.add(way);
+        if (nodes.isEmpty()) return;
+        mainView.getDrawingMap().setMarkedTag(nodes);
     }
 }

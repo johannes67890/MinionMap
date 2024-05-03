@@ -78,8 +78,6 @@ public class Controller implements Initializable, ControllerInterface{
     private boolean pointofInterestState = false;
     private boolean isMenuOpen = false;
     private static MainView mainView;
-    private String selectedItem;
-    private String selectedEndItem;
     private ObservableList<String> searchList = FXCollections.observableArrayList();
 
     private List<TagAddress> addresses = new ArrayList<>();
@@ -87,6 +85,7 @@ public class Controller implements Initializable, ControllerInterface{
     private TagAddress startAddress = null;
     private TagAddress endAddress = null;
     private Search s;
+    private boolean hasSearchedForPath = false;
 
     TransportType routeType = TransportType.CAR;
 
@@ -137,8 +136,10 @@ public class Controller implements Initializable, ControllerInterface{
                 Point2D clickedPoint = mainView.getDrawingMap().getTransform().transform(currentX, currentY);
 
                 TagNode pointofInterest = new TagNode((float) y, (float) x);
+                ArrayList<Tag> temp = new ArrayList<>();
+                temp.add(pointofInterest);
 
-                mainView.getDrawingMap().setMarkedTag(pointofInterest);
+                mainView.getDrawingMap().setMarkedTag(temp);
 
                 mainView.draw();
             }
@@ -310,7 +311,10 @@ public class Controller implements Initializable, ControllerInterface{
             if (endAddress == null){
                 showAddress(startAddress);
             }else{
-                s.pathfindBetweenTagAddresses(startAddress, endAddress, routeType);
+                if (!hasSearchedForPath){
+                    hasSearchedForPath = true;
+                    s.pathfindBetweenTagAddresses(startAddress, endAddress, routeType);
+                }
             }
 
         });
@@ -324,7 +328,10 @@ public class Controller implements Initializable, ControllerInterface{
             if (startAddress == null){
                 showAddress(endAddress);
             }else{
-                s.pathfindBetweenTagAddresses(startAddress, endAddress, routeType);
+                if (!hasSearchedForPath){
+                    hasSearchedForPath = true;
+                    s.pathfindBetweenTagAddresses(startAddress, endAddress, routeType);
+                }
             }
 
         });
@@ -374,13 +381,17 @@ public class Controller implements Initializable, ControllerInterface{
     }
 
     private void search(String address, ComboBox<String> searchBar) {
-    if (!address.isEmpty() && address.charAt(address.length() - 1) != ' ') {
+        
+        if (startAddress != null && searchBar.getEditor().textProperty().getValue().equals(startAddress.toString())) return;
+        if (endAddress != null && searchBar.getEditor().textProperty().getValue().equals(endAddress.toString())) return;
+        if (!address.isEmpty() && address.charAt(address.length() - 1) != ' ') {
             ArrayList<TagAddress> tagAddresses = s.getSuggestions(address);
             if (searchBar.equals(searchBarStart) && startAddress != null){
                 startAddress = null;
             }else if (searchBar.equals(searchBarDestination) && endAddress != null){
                 endAddress = null;
             }
+            hasSearchedForPath = false;
             // Update UI on JavaFX Application Thread
             Platform.runLater(() -> {
                 synchronized (searchList) {
@@ -430,7 +441,9 @@ public class Controller implements Initializable, ControllerInterface{
             }
         }
 
-        drawingMap.setMarkedTag(tagAddress);
+        ArrayList<Tag> temp = new ArrayList<>();
+        temp.add(tagAddress);
+        drawingMap.setMarkedTag(temp);
 
         mainView.getDrawingMap().pan(-deltaX, deltaY);
 
