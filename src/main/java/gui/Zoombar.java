@@ -1,8 +1,6 @@
-package util;
+package gui;
 
 public class Zoombar {
-    
-    
     private double zoomLevelMax;
     private double zoomLevelMin;
     private int zoombarIntervals;

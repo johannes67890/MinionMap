@@ -12,7 +12,7 @@ import java.io.FileNotFoundException;
 
 import org.junit.jupiter.api.*;
 import org.opentest4j.AssertionFailedError;
-import util.MecatorProjection;
+
 import util.FileDistributer;
 import parser.TagAddress;
 import parser.TagBound;

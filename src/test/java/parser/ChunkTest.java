@@ -11,12 +11,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.platform.reporting.shadow.org.opentest4j.reporting.events.core.Tag;
 
 import util.FileDistributer;
-import util.MecatorProjection;
-import parser.Chunk;
 import parser.XMLReader;
+import parser.chunking.Chunk;
+import parser.chunking.Chunk.CompasPoints;
 import parser.TagBound;
 import parser.TagNode;
-import parser.Chunk.CompasPoints;
+
 import java.io.File;
 
 public class ChunkTest {

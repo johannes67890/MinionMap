@@ -7,7 +7,7 @@
  *
  ******************************************************************************/
 
-package util;
+package structures.KDTree;
 
 /**
  * This class is made from the RectHV basis but changed to accomendate

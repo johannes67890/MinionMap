@@ -7,7 +7,7 @@
  *
  ******************************************************************************/
 
-package util;
+package structures.KDTree;
 
 import java.util.Comparator;
 

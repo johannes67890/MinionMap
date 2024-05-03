@@ -1,8 +1,6 @@
 package parser;
 
-import parser.XMLWriter.ChunkFiles;
 import util.FileDistributer;
-import util.MecatorProjection;
 
 import java.io.File;
 import java.util.HashSet;
@@ -12,6 +10,9 @@ import java.util.Set;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import parser.chunking.XMLWriter;
+import parser.chunking.XMLWriter.ChunkFiles;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;

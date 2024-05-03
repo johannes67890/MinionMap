@@ -4,13 +4,14 @@ import java.util.HashMap;
 import java.util.List;
 
 import edu.princeton.cs.algs4.MinPQ;
-import util.MecatorProjection;
+import parser.chunking.XMLWriter.ChunkFiles;
+import util.Type;
+
 import java.util.List;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import parser.XMLWriter.ChunkFiles;;
+import java.io.Serializable;;
 
 /**
  * Abstract class for a tag.

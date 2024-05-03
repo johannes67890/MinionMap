@@ -4,8 +4,10 @@ import java.util.HashMap;
 
 import gnu.trove.list.TLinkable;
 import gnu.trove.list.linked.TLinkedList;
-import parser.XMLWriter.ChunkFiles;
-import util.Tree;
+import parser.chunking.XMLWriter.ChunkFiles;
+import structures.KDTree.Tree;
+import util.Type;
+
 import java.util.*;
 
 /**

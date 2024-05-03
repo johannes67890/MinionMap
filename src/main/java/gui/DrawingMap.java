@@ -15,12 +15,11 @@ import parser.TagNode;
 import parser.TagRelation;
 import parser.TagWay;
 import parser.XMLReader;
+import structures.MinPQ;
+import structures.Trie;
+import structures.KDTree.Rect3D;
+import structures.KDTree.Tree;
 import util.MathUtil;
-import util.MinPQ;
-import util.Rect3D;
-import util.Tree;
-import util.Trie;
-import util.Zoombar;
 
 
 /**

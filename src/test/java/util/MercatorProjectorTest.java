@@ -1,9 +1,9 @@
 package util;
 import org.junit.jupiter.api.Test;
 
+import parser.MecatorProjection;
 import parser.TagBound;
 import parser.TagNode;
-import util.MecatorProjection;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

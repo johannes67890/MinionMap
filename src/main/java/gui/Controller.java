@@ -31,9 +31,9 @@ import parser.Tag;
 import parser.TagAddress;
 import parser.TagNode;
 import parser.TagWay;
-import parser.TransportType;
-import util.Point3D;
-import util.Tree;
+import structures.KDTree.Point3D;
+import structures.KDTree.Tree;
+import util.TransportType;
 
 public class Controller implements Initializable, ControllerInterface{
     
@@ -424,7 +424,7 @@ public class Controller implements Initializable, ControllerInterface{
         Tag tagToDraw = null;
         for (Tag tag : nearestTag){
 
-            if (tag instanceof TagWay && ((TagWay)tag).getType() != null && ((TagWay)tag).getType().equals(parser.Type.BUILDING)){
+            if (tag instanceof TagWay && ((TagWay)tag).getType() != null && ((TagWay)tag).getType().equals(util.Type.BUILDING)){
                 tagToDraw = tag;
                 break;
             }

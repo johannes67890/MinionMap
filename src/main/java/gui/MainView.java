@@ -14,8 +14,8 @@ import javafx.stage.FileChooser;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import parser.XMLReader;
+import structures.ZipHandler;
 import util.FileDistributer;
-import util.ZipHandler;
 public class MainView {
 
     enum StageSelect {

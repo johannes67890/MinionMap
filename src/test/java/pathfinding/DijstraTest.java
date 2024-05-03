@@ -12,11 +12,11 @@ import java.util.Arrays;
 
 import parser.TagAddress;
 import parser.TagWay;
-import parser.Type;
 import parser.XMLReader;
 import pathfinding.Dijsktra;
+import structures.KDTree.Tree;
 import util.FileDistributer;
-import util.Tree;
+import util.Type;
 import parser.Tag;
 import parser.TagAddress;
 

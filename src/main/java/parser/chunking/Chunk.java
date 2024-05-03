@@ -1,8 +1,9 @@
-package parser;
+package parser.chunking;
 
 import java.util.HashMap;
 
-import util.MecatorProjection;
+import parser.TagBound;
+import parser.TagNode;
 
 enum Quadrant {
     Q1, Q2, Q3, Q4

@@ -1,12 +1,8 @@
-package util;
+package parser;
 
 import java.lang.Math;
 
 import gnu.trove.list.linked.TLinkedList;
-import parser.TagBound;
-import parser.TagNode;
-import parser.TagRelation;
-import parser.TagWay;
 public class MecatorProjection {
   
         private static final double RADIUS = 6378137.0; /* in meters on the equator */

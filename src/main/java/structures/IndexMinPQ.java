@@ -1,4 +1,4 @@
-package pathfinding;
+package structures;
 
 import java.util.NoSuchElementException;
 

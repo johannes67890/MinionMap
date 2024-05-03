@@ -7,7 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 
 import java.util.Arrays;
 import java.util.List;
-import parser.Type;
 
 public class TypeTest {
     @Test

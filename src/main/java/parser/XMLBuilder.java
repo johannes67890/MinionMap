@@ -7,7 +7,7 @@ import javax.xml.stream.XMLStreamReader;
 import parser.TagAddress.AddressBuilder;
 import parser.TagRelation.RelationBuilder;
 import parser.TagWay.WayBuilder;
-import util.MecatorProjection;
+import util.Type;
 
 /**
 * Builder for a single XML element.

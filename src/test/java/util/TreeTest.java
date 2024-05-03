@@ -17,10 +17,10 @@ import edu.princeton.cs.algs4.RectHV;
 import parser.Tag;
 import parser.TagNode;
 import parser.XMLReader;
-import util.K3DTree;
-import util.Point3D;
-import util.Rect3D;
-import util.Tree;
+import structures.KDTree.K3DTree;
+import structures.KDTree.Point3D;
+import structures.KDTree.Rect3D;
+import structures.KDTree.Tree;
 
 public class TreeTest {
     private XMLReader reader;

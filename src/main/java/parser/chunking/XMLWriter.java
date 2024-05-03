@@ -1,9 +1,14 @@
-package parser;
+package parser.chunking;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.TimeUnit;
+
+import parser.Tag;
+import parser.TagBound;
+import parser.TagNode;
+
 import java.io.BufferedOutputStream;
 import java.io.EOFException;
 import java.io.FileOutputStream;

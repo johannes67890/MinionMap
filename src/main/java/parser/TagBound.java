@@ -3,6 +3,8 @@ package parser;
 import java.util.HashMap;
 import javax.xml.stream.XMLStreamReader;
 
+import util.Type;
+
 enum Bounds {
     MINLAT, MAXLAT, MINLON, MAXLON
 }

@@ -1,4 +1,4 @@
-package util;
+package structures.KDTree;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashMap;
@@ -6,14 +6,12 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
-import util.Point3D;
-import util.Rect3D;
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.Stack;
 import parser.Tag;
 import parser.TagRelation;
 import parser.TagWay;
-import parser.Type;
+import util.Type;
 
 /*
  * Copyright (C) 2016 Michael <GrubenM@GMail.com>

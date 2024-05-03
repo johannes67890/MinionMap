@@ -1,20 +1,13 @@
-package util;
+package structures.KDTree;
 
 import java.util.*;
 
-import edu.princeton.cs.algs4.Point2D;
-import edu.princeton.cs.algs4.RectHV;
-import gnu.trove.map.hash.TLongObjectHashMap;
 import parser.Tag;
 import parser.TagBound;
 import parser.TagNode;
 import parser.TagRelation;
 import parser.TagWay;
-import parser.XMLReader;
-import util.Point3D;
-import util.Rect3D;
-import util.K3DTree;
-import parser.Type;
+import util.Type;
 
 public class Tree {
 

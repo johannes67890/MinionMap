@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import javax.xml.stream.XMLStreamReader;
 
 import gnu.trove.list.linked.TLinkedList;
+import util.Type;
 
 enum Relation {
     ID, INNER, OUTER, WAYS, RELATIONS, NODES, TYPE, TYPEVALUE, NAME, RELATIONTYPE

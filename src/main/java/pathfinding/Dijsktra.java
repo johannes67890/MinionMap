@@ -2,10 +2,12 @@ package pathfinding;
 
 import parser.TagNode;
 import parser.TagWay;
-import parser.Type;
 import parser.XMLReader;
+import structures.IndexMinPQ;
+import structures.KDTree.Tree;
 import util.FileDistributer;
-import util.Tree;
+import util.TransportType;
+import util.Type;
 
 import java.util.*;
 
@@ -16,7 +18,6 @@ import edu.princeton.cs.algs4.StdOut;
 import gnu.trove.list.linked.TLinkedList;
 import parser.Tag;
 import parser.TagAddress;
-import parser.TransportType;
 
 public class Dijsktra {
     private HashMap<Long, Double> distTo;          // distTo[v] = distance  of shortest s->v path

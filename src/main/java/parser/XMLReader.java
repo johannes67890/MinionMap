@@ -11,8 +11,8 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import gnu.trove.map.hash.TLongObjectHashMap;
-import util.MecatorProjection;
-import util.Trie;
+import parser.chunking.XMLWriter;
+import structures.Trie;
 
 /**
  * Reader for a OSM XML file.

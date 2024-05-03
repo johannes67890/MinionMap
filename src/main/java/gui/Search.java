@@ -7,15 +7,15 @@ import edu.princeton.cs.algs4.Stack;
 import gnu.trove.list.linked.TLinkedList;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import parser.TagAddress;
-import parser.TransportType;
-import parser.Type;
 import parser.TagAddress.SearchAddress;
 import parser.TagNode;
 import parser.TagWay;
 import parser.Tag;
 import parser.XMLReader;
 import pathfinding.Dijsktra;
-import util.Trie;
+import structures.Trie;
+import util.TransportType;
+import util.Type;
 
 public class Search {
 
