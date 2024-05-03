@@ -330,11 +330,12 @@ public class Controller implements Initializable, ControllerInterface{
 
         });
 
-        
+        //Update the suggestions in the combobox when the text changes
         searchBarStart.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
             showSuggestions(searchBarStart, oldValue, newValue);            
         });
 
+        //Update the suggestions in the combobox when the text changes
         searchBarDestination.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
             showSuggestions(searchBarDestination, oldValue, newValue);
         });
