@@ -33,10 +33,16 @@ import java.util.stream.Collectors;
  */
 public enum Type  {
 
+    /* Draw Types */
+    // PATHWAY - The red path for shortest path
+    PATHWAY("", new String[]{""}, 9, 9, Color.RED, 4, true, 3, 100), 
+    // PATHGRID - The blue path for shortest path
+    PATHGRID("", new String[]{""}, 9, 9, Color.BLUE, 4, true, 3, 100),
+
+    /* OSM Types */
     REGION("place", new String[]{"island"}, 10, 2, Color.LIGHTYELLOW.desaturate(), Color.PLUM, 1000, false),
     //BOUNDARY("boundary", new String[]{"administrative"}, 10, 2, Color.LIGHTYELLOW.desaturate(), Color.YELLOW, 5, false),
     BORDER("admin_level", new String[]{"9", "8", "7", "6", "5", "4", "3"}, 10, 2, Color.LIGHTYELLOW.desaturate(), Color.YELLOW, 5, false),
-
 
     // Natural, Landuse and main infrastructure (Hierarchy 9)
     MOTORWAY("highway", new String[]{"motorway", "motorway_link"}, 9, 9, Color.DARKRED, 5, true, 6, 100),
@@ -46,8 +52,6 @@ public enum Type  {
     RAILWAY("railway",new String[]{"rail","light_rail","subway"}, 9, 9, Color.DARKGRAY, 2, true, 4, 1000),
     WATER("natural",new String[]{"water"}, 9, 9, Color.LIGHTBLUE, Color.LIGHTBLUE.darker(), 5, false),
     WATERWAY("waterway",new String[]{""},9, 8, Color.LIGHTBLUE, 3, true, 2, 25),
-    PATHWAY("thisisnotused", new String[]{"thisisnotused"}, 9, 9, Color.RED, 5, true, 6, 100),
-    PATHGRID("thisisnotused", new String[]{"thisisnotused"}, 9, 9, Color.BLUE, 5, true, 6, 100),
     //COASTLINE("natural", new String[]{"coastline"}, 10, 1, Color.PLUM, 5, true, 6, 100),
     
     // Landuse (Hierarchy: 8)
