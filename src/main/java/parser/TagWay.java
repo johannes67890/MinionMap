@@ -168,7 +168,7 @@ public class TagWay extends Tag implements Comparable<TagWay>{
         private TLinkedList<TagNode> refNodesList = new TLinkedList<TagNode>();
         private boolean isEmpty = true;
         private boolean isOneWay = false;
-        private short speedLimit = 1; // Default speed limit is 1 to not break edge cases in pathfinding.
+        private short speedLimit = 50; // Default speed limit is 1 to not break edge cases in pathfinding.
 
         public boolean isEmpty() {
             return isEmpty;
