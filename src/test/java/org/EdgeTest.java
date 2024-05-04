@@ -21,8 +21,8 @@ public class EdgeTest {
     DirectedEdge edge3 = new DirectedEdge(node0, node2, 1d);
 
     @Test
-    void IlligalEdgesTest(){
+    void IllegalEdgesTest(){
         assertThrows(IllegalArgumentException.class,() -> new DirectedEdge(null, null, Double.NaN)); // NaN
-        assertThrows(IllegalArgumentException.class,() -> new DirectedEdge(node0, null, 1d));
+        assertThrows(IllegalArgumentException.class,() -> new DirectedEdge(node0, node0, 1d));
     }
 }

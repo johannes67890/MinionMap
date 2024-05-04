@@ -96,7 +96,7 @@ public class Chunk {
             quadrants.put(Quadrant.Q1, new TagBound(
                 center.getLat(),
                 bound.getMaxLat(),
-                compas.getWest().getLon(),
+                bound.getMinLon(),
                 center.getLon()
             ));
             // Q2/North-East

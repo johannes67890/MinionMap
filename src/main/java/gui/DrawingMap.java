@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import gui.GraphicsHandler.GraphicStyle;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
@@ -34,7 +35,7 @@ public class DrawingMap {
 
 
     static Affine transform = new Affine();
-    public ResizableCanvas canvas;
+    public Canvas canvas;
     private XMLReader reader;
     private MainView mainView;
     public double zoomLevel = 1;
@@ -69,8 +70,13 @@ public class DrawingMap {
     public DrawingMap(MainView mainView, XMLReader reader){
         this.mainView = mainView;
         this.reader = reader;
-        ways = List.copyOf(XMLReader.getWays().valueCollection());
-        relations = List.copyOf(XMLReader.getRelations().valueCollection());
+        trie = new Trie();
+    }
+
+    //For testing
+    public DrawingMap(XMLReader reader){
+        this.mainView = null;
+        this.reader = reader;
         trie = new Trie();
     }
 
@@ -81,7 +87,7 @@ public class DrawingMap {
      * @param canvas - the canvas to be drawn.
      */
 
-    public void initialize(ResizableCanvas canvas){
+    public void initialize(Canvas canvas){
 
         this.canvas = canvas;
 
@@ -98,11 +104,9 @@ public class DrawingMap {
         Tree.initialize(tempList);
         zoombar = new Zoombar(zoombarIntervals, zoomLevelMax, zoomLevelMin);
         setBackGroundColor(Color.web("#F2EFE9"));
-        pan(-minlon, minlat + (screenBounds[3] - screenBounds[1]));
+        pan(-minlon, maxlat);
         zoom(canvas.getWidth() / (maxlon - minlon), 0, 0);
-        //pan(0, canvas.getHeight() * 1.20);
         tempBounds = getScreenBounds();
-        //pan(0, screenBounds[3] - screenBounds[1]);
         DrawMap(canvas);
         
     }
@@ -115,13 +119,22 @@ public class DrawingMap {
         backGroundColor = c;
     }
 
+    public double getZoomLevelMax(){
+        return zoomLevelMax;
+    }
+
+    public double getZoomLevelMin(){
+        return zoomLevelMin;
+    }
+
+
     /**
      * Directly draws the map, starting by filling the canvas with white, followed by drawing lines and polygons
      * @param gc - Graphicscontext, which ensures that the position of the vertices are placed correctly
      * @param canvas - The canvas that get drawn
      */
 
-    public void DrawMap(ResizableCanvas canvas){
+    public void DrawMap(Canvas canvas){
 
         long preTime = System.currentTimeMillis();
         this.canvas = canvas;
@@ -300,10 +313,7 @@ public class DrawingMap {
                     
                     if(n.getNext() == null) break;
                 }
-
-            
-            
-            
+    
             //Fills polygons with color
             if (!way.getType().getIsLine()){
                 gc.setFill(currentColor);
@@ -351,13 +361,9 @@ public class DrawingMap {
                     gc.setStroke(tagWay.getType().getPolyLineColor()); 
                 }
             }
-
-
            
             gc.setLineWidth(lineWidth);
 
-
-            
             gc.beginPath();
             gc.moveTo(tagWay.getRefNodes().getFirst().getLon(), -tagWay.getRefNodes().getFirst().getLat());
             
@@ -475,7 +481,7 @@ public class DrawingMap {
      * @param dx - Distance to pan on the x-axis
      * @param dy - Distance to pan on the y-axis
      */
-    void zoom(double factor, double dx, double dy){
+    public void zoom(double factor, double dx, double dy){
         double zoomLevelNext = zoomLevel * factor;
         if (zoomLevelNext < zoomLevelMax && zoomLevelNext > zoomLevelMin){
             zoomLevel = zoomLevelNext;
@@ -492,11 +498,11 @@ public class DrawingMap {
             transform.prependScale(factor, factor);
             pan(dx, dy);
         }
-        else if(zoomLevel > zoomLevelMax){
-            zoomLevel = zoomLevelMax - 1;
+        else if(zoomLevelNext > zoomLevelMax){
+            zoomLevel = zoomLevelMax - 0.000001;
         }
-        else if (zoomLevel < zoomLevelMin){
-            zoomLevel = zoomLevelMin + 1;
+        else if (zoomLevelNext < zoomLevelMin){
+            zoomLevel = zoomLevelMin + 0.000001;
         }
 
         
@@ -518,9 +524,10 @@ public class DrawingMap {
      * @param dy - Distance to pan on the y-axis
      */
     public void pan(double dx, double dy) {
-
         transform.prependTranslation(dx, dy);
-        mainView.draw();
+        if (mainView != null){
+            mainView.draw();
+        }
     }
 
     public void zoombarUpdater(Label label, ImageView imageView) {
@@ -546,7 +553,13 @@ public class DrawingMap {
     }
     public void append(double dx, double dy) {
         transform.appendTranslation(dx, dy);
-        mainView.draw();
+        if (mainView != null){
+            mainView.draw();
+        }
+    }
+
+    public Canvas getCanvas(){
+        return canvas;
     }
 
 }
