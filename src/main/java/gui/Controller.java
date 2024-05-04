@@ -18,6 +18,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.control.skin.ComboBoxListViewSkin;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -41,10 +42,7 @@ public class Controller implements Initializable, ControllerInterface{
     ObservableList<String> style = FXCollections.observableArrayList(
         "default", "dark", "gray scale");
 
-    @FXML private Button menuButton1;
-    @FXML private Button menuButton2;
-    @FXML private Button menuButton3;
-    @FXML private Button layerButton;
+    @FXML private ToggleButton menuButton1;
     @FXML private Button searchButton;
     @FXML private Button pointButton;
     @FXML private Button routeButton;
@@ -176,46 +174,33 @@ public class Controller implements Initializable, ControllerInterface{
 
     @Override
     public void initialize(URL location, ResourceBundle resources) { // This runs when the fxml is loaded and the canvas is injected (before stage is shown)
-
-
         setEnableDestinationComboBox(false);
         ComboBoxListViewSkin<String> comboBoxListViewSkinStart = new ComboBoxListViewSkin<String>(searchBarStart);
         ComboBoxListViewSkin<String> comboBoxListViewSkinDestination = new ComboBoxListViewSkin<>(searchBarDestination);
 
-
         mainMenuVBox.setVisible(false);
         leftBurgerMenu.setVisible(false);
-        graphicVBox.setVisible(false);
         routeTypeMenu.setVisible(false);
 
         styleChoiceBox.setItems(style);
         styleChoiceBox.setValue("default");
 
         styleChoiceBox.setOnAction((ActionEvent e) -> {
-            
             switch(styleChoiceBox.getValue()){
-                case "default" : {
-
+                case "default": {
                     GraphicsHandler.setGraphicsStyle(GraphicStyle.DEFAULT);
-                    mainView.draw();
-
                     break;
                 }
-                case "dark" : {
-                    System.out.println("DARKMODE");
+                case "dark": {
                     GraphicsHandler.setGraphicsStyle(GraphicStyle.DARKMODE);
-                    mainView.draw();
-
                     break;
-
                 }
-                case "gray scale" : {
-                    System.out.println("GRAY SCALE");
+                case "gray scale": {
                     GraphicsHandler.setGraphicsStyle(GraphicStyle.GRAYSCALE);
-                    mainView.draw();
                     break;
                 }
             }
+            mainView.draw();
         });
 
         mainMenuButton.setOnAction((ActionEvent e) -> {
@@ -223,35 +208,24 @@ public class Controller implements Initializable, ControllerInterface{
         });
 
         menuButton1.setOnAction((ActionEvent e) -> {
+            menuButton1.setSelected(!isMenuOpen);
+            if(isMenuOpen){
+                menuButton1.getStyleClass().add("button-selected");
+            }else{
+                menuButton1.getStyleClass().remove("button-selected");
+            }
             leftBurgerMenu.setVisible(!isMenuOpen);
             mainMenuVBox.setVisible(!isMenuOpen);
+            // graphicVBox.setVisible(!isMenuOpen);
+            styleChoiceBox.setVisible(!isMenuOpen);
             isMenuOpen = !isMenuOpen;
         });
-
 
         routeButton.setOnAction((ActionEvent e) -> {
-            
             setEnableDestinationComboBox(!searchBarDestination.isVisible());
-            routeTypeMenu.setVisible(!routeTypeMenu.isVisible());
-
-            
+            routeTypeMenu.setVisible(!routeTypeMenu.isVisible());            
         });
 
-        menuButton2.setOnAction((ActionEvent e) -> {
-            leftBurgerMenu.setVisible(!isMenuOpen);
-            mainMenuVBox.setVisible(!isMenuOpen);
-            isMenuOpen = !isMenuOpen;
-        });
-        menuButton3.setOnAction((ActionEvent e) -> {
-            leftBurgerMenu.setVisible(!isMenuOpen);
-            graphicVBox.setVisible(!isMenuOpen);
-            isMenuOpen = !isMenuOpen;
-        });
-        layerButton.setOnAction((ActionEvent e) -> {
-            graphicVBox.setVisible(true);
-            mainMenuVBox.setVisible(false);
-
-        });
         pointButton.setOnAction((ActionEvent e) ->{
             pointofInterestState = !pointofInterestState;
 
@@ -261,7 +235,6 @@ public class Controller implements Initializable, ControllerInterface{
 
             Image imagePassive = new Image(filePassive.toURI().toString());
             Image imageActive = new Image(fileActive.toURI().toString());
-            //Image otherImage = new Image(getClass().getResourceAsStream(selectedEndItem));
             if (pointofInterestState){
                 pointImage.setImage(imageActive);
             } else{

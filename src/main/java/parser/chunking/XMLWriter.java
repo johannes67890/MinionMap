@@ -112,7 +112,6 @@ public class XMLWriter {
             
             synchronized (path.intern()) {
                 try (AppendingObjectOutputStream oos = new AppendingObjectOutputStream(new BufferedOutputStream(new FileOutputStream(new File(path), true)))) {
-                    // TODO: if tags is written to bytes as array - do data get lost?
                     for (Tag tag : nodes) {
                         oos.writeObject(tag);
                     } 

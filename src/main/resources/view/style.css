@@ -1,4 +1,207 @@
-.leftmenu{
-    -fx-background-color:rgb(168, 168, 168);
+.root {
+    -fx-faint-focus-color: transparent;
+    -fx-background-color: #f7fafa;
+    -fx-font-family: "Amazon Ember",sans-serif;
+    -fx-font-size: 16px;
+    -fx-color: #0f1111;
 }
+
+.body {
+    -fx-faint-focus-color: transparent;
+}
+
+.title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-margin-top: 20px;
+    -fx-margin-left: 20px;
+}
+
+.button {
+    -fx-background-color: #fff;
+    -fx-min-width: 100px;
+    -fx-color: #0f1111;
+    -fx-cursor: hand;
+    -fx-border-color: #686868;
+    -fx-border-width: 2px;
+    -fx-text-fill: black;
+    -fx-box-shadow: rgba(213, 217, 217, .5) 0 2px 5px 0;
+    -fx-box-sizing: border-box;
+    -fx-cursor: pointer;
+    -fx-display: inline-block;
+    -fx-font-family: "Amazon Ember",sans-serif;
+    -fx-font-size: 16px;
+    -fx-line-height: 29px;
+    -fx-padding: 6px 16px 6px 16px;
+    -fx-position: relative;
+    -fx-text-align: center;
+    -fx-text-decoration: none;
+    -fx-user-select: none;
+    -fx--webkit-user-select: none;
+    -fx-touch-action: manipulation;
+    -fx-vertical-align: middle;
+    -fx-width: 125px;
+}
+
+.button:hover {
+    -fx-background-color: #f7fafa;
+}
+
+.button:focus {
+    -fx-border-color: #008296;
+    -fx-box-shadow: rgba(213, 217, 217, .5) 0 2px 5px 0;
+    -fx-outline: 0;
+}
+.button:selected {
+    -fx-border-color: #008296;
+    -fx-outline: 0;
+}
+
+.mapButton {
+    -fx-min-width: 260px;
+    -fx-min-height: 260px;
+    -fx-pref-width: 360px;
+    -fx-pref-height: 360px;
+    -fx-max-width: 160px;
+    -fx-max-height: 160px;
+    -fx-background-color: "#ade1ff";
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-background-size: contain;
+    -fx-font-weight: bold;
+    -fx-text-fill: transparent;
+    -fx-content-display: bottom;
+}
+
+.mapButton:hover {
+    -fx-text-fill: "#333";
+}
+
+.buttonPane {
+    -fx-display: flex;
+    -fx-justify-content: center;
+    -fx-margin-top: 20px;
+    -fx-gap: 20px;
+    -fx-margin-left: 200px;
+    -fx-text-align: center;
+}
+
+.dropzone {
+    -fx-background-color: #fff;
+    -fx-min-width: 350px;
+    -fx-min-height: 60px;
+    -fx-pref-width: 530px;
+    -fx-cursor: hand;
+    -fx-pref-height: 60px;
+    -fx-max-width: 530px;
+    -fx-max-height: 60px;
+    -fx-border-radius: 10px;
+    -fx-border-color: #686868;
+    -fx-border-width: 2px;
+    -fx-border-style: dashed;
+    -fx-padding: 20px;
+    -fx-position: relative;
+    -fx-text-align: center;
+    -fx-text-decoration: none;
+    -fx-user-select: none;
+    -fx-touch-action: manipulation;
+    -fx-vertical-align: middle;
+}
+
+.startScreen {
+    -fx-left-margin: auto;
+    -fx-right-margin: auto;
+    -fx-text-align: center;
+    -fx-font-size: 16px;
+    -fx-font-family: "Amazon Ember",sans-serif;
+    -fx-color: #0f1111;
+}
+
+.selectDefaultMaps {
+    -fx-spacing: 10;
+    -fx-alignment: center;
+    -fx-margin-top: 20px;
+    -fx-margin-bottom: 20px;
+    -fx-padding-top: 10px;
+    -fx-padding-bottom: 10px;
+}
+
+/* Main view */
+
+.combo-box .list-cell 
+{
+    -fx-min-width: 450px;
+    -fx-min-height: 60px;
+    -fx-pref-width: 430px;
+    -fx-pref-height: 60px;
+    -fx-max-width: 530px;
+    -fx-max-height: 60px;
+    -fx-background: white;
+    -fx-background-color: transparent;
+    -fx-text-fill: -fx-text-base-color;
+    /* -fx-padding: 1 0 1 4; */
+    -fx-cell-size: 1.66667em; 
+}
+
+.combo-box-popup .list-view 
+{
+    -fx-max-width: 530px;
+    -fx-background-color: white, white;
+    /* -fx-background-insets: 0, 1; */
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 8, 0.0 , 0 , 0 );
+}    
+
+.combo-box-popup .list-view .list-cell 
+{
+    /* -fx-padding: 2 0 2 3; */
+
+    /* No alternate highlighting */
+    -fx-background-color: white;
+}
+
+.combo-box-popup .list-view .list-cell:filled:selected, .combo-box-popup .list-view .list-cell:filled:selected:hover 
+{
+    -fx-background: -fx-accent;
+    -fx-background-color: -fx-selection-bar;
+    -fx-text-fill: -fx-selection-bar-text;
+}
+
+.combo-box-popup .list-view .list-cell:filled:hover 
+{
+    -fx-background-color: rgb(206, 206, 206);
+    -fx-text-fill: -fx-text-inner-color;
+}
+
+.combo-box-base  
+{
+    -fx-background-color: white, white, white, white;
+    -fx-background-radius: 5, 5, 4, 3;
+    -fx-background-insets: 0 0 -1 0, 0, 1, 2;
+    -fx-padding: 0;
+}
+
+.combo-box-base:hover
+{
+    -fx-color: -fx-hover-base;
+}
+
+.combo-box-base:showing 
+{
+    -fx-color: -fx-pressed-base;
+}
+
+.burgermenu {
+    -fx-background-color: #f7fafa;
+    -fx-padding-top: 30px;
+    -fx-min-width: 350px;
+    -fx-min-height: 10000px;
+    -fx-pref-width: 350px;
+    -fx-pref-height: 10000px;
+    -fx-max-width: 400px;
+    -fx-max-height: 10000px;
+}
+
+
+   
+
 

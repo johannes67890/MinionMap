@@ -60,7 +60,7 @@ public class MainView {
         try{
             if (selectedStage == StageSelect.MainMenu){
                 loader = new FXMLLoader(new URL("file:" + FileDistributer.start_screen.getFilePath()));
-                root = loader.load();
+                root =loader.load();
             }else { // else its mapView
                 loader = new FXMLLoader(new URL("file:" + FileDistributer.main.getFilePath()));
                 root = loader.load();
@@ -69,6 +69,7 @@ public class MainView {
             ControllerInterface controller = (ControllerInterface) loader.getController();
             controller.start(this); // To initialize the controller with a reference to this object
             Scene scene = new Scene(root);
+            scene.getStylesheets().add(getClass().getResource("/view/style.css").toExternalForm());
             stage.setScene(scene);
             stage.show();
         }catch (Exception e){
