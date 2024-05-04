@@ -118,7 +118,8 @@ public class TagRelation extends Tag{
 
             if(outer.loops()){
                 success = true;
-                handledOuter.add(outer);
+                TagWay newTagWay = new TagWay(this, id, outer.getRefNodes(), speedLimit);
+                handledOuter.add(newTagWay);
             } else{
 
                 currentFirstTagNode = outer.getRefNodes().getFirst();
@@ -169,7 +170,6 @@ public class TagRelation extends Tag{
 
 
                     for (int i = tempToTempNodes.size() - 1; i >= 0; i-- ){
-
                         TagNode node = new TagNode(tempToTempNodes.get(i)) ;
                         node.clearLinks();
                         tempNodes.add(node);    
@@ -179,8 +179,6 @@ public class TagRelation extends Tag{
                 wayCount++;
 
                 prevLastTagNode = tempNodes.get(tempNodes.size() - 1);
-
-
                 if (tempNodes.get(tempNodes.size() - 1).equals(beginFirstTagNode)){
 
                     //System.out.println(beginLastTagNode.getId() + " " + outer.getId());
@@ -194,8 +192,6 @@ public class TagRelation extends Tag{
                     success = true;
                     
                     wayCount = 0;
-
-
                 }
             }
         }

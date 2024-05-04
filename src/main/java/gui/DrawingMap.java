@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import gui.GraphicsHandler.GraphicStyle;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
@@ -14,6 +15,7 @@ import parser.TagBound;
 import parser.TagNode;
 import parser.TagRelation;
 import parser.TagWay;
+import util.Type;
 import parser.XMLReader;
 import structures.MinPQ;
 import structures.Trie;
@@ -41,7 +43,7 @@ public class DrawingMap {
     private double zoomScalerToMeter; // This is the world meters of how long the scaler in the bottom right corner is. Divide it with the zoomLevel
     private double[] zoomScales = {32, 16, 8, 4, 2, 1, 0.5, 0.1, 0.05, 0.015, 0.0001}; // 32, 16, 8, 4, 2, 1, 0.5, 0.1, 0.05, 0.015, 0.0001
     public Zoombar zoombar;
-    private double screenWidth;
+
      //
 
     private Trie trie;
@@ -51,6 +53,8 @@ public class DrawingMap {
     private List<TagRelation> relations;
 
     private Color currentColor;
+    private Color backGroundColor;
+    private boolean backGroundSet;
 
     private GraphicsContext gc;
 
@@ -86,18 +90,25 @@ public class DrawingMap {
         double maxlat = bound.getMaxLat();
         double maxlon = bound.getMaxLon();
         double minlat = bound.getMinLat();
+        float[] screenBounds = getScreenBounds();
         ArrayList<Tag> tempList = new ArrayList<>();
         tempList.addAll(List.copyOf(XMLReader.getWays().valueCollection()));
         tempList.addAll(List.copyOf(XMLReader.getRelations().valueCollection()));
         Tree.initialize(tempList);
         zoombar = new Zoombar(zoombarIntervals, zoomLevelMax, zoomLevelMin);
-        pan(-minlon, minlat);
+        setBackGroundColor(Color.web("#F2EFE9"));
+        pan(-minlon, minlat + (screenBounds[3] - screenBounds[1]));
         zoom(canvas.getWidth() / (maxlon - minlon), 0, 0);
+        //pan(0, canvas.getHeight() * 1.20);
         tempBounds = getScreenBounds();
     }
 
     public Trie getTrie(){
         return trie;
+    }
+
+    public void setBackGroundColor(Color c){
+        backGroundColor = c;
     }
 
     /**
@@ -118,21 +129,7 @@ public class DrawingMap {
         //Resfreshes the screen
         gc = canvas.getGraphicsContext2D();
         gc.setTransform(new Affine());
-        switch (GraphicsHandler.getGraphicStyle()) {
-            case DEFAULT:
-                gc.setFill(Color.LIGHTSKYBLUE);
-                break;
-            case DARKMODE:
-                gc.setFill(Color.BLACK);
-                break;
-            case GRAYSCALE:
-                gc.setFill(Color.LIGHTSKYBLUE.grayscale());
-                break;
-            default:
-                break;
-        }
-        gc.fillRect(0,0,canvas.getWidth(), canvas.getHeight());
-        gc.setTransform(transform);
+     
         currentColor = Color.BLACK;
 
         float[] canvasBounds = getScreenBoundsBigger(0.2);
@@ -142,6 +139,7 @@ public class DrawingMap {
         relations = new ArrayList<>();
 
         HashSet<Tag> tags = Tree.getTagsInBounds(rect);
+        backGroundSet = false;
         for(Tag tag : tags){
             if (tag instanceof TagNode){
                 nodes.add((TagNode) tag);
@@ -151,8 +149,32 @@ public class DrawingMap {
             }else if (tag instanceof TagRelation){
                 TagRelation relation = (TagRelation) tag;
                 relations.add(relation);
+                if (relation.getType() == Type.BORDER || relation.getType() == Type.REGION){
+                    setBackGroundColor(Color.web("#AAD3DF"));
+                    backGroundSet = true;
+                }
             }
         }
+
+        if (!backGroundSet){
+            setBackGroundColor(Color.web("#F2EFE9"));
+        }
+
+        switch (GraphicsHandler.getGraphicStyle()) {
+            case DEFAULT:
+                gc.setFill(backGroundColor);
+                break;
+            case DARKMODE:
+                gc.setFill(Color.BLACK);
+                break;
+            case GRAYSCALE:
+                gc.setFill(backGroundColor.grayscale());
+                break;
+            default:
+                break;
+        }
+        gc.fillRect(0,0,canvas.getWidth(), canvas.getHeight());
+        gc.setTransform(transform);
 
         waysToDrawWithType = new ArrayList<>();
         waysToDrawWithoutType = new ArrayList<>();
@@ -193,6 +215,33 @@ public class DrawingMap {
         }else if(tag instanceof TagNode || tag instanceof TagAddress){
             drawPoint(tag);
         }
+    }
+
+    private void drawInnerWays(){
+
+
+        waysToDrawWithType = new ArrayList<>();
+
+        ways = new ArrayList<>();
+
+        for (TagRelation relation : relations){
+
+            if (relation.getId() == 12332811){
+                System.out.println(relation.getActualInner().get(0).getType());
+            }
+
+            handleWays(relation.getActualInner());
+        }
+
+        MinPQ<TagWay> sortedWaysToDraw = new MinPQ<>(waysToDrawWithType.size());
+
+
+        for (TagWay way : waysToDrawWithType){
+            sortedWaysToDraw.insert(way);
+        }
+
+        drawWays(sortedWaysToDraw);
+
     }
 
     private void drawPoint(Tag node){
@@ -281,14 +330,25 @@ public class DrawingMap {
             double min = tagWay.getType().getMinWidth();
             double max = tagWay.getType().getMaxWidth();
             double lineWidth = MathUtil.clamp(defaultLineWidth * tagWay.getType().getWidth(), min, max);
+            if (GraphicsHandler.getGraphicStyle() == GraphicStyle.DARKMODE){
+                if (!tagWay.getType().getIsLine()){
+                    lineWidth = lineWidth * 2;
+                }
+                gc.setStroke(Color.GRAY.interpolate(Color.LIGHTGRAY, 0.5));
+            }
+            else{
+
+                if(tagWay.getType().getIsLine()){
+                    gc.setStroke(tagWay.getType().getColor()); 
+                } else{
+                    gc.setStroke(tagWay.getType().getPolyLineColor()); 
+                }
+            }
+
+
+           
             gc.setLineWidth(lineWidth);
 
-
-            if(tagWay.getType().getIsLine()){
-                gc.setStroke(tagWay.getType().getColor()); 
-            } else{
-                gc.setStroke(tagWay.getType().getPolyLineColor()); 
-            }
 
             
             gc.beginPath();
@@ -376,6 +436,7 @@ public class DrawingMap {
         
         float[] bounds = new float[4]; // x_min ; y_min ; x_max ; y_max
         double width = ((canvas.getWidth()) / zoomLevel);
+        
         double height = ((canvas.getHeight()) / zoomLevel);
         bounds[0] = (float) -(transform.getTx() / Math.sqrt(transform.determinant()));
         bounds[1] = (float) ((transform.getTy()) / Math.sqrt(transform.determinant()) - height);
@@ -395,17 +456,7 @@ public class DrawingMap {
         return bounds;
     }
 
-    /**
-     * 
-     * @return Returns the distance for the ruler in the bottom right corner
-     */
-    public double getZoomLevelMeters(){
-        double temp = zoomScalerToMeter / zoomLevel;
-        temp = temp * 10000;
-        temp = Math.round(temp);
-        temp /= 10;
-        return temp;
-    }
+    // getZoomLevelMeters() removed in zoombarfix branch 2/5-2024
 
 
 
@@ -441,7 +492,7 @@ public class DrawingMap {
             zoomLevel = zoomLevelMin + 1;
         }
 
-        this.screenWidth = canvas.getWidth();
+        
     }
 
     public Affine getTransform(){
@@ -465,9 +516,10 @@ public class DrawingMap {
     }
 
     public void zoombarUpdater(Label label, ImageView imageView) {
-        zoombar.setRange(zoomLevel);
-        label.setText(String.valueOf(zoombar.getRange()) + "m");
-        imageView.setFitWidth(metersToPixels(zoombar.getRange()));
+        zoombar.setRange(getZoomLevel());
+        int range = (int) zoombar.getRange();
+        label.setText( String.valueOf(range) + "m");
+        imageView.setFitWidth(metersToPixels(range));
     }
 
     /**
@@ -476,10 +528,12 @@ public class DrawingMap {
      */
 
      public double metersToPixels(int meters){
+        
         float[] bounds = getScreenBounds();
         double widthInMeter = bounds[2] - bounds[0];
-        double metersPerPixelRatio = screenWidth / widthInMeter;
         
+        double metersPerPixelRatio = canvas.getWidth() / (widthInMeter/2); //Divided by 2 because the width is from the center of the screen
+
         return metersPerPixelRatio * meters;
     }
     public void append(double dx, double dy) {

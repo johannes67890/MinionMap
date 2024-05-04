@@ -150,11 +150,10 @@ public class Controller implements Initializable, ControllerInterface{
             if (System.currentTimeMillis() - timer > 500){
                 timer = System.currentTimeMillis();
             }
-
+            
             mainView.getDrawingMap().zoom(Math.pow(zoomMultiplier,event.getDeltaY()), event.getX(), event.getY());
 
             mainView.getDrawingMap().zoombarUpdater(zoomLevelText, zoomLevelImage);
-            
         });
 
         mainView.canvas.setOnMouseDragged(e -> {
