@@ -310,7 +310,8 @@ public class K3DTree {
         if (p == null) throw new java.lang.NullPointerException(
                 "called contains() with a null Point3D");
         if (isEmpty()) return null;
-        return nearest(root, p, root.p, 0);
+        Point3D point = nearest(root, p, root.p, 0);
+        return point;
     }
     
     private Point3D nearest(Node n, Point3D p, Point3D champion, int xyz) {
@@ -372,7 +373,7 @@ public class K3DTree {
             champion = nearest(n.rtf, p, champion, temp);
             
             // Since champion may have changed, recalculate distance
-            if (champion.distanceSquaredTo(p) >=
+            if (champion.distanceSquaredTo(p) <=
                     toPartitionLine * toPartitionLine) {
                 champion = nearest(n.lbb, p, champion, temp);
             }
@@ -466,7 +467,7 @@ public class K3DTree {
             champion = nearest(n.rtf, p, champion, temp, types);
             
             // Since champion may have changed, recalculate distance
-            if (champion.distanceSquaredTo(p) >=
+            if (champion.distanceSquaredTo(p) <=
             toPartitionLine * toPartitionLine) {
                 champion = nearest(n.lbb, p, champion, temp, types);
             }
@@ -581,7 +582,7 @@ public class K3DTree {
         }else if (xyz == 1){
             return p.y() - n.p.y();
         }else{
-            return p.z() - n.p.z();
+            return 0;
         }
     }
     
