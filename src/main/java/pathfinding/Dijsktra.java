@@ -28,6 +28,8 @@ public class Dijsktra {
     private IndexMinPQ<Double> pq;    // priority queue of vertices
     private HashSet<Long> surroundingTags = new HashSet<Long>();
 
+    private boolean takeShortestRoute = false; // This can be enabled to get a more precise shortest path, but at the cost of perfomance
+
     private double distanceBetweenEndPoints;
 
     private TagNode start;
@@ -61,6 +63,7 @@ public class Dijsktra {
             }
             if(v.getId() == finish.getId()) {
                 this.finish = v;
+                System.out.println("Found finish!");
                 distTo.put(v.getId(), Double.POSITIVE_INFINITY);
                 costTo.put(v.getId(), distanceBetweenEndPoints);
                 continue;
@@ -97,11 +100,20 @@ public class Dijsktra {
         return G;
     }
 
+    /**
+     * This can be enabled on the cost of perfomance, but you get a shorter route. 
+     * It needs to be set before finding route, after creating object.
+     * @param bool
+     */
+    public void setPrecisionMode(boolean bool){
+        takeShortestRoute = bool;
+    }
+
     public static Stack<TagNode> getShortestPathofTags(){
         return shortestPath;
     }
-
     private void addSurroundingRoads(TagNode startTag, TagNode finish, TransportType transportType){
+        
         if(startTag.hasIntersection()){
             for (Tag tag : startTag.getIntersectionTags()) {
                 if(tag instanceof TagWay){
@@ -110,26 +122,32 @@ public class Dijsktra {
                     if(surroundingTags.contains(way.getId())) continue;
                     surroundingTags.add(way.getId());
                     addRoad(way);
-                    checkIntersections(startTag, transportType);
+                    for (TagNode tagNode : way.getRefNodes()) {
+                        if(tagNode.getId() == finish.getId()) {
+                            System.out.println("Found finish");
+                            this.finish = tagNode;
+                            distTo.put(tagNode.getId(), Double.POSITIVE_INFINITY);
+                            return;
+                        }
+                        
+                        if(tagNode.hasIntersection()) addSurroundingRoads(tagNode, finish,transportType);
+                        if(tagNode.getNext() == null) continue;
+                    } 
                 }
             }
         } else{
             addRoad(startTag.getParent());
-            checkIntersections(startTag, transportType);
-        }
-    }    
-
-    private void checkIntersections(TagNode t, TransportType transportType){
-        for (TagNode tagNode : t.getParent().getRefNodes()) {
-            if(tagNode.getId() == finish.getId()) {
-                System.out.println("Found finish");
-                this.finish = tagNode;
-                distTo.put(tagNode.getId(), Double.POSITIVE_INFINITY);
-                return;
+            for (TagNode tagNode : startTag.getParent().getRefNodes()) {
+                if(tagNode.getId() == finish.getId()) {
+                    System.out.println("Found finish");
+                    this.finish = tagNode;
+                    distTo.put(tagNode.getId(), Double.POSITIVE_INFINITY);
+                    return;
+                }
+                
+                if(tagNode.hasIntersection()) addSurroundingRoads(tagNode,finish, transportType);
+                if(tagNode.getNext() == null) continue;
             }
-            
-            if(tagNode.hasIntersection()) addSurroundingRoads(tagNode,finish, transportType);
-            if(tagNode.getNext() == null) continue;
         }
     }
 
@@ -146,12 +164,12 @@ public class Dijsktra {
     }
 
     private void addTwoWayEdges(TagNode node, TagWay way){
-            G.addEdge(new DirectedEdge(node, node.getNext(), way.getSpeedLimit()));
-            G.addEdge(new DirectedEdge(node.getNext(), node, way.getSpeedLimit()));
+        G.addEdge(new DirectedEdge(node, node.getNext(), way.getSpeedLimit()));
+        G.addEdge(new DirectedEdge(node.getNext(), node, way.getSpeedLimit()));
     }
 
     private void addOneWayEdge(TagNode node, TagWay way){
-            G.addEdge(new DirectedEdge(node, node.getNext(), way.getSpeedLimit()));
+        G.addEdge(new DirectedEdge(node, node.getNext(), way.getSpeedLimit()));
     }
 
     public TagNode getNearestRoadPoint(Tag tag, TransportType transportType){
@@ -179,36 +197,36 @@ public class Dijsktra {
         return best;
     }
     
-      // relax edge e and update pq if changed
-    private void relax(DirectedEdge e) {
+    /**
+     * Relax edge if its changed
+     * @param e The fortunate edge
+     */
+    private void relax(DirectedEdge e){
         long v = e.from().getId(), w = e.to().getId();
 
         double distance = (G.getNode(w).distance(G.getNode(v))); // Length of the edge in meters
-
-        if(distTo.get(w) > distTo.get(v) + distance) {
-            distTo.put(w, distTo.get(v) + distance);
-            edgeTo.put(w, e);
-            if(pq.contains(w)){
-                pq.decreaseKey(w, distTo.get(w));
-            } else {
-                pq.insert(w, distTo.get(w));
-            }
+        double distanceToDestination = G.getNode(w).distance(finish);
+        double minutesWeight = ((distance / 1000) / e.weight()) * 60;
+        double weight = 0;
+        if (takeShortestRoute){
+            weight = distance;
+        }else{
+            weight = minutesWeight;
         }
-    }
 
-    private void relax2(DirectedEdge e){
-        long v = e.from().getId(), w = e.to().getId();
-
-        double distance = (G.getNode(w).distance(G.getNode(v))); // Length of the edge in meters
-
-        if(distTo.get(w) + costTo.get(w) > distTo.get(v) + distance + costTo.get(v)) {
-            distTo.put(w, distTo.get(v) + distance);
+        if(distTo.get(w) > distTo.get(v) + weight) {
+            if (takeShortestRoute){
+                distTo.put(w, distTo.get(v) + weight);
+                costTo.put(w, costTo.get(v) + minutesWeight);
+            }else{
+                distTo.put(w, distTo.get(v) + weight);
+                costTo.put(w, costTo.get(v) + distance);
+            }
             edgeTo.put(w, e);
-            System.out.println(e);
-            if(pq.contains(w)){
-                pq.decreaseKey(w, distTo.get(w) + costTo.get(w));
+            if (pq.contains(w)) {
+                pq.decreaseKey(w, distTo.get(w) + distanceToDestination);
             } else {
-                pq.insert(w, distTo.get(w));
+                pq.insert(w, distTo.get(w) + distanceToDestination);
             }
         }
     }
@@ -245,7 +263,8 @@ public class Dijsktra {
     public TLinkedList<TagNode> shortestPath(){
         TLinkedList<TagNode> nodes = new TLinkedList<>();
         if (!hasPathTo(this.finish)) return null;
-        System.out.println("Minutes: " + distTo.get(finish.getId()));
+        System.out.println("Weight: " + distTo.get(finish.getId()));
+        System.out.println("Cost: " + costTo.get(finish.getId()));
 
         for (DirectedEdge e : pathTo(this.finish)) {
             if(e.to() == null) break;
