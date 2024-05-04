@@ -24,6 +24,7 @@ import structures.Trie;
 public class XMLReader {
     private static TagBound bound;
     private static TLongObjectHashMap<TagNode> nodes = new TLongObjectHashMap<TagNode>();
+    //TODO: Possibly remove addresses?
     private static TLongObjectHashMap<TagAddress> addresses = new TLongObjectHashMap<TagAddress>();
     private static TLongObjectHashMap<TagRelation> relations = new TLongObjectHashMap<TagRelation>();
     private static TLongObjectHashMap<TagWay> ways = new TLongObjectHashMap<TagWay>();
