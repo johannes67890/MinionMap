@@ -143,11 +143,17 @@ public class Controller implements Initializable, ControllerInterface{
 
                 Point2D clickedPoint = mainView.getDrawingMap().getTransform().transform(currentX, currentY);
 
-                TagNode pointofInterest = new TagNode((float) y, (float) x);
-                ArrayList<Tag> temp = new ArrayList<>();
-                temp.add(pointofInterest);
+                s.setPointOfInterest((float) x, (float) y);
+                TagNode pointOfInterest = new TagNode((float) y, (float) x);
 
+                Point3D point = Tree.getNearestPoint(new Point3D(pointOfInterest.getLon(), pointOfInterest.getLat(), (byte)0));
+
+                
+                ArrayList<Tag> temp = new ArrayList<>();
+                temp.add(new TagNode(point.y(), point.x()));
                 mainView.getDrawingMap().setMarkedTag(temp);
+
+                mainView.getDrawingMap().setPointOfInterest(pointOfInterest);
 
                 mainView.draw();
             }

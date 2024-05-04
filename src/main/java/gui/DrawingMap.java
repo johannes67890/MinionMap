@@ -52,6 +52,7 @@ public class DrawingMap {
     private List<TagNode> nodes;
     private List<TagWay> ways;
     private List<TagRelation> relations;
+    private TagNode pointOfInterestNode = null;
     private Label zoomLabel;
     private ImageView zoomImage;
 
@@ -193,16 +194,22 @@ public class DrawingMap {
  
         drawWays(sortedWaysToDraw);
 
-        if (markedTag == null) return;
-        for (Tag tag : markedTag){
-            drawMarkedTag(tag);
+        if (markedTag != null){
+            for (Tag tag : markedTag){
+                drawMarkedTag(tag);
+            }
         }
-            
+        if (pointOfInterestNode != null){
+            drawMarkedTag(pointOfInterestNode);
+        }
+    }
+
+    public void setPointOfInterest(TagNode node){
+        pointOfInterestNode = node;
     }
 
     public void setMarkedTag(ArrayList<Tag> tag){
         markedTag = tag;
-    
         mainView.draw();
     }
 
@@ -251,7 +258,7 @@ public class DrawingMap {
 
     private void drawPoint(Tag node){
 
-        double radius = 25 * 1/Math.sqrt(transform.determinant());
+        double radius = 10 * 1/Math.sqrt(transform.determinant());
         gc.fillOval(node.getLon() - radius / 2, -(node.getLat()) - radius / 2, radius, radius);
 
     }
