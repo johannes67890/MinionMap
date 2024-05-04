@@ -100,6 +100,15 @@ public class Dijsktra {
         return G;
     }
 
+    /**
+     * This can be enabled on the cost of perfomance, but you get a shorter route. 
+     * It needs to be set before finding route, after creating object.
+     * @param bool
+     */
+    public void setPrecisionMode(boolean bool){
+        takeShortestRoute = bool;
+    }
+
     public static Stack<TagNode> getShortestPathofTags(){
         return shortestPath;
     }
