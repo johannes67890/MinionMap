@@ -6,6 +6,7 @@ import java.util.List;
 import gui.GraphicsHandler.GraphicStyle;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
@@ -38,8 +39,8 @@ public class DrawingMap {
     private MainView mainView;
     public double zoomLevel = 1;
     private int hierarchyLevel = 9;
-    private int zoombarIntervals = 15;
-    private final double zoomLevelMin = 0.0002, zoomLevelMax = 31.8; // These variables changes how much you can zoom in and out. Min is far out and max is closest in
+    private int zoombarIntervals = 14;
+    private final double zoomLevelMin = 0.0007, zoomLevelMax = 31.8; // These variables changes how much you can zoom in and out. Min is far out and max is closest in
     private double zoomScalerToMeter; // This is the world meters of how long the scaler in the bottom right corner is. Divide it with the zoomLevel
     private double[] zoomScales = {32, 16, 8, 4, 2, 1, 0.5, 0.1, 0.05, 0.015, 0.0001}; // 32, 16, 8, 4, 2, 1, 0.5, 0.1, 0.05, 0.015, 0.0001
     public Zoombar zoombar;
@@ -51,6 +52,8 @@ public class DrawingMap {
     private List<TagNode> nodes;
     private List<TagWay> ways;
     private List<TagRelation> relations;
+    private Label zoomLabel;
+    private ImageView zoomImage;
 
     private Color currentColor;
     private Color backGroundColor;
@@ -503,7 +506,8 @@ public class DrawingMap {
             zoomLevel = zoomLevelMin + 1;
         }
 
-        
+        zoombar.setRange(zoomLevel);
+        zoombarUpdater(zoomLabel, zoomImage);
     }
 
     public Affine getTransform(){
@@ -527,10 +531,8 @@ public class DrawingMap {
     }
 
     public void zoombarUpdater(Label label, ImageView imageView) {
-        zoombar.setRange(getZoomLevel());
-        int range = (int) zoombar.getRange();
-        label.setText( String.valueOf(range) + "m");
-        imageView.setFitWidth(metersToPixels(range));
+        label.setText(String.valueOf(zoombar.getRange()) + "m");
+        imageView.setFitWidth(metersToPixels(zoombar.getRange()));
     }
 
     /**
@@ -538,18 +540,28 @@ public class DrawingMap {
      * @return the amount of pixels that corresponds to the amount of meters
      */
 
-     public double metersToPixels(int meters){
-        
+     private double metersToPixels(int meters){
         float[] bounds = getScreenBounds();
-        double widthInMeter = bounds[2] - bounds[0];
+        TagNode left = new TagNode(0, bounds[1]);
+        TagNode right = new TagNode(0, bounds[3]);
+        double widthInMeter =  left.distance(right);
+
         
-        double metersPerPixelRatio = canvas.getWidth() / (widthInMeter/2); //Divided by 2 because the width is from the center of the screen
+        double metersPerPixelRatio = canvas.getWidth() / widthInMeter; //Divided by 2 because the width is from the center of the screen
 
         return metersPerPixelRatio * meters;
     }
     public void append(double dx, double dy) {
         transform.appendTranslation(dx, dy);
         mainView.draw();
+    }
+
+    public void setZoomLabel(Label label){
+        this.zoomLabel = label;
+    }
+
+    public void setZoomImage(ImageView imageView){
+        this.zoomImage = imageView;
     }
 
 }
