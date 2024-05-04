@@ -43,8 +43,6 @@ public class DrawingMap {
     private double[] zoomScales = {32, 16, 8, 4, 2, 1, 0.5, 0.1, 0.05, 0.015, 0.0001}; // 32, 16, 8, 4, 2, 1, 0.5, 0.1, 0.05, 0.015, 0.0001
     public Zoombar zoombar;
     private double screenWidth;
-     //
-
     private Trie trie;
     private Tag markedTag;
     private List<TagNode> nodes;
@@ -228,7 +226,6 @@ public class DrawingMap {
 
         double defaultLineWidth = 1/Math.sqrt(transform.determinant());
         
-
         currentColor = way.getType().getColor();
         int counter = 0;
         xPoints = new double[way.getRefNodes().size()];
@@ -239,23 +236,17 @@ public class DrawingMap {
         double lineWidth = MathUtil.clamp(defaultLineWidth * way.getType().getWidth(), min, max);
         gc.setLineWidth(lineWidth);
 
-        
         gc.beginPath();
         gc.moveTo(way.getRefNodes().getFirst().getLon(), -way.getRefNodes().getFirst().getLat());
         
-        
-
-            for (TagNode n : way.getRefNodes()) {
-                gc.lineTo(n.getLon(), -n.getLat());
-                xPoints[counter] = n.getLon();
-                yPoints[counter] = -n.getLat();
-                counter++;
-                
-                if(n.getNext() == null) break;
-            }
-
-        
-        
+        for (TagNode n : way.getRefNodes()) {
+            gc.lineTo(n.getLon(), -n.getLat());
+            xPoints[counter] = n.getLon();
+            yPoints[counter] = -n.getLat();
+            counter++;
+            
+            if(n.getNext() == null) break;
+        }
         
         //Fills polygons with color
         if (!way.getType().getIsLine()){
@@ -300,7 +291,6 @@ public class DrawingMap {
             } else{
                 gc.setStroke(tagWay.getType().getPolyLineColor()); 
             }
-
             
             gc.beginPath();
             gc.moveTo(tagWay.getRefNodes().getFirst().getLon(), -tagWay.getRefNodes().getFirst().getLat());
@@ -321,7 +311,6 @@ public class DrawingMap {
             
             gc.stroke();    
         }
-
     }
 
     /**
