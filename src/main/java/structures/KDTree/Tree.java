@@ -176,11 +176,11 @@ public class Tree {
      * @return ArrayList of tag-objects in the given bounds
      */
     public static ArrayList<Tag> getTagFromPoint(Tag node){
-        return multiTree.getTagsFromPoint(new Point3D(node.getLon(), node.getLat(), (byte) 0));
+        return multiTree.getTagsFromPoint(new Point3D(node.getLon(), node.getLat(), (byte) 10));
     }
 
     public static ArrayList<Tag> getNearestOfType(Tag tag, List<Type> searchType){
-        return multiTree.nearestTags(new Point3D(tag.getLon(), tag.getLat(), (byte) 0), searchType);
+        return multiTree.nearestTags(new Point3D(tag.getLon(), tag.getLat(), (byte) 10), searchType);
     }
 
     public static boolean isLoaded(){

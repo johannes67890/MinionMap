@@ -466,8 +466,6 @@ public class K3DTree {
                 if (secondChampion.distance2DTo(p) < champion.distance2DTo(p)){
                     champion = secondChampion;
                 }
-            } else{
-                System.out.println("I am");
             }
         }
         
