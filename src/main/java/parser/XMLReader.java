@@ -15,10 +15,11 @@ import parser.chunking.XMLWriter;
 import structures.Trie;
 
 /**
- * Reader for a OSM XML file.
+ * XMLReader for reading the OSM XML file.
  * <p>
- * Uses the {@link XMLStreamReader} to read the file and parse the data into the different classes: {@link TagNode}, {@link TagNode} , {@link TagAddress} and {@link TagWay}.
+ * The XMLReader reads the XML file and parses the data into the different classes: {@link TagBound}, {@link TagNode}, {@link TagAddress} and {@link TagWay}.
  * </p>
+ * 
  */
 public class XMLReader {
     private static TagBound bound;
@@ -127,7 +128,8 @@ public class XMLReader {
      * <p>
      * Uses the {@link XMLStreamReader} to read the file and parse the data into the different classes: {@link TagBound}, {@link TagNode}, {@link TagNode} , {@link TagAddress} and {@link TagWay}.
      * </p>
-     * 
+     * Each element is read and the data is parsed into the diffrent "Tag-builders" and then parsed into the correct class.
+     * @see XMLBuilder
      * @param filepath - The path to the XML file.
      */
     public XMLReader(String filepath) {
@@ -136,16 +138,13 @@ public class XMLReader {
             XMLStreamReader reader = factory.createXMLStreamReader(new FileInputStream(filepath));
             // start timer
             long start = System.currentTimeMillis();
-            while (reader.hasNext()) {
-            
-                
+            while (reader.hasNext()) {                
                 reader.next();
                 switch (reader.getEventType()) {
                     case START_ELEMENT:
                         String element = reader.getLocalName().intern();
                         if(element.equals("bounds")) {
                             bound = MecatorProjection.project(new TagBound(reader));
-                            //new XMLWriter(bound);
                         }else {
                             tempBuilder.parse(element, reader);
                         };
@@ -158,7 +157,6 @@ public class XMLReader {
                                     TagAddress address = new TagAddress(tempBuilder);
                                     addresses.put(tempBuilder.getId(), address);
                                     trie.insert(address);
-                                    XMLWriter.appendToPool(address);
                                 } else {
                                     nodes.put(tempBuilder.getId(), new TagNode(tempBuilder));
                                 }
@@ -168,23 +166,12 @@ public class XMLReader {
                                 TagWay way = new TagWay(tempBuilder);
                         
                                 ways.put(tempBuilder.getId(), way);
-                                for (TagNode node : way.getRefNodes()) {
-                                    XMLWriter.appendToPool(node);   
-                                    if(node.getNext() == null) break;
-                                }
-                                
                                 tempBuilder = new XMLBuilder();
                                 break;
                             case "relation":
                                 TagRelation relation = new TagRelation(tempBuilder);
                                 relations.put(tempBuilder.getId(), relation);
-                                for (TagWay RelationWay : relation.getHandledOuter()) {
-                                    RelationWay.setRelationParent(relation);
-                                    for (TagNode node : RelationWay.getRefNodes()) {
-                                        XMLWriter.appendToPool(node);
-                                        if(node.getNext() == null) break;
-                                    }
-                                }
+                                
                                 tempBuilder = new XMLBuilder();
                                 break;
                             default:
@@ -194,10 +181,9 @@ public class XMLReader {
                     default:
                         break;
                     }
-            }             
-            // nodes = null; // Free up memory
+            }            
+            nodes = null;  
             reader.close();
-            XMLWriter.appendToBinary();
       
             // end timer
             long end = System.currentTimeMillis();
@@ -211,12 +197,9 @@ public class XMLReader {
             e.printStackTrace();
         }
     }
-
     public static void clearTags(){
         nodes = null;
         ways = null;
         relations = null;
     }
-
-
 }

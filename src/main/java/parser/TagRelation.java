@@ -33,9 +33,6 @@ public class TagRelation extends Tag{
         this.type = builder.getType();
         this.relationType = builder.getRelationBuilder().getRelationType();
         this.name = builder.getName();
-        //this.ways = builder.getRelationBuilder().getWays();
-
-
         this.actualOuter = builder.getRelationBuilder().getOuter();
         this.actualInner = builder.getRelationBuilder().getInner();
         this.relations = builder.getRelationBuilder().getRelations();
@@ -76,16 +73,6 @@ public class TagRelation extends Tag{
     public ArrayList<TagWay> getActualOuter(){ return actualOuter ; };
     public ArrayList<TagWay> getHandledOuter(){ return handledOuter; };
 
-    // TODO: Implement this method - all the memebers of the relation is empty?
-    // public ArrayList<TagWay> getMembers(){
-    //     ArrayList<TagWay> members = new ArrayList<>();
-    //     members.addAll(ways);
-    //     members.addAll(actualInner);
-    //     members.addAll(actualOuter);
-    //     members.addAll(handledOuter);
-    //     return members;
-    // }
-
     /**
      * Constructs the outer ways as multiple connected polygons or lines,
      * by assuming that ways with identical start- or endnodes should be merged into one way.
@@ -93,37 +80,20 @@ public class TagRelation extends Tag{
      */
     public void constructOuterWays(){
         TLinkedList<TagNode> tempNodes = new TLinkedList<>();
-        TagNode beginLastTagNode = null;
+
         TagNode beginFirstTagNode = null;
-
         TagNode currentFirstTagNode = null;
-
         TagNode prevLastTagNode = null;
-
-        boolean success = false;
-        short speedLimit = 0;
-        long id = 0;
-
-        int wayCount = 0;
 
 
         for (int j = 0; j < getActualOuter().size() ; j++){
-
             TagWay outer = getActualOuter().get(j);
 
-            speedLimit = outer.getSpeedLimit();
-            success = false;
-            id = outer.getId();
-
             if(outer.loops()){
-                success = true;
-                TagWay newTagWay = new TagWay(this, id, outer.getRefNodes(), speedLimit);
+                TagWay newTagWay = new TagWay(this, outer.getId(), outer.getRefNodes(), outer.getSpeedLimit());
                 handledOuter.add(newTagWay);
             } else{
-
                 currentFirstTagNode = outer.getRefNodes().getFirst();
-
-
                 if (beginFirstTagNode == null){
 
                     if (j < getActualOuter().size() - 1){
@@ -133,14 +103,12 @@ public class TagRelation extends Tag{
                         if ((other.getRefNodes().getFirst().equals(outer.getRefNodes().getLast())) || (other.getRefNodes().getLast().equals(outer.getRefNodes().getLast()))){
                             beginFirstTagNode = outer.getRefNodes().getFirst();
                             currentFirstTagNode = beginFirstTagNode;
-                            beginLastTagNode = outer.getRefNodes().getLast();
                             prevLastTagNode = outer.getRefNodes().getFirst();
                         } 
                         // Starts from the opposite direction
                         else{
                             beginFirstTagNode = outer.getRefNodes().getLast();
                             currentFirstTagNode = beginFirstTagNode;
-                            beginLastTagNode = outer.getRefNodes().getFirst();
                             prevLastTagNode = outer.getRefNodes().getFirst();
                         }
                     }
@@ -150,7 +118,6 @@ public class TagRelation extends Tag{
                     
                 }
                 //Checks whether way should be read in reverse
-
                 if ((prevLastTagNode != null) && prevLastTagNode.equals(currentFirstTagNode)){
                     for (TagNode node : outer.getRefNodes()) {
                         TagNode newNode = new TagNode(node);
@@ -158,9 +125,7 @@ public class TagRelation extends Tag{
                         tempNodes.add(newNode);
                     }
                 } else{
-
                     TLinkedList<TagNode> tempToTempNodes = new TLinkedList<>();
-
                     for (TagNode node : outer.getRefNodes()) {
                         TagNode newNode = new TagNode(node);
                         newNode.clearLinks();
@@ -175,30 +140,15 @@ public class TagRelation extends Tag{
                     }
                 }
 
-                wayCount++;
-
                 prevLastTagNode = tempNodes.get(tempNodes.size() - 1);
                 if (tempNodes.get(tempNodes.size() - 1).equals(beginFirstTagNode)){
-
-                    //System.out.println(beginLastTagNode.getId() + " " + outer.getId());
-
-
-                    TagWay newTagWay = new TagWay(this, id, tempNodes, speedLimit);
+                    TagWay newTagWay = new TagWay(this, id, tempNodes, outer.getSpeedLimit());
                     handledOuter.add(newTagWay);
                     tempNodes = new TLinkedList<>();
                     beginFirstTagNode = null;
-                    beginLastTagNode = null;
-                    success = true;
-                    
-                    wayCount = 0;
                 }
             }
         }
-        /*if (!success){
-            TagWay newTagWay = new TagWay(this, id, tempNodes, speedLimit);
-            handledOuter.add(newTagWay);
-            tempNodes = new ArrayList<>();
-        }*/
     }
 
     public Type getType() {

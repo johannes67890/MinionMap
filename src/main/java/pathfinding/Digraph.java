@@ -1,14 +1,11 @@
 package pathfinding;
 
 import java.util.NoSuchElementException;
-import java.util.Stack;
 import java.util.TreeMap;
 
 import parser.TagNode;
 
 import java.util.ArrayList;
-
-import pathfinding.DirectedEdge;
 
 // Note: This Class is from https://algs4.cs.princeton.edu/44sp/EdgeWeightedGraph.java.html
 
