@@ -58,7 +58,7 @@ public class StartScreenController implements Initializable, ControllerInterface
             if (droppedFile != null){
                 mainView.loadXMLReader(droppedFile.getAbsolutePath());
             }else{
-                mainView.loadXMLReader(FileDistributer.input.getFilePath());
+                mainView.loadXMLReader(FileDistributer.testMap.getFilePath());
             }
             mainView.drawScene(StageSelect.MapView);
         });

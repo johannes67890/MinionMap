@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import javax.xml.stream.XMLStreamReader;
 
 import gnu.trove.list.linked.TLinkedList;
+import util.Type;
 
 enum Relation {
     ID, INNER, OUTER, WAYS, RELATIONS, NODES, TYPE, TYPEVALUE, NAME, RELATIONTYPE
@@ -101,7 +102,7 @@ public class TagRelation extends Tag{
         TagNode prevLastTagNode = null;
 
         boolean success = false;
-        int speedLimit = 0;
+        short speedLimit = 0;
         long id = 0;
 
         int wayCount = 0;

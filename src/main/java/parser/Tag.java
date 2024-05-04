@@ -4,13 +4,14 @@ import java.util.HashMap;
 import java.util.List;
 
 import edu.princeton.cs.algs4.MinPQ;
-import util.MecatorProjection;
+import parser.chunking.XMLWriter.ChunkFiles;
+import util.Type;
+
 import java.util.List;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import parser.XMLWriter.ChunkFiles;;
+import java.io.Serializable;;
 
 /**
  * Abstract class for a tag.
@@ -86,7 +87,13 @@ public abstract class Tag implements Serializable{
             && Float.valueOf(this.getLon()).compareTo(bound.getMinLon()) == 1 && Float.valueOf(this.getLon()).compareTo(bound.getMaxLon()) == -1;
     }
 
-    
+    public  boolean isProjected() {
+        if(this.getLat() > 180 || this.getLat() < -180 || this.getLon() > 180 || this.getLon() < -180){
+            return false;
+        }else {
+            return true;
+        }
+    }
 
     /**
      * Calculate the distance between two tags.
@@ -97,6 +104,11 @@ public abstract class Tag implements Serializable{
      * @return The distance between the two tags.
      */
     public double distance(Tag a){
+        if(this instanceof TagBound || a instanceof TagBound) throw new UnsupportedOperationException("TagBound does not have a distance method.");
+        if(!this.isProjected() || !a.isProjected()){
+            return MecatorProjection.unproject((TagNode) this).distance(MecatorProjection.unproject((TagNode) a));
+        }
+
         double lat1Rad = Math.toRadians(this.getLat());
         double lat2Rad = Math.toRadians(a.getLat());
         double lon1Rad = Math.toRadians(this.getLon());

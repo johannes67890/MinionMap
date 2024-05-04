@@ -6,6 +6,7 @@ import java.util.List;
 import gui.GraphicsHandler.GraphicStyle;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
@@ -15,14 +16,13 @@ import parser.TagBound;
 import parser.TagNode;
 import parser.TagRelation;
 import parser.TagWay;
-import parser.Type;
+import util.Type;
 import parser.XMLReader;
+import structures.MinPQ;
+import structures.Trie;
+import structures.KDTree.Rect3D;
+import structures.KDTree.Tree;
 import util.MathUtil;
-import util.MinPQ;
-import util.Rect3D;
-import util.Tree;
-import util.Trie;
-import util.Zoombar;
 
 
 /**
@@ -39,8 +39,8 @@ public class DrawingMap {
     private MainView mainView;
     public double zoomLevel = 1;
     private int hierarchyLevel = 9;
-    private int zoombarIntervals = 15;
-    private final double zoomLevelMin = 0.0002, zoomLevelMax = 31.8; // These variables changes how much you can zoom in and out. Min is far out and max is closest in
+    private int zoombarIntervals = 14;
+    private final double zoomLevelMin = 0.0007, zoomLevelMax = 31.8; // These variables changes how much you can zoom in and out. Min is far out and max is closest in
     private double zoomScalerToMeter; // This is the world meters of how long the scaler in the bottom right corner is. Divide it with the zoomLevel
     private double[] zoomScales = {32, 16, 8, 4, 2, 1, 0.5, 0.1, 0.05, 0.015, 0.0001}; // 32, 16, 8, 4, 2, 1, 0.5, 0.1, 0.05, 0.015, 0.0001
     public Zoombar zoombar;
@@ -48,10 +48,12 @@ public class DrawingMap {
      //
 
     private Trie trie;
-    private Tag markedTag;
+    private List<Tag> markedTag;
     private List<TagNode> nodes;
     private List<TagWay> ways;
     private List<TagRelation> relations;
+    private Label zoomLabel;
+    private ImageView zoomImage;
 
     private Color currentColor;
     private Color backGroundColor;
@@ -102,9 +104,6 @@ public class DrawingMap {
         zoom(canvas.getWidth() / (maxlon - minlon), 0, 0);
         //pan(0, canvas.getHeight() * 1.20);
         tempBounds = getScreenBounds();
-        //pan(0, screenBounds[3] - screenBounds[1]);
-        DrawMap(canvas);
-        
     }
 
     public Trie getTrie(){
@@ -183,8 +182,6 @@ public class DrawingMap {
         waysToDrawWithType = new ArrayList<>();
         waysToDrawWithoutType = new ArrayList<>();
 
-        long time = System.currentTimeMillis();
-
         handleWays(ways);
         handleRelations();
 
@@ -196,20 +193,23 @@ public class DrawingMap {
  
         drawWays(sortedWaysToDraw);
 
-        //drawInnerWays();
-
-        
-        if (markedTag != null){
-
-            drawMarkedTag(markedTag);
+        if (markedTag == null) return;
+        for (Tag tag : markedTag){
+            drawMarkedTag(tag);
         }
+            
     }
 
-    public void setMarkedTag(Tag tag){
-
+    public void setMarkedTag(ArrayList<Tag> tag){
         markedTag = tag;
+    
+        mainView.draw();
     }
 
+    /**
+     * Draws a specified tag with a different color to mark it on the map
+     * @param tag the tag to be marked
+     */
     private void drawMarkedTag(Tag tag){
         gc.setFill(Color.PINK.interpolate(Color.RED, 0.5));
         gc.setStroke(Color.RED);
@@ -269,49 +269,46 @@ public class DrawingMap {
     }
     
     private void drawWay(TagWay way, boolean starting){
-
         double[] xPoints;
         double[] yPoints;
 
         double defaultLineWidth = 1/Math.sqrt(transform.determinant());
-        
+        currentColor = way.getType().getColor();
+        int counter = 0;
+        xPoints = new double[way.getRefNodes().size()];
+        yPoints = new double[way.getRefNodes().size()];
 
-            currentColor = way.getType().getColor();
-            int counter = 0;
-            xPoints = new double[way.getRefNodes().size()];
-            yPoints = new double[way.getRefNodes().size()];
+        double min = way.getType().getMinWidth();
+        double max = way.getType().getMaxWidth();
+        double lineWidth = MathUtil.clamp(defaultLineWidth * way.getType().getWidth(), min, max);
+        gc.setLineWidth(lineWidth);
 
-            double min = way.getType().getMinWidth();
-            double max = way.getType().getMaxWidth();
-            double lineWidth = MathUtil.clamp(defaultLineWidth * way.getType().getWidth(), min, max);
-            gc.setLineWidth(lineWidth);
-
-            
-            gc.beginPath();
-            gc.moveTo(way.getRefNodes().getFirst().getLon(), -way.getRefNodes().getFirst().getLat());
-            
-            
-
-                for (TagNode n : way.getRefNodes()) {
-                    gc.lineTo(n.getLon(), -n.getLat());
-                    xPoints[counter] = n.getLon();
-                    yPoints[counter] = -n.getLat();
-                    counter++;
-                    
-                    if(n.getNext() == null) break;
-                }
-
-            
-            
-            
-            //Fills polygons with color
-            if (!way.getType().getIsLine()){
-                gc.setFill(currentColor);
-                gc.fillPolygon(xPoints, yPoints, counter);
-            }
-            
-            gc.stroke();    
+        if (way.getType() != null){
+            gc.setStroke(way.getType().getColor());
         }
+
+        gc.beginPath();
+        gc.moveTo(way.getRefNodes().getFirst().getLon(), -way.getRefNodes().getFirst().getLat());
+
+            for (TagNode n : way.getRefNodes()) {
+                gc.lineTo(n.getLon(), -n.getLat());
+                xPoints[counter] = n.getLon();
+                yPoints[counter] = -n.getLat();
+                counter++;
+                
+                if(n.getNext() == null) break;
+            }
+
+        //Fills polygons with color
+        if (!way.getType().getIsLine()){
+            gc.setFill(currentColor);
+            gc.fillPolygon(xPoints, yPoints, counter);
+        }
+        
+        gc.stroke();    
+    }
+
+    
 
     /**
      * 
@@ -377,12 +374,11 @@ public class DrawingMap {
             
             gc.stroke();    
         }
-
     }
 
     /**
      * 
-     * Handles ways by checking if their connected to a type.
+     * Handles ways by checking if they are connected to a type.
      * If they are not connected, ways will be put into a list of ways without type.
      * 
      */
@@ -433,11 +429,15 @@ public class DrawingMap {
      * Calculates the coordinates the screen sees and returns a array of coordinates.
      * A bit weird. If you draw with this calculation it draws perfect, but if you need the nodes within the screen the Y value needs to be negated
      * This method is primarily made for the KdTree
+     * <p>
      * Index 0: X - Minimum
+     * <p>
      * Index 1: Y - Minimum
+     * <p>
      * Index 2: X - Maximum
+     * <p>
      * Index 3: Y - Maximum
-     * @return It returns the coordinates of the screen to map coordinates in an array (double[])
+     * @return It returns the coordinates of the screen to map coordinates in an array (float[])
      */
     public float[] getScreenBounds(){
         
@@ -452,6 +452,13 @@ public class DrawingMap {
         return bounds;
     }
 
+    /**
+     * Like the getScreenBounds() method, but returns a bigger area so
+     * the screen can be panned without the map disappearing
+     * @param multiplier - The multiplier of the screen bounds
+     * @return It returns the coordinates of the screen to map coordinates in an array (float[])
+     * @see getScreenBounds()
+     */
     public float[] getScreenBoundsBigger(double multiplier){
         float[] bounds = getScreenBounds();
         double width = bounds[2] - bounds[0];
@@ -499,7 +506,8 @@ public class DrawingMap {
             zoomLevel = zoomLevelMin + 1;
         }
 
-        
+        zoombar.setRange(zoomLevel);
+        zoombarUpdater(zoomLabel, zoomImage);
     }
 
     public Affine getTransform(){
@@ -518,16 +526,13 @@ public class DrawingMap {
      * @param dy - Distance to pan on the y-axis
      */
     public void pan(double dx, double dy) {
-
         transform.prependTranslation(dx, dy);
         mainView.draw();
     }
 
     public void zoombarUpdater(Label label, ImageView imageView) {
-        zoombar.setRange(getZoomLevel());
-        int range = (int) zoombar.getRange();
-        label.setText( String.valueOf(range) + "m");
-        imageView.setFitWidth(metersToPixels(range));
+        label.setText(String.valueOf(zoombar.getRange()) + "m");
+        imageView.setFitWidth(metersToPixels(zoombar.getRange()));
     }
 
     /**
@@ -535,18 +540,28 @@ public class DrawingMap {
      * @return the amount of pixels that corresponds to the amount of meters
      */
 
-     public double metersToPixels(int meters){
-        
+     private double metersToPixels(int meters){
         float[] bounds = getScreenBounds();
-        double widthInMeter = bounds[2] - bounds[0];
+        TagNode left = new TagNode(0, bounds[1]);
+        TagNode right = new TagNode(0, bounds[3]);
+        double widthInMeter =  left.distance(right);
+
         
-        double metersPerPixelRatio = canvas.getWidth() / (widthInMeter/2); //Divided by 2 because the width is from the center of the screen
+        double metersPerPixelRatio = canvas.getWidth() / widthInMeter; //Divided by 2 because the width is from the center of the screen
 
         return metersPerPixelRatio * meters;
     }
     public void append(double dx, double dy) {
         transform.appendTranslation(dx, dy);
         mainView.draw();
+    }
+
+    public void setZoomLabel(Label label){
+        this.zoomLabel = label;
+    }
+
+    public void setZoomImage(ImageView imageView){
+        this.zoomImage = imageView;
     }
 
 }

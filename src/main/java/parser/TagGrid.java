@@ -1,6 +1,8 @@
 package parser;
 import java.util.HashMap;
 
+import util.Type;
+
 
 /**
  * Class for storing a {@link HashMap} of a single node in a grid.

@@ -19,6 +19,9 @@ javafx {
 
 test {
     useJUnitPlatform()
+    minHeapSize = "128m" // initial heap size
+    maxHeapSize = "1024m" // maximum heap size
+    jvmArgs '-XX:MaxMetaspaceSize=256m' // mem argument for the test JVM
 }
 
 dependencies {

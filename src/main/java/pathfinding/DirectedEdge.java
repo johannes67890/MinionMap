@@ -37,7 +37,8 @@ import parser.TagNode;
         if (v.equals(w)) throw new IllegalArgumentException("Edges cannot be self loops");
         this.v = v;
         this.w = w;
-        this.weight = v.distance(w)/ speed;
+        //this.weight = v.distance(w)/ speed;
+        this.weight = speed;
     }
 
     /**

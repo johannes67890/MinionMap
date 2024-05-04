@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+
 import gui.GraphicsHandler.GraphicStyle;
 import gui.MainView.StageSelect;
 import javafx.application.Platform;
@@ -18,6 +19,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.control.skin.ComboBoxListViewSkin;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -31,8 +33,9 @@ import parser.Tag;
 import parser.TagAddress;
 import parser.TagNode;
 import parser.TagWay;
-import util.Point3D;
-import util.Tree;
+import structures.KDTree.Point3D;
+import structures.KDTree.Tree;
+import util.TransportType;
 import util.AddressComparator;
 
 public class Controller implements Initializable, ControllerInterface{
@@ -41,10 +44,7 @@ public class Controller implements Initializable, ControllerInterface{
     ObservableList<String> style = FXCollections.observableArrayList(
         "default", "dark", "gray scale");
 
-    @FXML private Button menuButton1;
-    @FXML private Button menuButton2;
-    @FXML private Button menuButton3;
-    @FXML private Button layerButton;
+    @FXML private ToggleButton menuButton1;
     @FXML private Button searchButton;
     @FXML private Button pointButton;
     @FXML private Button routeButton;
@@ -78,25 +78,16 @@ public class Controller implements Initializable, ControllerInterface{
     private boolean pointofInterestState = false;
     private boolean isMenuOpen = false;
     private static MainView mainView;
-    private String selectedItem;
-    private String selectedEndItem;
     private ObservableList<String> searchList = FXCollections.observableArrayList();
 
     private List<TagAddress> addresses = new ArrayList<>();
 
     private TagAddress startAddress = null;
     private TagAddress endAddress = null;
+    private Search s;
+    private boolean hasSearchedForPath = false;
 
-    enum RouteType {
-        WALKING,
-        CYCLING,
-        DRIVING
-    }
-
-    RouteType routeType = RouteType.DRIVING;
-
-
-    Search s = new Search();
+    TransportType routeType = TransportType.CAR;
 
     double lastX;
     double lastY;
@@ -113,15 +104,19 @@ public class Controller implements Initializable, ControllerInterface{
         mainBorderPane.setCenter(p);
         mainView.setCanvas(c);
         mainView.loadDrawingMap();
+
         c.widthProperty().bind(p.widthProperty());
         c.heightProperty().bind(p.heightProperty());
-
+        s = new Search(mw);
         System.out.println("DRAWING MAP");
-
+        mainView.getDrawingMap().setZoomImage(zoomLevelImage);
+        mainView.getDrawingMap().setZoomLabel(zoomLevelText);
         panZoomInitialize();
     }
 
     private void panZoomInitialize(){ 
+
+        
         mainView.canvas.setOnMousePressed(e -> {
             lastX = e.getX();
             lastY = e.getY();
@@ -145,8 +140,10 @@ public class Controller implements Initializable, ControllerInterface{
                 Point2D clickedPoint = mainView.getDrawingMap().getTransform().transform(currentX, currentY);
 
                 TagNode pointofInterest = new TagNode((float) y, (float) x);
+                ArrayList<Tag> temp = new ArrayList<>();
+                temp.add(pointofInterest);
 
-                mainView.getDrawingMap().setMarkedTag(pointofInterest);
+                mainView.getDrawingMap().setMarkedTag(temp);
 
                 mainView.draw();
             }
@@ -162,7 +159,6 @@ public class Controller implements Initializable, ControllerInterface{
             
             mainView.getDrawingMap().zoom(Math.pow(zoomMultiplier,event.getDeltaY()), event.getX(), event.getY());
 
-            mainView.getDrawingMap().zoombarUpdater(zoomLevelText, zoomLevelImage);
         });
 
         mainView.canvas.setOnMouseDragged(e -> {
@@ -182,46 +178,33 @@ public class Controller implements Initializable, ControllerInterface{
 
     @Override
     public void initialize(URL location, ResourceBundle resources) { // This runs when the fxml is loaded and the canvas is injected (before stage is shown)
-
-
         setEnableDestinationComboBox(false);
         ComboBoxListViewSkin<String> comboBoxListViewSkinStart = new ComboBoxListViewSkin<String>(searchBarStart);
         ComboBoxListViewSkin<String> comboBoxListViewSkinDestination = new ComboBoxListViewSkin<>(searchBarDestination);
 
-
         mainMenuVBox.setVisible(false);
         leftBurgerMenu.setVisible(false);
-        graphicVBox.setVisible(false);
         routeTypeMenu.setVisible(false);
 
         styleChoiceBox.setItems(style);
         styleChoiceBox.setValue("default");
 
         styleChoiceBox.setOnAction((ActionEvent e) -> {
-            
             switch(styleChoiceBox.getValue()){
-                case "default" : {
-
+                case "default": {
                     GraphicsHandler.setGraphicsStyle(GraphicStyle.DEFAULT);
-                    mainView.draw();
-
                     break;
                 }
-                case "dark" : {
-                    System.out.println("DARKMODE");
+                case "dark": {
                     GraphicsHandler.setGraphicsStyle(GraphicStyle.DARKMODE);
-                    mainView.draw();
-
                     break;
-
                 }
-                case "gray scale" : {
-                    System.out.println("GRAY SCALE");
+                case "gray scale": {
                     GraphicsHandler.setGraphicsStyle(GraphicStyle.GRAYSCALE);
-                    mainView.draw();
                     break;
                 }
             }
+            mainView.draw();
         });
 
         mainMenuButton.setOnAction((ActionEvent e) -> {
@@ -229,35 +212,24 @@ public class Controller implements Initializable, ControllerInterface{
         });
 
         menuButton1.setOnAction((ActionEvent e) -> {
+            menuButton1.setSelected(!isMenuOpen);
+            if(isMenuOpen){
+                menuButton1.getStyleClass().add("button-selected");
+            }else{
+                menuButton1.getStyleClass().remove("button-selected");
+            }
             leftBurgerMenu.setVisible(!isMenuOpen);
             mainMenuVBox.setVisible(!isMenuOpen);
+            // graphicVBox.setVisible(!isMenuOpen);
+            styleChoiceBox.setVisible(!isMenuOpen);
             isMenuOpen = !isMenuOpen;
         });
-
 
         routeButton.setOnAction((ActionEvent e) -> {
-            
             setEnableDestinationComboBox(!searchBarDestination.isVisible());
-            routeTypeMenu.setVisible(!routeTypeMenu.isVisible());
-
-            
+            routeTypeMenu.setVisible(!routeTypeMenu.isVisible());            
         });
 
-        menuButton2.setOnAction((ActionEvent e) -> {
-            leftBurgerMenu.setVisible(!isMenuOpen);
-            mainMenuVBox.setVisible(!isMenuOpen);
-            isMenuOpen = !isMenuOpen;
-        });
-        menuButton3.setOnAction((ActionEvent e) -> {
-            leftBurgerMenu.setVisible(!isMenuOpen);
-            graphicVBox.setVisible(!isMenuOpen);
-            isMenuOpen = !isMenuOpen;
-        });
-        layerButton.setOnAction((ActionEvent e) -> {
-            graphicVBox.setVisible(true);
-            mainMenuVBox.setVisible(false);
-
-        });
         pointButton.setOnAction((ActionEvent e) ->{
             pointofInterestState = !pointofInterestState;
 
@@ -267,7 +239,6 @@ public class Controller implements Initializable, ControllerInterface{
 
             Image imagePassive = new Image(filePassive.toURI().toString());
             Image imageActive = new Image(fileActive.toURI().toString());
-            //Image otherImage = new Image(getClass().getResourceAsStream(selectedEndItem));
             if (pointofInterestState){
                 pointImage.setImage(imageActive);
             } else{
@@ -276,15 +247,15 @@ public class Controller implements Initializable, ControllerInterface{
         });
 
         walkButton.setOnAction((ActionEvent e) -> {
-            routeType = RouteType.WALKING;
+            routeType = TransportType.FOOT;
         });
 
         bicycleButton.setOnAction((ActionEvent e) ->{
-            routeType = RouteType.CYCLING;
+            routeType = TransportType.BIKE;
         });
 
         carButton.setOnAction((ActionEvent e) ->{
-            routeType = RouteType.DRIVING;
+            routeType = TransportType.CAR;
         });
 
 
@@ -317,7 +288,10 @@ public class Controller implements Initializable, ControllerInterface{
             if (endAddress == null){
                 showAddress(startAddress);
             }else{
-                s.pathfindBetweenTagAddresses(startAddress, endAddress);
+                if (!hasSearchedForPath){
+                    hasSearchedForPath = true;
+                    s.pathfindBetweenTagAddresses(startAddress, endAddress, routeType);
+                }
             }
 
         });
@@ -331,21 +305,31 @@ public class Controller implements Initializable, ControllerInterface{
             if (startAddress == null){
                 showAddress(endAddress);
             }else{
-                s.pathfindBetweenTagAddresses(startAddress, endAddress);
+                if (!hasSearchedForPath){
+                    hasSearchedForPath = true;
+                    s.pathfindBetweenTagAddresses(startAddress, endAddress, routeType);
+                }
             }
 
         });
 
-        
+        //Update the suggestions in the combobox when the text changes
         searchBarStart.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
             showSuggestions(searchBarStart, oldValue, newValue);            
         });
 
+        //Update the suggestions in the combobox when the text changes
         searchBarDestination.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
             showSuggestions(searchBarDestination, oldValue, newValue);
         });
     }
 
+    /**
+     * Shows suggestions in the combobox
+     * @param searchBar The combobox to show suggestions in
+     * @param oldValue The old value of the combobox
+     * @param newValue The new value of the combobox
+     */
     private void showSuggestions(ComboBox<String> searchBar, String oldValue, String newValue){
         if (searchBar.isFocused()){
             search(newValue, searchBar);
@@ -357,6 +341,10 @@ public class Controller implements Initializable, ControllerInterface{
         }
     }
 
+    /**
+     * Sets the visibility of the destination combobox
+     * @param isEnabled If the combobox should be enabled
+     */
     private void setEnableDestinationComboBox(boolean isEnabled){
         if (isEnabled){
             searchBarDestination.setMaxWidth(1000000);
@@ -366,6 +354,11 @@ public class Controller implements Initializable, ControllerInterface{
         searchBarDestination.setVisible(isEnabled);
     }
 
+    /**
+     * Returns the TagAddress object from the combobox
+     * @param searchBar The combobox to get the address from
+     * @return The TagAddress object from the combobox
+     */
     private TagAddress comboBoxAddress(ComboBox<String> searchBar){
         String string = searchBar.getEditor().textProperty().getValue();
 
@@ -380,15 +373,25 @@ public class Controller implements Initializable, ControllerInterface{
             return null;
     }
 
+    /**
+     * Searches for addresses in the combobox
+     * @param address The address to search for
+     * @param searchBar The combobox to search in
+     */
     private void search(String address, ComboBox<String> searchBar) {
-    if (!address.isEmpty() && address.charAt(address.length() - 1) != ' ') {
+        
+        if (startAddress != null && searchBar.getEditor().textProperty().getValue().equals(startAddress.toString())) return;
+        if (endAddress != null && searchBar.getEditor().textProperty().getValue().equals(endAddress.toString())) return;
+        if (!address.isEmpty() && address.charAt(address.length() - 1) != ' ') {
             ArrayList<TagAddress> tagAddresses = s.getSuggestions(address);
+            //sorts the addresses before they are put into the combobox
             tagAddresses.sort(new AddressComparator());
             if (searchBar.equals(searchBarStart) && startAddress != null){
                 startAddress = null;
             }else if (searchBar.equals(searchBarDestination) && endAddress != null){
-                startAddress = null;
+                endAddress = null;
             }
+            hasSearchedForPath = false;
             // Update UI on JavaFX Application Thread
             Platform.runLater(() -> {
                 synchronized (searchList) {
@@ -410,6 +413,10 @@ public class Controller implements Initializable, ControllerInterface{
         }
     }
 
+    /**
+     * Shows the address on the map
+     * @param tagAddress The address to show
+     */
     private void showAddress(TagAddress tagAddress){
         DrawingMap drawingMap = mainView.getDrawingMap();
 
@@ -432,19 +439,15 @@ public class Controller implements Initializable, ControllerInterface{
         Tag tagToDraw = null;
         for (Tag tag : nearestTag){
 
-            if (tag instanceof TagWay && ((TagWay)tag).getType() != null && ((TagWay)tag).getType().equals(parser.Type.BUILDING)){
+            if (tag instanceof TagWay && ((TagWay)tag).getType() != null && ((TagWay)tag).getType().equals(util.Type.BUILDING)){
                 tagToDraw = tag;
                 break;
             }
         }
 
-        if(tagToDraw != null){
-            //drawingMap.setMarkedTag(tagToDraw);
-        } else{
-            //drawingMap.setMarkedTag(tagAddress);
-        }
-
-        drawingMap.setMarkedTag(tagAddress);
+        ArrayList<Tag> temp = new ArrayList<>();
+        temp.add(tagAddress);
+        drawingMap.setMarkedTag(temp);
 
         mainView.getDrawingMap().pan(-deltaX, deltaY);
 

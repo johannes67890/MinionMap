@@ -7,15 +7,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import parser.XMLReader;
+import structures.ZipHandler;
 import util.FileDistributer;
-import util.ZipHandler;
 public class MainView {
 
     enum StageSelect {
@@ -60,7 +59,7 @@ public class MainView {
         try{
             if (selectedStage == StageSelect.MainMenu){
                 loader = new FXMLLoader(new URL("file:" + FileDistributer.start_screen.getFilePath()));
-                root = loader.load();
+                root =loader.load();
             }else { // else its mapView
                 loader = new FXMLLoader(new URL("file:" + FileDistributer.main.getFilePath()));
                 root = loader.load();
@@ -69,6 +68,7 @@ public class MainView {
             ControllerInterface controller = (ControllerInterface) loader.getController();
             controller.start(this); // To initialize the controller with a reference to this object
             Scene scene = new Scene(root);
+            scene.getStylesheets().add(getClass().getResource("/view/style.css").toExternalForm());
             stage.setScene(scene);
             stage.show();
         }catch (Exception e){
