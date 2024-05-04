@@ -1,10 +1,16 @@
 package parser;
 
 import java.util.HashMap;
+import java.util.List;
 
-enum Node {
-    ID, LAT, LON;
-}
+import edu.princeton.cs.algs4.MinPQ;
+import util.MecatorProjection;
+import java.util.List;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import parser.XMLWriter.ChunkFiles;;
 
 /**
  * Abstract class for a tag.
@@ -34,7 +40,9 @@ enum Node {
  * **Note** that not all tags, like {@link TagRelation} and {@link TagWay} uses {@link #getLat()} and {@link #getLon()} methods.
  * </p>
  */
-public abstract class Tag<E extends Enum<E>> extends HashMap<E, Object> {
+public abstract class Tag implements Serializable{ 
+    public Tag() {}
+
     /**
      * Get the id of the tag.
      * @return The id of the tag.
@@ -45,34 +53,59 @@ public abstract class Tag<E extends Enum<E>> extends HashMap<E, Object> {
      * @throws UnsupportedOperationException if the tag does not have a latitude value.
      * @return The latitude of the tag.
      */
-    public abstract double getLat();
+    public abstract float getLat();
     /**
      * Get the longitude of the tag.
      * @throws UnsupportedOperationException if the tag does not have a longitude value.
      * @return The longitude of the tag.
      */
-    public abstract double getLon();
-    
-    public Tag() {}
+    public abstract float getLon();
 
-    public Tag(HashMap<E, Object> map) {
-        super(map);
+    public abstract Type getType();
+
+    /**
+     * Get the {@link TagBound} from the chunk, that the tag is in.
+     * @return
+     */
+    public TagBound getBoundFromChunk(){
+        return ChunkFiles.getBoundFromTag(this);
     }
 
 
-    public boolean isEmpty() {
-        return this.size() == 0;
-    }
 
     /**
      * Check if a tag is within a specified {@link TagBound}.
-     * @param node - The tag to check.
+     * <p>
+     * if the tag is a {@link TagWay} or {@link TagRelation} it will check if any of the nodes or members are within the {@link TagBound}. If yes return true.
+     * </p>
      * @param bound - The {@link TagBound} to check if the tag is within.
      * @return True if the tag is within the {@link TagBound}, false otherwise.
      */
-    public boolean isInBounds(TagBound bound) {
-        return Double.valueOf(this.getLat()).compareTo(bound.getMinLat()) == 1 && Double.valueOf(this.getLat()).compareTo(bound.getMaxLat()) == -1
-            && Double.valueOf(this.getLon()).compareTo(bound.getMinLon()) == 1 && Double.valueOf(this.getLon()).compareTo(bound.getMaxLon()) == -1;
+    public boolean isInBounds(TagBound bound) { 
+        return Float.valueOf(this.getLat()).compareTo(bound.getMinLat()) == 1 && Float.valueOf(this.getLat()).compareTo(bound.getMaxLat()) == -1
+            && Float.valueOf(this.getLon()).compareTo(bound.getMinLon()) == 1 && Float.valueOf(this.getLon()).compareTo(bound.getMaxLon()) == -1;
     }
 
+    
+
+    /**
+     * Calculate the distance between two tags.
+     * <p>
+     * The distance is calculated using the Haversine formula.
+     * </p>
+     * @param a - The tag to calculate the distance to.
+     * @return The distance between the two tags.
+     */
+    public double distance(Tag a){
+        double lat1Rad = Math.toRadians(this.getLat());
+        double lat2Rad = Math.toRadians(a.getLat());
+        double lon1Rad = Math.toRadians(this.getLon());
+        double lon2Rad = Math.toRadians(a.getLon());
+
+        double x = (lon2Rad - lon1Rad) * Math.cos((lat1Rad + lat2Rad) / 2);
+        double y = (lat2Rad - lat1Rad);
+        double distance = Math.sqrt(x * x + y * y) * MecatorProjection.getEarthRadius();
+
+        return distance;
+    }
 }

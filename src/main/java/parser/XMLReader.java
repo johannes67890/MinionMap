@@ -3,12 +3,16 @@ package parser;
 import static javax.xml.stream.XMLStreamConstants.*;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.HashMap;
+
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import java.io.FileNotFoundException;
+import gnu.trove.map.hash.TLongObjectHashMap;
+import util.MecatorProjection;
+import util.Trie;
 
 /**
  * Reader for a OSM XML file.
@@ -18,10 +22,11 @@ import java.io.FileNotFoundException;
  */
 public class XMLReader {
     private static TagBound bound;
-    private static HashMap<Long, TagNode> nodes = new HashMap<Long, TagNode>();
-    private static HashMap<Long, TagAddress> addresses = new HashMap<Long, TagAddress>();
-    private static HashMap<Long, TagRelation> relations = new HashMap<Long, TagRelation>();
-    private static HashMap<Long, TagWay> ways = new HashMap<Long, TagWay>();
+    private static TLongObjectHashMap<TagNode> nodes = new TLongObjectHashMap<TagNode>();
+    private static TLongObjectHashMap<TagAddress> addresses = new TLongObjectHashMap<TagAddress>();
+    private static TLongObjectHashMap<TagRelation> relations = new TLongObjectHashMap<TagRelation>();
+    private static TLongObjectHashMap<TagWay> ways = new TLongObjectHashMap<TagWay>();
+    private static Trie trie = new Trie();
 
     /**
      * Get the {@link TagBound} of the XML file.
@@ -83,7 +88,7 @@ public class XMLReader {
      * Get all the {@link TagNode}s in the XML file.
      * @return A {@link HashMap} of the as {@link Node#ID} to all the {@link TagNode}s in the XML file.
      */
-    public static HashMap<Long, TagNode> getNodes(){
+    public static TLongObjectHashMap<TagNode> getNodes(){
         return nodes;
     }
 
@@ -91,7 +96,7 @@ public class XMLReader {
      * Get all the {@link TagAddress}' in the XML file.
      * @return A {@link HashMap} of the keys as {@link Address#ID} to all the {@link TagAddress}s in the XML file.
      */
-    public static HashMap<Long, TagAddress> getAddresses(){
+    public static TLongObjectHashMap<TagAddress> getAddresses(){
         return addresses;
     }
 
@@ -99,7 +104,7 @@ public class XMLReader {
      * Get all the {@link TagRelation}s in the XML file.
      * @return A {@link HashMap} of the keys as {@link Relation#ID} to all the {@link TagRelation}s in the XML file.
      */
-    public static HashMap<Long, TagRelation> getRelations(){
+    public static TLongObjectHashMap<TagRelation> getRelations(){
         return relations;
     }
 
@@ -107,8 +112,12 @@ public class XMLReader {
      * Get all the {@link TagWay}s in the XML file.
      * @return A {@link HashMap} of the keys as {@link Way#ID} to all the {@link TagWay}s in the XML file.
      */
-    public static HashMap<Long, TagWay> getWays(){
+    public static TLongObjectHashMap<TagWay> getWays(){
         return ways;
+    }
+
+    public static Trie getTrie(){
+        return trie;
     }
 
     private XMLBuilder tempBuilder = new XMLBuilder();
@@ -125,46 +134,68 @@ public class XMLReader {
         try {
             XMLInputFactory factory = XMLInputFactory.newInstance();
             XMLStreamReader reader = factory.createXMLStreamReader(new FileInputStream(filepath));
-            
+            // start timer
+            long start = System.currentTimeMillis();
             while (reader.hasNext()) {
+            
+                
                 reader.next();
                 switch (reader.getEventType()) {
                     case START_ELEMENT:
                         String element = reader.getLocalName().intern();
                         if(element.equals("bounds")) {
-                            bound = new TagBound(reader);
+                            bound = MecatorProjection.project(new TagBound(reader));
+                            // new XMLWriter(bound);
                         }else {
                             tempBuilder.parse(element, reader);
                         };
-                       
                         break;
                     case END_ELEMENT:
                         element = reader.getLocalName().intern();
                         switch (element) {
                             case "node":
                                 if(!tempBuilder.getAddressBuilder().isEmpty()){
-                                    addresses.put(tempBuilder.getId(), new TagAddress(tempBuilder));
+                                    TagAddress address = new TagAddress(tempBuilder);
+                                    //TODO insert into trie instead of hashmap when it actually works
+                                    addresses.put(tempBuilder.getId(), address);
+                                    trie.insert(address);
+                                    XMLWriter.appendToPool(address);
                                 } else {
                                     nodes.put(tempBuilder.getId(), new TagNode(tempBuilder));
                                 }
                                 tempBuilder = new XMLBuilder(); // Reset the builder
                                 break;
                             case "way":
-                                ways.put(tempBuilder.getId(), new TagWay(tempBuilder));
+                                TagWay way = new TagWay(tempBuilder);
+                        
+                                ways.put(tempBuilder.getId(), way);
+                                for (TagNode node : way.getRefNodes()) {
+                                    if(node.getNext() == null) break;
+                                    XMLWriter.appendToPool(node);   
+                                }
+                                
                                 tempBuilder = new XMLBuilder();
+                                break;
                             case "relation":
+                                XMLWriter.appendToPool(new TagRelation(tempBuilder));
                                 relations.put(tempBuilder.getId(), new TagRelation(tempBuilder));
                                 tempBuilder = new XMLBuilder();
                                 break;
                             default:
                                 break;
                         }
-                        break;
+                        break; 
                     default:
                         break;
                     }
-            }
+            }             
+            // nodes = null; // Free up memory
             reader.close();
+            XMLWriter.appendToBinary();
+      
+            // end timer
+            long end = System.currentTimeMillis();
+            System.out.println("Time total: " + (end - start) + "ms");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (XMLStreamException e) {
@@ -174,4 +205,12 @@ public class XMLReader {
             e.printStackTrace();
         }
     }
+
+    public static void clearTags(){
+        nodes = null;
+        ways = null;
+        relations = null;
+    }
+
+
 }

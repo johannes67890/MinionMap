@@ -40,5 +40,4 @@ public class zipHandlerTest {
         assertFalse(zipHandler.getDestDir().isEmpty());
     }
 
-    
 }

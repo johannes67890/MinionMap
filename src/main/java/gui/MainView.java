@@ -16,7 +16,6 @@ import javafx.stage.Stage;
 import parser.XMLReader;
 import util.FileDistributer;
 import util.ZipHandler;
-
 public class MainView {
 
     enum StageSelect {
@@ -78,6 +77,7 @@ public class MainView {
         }
 
         if (selectedStage == StageSelect.MapView){
+            System.out.println("INITIALZING");
             drawView.initialize(canvas);
         }
     }
@@ -88,15 +88,14 @@ public class MainView {
 
     public void loadDrawingMap(){
         drawView = new DrawingMap(this, xmlReader);
-        System.out.println(drawView);
     }
 
     public void draw(){
+
         gc = canvas.getGraphicsContext2D();
         gc.setFill(Color.RED);
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        //zoomLevelText.setText("" + Math.round(drawView.getZoomLevelMeters()) + "m");;
-        drawView.DrawMap(gc, canvas);
+        drawView.DrawMap(canvas);
         
     }
 
@@ -132,16 +131,4 @@ public class MainView {
         return drawView;
     }
 
-    // A function for searching for an address. Called when the search button is pressed 
-    // or when the enter key is pressed in the search bar.
-    // The function makes a new AddressSearchPage object which takes the addresses from the XMLReader
-    // and then uses the searchForAdress method to search for the address
-    // See AddressSearchPage for more information
-
-    public void search(TextField searchBar){
-        // TODO: Unfinished
-        //Search search = new Search(XMLReader.getAddresses());
-        String text = searchBar.getText();
-        //search.searchForAdress(text);
-    }
 }

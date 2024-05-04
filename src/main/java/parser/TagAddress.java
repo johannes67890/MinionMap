@@ -15,59 +15,89 @@ enum Address{
  * {@link Address#ID}, {@link Address#LAT}, {@link Address#LON}, {@link Address#STREET}, {@link Address#HOUSENUMBER}, {@link Address#POSTCODE}, {@link Address#MUNICIPALITY}
  * </p>
 */
-public class TagAddress extends Tag<Address> {
-    
+public class TagAddress extends Tag  implements Comparable{
+    long id;
+    float lat;
+    float lon;
+    String street;
+    String house;
+    String postCode;
+    String municipality;
+    String city;
+    String country;
+
     TagAddress(XMLBuilder builder){
-        super(new HashMap<Address, Object>(){
-            {
-                put(Address.ID, builder.getId().toString());
-                put(Address.LAT, Double.toString(builder.getLat()));
-                put(Address.LON, Double.toString(builder.getLon()));
-                put(Address.STREET, builder.getAddressBuilder().street);
-                put(Address.HOUSENUMBER, builder.getAddressBuilder().house);
-                put(Address.POSTCODE, builder.getAddressBuilder().postcode);
-                put(Address.MUNICIPALITY, builder.getAddressBuilder().municipality);
-                put(Address.CITY, builder.getAddressBuilder().city);
-                put(Address.COUNTRY, builder.getAddressBuilder().country);
-            }
-        });
+        id = builder.getId();
+        lat = builder.getLat();
+        lon = builder.getLon();
+        street = builder.getAddressBuilder().street;
+        house = builder.getAddressBuilder().house;
+        postCode = builder.getAddressBuilder().postcode;
+        municipality =  builder.getAddressBuilder().municipality;
+        city = builder.getAddressBuilder().city;
+        country = builder.getAddressBuilder().country;
+    }
+
+    public TagAddress (long id, float lat, float lon, String street, String house, String postCode, String municipality, String city, String country){
+        this.id = id;
+        this.lat = lat;
+        this.lon = lon;
+        this.street = street;
+        this.house = house;
+        this.postCode = postCode;
+        this.municipality = municipality;
+        this.city = city;
+        this.country = country;
     }
 
     @Override
     public long getId() {
-        return Long.parseLong(this.get(Address.ID).toString());
+        return id;
     }
     @Override
-    public double getLat() {
-        return Double.parseDouble(this.get(Address.LAT).toString());
+    public float getLat() {
+        return lat;
     }
     @Override
-    public double getLon() {
-        return Double.parseDouble(this.get(Address.LON).toString());
+    public float getLon() {
+        return lon;
+    }
+
+    @Override
+    public Type getType() {
+        throw new UnsupportedOperationException("TagAddress does not have a type.");
     }
 
     public String getStreet() {
-        return this.get(Address.STREET).toString();
+        return street;
     }
 
     public String getHouseNumber() {
-        return this.get(Address.HOUSENUMBER).toString();
+        return house;
     }
 
     public String getPostcode() {
-        return this.get(Address.POSTCODE).toString();
+        return postCode;
     }
 
     public String getMunicipality() {
-        return this.get(Address.MUNICIPALITY).toString();
+        return municipality;
     }
 
     public String getCity() {
-        return this.get(Address.CITY).toString();
+        return city;
     }
 
     public String getCountry() {
-        return this.get(Address.COUNTRY).toString();
+        return country;
+    }
+
+    public String toString() {
+        if (!house.equals("")){
+            return street + ", " + house + ", " + postCode + " " + city;
+        } else{
+            return street + ", " + postCode + " " + city;
+        }
     }
 
     /**
@@ -131,7 +161,10 @@ public class TagAddress extends Tag<Address> {
         public SearchAddress(String input){
             final String REGEX = "(?<street>[A-Za-zØÆÅåæø ]+)? ?(?<house>[0-9]{1,3}[A-Za-z]{0,2})? ?(?<floor> st| [0-9]{1,3})? ?(?<side>tv|th|mf)?\\.? ?(?<postcode>[0-9]{4})? ?(?<city>[A-Za-ØÆÅåøæ ]+)?$";
             final Pattern PATTERN = Pattern.compile(REGEX);
-
+            
+            if (input == null){
+                throw new IllegalArgumentException("SearchAddress input is null");
+            }
             Matcher matcher = PATTERN.matcher(input);
 
             if(matcher.matches()){
@@ -176,14 +209,69 @@ public class TagAddress extends Tag<Address> {
                     this.city = "";
                 }
 
+                if (matcher.group("postcode") == null){
+                    this.postcode = "";
+                }
+                if (matcher.group("house") == null){
+                    this.house = "";
+                }
+
             } else{
-                throw new IllegalArgumentException("Invalid input");
+                throw new IllegalArgumentException("Invalid input: " + input);
             }
         }
 
         public String toString() {
-            return street + " " + house + ", " + floor + " " + side + "\n"
-                    + postcode + " " + city;
+            String output = "";
+            if (street != null && !street.isBlank()){
+                output += street;
+                if (house != null && !house.isBlank()){
+                    output += " " + house;
+
+                    if (floor != null && !floor.isBlank()){
+                        output += " " + floor;
+                    }
+                    if (side != null && !side.isBlank()){
+                        output += " " + side;
+                    }
+                }else{
+                    output += " ";
+                }
+                if (city != null && !city.isBlank()){
+                    if (postcode != null && !postcode.isBlank()){
+                        output += postcode + " ";
+                    }
+                    output += city;
+                }
+                
+            }
+            return output;
+            //return street + " " + house + ", " + floor + " " + side + "\n" + postcode + " " + city;
+        }
+    }
+
+    @Override
+    public int compareTo(Object object) {
+        if (object == null){
+            throw new IllegalArgumentException("Paramenter object is of null");
+        }else if (object instanceof TagAddress){
+            TagAddress tagAdress = (TagAddress) object;
+
+            int comparison = this.city.compareTo(tagAdress.city);
+
+            if (comparison == 0){
+                comparison = this.street.compareTo(tagAdress.street);
+                if (comparison == 0){
+                    return this.house.compareTo(tagAdress.house);
+                }else{
+                    return comparison;
+                }
+            }else{
+                return comparison;
+            }
+
+        }else{
+            throw new IllegalArgumentException("Parameter object is not of type TagAdress!");
         }
     }
 }

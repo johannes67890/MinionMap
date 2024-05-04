@@ -21,6 +21,9 @@ gradle-app.setting
 .project
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
+.vscode
+.idea
+*.iml
 # Ignore Gradle build output directory
 build
 
@@ -29,6 +32,8 @@ bin
 
 # Added input files that are local to your machine
 src/main/resources/inputFiles_ignored/*
+src/main/resources/chunks
+
 
 ## Core latex/pdflatex auxiliary files:
 *.aux
@@ -49,11 +54,11 @@ src/main/resources/inputFiles_ignored/*
 *.xdv
 *-converted-to.*
 # these rules might exclude image files for figures etc.
-# *.ps
-# *.eps
-# *.pdf
+*.ps
+*.eps
+*.pdf
 
-## Generated if empty string is given at "Please type another file name for output:"
+# ## Generated if empty string is given at "Please type another file name for output:"
 .pdf
 
 ## Bibliography auxiliary files (bibtex/biblatex/biber):
@@ -72,11 +77,11 @@ src/main/resources/inputFiles_ignored/*
 *.synctex.gz(busy)
 *.pdfsync
 
-## Build tool directories for auxiliary files
+# ## Build tool directories for auxiliary files
 # latexrun
 latex.out/
 
-## Auxiliary and intermediate files from other packages:
+# ## Auxiliary and intermediate files from other packages:
 # algorithms
 *.alg
 *.loa
