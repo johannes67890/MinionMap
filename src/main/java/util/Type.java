@@ -119,7 +119,7 @@ public enum Type  {
     PEDESTRIAN_ROAD("highway",new String[]{"footway", "path", "steps", "bridleway", "service", "living_street", "pedestrian", "unclassified"}, 6, 9, Color.WHITE, 5, true, 2, 7),
     OTHER_ROAD("highway",new String[]{"cycleway", "road", "mini_roundabout"}, 6, 9, Color.WHITE, 5, true, 2, 7),
     // Relations (Hierarchy: 3)
-    MULTIPOLYGON("type", new String[]{"multipolygon"}, 3, Color.BLACK, 0),
+    MULTIPOLYGON("nothing must be mutlipolygon", new String[]{"multipolygon"}, 3, Color.BLACK, 0),
     RESTRICTION("type", new String[]{"restriction"}, 3, Color.BLACK, 0),
     ROUTE("type", new String[]{"route"}, 3, Color.BLACK, 0),
     // Unknown (Hierarchy: 0)
