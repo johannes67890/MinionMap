@@ -45,9 +45,9 @@ public class Controller implements Initializable, ControllerInterface{
         "default", "dark", "gray scale");
 
     @FXML private ToggleButton menuButton1;
+    @FXML private ToggleButton pointButton;
+    @FXML private ToggleButton routeButton;
     @FXML private Button searchButton;
-    @FXML private Button pointButton;
-    @FXML private Button routeButton;
     @FXML private Pane leftBurgerMenu;
 
     @FXML private Pane routeTypeMenu;
@@ -213,11 +213,6 @@ public class Controller implements Initializable, ControllerInterface{
 
         menuButton1.setOnAction((ActionEvent e) -> {
             menuButton1.setSelected(!isMenuOpen);
-            if(isMenuOpen){
-                menuButton1.getStyleClass().add("button-selected");
-            }else{
-                menuButton1.getStyleClass().remove("button-selected");
-            }
             leftBurgerMenu.setVisible(!isMenuOpen);
             mainMenuVBox.setVisible(!isMenuOpen);
             // graphicVBox.setVisible(!isMenuOpen);
@@ -227,6 +222,7 @@ public class Controller implements Initializable, ControllerInterface{
 
         routeButton.setOnAction((ActionEvent e) -> {
             setEnableDestinationComboBox(!searchBarDestination.isVisible());
+          
             routeTypeMenu.setVisible(!routeTypeMenu.isVisible());            
         });
 

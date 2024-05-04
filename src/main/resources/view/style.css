@@ -23,14 +23,14 @@
     -fx-color: #0f1111;
     -fx-cursor: hand;
     -fx-border-color: #686868;
-    -fx-border-width: 2px;
+    -fx-border-width: 1px;
     -fx-text-fill: black;
     -fx-box-shadow: rgba(213, 217, 217, .5) 0 2px 5px 0;
     -fx-box-sizing: border-box;
     -fx-cursor: pointer;
     -fx-display: inline-block;
     -fx-font-family: "Amazon Ember",sans-serif;
-    -fx-font-size: 16px;
+    -fx-font-size: 15px;
     -fx-line-height: 29px;
     -fx-padding: 6px 16px 6px 16px;
     -fx-position: relative;
@@ -56,8 +56,12 @@
 }
 .button:selected {
     -fx-border-color: #008296;
+    -fx-box-shadow: rgba(21, 223, 223, 0.5) 0 2px 5px 0;
+    -fx-border-width: 2px;
     -fx-outline: 0;
 }
+
+
 
 .mapButton {
     -fx-min-width: 260px;
@@ -128,16 +132,13 @@
     -fx-padding-bottom: 10px;
 }
 
-/* Main view */
+.combo-box-container {
+    -fx-max-width: 600px;
+    -fx-min-height: 40px;
+}
 
 .combo-box .list-cell 
 {
-    -fx-min-width: 450px;
-    -fx-min-height: 60px;
-    -fx-pref-width: 430px;
-    -fx-pref-height: 60px;
-    -fx-max-width: 530px;
-    -fx-max-height: 60px;
     -fx-background: white;
     -fx-background-color: transparent;
     -fx-text-fill: -fx-text-base-color;
@@ -147,7 +148,7 @@
 
 .combo-box-popup .list-view 
 {
-    -fx-max-width: 530px;
+    -fx-min-width: 300px;
     -fx-background-color: white, white;
     /* -fx-background-insets: 0, 1; */
     -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 8, 0.0 , 0 , 0 );
@@ -176,6 +177,11 @@
 
 .combo-box-base  
 {
+    -fx-min-width: 300px;
+    -fx-pref-width: 300px;
+    -fx-font-size: 14px;
+    -fx-border-width: 1px;
+    -fx-border-color: #686868;
     -fx-background-color: white, white, white, white;
     -fx-background-radius: 5, 5, 4, 3;
     -fx-background-insets: 0 0 -1 0, 0, 1, 2;
@@ -190,6 +196,13 @@
 .combo-box-base:showing 
 {
     -fx-color: -fx-pressed-base;
+}
+
+.header {
+    -fx-background-color: transparent;
+    -fx-padding: 10px;
+    -fx-height: 120px;
+
 }
 
 .burgermenu {
