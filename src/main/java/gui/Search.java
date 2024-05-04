@@ -11,12 +11,14 @@ import parser.Tag;
 import parser.XMLReader;
 import pathfinding.Dijsktra;
 import structures.Trie;
+import structures.TrieNode;
 import util.TransportType;
 import util.Type;
 
 public class Search {
     private Trie trie;
     private MainView mainView;
+    private Trie.TrieNode pointOfInterestNode = null;
 
     public Search(MainView mw){
         //mainview to be used with dijsktra
@@ -31,6 +33,15 @@ public class Search {
      */
     public ArrayList<TagAddress> getSuggestions(String input){
         return trie.getAddressSuggestions(input, 5);
+    }
+
+    public void setPointOfInterest(float x, float y){
+        TagAddress point = new TagAddress(0, y, x, "PointOfInterest", "1", " ", " ", " ", " ");
+        if (pointOfInterestNode == null){
+            pointOfInterestNode = trie.insert(point);
+        }else{
+            pointOfInterestNode.addHouseNumber(" ", point);
+        }
     }
 
     /**

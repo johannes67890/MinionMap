@@ -30,7 +30,7 @@ public class Trie {
      * 
      * @param address the TagAddress object to be inserted
      */
-    public void insert(TagAddress address) {
+    public TrieNode insert(TagAddress address) {
         // address is made lowercase to make searching easier for the user, ie.
         // writing "Svanevej" is read the same as "svanevej"
         currentNode = root;
@@ -46,6 +46,7 @@ public class Trie {
         }
         currentNode.setIsEnd(true);
         currentNode.addHouseNumber(address.getHouseNumber(), address);
+        return currentNode;
     }
 
     /**
@@ -154,7 +155,7 @@ public class Trie {
  * @param endAddress           is a String of the full address contained in the
  *                             Trie, not including the housenumber
  */
-class TrieNode implements Serializable {
+public class TrieNode implements Serializable {
     private boolean isEnd;
     private TCharObjectHashMap<TrieNode> branches;
     private HashMap<String, TagAddress> houseNumberToAddress = new HashMap<>();

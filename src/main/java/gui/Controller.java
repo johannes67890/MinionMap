@@ -139,11 +139,12 @@ public class Controller implements Initializable, ControllerInterface{
 
                 Point2D clickedPoint = mainView.getDrawingMap().getTransform().transform(currentX, currentY);
 
+                s.setPointOfInterest((float) x, (float) y);
                 TagNode pointofInterest = new TagNode((float) y, (float) x);
                 ArrayList<Tag> temp = new ArrayList<>();
                 temp.add(pointofInterest);
 
-                mainView.getDrawingMap().setMarkedTag(temp);
+                mainView.getDrawingMap().setPointOfInterest(pointofInterest);
 
                 mainView.draw();
             }
