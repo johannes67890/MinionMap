@@ -208,6 +208,7 @@
 .burgermenu {
     -fx-background-color: #f7fafa;
     -fx-padding-top: 30px;
+    -fx-padding: 10px;
     -fx-min-width: 350px;
     -fx-min-height: 10000px;
     -fx-pref-width: 350px;
@@ -215,6 +216,38 @@
     -fx-max-width: 400px;
     -fx-max-height: 10000px;
 }
+
+.choice-box {
+    -fx-background-color: #fff;
+    -fx-border-color: #686868;
+    -fx-border-width: 1px;
+    -fx-box-shadow: rgba(213, 217, 217, .5) 0 2px 5px 0;
+    -fx-box-sizing: border-box;
+    -fx-min-width: 125px;
+    -fx-pref-width: 125px;
+}
+
+.choice-box .label {
+    -fx-text-fill: black; 
+}
+
+.choice-box .menu-item:focused {
+    -fx-text-fill: black;
+    -fx-background-color: rgb(206, 206, 206);
+    -fx-min-width: 100px;
+    -fx-pref-width: 125px;
+}
+.choice-box .menu-item > .label { 
+    -fx-text-fill: black; 
+    -fx-min-width: 100px;
+    -fx-pref-width: 125px;
+}
+.choice-box .menu-item:focused > .label { 
+    -fx-text-fill: black; 
+    -fx-min-width: 100px;
+    -fx-pref-width: 125px;
+}
+
 
 
    

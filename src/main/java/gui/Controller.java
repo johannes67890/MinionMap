@@ -186,8 +186,8 @@ public class Controller implements Initializable, ControllerInterface{
         leftBurgerMenu.setVisible(false);
         routeTypeMenu.setVisible(false);
 
-        styleChoiceBox.setItems(style);
         styleChoiceBox.setValue("default");
+        styleChoiceBox.setItems(style);
 
         styleChoiceBox.setOnAction((ActionEvent e) -> {
             switch(styleChoiceBox.getValue()){

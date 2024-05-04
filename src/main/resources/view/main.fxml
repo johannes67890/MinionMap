@@ -92,10 +92,10 @@
                </children>
             </Pane>
             <Pane fx:id="leftBurgerMenu" translateY="55.0" visible="false" StackPane.alignment="CENTER_LEFT">
-                  <VBox fx:id="mainMenuVBox" styleClass="burgermenu" visible="false">
+                  <VBox fx:id="mainMenuVBox" spacing="10" StackPane.alignment="CENTER" styleClass="burgermenu" visible="false">
                      <Label text="Press the button below to generate a new map using a new file" wrapText="true" />
                      <Button fx:id="mainMenuButton" mnemonicParsing="false" text="Upload new file" />
-                     <ChoiceBox fx:id="styleChoiceBox" prefWidth="150.0" translateX="5.0" translateY="50.0" />
+                     <ChoiceBox fx:id="styleChoiceBox" styleClass="choice-box"/>
                   </VBox>
             </Pane>
              <VBox maxHeight="30.0" maxWidth="0.0" StackPane.alignment="BOTTOM_RIGHT">
