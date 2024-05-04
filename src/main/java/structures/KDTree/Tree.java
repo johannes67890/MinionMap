@@ -10,11 +10,11 @@ import parser.TagNode;
 import parser.TagRelation;
 import parser.TagWay;
 import util.Type;
-import parser.TagGrid;
 import parser.TagNode;
 import parser.TagRelation;
 import parser.TagWay;
 import parser.XMLReader;
+import structures.TagGrid;
 
 public class Tree {
 

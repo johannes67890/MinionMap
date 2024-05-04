@@ -1,23 +1,26 @@
 package parser;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import gnu.trove.list.TLinkable;
-import gnu.trove.list.linked.TLinkedList;
-import parser.chunking.XMLWriter.ChunkFiles;
 import structures.KDTree.Tree;
 import util.Type;
 
-import java.util.*;
-
 /**
- * Class for storing a {@link HashMap} of a single node.
- * Contains the following tags:
- * <p>
- * {@link Node#ID}, {@link Node#LAT}, {@link Node#LON}
- * </p>
+    * Class representing a node in the OSM XML file.
+    * <p>
+    * 
+    * <ul>
+    * <li>{@link #id} - The id of the node.</li>
+    * <li>{@link #lat} - The latitude of the node.</li>
+    * <li>{@link #lon} - The longitude of the node.</li>
+    * <li>{@link #parent} - The parent way of the node.</li>
+    * <li>{@link #next} - The next node in the list.</li>
+    * <li>{@link #prev} - The previous node in the list.</li>
+    * </ul>
+    * </p>
+    * @implNote This class implements the {@link TLinkable} interface to allow for linking of nodes in a list.
 */
-public class TagNode extends Tag implements TLinkable<TagNode>, Comparable<TagNode>  {
+public class TagNode extends Tag implements TLinkable<TagNode> {
 
     private long id;
     private TagWay parent;
@@ -27,12 +30,23 @@ public class TagNode extends Tag implements TLinkable<TagNode>, Comparable<TagNo
     private TagNode next;
     private TagNode prev;
 
-    public TagNode(long id, float lat, float lon) {
-        this.id = id;
-        this.lat = lat;
-        this.lon = lon;
+    /**
+     * Create a new TagNode from the {@link XMLBuilder}
+     * @param builder
+     */
+    public TagNode(XMLBuilder builder) {
+        this.id = builder.getId();
+        this.lon = builder.getLon();
+        this.lat = builder.getLat();
     }
 
+    /**
+     * Create a new TagNode with the given values.
+     * @param id - The id of the node.
+     * @param lat - The latitude of the node.
+     * @param lon - The longitude of the node.
+     * @param way - The parent way of the node.
+     */
     public TagNode(long id, float lat, float lon, TagWay way) {
         this.id = id;
         this.lat = lat;
@@ -40,17 +54,31 @@ public class TagNode extends Tag implements TLinkable<TagNode>, Comparable<TagNo
         this.parent = way;
     }
 
+    /**
+     * Create a new TagNode with the given values.
+     * @param id - The id of the node.
+     * @param lat - The latitude of the node.
+     * @param lon - The longitude of the node.
+     */
+    public TagNode(long id, float lat, float lon) {
+        this.id = id;
+        this.lat = lat;
+        this.lon = lon;
+    }
+
+    /**
+     * Create a new TagNode with the given values.
+     * @param lat - The latitude of the node.
+     * @param lon - The longitude of the node.
+     */
     public TagNode(float lat, float lon) {
         this.lon = lon;
         this.lat = lat;
     }
 
-    public TagNode(XMLBuilder builder) {
-        this.id = builder.getId();
-        this.lon = builder.getLon();
-        this.lat = builder.getLat();
-    }
-    
+    /**
+     * Copy a {@link TagNode} to a new, with the same field values.
+     */
     public TagNode(TagNode other) {
         this.id = other.id;
         this.lat = other.lat;
@@ -58,8 +86,6 @@ public class TagNode extends Tag implements TLinkable<TagNode>, Comparable<TagNo
         this.next = other.next;
         this.prev = other.prev;
     }
-
-   
 
     @Override
     public long getId(){
@@ -83,29 +109,15 @@ public class TagNode extends Tag implements TLinkable<TagNode>, Comparable<TagNo
         this.type = type;
     }
 
+    /**
+     * Check if the node is equal to another node, by comparing the {@link TagNode#id}.
+     * @param tN - The node to compare to.
+     * @return {@code true} if the nodes are equal by {@link TagNode#id}, {@code false} otherwise.
+     */
     public boolean equals(TagNode tN){
-
-        if (this.id == tN.getId()){
-            return true;
-        }
-        else{return false;}
-
+        if (this.id == tN.getId()) return true;
+        else return false;
     }
- 
-    public boolean hasIntersection(){
-        return Tree.getTagFromPoint(this).size() > 1;
-    }
-
-    public ArrayList<Tag> getIntersectionTags(){
-        // System.out.println(Tree.getTagFromPoint(this));
-        return Tree.getTagFromPoint(this);
-    }
-
-    @Override
-    public int compareTo(TagNode o) {
-        return Long.compare(this.id, o.getId());
-    }
-
 
     @Override
     public String toString() {
@@ -116,55 +128,52 @@ public class TagNode extends Tag implements TLinkable<TagNode>, Comparable<TagNo
                 '}';
     }
 
+    /**
+     * Get the next node in the list.
+     * @see TLinkable - The interface used to link nodes in a list.
+     * @return The next {@link TagNode}
+     */
     @Override
     public TagNode getNext() {
         return next;
     }
 
+    /**
+     * Get the previous node in the list.
+     * @see TLinkable - The interface used to link nodes in a list.
+     * @return The previous {@link TagNode}
+     */
     @Override
     public TagNode getPrevious() {
         return prev;
     }
 
+    /**
+     * Set the next node in the list.
+     * @see TLinkable - The interface used to link nodes in a list.
+     * @param linkable - The next {@link TagNode} in the list.
+     */
     @Override
     public void setNext(TagNode linkable) {
         next = linkable;
     }
 
+    /**
+     * Set the previous node in the list.
+     * @see TLinkable - The interface used to link nodes in a list.
+     * @param linkable - The previous {@link TagNode} in the list.
+     */
     @Override
     public void setPrevious(TagNode linkable) {
         prev = linkable;
     }
 
-    public void revertNextPrev(){
-        TagNode temp = getNext();
-
-
-        setNext(getPrevious());
-        setPrevious(temp);
-        
-    
-    }
- 
-
-    public void setParent(TagWay linkable) {
-        parent = linkable;
-    }
-
-    public boolean hasParent(){
-        return this.parent != null;
-    }
-
-    public boolean hasParent(TagWay way){
-        return this.parent.equals(way);
-    }
-    
     /**
      * Clears the links of the node.
      * <p>
-     * Sets the next and previous nodes to null.
+     * Sets the {@link TagNode#next} and {@link TagNode#prev} nodes to {@code null}.
      * </p>
-     * @see TLinkable
+     * @see TLinkable - The interface used to link nodes in a list.
      */
     public void clearLinks(){
         next = null;
@@ -172,8 +181,48 @@ public class TagNode extends Tag implements TLinkable<TagNode>, Comparable<TagNo
     }
 
     /**
+     * Reverts the next and previous nodes in the list.
+     * <p>
+     * Swaps the {@link TagNode#next} and {@link TagNode#prev} nodes.
+     * </p>
+     */
+    public void revertNextPrev(){
+        TagNode temp = getNext();
+
+        setNext(getPrevious());
+        setPrevious(temp);
+    }
+
+    /**
+     * Set the parent way of the node.
+     * <p>
+     * Sets a {@link TagWay} to the {@link TagNode#parent} of the node.
+     * </p>
+     */
+    public void setParent(TagWay linkable) {
+        parent = linkable;
+    }
+
+    /**
+     * Check if the node has a parent {@link TagWay}.
+     * @return {@code true} if the node has a parent way, {@code false} otherwise.
+     */
+    public boolean hasParent(){
+        return this.parent != null;
+    }
+
+    /**
+     * Check if the node has a parent that is the equal to the object to the given {@link TagWay}.
+     * @param way
+     * @return
+     */
+    public boolean hasParent(TagWay way){
+        return this.parent.equals(way);
+    }
+
+    /**
      * Iterates backwards through the linked list of nodes to find the parent way.
-     * @return The {@link TagWay} parent of the node.
+     * @return The {@link TagWay} parent of the node. {@code null} if no parent is found.
      */
     public TagWay getParent(){
         TagWay p = null;
@@ -191,5 +240,29 @@ public class TagNode extends Tag implements TLinkable<TagNode>, Comparable<TagNo
             }
         }
         return p;
+    }
+
+    /**
+     * Check the node for intersections with other nodes.
+     * <p>
+     * With the use of the {@link Tree}, checks if the node has more than one in the same location.
+     * </p>
+     * @see Tree - The KDTree used to store and search for nodes.
+     * @return {@code true} if the node has intersections, {@code false} otherwise.
+     */
+    public boolean hasIntersection(){
+        return Tree.getTagFromPoint(this).size() > 1;
+    }
+
+    /**
+     * Get the {@link Tag}s of the node that intersect with the node.
+     * <p>
+     * With the use of the {@link Tree}, gets the tags of the nodes that intersect with the node.
+     * </p>
+     * @see Tree - The KDTree used to store and search for nodes.
+     * @return The {@link ArrayList} of {@link Tag} that intersect with the node.
+     */
+    public ArrayList<Tag> getIntersectionTags(){
+        return Tree.getTagFromPoint(this);
     }
 }

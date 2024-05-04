@@ -96,7 +96,6 @@ public class TagRelation extends Tag{
         TagNode beginLastTagNode = null;
         TagNode beginFirstTagNode = null;
 
-        TagNode currentLastTagNode = null;
         TagNode currentFirstTagNode = null;
 
         TagNode prevLastTagNode = null;

@@ -3,6 +3,7 @@ package parser;
 import edu.princeton.cs.algs4.Stack;
 import gnu.trove.list.linked.TLinkedList;
 import javafx.print.Collation;
+import structures.TagGrid;
 import util.Type;
 import java.util.ArrayList;
 import java.util.HashMap;

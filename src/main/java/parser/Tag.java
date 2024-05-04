@@ -1,26 +1,13 @@
 package parser;
 
-import java.util.HashMap;
-import java.util.List;
-
-import edu.princeton.cs.algs4.MinPQ;
 import parser.chunking.XMLWriter.ChunkFiles;
 import util.Type;
-
-import java.util.List;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;;
+import java.io.Serializable;
 
 /**
  * Abstract class for a tag.
  * <p>
  * A tag is a node, way or relation in the OSM XML file.
- * </p>
- * <p>
- * The Tag class is a subclass of {@link HashMap} with the key as an {@link Enum} that is from one of the five possible OSM XML Tags- and the value is stored as an {@link Object}.
- * Not all tags have the same keys, so the Enum is used to define the keys for the different tags.
  * </p>
  * <p>
  * The possible tags are:
@@ -46,15 +33,18 @@ public abstract class Tag implements Serializable{
 
     /**
      * Get the id of the tag.
+     * @throws UnsupportedOperationException if the tag does not have an id value.
      * @return The id of the tag.
      */
     public abstract long getId();
+
     /**
      * Get the latitude of the tag.
      * @throws UnsupportedOperationException if the tag does not have a latitude value.
      * @return The latitude of the tag.
      */
     public abstract float getLat();
+
     /**
      * Get the longitude of the tag.
      * @throws UnsupportedOperationException if the tag does not have a longitude value.
@@ -62,6 +52,11 @@ public abstract class Tag implements Serializable{
      */
     public abstract float getLon();
 
+    /**
+     * Get the type of the tag.
+     * @throws UnsupportedOperationException if the tag does not have a type value.
+     * @return The type of the tag.
+     */
     public abstract Type getType();
 
     /**
@@ -71,8 +66,6 @@ public abstract class Tag implements Serializable{
     public TagBound getBoundFromChunk(){
         return ChunkFiles.getBoundFromTag(this);
     }
-
-
 
     /**
      * Check if a tag is within a specified {@link TagBound}.
@@ -98,7 +91,7 @@ public abstract class Tag implements Serializable{
     /**
      * Calculate the distance between two tags.
      * <p>
-     * The distance is calculated using the Haversine formula.
+     * The distance is calculated using the <a href="https://en.wikipedia.org/wiki/Haversine_formula">Haversine formula</a>
      * </p>
      * @param a - The tag to calculate the distance to.
      * @return The distance between the two tags.
@@ -114,6 +107,7 @@ public abstract class Tag implements Serializable{
         double lon1Rad = Math.toRadians(this.getLon());
         double lon2Rad = Math.toRadians(a.getLon());
 
+        // Haversine formula
         double x = (lon2Rad - lon1Rad) * Math.cos((lat1Rad + lat2Rad) / 2);
         double y = (lat2Rad - lat1Rad);
         double distance = Math.sqrt(x * x + y * y) * MecatorProjection.getEarthRadius();
