@@ -119,24 +119,6 @@ public final class Point3D implements Comparable<Point3D> {
         return (float) Math.atan2(dy, dx);
     }
 
-    /**
-     * Returns true if a→b→c is a counterclockwise turn.
-     * 
-     * @param a first point
-     * @param b second point
-     * @param c third point
-     * @return { -1, 0, +1 } if a→b→c is a { clockwise, collinear; counterclocwise }
-     *         turn.
-     */
-    public static int ccw(Point3D a, Point3D b, Point3D c) {
-        float area2 = (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
-        if (area2 < 0)
-            return -1;
-        else if (area2 > 0)
-            return +1;
-        else
-            return 0;
-    }
 
     /**
      * Returns the Euclidean distance between this point and that point.
@@ -222,35 +204,6 @@ public final class Point3D implements Comparable<Point3D> {
         return 0;
     }
 
-    /**
-     * Compares two points by polar angle (between 0 and 2&pi;) with respect to this
-     * point.
-     *
-     * @return the comparator
-     */
-    public Comparator<Point3D> polarOrder() {
-        return new PolarOrder();
-    }
-
-    /**
-     * Compares two points by atan2() angle (between –&pi; and &pi;) with respect to
-     * this point.
-     *
-     * @return the comparator
-     */
-    public Comparator<Point3D> atan2Order() {
-        return new Atan2Order();
-    }
-
-    /**
-     * Compares two points by distance to this point.
-     *
-     * @return the comparator
-     */
-    public Comparator<Point3D> distanceToOrder() {
-        return new DistanceToOrder();
-    }
-
     // compare points according to their x-coordinate
     private static class XOrder implements Comparator<Point3D> {
         public int compare(Point3D p, Point3D q) {
@@ -296,71 +249,6 @@ public final class Point3D implements Comparable<Point3D> {
         }
     }
 
-    // compare other points relative to atan2 angle (bewteen -pi/2 and pi/2) they
-    // make with this Point
-    private class Atan2Order implements Comparator<Point3D> {
-        public int compare(Point3D q1, Point3D q2) {
-            double angle1 = angleTo(q1);
-            double angle2 = angleTo(q2);
-            if (angle1 < angle2)
-                return -1;
-            else if (angle1 > angle2)
-                return +1;
-            else
-                return 0;
-        }
-    }
-
-    // compare other points relative to polar angle (between 0 and 2pi) they make
-    // with this Point
-    private class PolarOrder implements Comparator<Point3D> {
-        public int compare(Point3D q1, Point3D q2) {
-            double dx1 = q1.x - x;
-            double dy1 = q1.y - y;
-            double dz1 = q1.z - z;
-            double dx2 = q2.x - x;
-            double dy2 = q2.y - y;
-            double dz2 = q2.z - z;
-
-            if (dy1 >= 0 && dy2 < 0)
-                return -1; // q1 above; q2 below
-            else if (dy2 >= 0 && dy1 < 0)
-                return +1; // q1 below; q2 above
-            else if (dy1 == 0 && dy2 == 0) { // 3-collinear and horizontal
-                if (dx1 >= 0 && dx2 < 0)
-                    return -1;
-                else if (dx2 >= 0 && dx1 < 0)
-                    return +1;
-                else if (dx1 == 0 && dx2 == 0) {
-                    if (dz1 >= 0 && dz2 < 0)
-                        return -1;
-                    else if (dz2 >= 0 && dz1 < 0)
-                        return +1;
-                    else
-                        return 0;
-                } else
-                    return 0;
-
-            } else
-                return -ccw(Point3D.this, q1, q2); // both above or below
-
-            // Note: ccw() recomputes dx1, dy1, dx2, and dy2
-        }
-    }
-
-    // compare points according to their distance to this point
-    private class DistanceToOrder implements Comparator<Point3D> {
-        public int compare(Point3D p, Point3D q) {
-            double dist1 = distanceSquaredTo(p);
-            double dist2 = distanceSquaredTo(q);
-            if (dist1 < dist2)
-                return -1;
-            else if (dist1 > dist2)
-                return +1;
-            else
-                return 0;
-        }
-    }
 
     /**
      * Compares this point to the specified point.

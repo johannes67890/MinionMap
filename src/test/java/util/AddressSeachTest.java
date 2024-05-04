@@ -20,6 +20,7 @@ public class AddressSeachTest {
         // addressSearch = new Search();
     }
 
+
     @Test
     void CapitalFirstLetter() {
         
@@ -29,6 +30,7 @@ public class AddressSeachTest {
         assertEquals(a.street, "Stenvænget");
         
     }
+
 
     @Test
     void FindAddress(){

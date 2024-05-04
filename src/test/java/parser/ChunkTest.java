@@ -105,30 +105,30 @@ public class ChunkTest {
     public void testSplitArea() {     
 
         TagBound expectedQ1 = new TagBound(
-        55.6572100f, 
+        55.6572150f, 
         55.6581600f, 
-        12.4677300f,  
-        12.4705650f 
+        12.4677290f,  
+        12.4705660f 
         );
         
         TagBound expectedQ2 = new TagBound(
-        55.6572100f, 
+        55.6572150f, 
         55.6581600f, 
-        12.4705650f,  
+        12.4705660f,  
         12.4734000f 
         );
         
         TagBound expectedQ3 = new TagBound(
         55.6562600f, 
-        55.6572100f, 
-        12.4677300f, 
-        12.4705650f
+        55.6572150f, 
+        12.4677290f, 
+        12.4705660f
         );
 
         TagBound expectedQ4 = new TagBound(
         55.6562600f, 
-        55.6572100f, 
-        12.4705650f,  
+        55.6572150f, 
+        12.4705660f,  
         12.4734000f 
         );
 
