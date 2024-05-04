@@ -281,7 +281,6 @@ public class TagAddress extends Tag  implements Comparable<TagAddress>{
         if (tagAddress == null){
             throw new IllegalArgumentException("Paramenter object is of null");
         }else{
-            
             int comparison = this.city.compareTo(tagAddress.city);
 
             if (comparison == 0){

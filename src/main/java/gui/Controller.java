@@ -35,6 +35,7 @@ import parser.TagWay;
 import structures.KDTree.Point3D;
 import structures.KDTree.Tree;
 import util.TransportType;
+import util.AddressComparator;
 
 public class Controller implements Initializable, ControllerInterface{
     
@@ -308,16 +309,23 @@ public class Controller implements Initializable, ControllerInterface{
 
         });
 
-        
+        //Update the suggestions in the combobox when the text changes
         searchBarStart.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
             showSuggestions(searchBarStart, oldValue, newValue);            
         });
 
+        //Update the suggestions in the combobox when the text changes
         searchBarDestination.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
             showSuggestions(searchBarDestination, oldValue, newValue);
         });
     }
 
+    /**
+     * Shows suggestions in the combobox
+     * @param searchBar The combobox to show suggestions in
+     * @param oldValue The old value of the combobox
+     * @param newValue The new value of the combobox
+     */
     private void showSuggestions(ComboBox<String> searchBar, String oldValue, String newValue){
         if (searchBar.isFocused()){
             search(newValue, searchBar);
@@ -329,6 +337,10 @@ public class Controller implements Initializable, ControllerInterface{
         }
     }
 
+    /**
+     * Sets the visibility of the destination combobox
+     * @param isEnabled If the combobox should be enabled
+     */
     private void setEnableDestinationComboBox(boolean isEnabled){
         if (isEnabled){
             searchBarDestination.setMaxWidth(1000000);
@@ -338,6 +350,11 @@ public class Controller implements Initializable, ControllerInterface{
         searchBarDestination.setVisible(isEnabled);
     }
 
+    /**
+     * Returns the TagAddress object from the combobox
+     * @param searchBar The combobox to get the address from
+     * @return The TagAddress object from the combobox
+     */
     private TagAddress comboBoxAddress(ComboBox<String> searchBar){
         String string = searchBar.getEditor().textProperty().getValue();
 
@@ -352,12 +369,19 @@ public class Controller implements Initializable, ControllerInterface{
             return null;
     }
 
+    /**
+     * Searches for addresses in the combobox
+     * @param address The address to search for
+     * @param searchBar The combobox to search in
+     */
     private void search(String address, ComboBox<String> searchBar) {
         
         if (startAddress != null && searchBar.getEditor().textProperty().getValue().equals(startAddress.toString())) return;
         if (endAddress != null && searchBar.getEditor().textProperty().getValue().equals(endAddress.toString())) return;
         if (!address.isEmpty() && address.charAt(address.length() - 1) != ' ') {
             ArrayList<TagAddress> tagAddresses = s.getSuggestions(address);
+            //sorts the addresses before they are put into the combobox
+            tagAddresses.sort(new AddressComparator());
             if (searchBar.equals(searchBarStart) && startAddress != null){
                 startAddress = null;
             }else if (searchBar.equals(searchBarDestination) && endAddress != null){
@@ -385,6 +409,10 @@ public class Controller implements Initializable, ControllerInterface{
         }
     }
 
+    /**
+     * Shows the address on the map
+     * @param tagAddress The address to show
+     */
     private void showAddress(TagAddress tagAddress){
         DrawingMap drawingMap = mainView.getDrawingMap();
 
