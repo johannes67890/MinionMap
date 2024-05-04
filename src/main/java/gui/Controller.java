@@ -54,6 +54,9 @@ public class Controller implements Initializable, ControllerInterface{
     @FXML private Button walkButton;
     @FXML private Button bicycleButton;
     @FXML private Button carButton;
+    @FXML private Button fastButton;
+    @FXML private Button shortButton;
+
 
     @FXML private ComboBox<String> searchBarStart;
     @FXML private ComboBox<String> searchBarDestination;
@@ -77,6 +80,7 @@ public class Controller implements Initializable, ControllerInterface{
 
     private boolean pointofInterestState = false;
     private boolean isMenuOpen = false;
+    private boolean shortest = false;
     private static MainView mainView;
     private ObservableList<String> searchList = FXCollections.observableArrayList();
 
@@ -227,7 +231,11 @@ public class Controller implements Initializable, ControllerInterface{
 
         routeButton.setOnAction((ActionEvent e) -> {
             setEnableDestinationComboBox(!searchBarDestination.isVisible());
-            routeTypeMenu.setVisible(!routeTypeMenu.isVisible());            
+            routeTypeMenu.setVisible(!routeTypeMenu.isVisible());
+            routeType = TransportType.CAR;
+            setStyleClass(carButton, "activeButton");
+            setStyleClass(walkButton, "button");
+            setStyleClass(bicycleButton, "button");            
         });
 
         pointButton.setOnAction((ActionEvent e) ->{
@@ -246,16 +254,37 @@ public class Controller implements Initializable, ControllerInterface{
             }
         });
 
+        fastButton.setOnAction((ActionEvent e) -> {
+            shortest = false;
+            setStyleClass(fastButton, "activeButton");
+            setStyleClass(shortButton, "button");
+        });
+
+        shortButton.setOnAction((ActionEvent e) -> {
+            shortest = true;
+            setStyleClass(shortButton, "activeButton");
+            setStyleClass(fastButton, "button");
+        });
+
         walkButton.setOnAction((ActionEvent e) -> {
             routeType = TransportType.FOOT;
+            setStyleClass(walkButton, "activeButton");
+            setStyleClass(bicycleButton, "button");
+            setStyleClass(carButton, "button");
         });
 
         bicycleButton.setOnAction((ActionEvent e) ->{
             routeType = TransportType.BIKE;
+            setStyleClass(bicycleButton, "activeButton");
+            setStyleClass(carButton, "button");
+            setStyleClass(walkButton, "button");
         });
 
         carButton.setOnAction((ActionEvent e) ->{
             routeType = TransportType.CAR;
+            setStyleClass(carButton, "activeButton");
+            setStyleClass(walkButton, "button");
+            setStyleClass(bicycleButton, "button");
         });
 
 
@@ -290,7 +319,7 @@ public class Controller implements Initializable, ControllerInterface{
             }else{
                 if (!hasSearchedForPath){
                     hasSearchedForPath = true;
-                    s.pathfindBetweenTagAddresses(startAddress, endAddress, routeType);
+                    s.pathfindBetweenTagAddresses(startAddress, endAddress, routeType, shortest);
                 }
             }
 
@@ -307,7 +336,7 @@ public class Controller implements Initializable, ControllerInterface{
             }else{
                 if (!hasSearchedForPath){
                     hasSearchedForPath = true;
-                    s.pathfindBetweenTagAddresses(startAddress, endAddress, routeType);
+                    s.pathfindBetweenTagAddresses(startAddress, endAddress, routeType, shortest);
                 }
             }
 
@@ -322,6 +351,12 @@ public class Controller implements Initializable, ControllerInterface{
         searchBarDestination.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
             showSuggestions(searchBarDestination, oldValue, newValue);
         });
+    }
+
+
+    private void setStyleClass(Button b, String s){
+        b.getStyleClass().clear();
+        b.getStyleClass().add(s);
     }
 
     /**

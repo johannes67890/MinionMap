@@ -114,10 +114,19 @@ public enum Type  {
     AERIALWAY("aerialway", new String[]{"cable_car", "gondola", "mixed_lift", "chair_lift", "drag_lift", "t-bar", "j-bar", "platter", "rope_tow", "magic_carpet", "zip_line", "goods", "pylon"}, 
     4, 9, Color.LIGHTGRAY, 2, true, 4, 10),
     AERIALWAYSTATION("aerialway", new String[]{"station"},4, 8, Color.GRAY, Color.GRAY.darker(), 5, false),
-    RESIDENTIAL_ROAD("highway",new String[]{"residential"}, 4, 9, Color.WHITE, 5, true, 2, 7),
-    BIKE_ROAD("cycleway",new String[]{"lane", "oppisite", "opposite_lane", "track", "opposite_track", "share_busway", "shared_lane", "opposite_share_busway"}, 6, 9, Color.WHITE, 5, true, 2, 7),
-    PEDESTRIAN_ROAD("highway",new String[]{"footway", "path", "steps", "bridleway", "service", "living_street", "pedestrian", "unclassified"}, 6, 9, Color.WHITE, 5, true, 2, 7),
-    OTHER_ROAD("highway",new String[]{"cycleway", "road", "mini_roundabout"}, 6, 9, Color.WHITE, 5, true, 2, 7),
+    RESIDENTIAL_ROAD("highway",new String[]{"residential"}, 7, 9, Color.WHITE, 5, true, 2, 7),
+    UNCLASSIFIED("highway",new String[]{"unclassified"}, 7, 9, Color.WHITE, 5, true, 2, 7),
+    LIVING_STREET("highway",new String[]{"living_street"}, 7, 9, Color.WHITE, 5, true, 2, 7),
+
+    ROAD("highway",new String[]{"road"}, 7, 9, Color.WHITE, 5, true, 2, 7),
+
+
+    SERVICE("highway",new String[]{"service"}, 7, 9, Color.WHITE, 5, true, 2, 7),
+    TRACK("highway",new String[]{"track"}, 7, 9, Color.WHITE, 5, true, 2, 7),
+
+    BIKE_ROAD("cycleway",new String[]{"lane", "oppisite", "opposite_lane", "track", "opposite_track", "share_busway", "shared_lane", "opposite_share_busway"}, 7, 9, Color.WHITE, 5, true, 2, 7),
+    PEDESTRIAN_ROAD("highway",new String[]{"footway", "path", "steps", "bridleway", "pedestrian"}, 7, 9, Color.WHITE, 5, true, 2, 7),
+    OTHER_ROAD("highway",new String[]{"cycleway", "mini_roundabout"}, 7, 9, Color.WHITE, 5, true, 2, 7),
     // Relations (Hierarchy: 3)
     MULTIPOLYGON("nothing must be mutlipolygon", new String[]{"multipolygon"}, 3, Color.BLACK, 0),
     RESTRICTION("type", new String[]{"restriction"}, 3, Color.BLACK, 0),
@@ -187,8 +196,8 @@ public enum Type  {
     }
 
     public static List<Type> getAllCarRoads() {
-        String[] unAllowed = {"footway", "steps", "cycleway", "bridleway", "path", "track", 
-        "pedestrian", "unclassified", "road", "mini_roundabout"};
+        String[] unAllowed = {"footway", "steps", "cycleway", "bridleway", "path", 
+        "pedestrian", "track", "mini_roundabout"};
 
         // A group that contains all types of roads that are for cars
         // But disallowing types with values from unAllowed

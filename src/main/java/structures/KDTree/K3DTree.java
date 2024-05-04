@@ -405,6 +405,9 @@ public class K3DTree {
 
     private Point3D nearest(Node n, Point3D p, Point3D champion, int xyz, List<Type> types) {
         
+
+        Point3D secondChampion;
+
         // Handle reaching the end of the tree
         if (n == null){
             return champion;
@@ -416,7 +419,7 @@ public class K3DTree {
         }
         
         // Determine if the current Node's point beats the existing champion
-        if (n.p.distanceSquaredTo(p) < champion.distanceSquaredTo(p) && isPointOfTypes(n.p, types)){
+        if (n.p.distance2DTo(p) < champion.distance2DTo(p) && isPointOfTypes(n.p, types)){
             champion = n.p;
         }
         
@@ -437,18 +440,30 @@ public class K3DTree {
         double toPartitionLine = comparePoints(p, n, xyz);
         int temp = xyz + 1;
         if (xyz > 2){
+            toPartitionLine = 0;
             temp = 0;
         }
         /**
          * Handle the search point being to the left of or below
          * the current Node's point.
          */
-        if (toPartitionLine < 0) {
+        if (toPartitionLine == 0){
+            champion = nearest(n.lbb, p, champion, temp, types);
+            secondChampion = nearest(n.rtf, p, champion, temp, types);
+
+            if (secondChampion.distance2DTo(p) < champion.distance2DTo(p)){
+                champion = secondChampion;
+            }
+
+        }
+        else if (toPartitionLine < 0) {
             champion = nearest(n.lbb, p, champion, temp, types);
             
             // Since champion may have changed, recalculate distance
-            if (champion.distanceSquaredTo(p) >= toPartitionLine * toPartitionLine) {
+            if (champion.distance2DTo(p) >= toPartitionLine) {
                 champion = nearest(n.rtf, p, champion, temp, types);
+            } else{
+                System.out.println("I am");
             }
         }
         
@@ -466,8 +481,8 @@ public class K3DTree {
             champion = nearest(n.rtf, p, champion, temp, types);
             
             // Since champion may have changed, recalculate distance
-            if (champion.distanceSquaredTo(p) >=
-            toPartitionLine * toPartitionLine) {
+            if (champion.distance2DTo(p) <=
+            toPartitionLine) {
                 champion = nearest(n.lbb, p, champion, temp, types);
             }
         }

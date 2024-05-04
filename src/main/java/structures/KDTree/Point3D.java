@@ -152,6 +152,18 @@ public final class Point3D implements Comparable<Point3D> {
     }
 
     /**
+     * Returns the 2-Dimensional Euclidean distance between this point and that point.
+     * 
+     * @param that the other point
+     * @return the Euclidean distance between this point and that point
+     */
+    public float distance2DTo(Point3D that) {
+        float dx = this.x - that.x;
+        float dy = this.y - that.y;
+        return (float) Math.sqrt(dx * dx + dy * dy);
+    }
+
+    /**
      * Returns the square of the Euclidean distance between this point and that
      * point.
      * 
@@ -164,6 +176,20 @@ public final class Point3D implements Comparable<Point3D> {
         float dy = this.y - that.y;
         float dz = this.z - that.z;
         return dx * dx + dy * dy + dz * dz;
+    }
+
+        /**
+     * Returns the square of the 2D Euclidean distance between this point and that
+     * point.
+     * 
+     * @param that the other point
+     * @return the square of the Euclidean distance between this point and that
+     *         point
+     */
+    public float distance2DSquaredTo(Point3D that) {
+        float dx = this.x - that.x;
+        float dy = this.y - that.y;
+        return dx * dx + dy * dy;
     }
 
     /**

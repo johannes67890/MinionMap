@@ -39,10 +39,11 @@ public class Dijsktra {
     private static Stack<TagNode> shortestPath = new Stack<TagNode>();
 
 
-    public Dijsktra(Tag _start, Tag _finish, TransportType transportType) {
+    public Dijsktra(Tag _start, Tag _finish, TransportType transportType, boolean shortest) {
         distTo = new HashMap<>();
         edgeTo = new HashMap<Long, DirectedEdge>(G.V());
         costTo = new HashMap<>();
+        this.takeShortestRoute = shortest;
 
         this.start = getNearestRoadPoint(_start, transportType);
         this.finish = getNearestRoadPoint(_finish, transportType);
@@ -178,9 +179,11 @@ public class Dijsktra {
         ArrayList<Tag> tags = Tree.getNearestOfType(tag, transportType.getRoadTypes());
         double bestDistance = Double.MAX_VALUE;
         TagNode best = null;
+
         for (Tag tempTag : tags){
             if (tempTag instanceof TagWay){
                 TagWay way = (TagWay) tempTag;
+                System.out.println(way.getId());
                 if(!transportType.getRoadTypes().contains(way.getType()) || way.getType() == null) continue;
                 if (Type.getAllRoads().contains(way.getType())){
                     for (TagNode node : way.getRefNodes()){
@@ -217,10 +220,10 @@ public class Dijsktra {
         if(distTo.get(w) > distTo.get(v) + weight) {
             if (takeShortestRoute){
                 distTo.put(w, distTo.get(v) + weight);
-                costTo.put(w, costTo.get(v) + minutesWeight);
+                costTo.put(w, costTo.get(v) + distance);
             }else{
                 distTo.put(w, distTo.get(v) + weight);
-                costTo.put(w, costTo.get(v) + distance);
+                costTo.put(w, costTo.get(v) + minutesWeight);
             }
             edgeTo.put(w, e);
             if (pq.contains(w)) {
@@ -374,7 +377,7 @@ public class Dijsktra {
         // TagNode start = XMLReader.getNodeById(379686625l);
       
 
-       Dijsktra d = new Dijsktra(start, finish, TransportType.CAR);
+       Dijsktra d = new Dijsktra(start, finish, TransportType.CAR, false);
        System.out.println(d.shortestPath().toString() + "\n");
         d.printPath().forEach((k, v) -> System.out.println(k.getId() + " " + v));
         System.out.println("Total distance: " + d.getTotalDistance());

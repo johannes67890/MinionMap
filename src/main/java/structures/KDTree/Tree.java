@@ -122,7 +122,7 @@ public class Tree {
      * @return ArrayList of Tag-objects near the point
      */
     public static ArrayList<Tag> getTagsNearTag(Tag tag, List<Type> searchType){
-        return multiTree.nearestTags(new Point3D(tag.getLon(), tag.getLat(), (byte) 0), searchType);
+        return multiTree.nearestTags(new Point3D(tag.getLon(), tag.getLat(), (byte) 10), searchType);
     }
 
     // TODO:

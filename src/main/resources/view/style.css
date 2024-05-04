@@ -17,9 +17,9 @@
     -fx-margin-left: 20px;
 }
 
-.button {
+.button, .activeButton {
     -fx-background-color: #fff;
-    -fx-min-width: 100px;
+    -fx-min-width: 50px;
     -fx-color: #0f1111;
     -fx-cursor: hand;
     -fx-border-color: #686868;
@@ -43,21 +43,23 @@
     -fx-width: 125px;
 }
 
+.activeButton{
+    -fx-background-color: #008296;
+    -fx-text-fill: rgb(255, 255, 255);
+}
+
 .button:hover {
     -fx-border-color: #008296;
     -fx-box-shadow: rgba(213, 217, 217, .5) 0 2px 5px 0;
     -fx-outline: 0;
 }
 
-.button:focus {
+.button:active {
     -fx-border-color: #008296;
     -fx-box-shadow: rgba(213, 217, 217, .5) 0 2px 5px 0;
     -fx-outline: 0;
 }
-.button:selected {
-    -fx-border-color: #008296;
-    -fx-outline: 0;
-}
+
 
 .mapButton {
     -fx-min-width: 260px;

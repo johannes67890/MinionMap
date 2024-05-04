@@ -2,10 +2,10 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
@@ -30,8 +30,8 @@
                               </ImageView>
                            </graphic>
                         </ToggleButton>
-                        <ComboBox fx:id="searchBarStart" styleClass="combo-box" editable="true"   />
-                        <ComboBox fx:id="searchBarDestination"  styleClass="combo-box" editable="true"  />
+                        <ComboBox fx:id="searchBarStart" editable="true" styleClass="combo-box" />
+                        <ComboBox fx:id="searchBarDestination" editable="true" styleClass="combo-box" />
                         <Button fx:id="routeButton" minWidth="29.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="29.0">
                            <graphic>
                               <ImageView fitHeight="20.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
@@ -54,31 +54,37 @@
                   </HBox>
                </top>
             </BorderPane>
-            <Pane fx:id="routeTypeMenu" maxHeight="125.0" maxWidth="70.0" stylesheets="@style.css" StackPane.alignment="BOTTOM_LEFT">
+            <Pane fx:id="routeTypeMenu" maxHeight="301.0" maxWidth="262.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="301.0" prefWidth="262.0" stylesheets="@style.css" StackPane.alignment="BOTTOM_LEFT">
                <children>
-                  <VBox alignment="BOTTOM_LEFT" maxHeight="200.0" maxWidth="70.0" prefHeight="125.0" spacing="10.0" style="-fx-background-color: #CCCCCC;">
+                  <VBox alignment="BOTTOM_LEFT" layoutY="90.0" spacing="10.0" style="-fx-background-color: #CCCCCC;">
                      <children>
-                        <Button fx:id="walkButton" alignment="TOP_LEFT" maxHeight="29.0" maxWidth="29.0" minWidth="29.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="29.0">
+                        <HBox alignment="TOP_CENTER" spacing="10.0">
+                           <children>
+                              <Button fx:id="shortButton" mnemonicParsing="false" text="Shortest" />
+                              <Button fx:id="fastButton" mnemonicParsing="false" text="Fastest" />
+                           </children>
+                        </HBox>
+                        <Button fx:id="walkButton" mnemonicParsing="false" stylesheets="@style.css">
                            <graphic>
-                              <ImageView fitHeight="20.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../visuals/Walking.png" />
                                  </image>
                               </ImageView>
                            </graphic>
                         </Button>
-                        <Button fx:id="bicycleButton" maxHeight="29.0" maxWidth="29.0" minWidth="29.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="29.0">
+                        <Button fx:id="bicycleButton" mnemonicParsing="false">
                            <graphic>
-                              <ImageView fitHeight="20.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../visuals/Bicycle.png" />
                                  </image>
                               </ImageView>
                            </graphic>
                         </Button>
-                        <Button fx:id="carButton" maxHeight="29.0" maxWidth="29.0" minWidth="29.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="29.0">
+                        <Button fx:id="carButton" mnemonicParsing="false">
                            <graphic>
-                              <ImageView fitHeight="20.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../visuals/carIcon.png" />
                                  </image>
@@ -91,6 +97,9 @@
                      </padding>
                   </VBox>
                </children>
+               <StackPane.margin>
+                  <Insets />
+               </StackPane.margin>
             </Pane>
             <Pane fx:id="leftBurgerMenu" translateY="55.0" visible="false" StackPane.alignment="CENTER_LEFT">
                   <VBox fx:id="mainMenuVBox" styleClass="burgermenu" visible="false">
