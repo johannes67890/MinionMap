@@ -5,6 +5,7 @@
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -64,10 +65,11 @@
                   </HBox>
                </top>
             </BorderPane>
-            <Pane fx:id="routeTypeMenu" maxHeight="301.0" maxWidth="262.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="301.0" prefWidth="262.0" stylesheets="@style.css" StackPane.alignment="BOTTOM_LEFT">
+            <Pane fx:id="routeTypeMenu" maxHeight="200.0" maxWidth="200.0" prefHeight="730.0" prefWidth="100.0" stylesheets="@style.css" StackPane.alignment="CENTER_LEFT">
                <children>
-                  <VBox alignment="BOTTOM_LEFT" layoutY="39.0" spacing="10.0" style="-fx-background-color: #CCCCCC;">
+                  <VBox alignment="BOTTOM_LEFT" layoutY="-100.0" spacing="10.0" style="-fx-background-color: #CCCCCC;">
                      <children>
+                        <ListView fx:id="routeListView" maxHeight="200.0" prefHeight="200.0" prefWidth="150.0" />
                         <Button fx:id="findRouteButton" alignment="CENTER" mnemonicParsing="false" text="Find Route">
                            <VBox.margin>
                               <Insets left="37.0" />

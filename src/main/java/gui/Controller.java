@@ -2,6 +2,7 @@ package gui;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -19,6 +20,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.skin.ComboBoxListViewSkin;
 import javafx.scene.image.Image;
@@ -38,6 +40,7 @@ import structures.KDTree.Point3D;
 import structures.KDTree.Tree;
 import util.TransportType;
 import util.AddressComparator;
+import util.MathUtil;
 
 public class Controller implements Initializable, ControllerInterface{
     
@@ -60,6 +63,8 @@ public class Controller implements Initializable, ControllerInterface{
     @FXML private Button fastButton;
     @FXML private Button shortButton;
     @FXML private Button findRouteButton;
+    @FXML private ListView<String> routeListView;
+
     @FXML private Text speedText;
     @FXML private Text distanceText;
 
@@ -89,6 +94,8 @@ public class Controller implements Initializable, ControllerInterface{
     private boolean shortest = false;
     private static MainView mainView;
     private ObservableList<String> searchList = FXCollections.observableArrayList();
+    private ObservableList<String> pathList = FXCollections.observableArrayList();
+
 
     private List<TagAddress> addresses = new ArrayList<>();
 
@@ -250,7 +257,7 @@ public class Controller implements Initializable, ControllerInterface{
             routeType = TransportType.CAR;
             setStyleClass(carButton, "activeButton");
             setStyleClass(walkButton, "button");
-            setStyleClass(bicycleButton, "button");            
+            setStyleClass(bicycleButton, "button"); 
         });
 
         pointButton.setOnAction((ActionEvent e) ->{
@@ -258,7 +265,6 @@ public class Controller implements Initializable, ControllerInterface{
 
             File filePassive = new File(System.getProperty("user.dir").toString() + "\\src\\main\\resources\\visuals\\pointofinterestpassive.png");
             File fileActive = new File(System.getProperty("user.dir").toString() + "\\src\\main\\resources\\visuals\\pointofinterest.png");
-
 
             Image imagePassive = new Image(filePassive.toURI().toString());
             Image imageActive = new Image(fileActive.toURI().toString());
@@ -338,10 +344,8 @@ public class Controller implements Initializable, ControllerInterface{
             }else{
                 if (!hasSearchedForPath){
                     hasSearchedForPath = true;
-                    s.pathfindBetweenTagAddresses(startAddress, endAddress, routeType, shortest);
-                    String string = s.getDijkstra().getTotalDistance();
-                    System.out.println(string);
-                    distanceText.setText(string);
+                    pathfindBetweenTagAddresses();
+
                 }
             }
 
@@ -358,9 +362,7 @@ public class Controller implements Initializable, ControllerInterface{
             }else{
                 if (!hasSearchedForPath){
                     hasSearchedForPath = true;
-                    s.pathfindBetweenTagAddresses(startAddress, endAddress, routeType, shortest);
-                    String string = s.getDijkstra().getTotalDistance();
-                    distanceText.setText(string);
+                    pathfindBetweenTagAddresses();
                 }
             }
 
@@ -382,6 +384,46 @@ public class Controller implements Initializable, ControllerInterface{
             s.pathfindBetweenTagAddresses(startAddress, endAddress, routeType, shortest);
             String string = s.getDijkstra().getTotalDistance();
             distanceText.setText(string);
+            LinkedHashMap<TagWay, Double> path = s.getDijkstra().printPath();
+
+            Platform.runLater(() -> {
+                synchronized (pathList) {
+                    double distance = 0;
+                    String tempName = "";
+                    String distanceString = "";
+
+                    if (!routeListView.getItems().isEmpty()) {
+                        routeListView.getItems().clear();
+                    }
+                    for (TagWay way : path.keySet()){
+
+                        distance += path.get(way);
+
+                        if (way.getName() != null && !way.getName().equals(tempName)){
+                            tempName = way.getName();
+                            if (distance / 1000 > 1.0){
+                                distance = MathUtil.round(distance / 1000, 2);
+                                distanceString = Double.toString(distance) + " km";
+                            }
+                            else{
+                                distance = MathUtil.round(distance, 0);
+                                distanceString = Double.toString(distance) + " m";
+                            }
+                            pathList.add(way.getName() + ", for " + distanceString);
+                            distance = 0;
+                        }
+
+                    }
+                    routeListView.getItems().setAll(pathList);
+                    pathList.clear();
+                    if (!routeListView.isVisible() && routeListView.getItems().size() > 0){
+                        routeListView.setVisible(true);
+                    }
+                }
+            });
+            
+
+
         }
     }
 
