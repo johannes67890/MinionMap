@@ -23,7 +23,7 @@ import util.Type;
     * </p>
     * @implNote This class implements the {@link TLinkable} interface to allow for linking of nodes in a list.
 */
-public class TagNode extends Tag implements TLinkable<TagNode> {
+public class TagNode extends Tag implements TLinkable<TagNode>, Comparable<TagNode> {
 
     private long id;
     private Pair<Type.Place, String> place = null;
@@ -131,6 +131,11 @@ public class TagNode extends Tag implements TLinkable<TagNode> {
     public boolean equals(TagNode tN){
         if (this.id == tN.getId()) return true;
         else return false;
+    }
+
+    @Override
+    public int compareTo(TagNode o) {
+        return Long.compare(this.id, o.getId());
     }
 
     @Override
