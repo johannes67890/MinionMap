@@ -1,28 +1,8 @@
-/******************************************************************************
- *  Compilation:  javac Rect3D.java
- *  Execution:    none
- *  Dependencies: Point3D.java
- *
- *  Immutable data type for 3D axis-aligned rectangle.
- *
- ******************************************************************************/
-
 package structures.KDTree;
 
 /**
- * This class is made from the RectHV basis but changed to accomendate
- * 3 dimensional points.
- * 
- * The {@code Rect3D} class is an immutable data type to encapsulate a
- * two-dimensional axis-aligned rectagle with real-value coordinates.
- * The rectangle is <em>closed</em>—it includes the points on the boundary.
- * <p>
- * For additional documentation,
- * see <a href="https://algs4.cs.princeton.edu/12oop">Section 1.2</a> of
- * <i>Algorithms, 4th Edition</i> by Robert Sedgewick and Kevin Wayne.
- *
- * @author Robert Sedgewick
- * @author Kevin Wayne
+ * This class is heavily inspired by Kevin Waynes RectHV class, but
+ * this one is 3D.
  */
 
 public final class Rect3D {
@@ -116,28 +96,6 @@ public final class Rect3D {
 
     public double zmax() {
         return zmax;
-    }
-
-    /**
-     * Returns the width of this rectangle.
-     *
-     * @return the width of this rectangle {@code xmax - xmin}
-     */
-    public double width() {
-        return xmax - xmin;
-    }
-
-    /**
-     * Returns the height of this rectangle.
-     *
-     * @return the height of this rectangle {@code ymax - ymin}
-     */
-    public double height() {
-        return ymax - ymin;
-    }
-
-    public double depth() {
-        return zmax - zmin;
     }
 
     /**

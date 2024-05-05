@@ -7,7 +7,7 @@
  *
  ******************************************************************************/
 
-package structures.KDTree;
+package util;
 
 import java.util.Comparator;
 
@@ -30,6 +30,25 @@ import java.util.Comparator;
  * @author Kevin Wayne
  */
 public final class Point3D implements Comparable<Point3D> {
+
+    /**
+     * Compares two points by x-coordinate.
+     */
+    public static final Comparator<Point3D> X_ORDER = new XOrder();
+
+    /**
+     * Compares two points by y-coordinate.
+     */
+    public static final Comparator<Point3D> Y_ORDER = new YOrder();
+
+    /**
+     * Compares two points by z-coordinate.
+     */
+    public static final Comparator<Point3D> Z_ORDER = new ZOrder();
+    /**
+     * Compares two points by polar radius.
+     */
+    public static final Comparator<Point3D> R_ORDER = new ROrder();
 
     private final float x; // x coordinate
     private final float y; // y coordinate
@@ -66,27 +85,6 @@ public final class Point3D implements Comparable<Point3D> {
             this.z = z;
     }
 
-    public Point3D(float x, float y, int z) {
-        if (Float.isInfinite(x) || Float.isInfinite(y))
-            throw new IllegalArgumentException("Coordinates must be finite");
-        if (Float.isNaN(x) || Float.isNaN(y))
-            throw new IllegalArgumentException("Coordinates cannot be NaN");
-        if (x == 0.0)
-            this.x = 0.0f; // convert -0.0 to +0.0
-        else
-            this.x = x;
-
-        if (y == 0.0)
-            this.y = 0.0f; // convert -0.0 to +0.0
-        else
-            this.y = y;
-
-        if (z == 0.0)
-            this.z = 0;
-        else
-            this.z = (byte) z;
-    }
-
     /**
      * Returns the x-coordinate.
      * 
@@ -105,13 +103,22 @@ public final class Point3D implements Comparable<Point3D> {
         return y;
     }
 
-    /**
-     * Returns the z-coordiante
-     * @return the z-coordinate
-     */
     public int z() {
         return z;
     }
+
+    /**
+     * Returns the angle between this point and that point.
+     * 
+     * @return the angle in radians (between –&pi; and &pi;) between this point and
+     *         that point (0 if equal)
+     */
+    private float angleTo(Point3D that) {
+        float dx = that.x - this.x;
+        float dy = that.y - this.y;
+        return (float) Math.atan2(dy, dx);
+    }
+
 
     /**
      * Returns the Euclidean distance between this point and that point.
@@ -127,18 +134,6 @@ public final class Point3D implements Comparable<Point3D> {
     }
 
     /**
-     * Returns the 2-Dimensional Euclidean distance between this point and that point.
-     * 
-     * @param that the other point
-     * @return the Euclidean distance between this point and that point
-     */
-    public float distance2DTo(Point3D that) {
-        float dx = this.x - that.x;
-        float dy = this.y - that.y;
-        return (float) Math.sqrt(dx * dx + dy * dy);
-    }
-
-    /**
      * Returns the square of the Euclidean distance between this point and that
      * point.
      * 
@@ -151,21 +146,6 @@ public final class Point3D implements Comparable<Point3D> {
         float dy = this.y - that.y;
         float dz = this.z - that.z;
         return dx * dx + dy * dy + dz * dz;
-    }
-    
-
-        /**
-     * Returns the square of the 2D Euclidean distance between this point and that
-     * point.
-     * 
-     * @param that the other point
-     * @return the square of the Euclidean distance between this point and that
-     *         point
-     */
-    public float distance2DSquaredTo(Point3D that) {
-        float dx = this.x - that.x;
-        float dy = this.y - that.y;
-        return dx * dx + dy * dy;
     }
 
     /**
@@ -196,6 +176,51 @@ public final class Point3D implements Comparable<Point3D> {
         if (this.z > that.z)
             return +1;
         return 0;
+    }
+
+    // compare points according to their x-coordinate
+    private static class XOrder implements Comparator<Point3D> {
+        public int compare(Point3D p, Point3D q) {
+            if (p.x < q.x)
+                return -1;
+            if (p.x > q.x)
+                return +1;
+            return 0;
+        }
+    }
+
+    // compare points according to their y-coordinate
+    private static class YOrder implements Comparator<Point3D> {
+        public int compare(Point3D p, Point3D q) {
+            if (p.y < q.y)
+                return -1;
+            if (p.y > q.y)
+                return +1;
+            return 0;
+        }
+    }
+
+    // compare points according to their z-coordinate
+    private static class ZOrder implements Comparator<Point3D> {
+        public int compare(Point3D p, Point3D q) {
+            if (p.z < q.z)
+                return -1;
+            if (p.z > q.z)
+                return +1;
+            return 0;
+        }
+    }
+
+    // compare points according to their polar radius
+    private static class ROrder implements Comparator<Point3D> {
+        public int compare(Point3D p, Point3D q) {
+            double delta = (p.x * p.x + p.y * p.y + p.z * p.z) - (q.x * q.x + q.y * q.y + q.z * q.z);
+            if (delta < 0)
+                return -1;
+            if (delta > 0)
+                return +1;
+            return 0;
+        }
     }
 
 

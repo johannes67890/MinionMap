@@ -17,10 +17,11 @@ import parser.chunking.XMLWriter;
 import structures.Trie;
 
 /**
- * Reader for a OSM XML file.
+ * XMLReader for reading the OSM XML file.
  * <p>
- * Uses the {@link XMLStreamReader} to read the file and parse the data into the different classes: {@link TagNode}, {@link TagNode} , {@link TagAddress} and {@link TagWay}.
+ * The XMLReader reads the XML file and parses the data into the different classes: {@link TagBound}, {@link TagNode}, {@link TagAddress} and {@link TagWay}.
  * </p>
+ * 
  */
 public class XMLReader implements Serializable{
     private static TagBound bound;
@@ -117,17 +118,21 @@ public class XMLReader implements Serializable{
      * <p>
      * Uses the {@link XMLStreamReader} to read the file and parse the data into the different classes: {@link TagBound}, {@link TagNode}, {@link TagNode} , {@link TagAddress} and {@link TagWay}.
      * </p>
+<<<<<<< HEAD
+     * Each element is read and the data is parsed into the diffrent "Tag-builders" and then parsed into the correct class.
+     * @see XMLBuilder
+     * @param filepath - The path to the XML file.
+=======
      * 
      * @param iS inputstream from file
+>>>>>>> main
      */
     public XMLReader(InputStream is) {
         try {
             XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(is);
             // start timer
             long start = System.currentTimeMillis();
-            while (reader.hasNext()) {
-            
-                
+            while (reader.hasNext()) {                
                 reader.next();
                 switch (reader.getEventType()) {
                     case START_ELEMENT:

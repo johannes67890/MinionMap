@@ -5,11 +5,8 @@ import java.util.ArrayList;
 
 import parser.TagAddress;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
-
 import gnu.trove.map.hash.TCharObjectHashMap;
-import parser.TagAddress;
 
 public class Trie implements Serializable {
     private TrieNode root;
@@ -41,11 +38,11 @@ public class Trie implements Serializable {
         for (int i = 0; i < treatedAddressString.length(); i++) {
             char currentChar = treatedAddressString.charAt(i);
             if (!currentNode.containsKey(currentChar)) {
-                currentNode.setNode(currentChar, new TrieNode());
+                currentNode.setNode(currentChar);
             }
             currentNode = currentNode.getNode(currentChar);
         }
-        currentNode.setIsEnd(true);
+        currentNode.setIsEnd();
         currentNode.addHouseNumber(address.getHouseNumber(), address);
         return currentNode;
     }
@@ -166,51 +163,96 @@ public class TrieNode implements Serializable {
         branches = new TCharObjectHashMap<>();
     }
 
-    public void setIsEnd(boolean bool) {
-        isEnd = bool;
+    /**
+     * Sets the node as an end node
+     */
+    public void setIsEnd() {
+        isEnd = true;
     }
 
+    /**
+     * 
+     * @return Whether the node is an end node
+     */
     public boolean getIsEnd() {
         return isEnd;
     }
 
-    public void setNode(char character, TrieNode node) {
-        branches.put(character, node);
+    /**
+     * 
+     * @param character - The character to be added as a new node
+     */
+    public void setNode(char character) {
+        branches.put(character, new TrieNode());
     }
 
+    /**
+     * 
+     * @param character - The character to be checked for in the branches
+     * @return The TrieNode corresponding to the character
+     */
     public TrieNode getNode(char character) {
         return branches.get(character);
     }
 
+    /**
+     * Adds a house number and its corresponding TagAddress object to the HashMap
+     * @param houseNumber - The house number to be added
+     * @param address - The Address object to be added
+     */
     public void addHouseNumber(String houseNumber, TagAddress address) {
         houseNumberToAddress.put(houseNumber, address);
     }
 
+    /**
+     * 
+     * @return A list of all house numbers in the TrieNode
+     */
     public ArrayList<String> getHouseNumbers() {
         ArrayList<String> houseNumberList = new ArrayList<>(houseNumberToAddress.keySet());
         return houseNumberList;
     }
 
+    //Not currently used
     public void setEndAddress(String address) {
         this.endAddress = address;
     }
 
+    /**
+     * 
+     * @return A list of all TagAddress objects in the TrieNode
+     */
     public ArrayList<TagAddress> getTagAddresses(){
         return new ArrayList<>(houseNumberToAddress.values());
     }
 
+    //Not currently used
     public String getEndAddress() {
         return endAddress;
     }
 
+    /**
+     * 
+     * @param house - The house number to be checked for in the HashMap
+     * @return The TagAddress object corresponding to the house number
+     */
     public TagAddress getAddressObject(String house) {
         return houseNumberToAddress.get(house);
     }
 
+    /**
+     * 
+     * @return The HashMap of branches
+     */
     public TCharObjectHashMap<TrieNode> getBranches() {
         return branches;
     }
 
+    /**
+     * 
+     * @param character - The character to be checked for in the branches
+     * @return Whether the character is in the branches
+     */
     public boolean containsKey(char character) {
         if (branches.containsKey(character)) {
             return true;

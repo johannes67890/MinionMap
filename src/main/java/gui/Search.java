@@ -11,7 +11,6 @@ import parser.Tag;
 import parser.XMLReader;
 import pathfinding.Dijsktra;
 import structures.Trie;
-import structures.TrieNode;
 import util.TransportType;
 import util.Type;
 

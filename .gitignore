@@ -1,5 +1,26 @@
-# Ignore Gradle project-specific cache directory
 .gradle
+**/build/
+!src/**/build/
+.vscode
+.idea
+
+# Ignore Gradle GUI config
+gradle-app.setting
+
+# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
+!gradle-wrapper.jar
+
+# Avoid ignore Gradle wrappper properties
+!gradle-wrapper.properties
+
+# Cache of project
+.gradletasknamecache
+
+# Eclipse Gradle plugin generated files
+# Eclipse Core
+.project
+# JDT-specific (Eclipse Java Development Tools)
+.classpath
 .vscode
 .idea
 *.iml
@@ -27,7 +48,6 @@ src/main/resources/chunks
 *.cb
 *.cb2
 .*.lb
-.vscode
 
 ## Intermediate documents:
 *.dvi
@@ -104,20 +124,20 @@ acs-*.bib
 *.tfm
 
 #(r)(e)ledmac/(r)(e)ledpar
-# *.end
-# *.?end
-# *.[1-9]
-# *.[1-9][0-9]
-# *.[1-9][0-9][0-9]
-# *.[1-9]R
-# *.[1-9][0-9]R
-# *.[1-9][0-9][0-9]R
-# *.eledsec[1-9]
-# *.eledsec[1-9]R
-# *.eledsec[1-9][0-9]
-# *.eledsec[1-9][0-9]R
-# *.eledsec[1-9][0-9][0-9]
-# *.eledsec[1-9][0-9][0-9]R
+*.end
+*.?end
+*.[1-9]
+*.[1-9][0-9]
+*.[1-9][0-9][0-9]
+*.[1-9]R
+*.[1-9][0-9]R
+*.[1-9][0-9][0-9]R
+*.eledsec[1-9]
+*.eledsec[1-9]R
+*.eledsec[1-9][0-9]
+*.eledsec[1-9][0-9]R
+*.eledsec[1-9][0-9][0-9]
+*.eledsec[1-9][0-9][0-9]R
 
 # glossaries
 *.acn

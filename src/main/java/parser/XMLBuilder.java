@@ -30,47 +30,10 @@ public class XMLBuilder implements Serializable{
         private long id;
         private float lat, lon;
 
-        /**
-         * Get a attrubute from the {@link XMLStreamReader} as a {@link BigDecimal}.
-         * @param event - The {@link XMLStreamReader} to get the attribute from.
-         * @param name - The name of the attribute to get. ({@link String})
-         * @return The attribute as a {@link BigDecimal}.
-         */
-        public static double getAttributeByDouble(XMLStreamReader event, String name) {
-            return Double.parseDouble(event.getAttributeValue(null, name));
-        }
-
-                /**
-         * Get a attrubute from the {@link XMLStreamReader} as a {@link BigDecimal}.
-         * @param event - The {@link XMLStreamReader} to get the attribute from.
-         * @param name - The name of the attribute to get. ({@link String})
-         * @return The attribute as a {@link BigDecimal}.
-         */
-        public static float getAttributeByFloat(XMLStreamReader event, String name) {
-            return Float.parseFloat(event.getAttributeValue(null, name));
-        }
-        
-        /**
-         * Get a attrubute from the {@link XMLStreamReader} as a {@link Long}.
-         * @param event - The {@link XMLStreamReader} to get the attribute from.
-         * @param name - The name of the attribute to get. ({@link String})
-         * @return The attribute as a {@link Long}.
-         */
-        public static Long getAttributeByLong(XMLStreamReader event, String name) {
-            return Long.parseUnsignedLong(event.getAttributeValue(null, name));
-        }
-        
-        public boolean isEmpty(){
-            return this.getAddressBuilder().isEmpty() || this.getWayBuilder().isEmpty() || this.getRelationBuilder().isEmpty();
-        }
-
         public long getId(){
             return this.id;
         }
 
-        public int getIdasInt(){
-            return (int) this.id;
-        }
         public float getLat(){
             return this.lat;
         }
@@ -78,32 +41,71 @@ public class XMLBuilder implements Serializable{
             return this.lon;
         }
 
-        public Type.Place getPlace(){
-            return this.place;
+        public boolean isEmpty(){
+            return this.getAddressBuilder().isEmpty() || this.getWayBuilder().isEmpty() || this.getRelationBuilder().isEmpty();
         }
         
-        public AddressBuilder getAddressBuilder(){
-            return this.addressBuilder;
-        }
-        public WayBuilder getWayBuilder(){
-            return this.wayBuilder;
-        }
-        public RelationBuilder getRelationBuilder(){
-            return this.relationBuilder;
+        public Type.Place getPlace(){
+            return this.place;
         }
 
         public String getName(){
             return name;
         }
+        
         public Type getType(){
             return this.type;
         }
+
         public String getTypeValue(){
             return this.TypeValue;
+        }
+        
+        public AddressBuilder getAddressBuilder(){
+            return this.addressBuilder;
+        }
+
+        public WayBuilder getWayBuilder(){
+            return this.wayBuilder;
+        }
+
+        public RelationBuilder getRelationBuilder(){
+            return this.relationBuilder;
+        }
+
+        /**
+         * Get a attrubute from the {@link XMLStreamReader} as a {@code float}.
+         * @param event - The {@link XMLStreamReader} to get the attribute from.
+         * @param name - The name of the attribute to get. ({@link String})
+         * @return The attribute as a {@code float}.
+         */
+        public static float getAttributeByFloat(XMLStreamReader event, String name) {
+            return Float.parseFloat(event.getAttributeValue(null, name));
+        }
+        
+        /**
+         * Get a attrubute from the {@link XMLStreamReader} as a {@code long}.
+         * @param event - The {@link XMLStreamReader} to get the attribute from.
+         * @param name - The name of the attribute to get. ({@link String})
+         * @return The attribute as a {@code long}.
+         */
+        public static Long getAttributeByLong(XMLStreamReader event, String name) {
+            return Long.parseUnsignedLong(event.getAttributeValue(null, name));
+        }
+
+         /**
+         * Get a attrubute from the {@link XMLStreamReader} as a {@code double}.
+         * @param event - The {@link XMLStreamReader} to get the attribute from.
+         * @param name - The name of the attribute to get. ({@link String})
+         * @return The attribute as a {@code double}.
+         */
+        public static double getAttributeByDouble(XMLStreamReader event, String name) {
+            return Double.parseDouble(event.getAttributeValue(null, name));
         }
 
         /**
          * Parse the XML element and add the data to the builder(s).
+         * @see {@link XMLStreamReader} for the different elements.
          * @param element - The name of the element to parse.
          * @param reader - The {@link XMLStreamReader} to get the data from.
          */
@@ -115,16 +117,14 @@ public class XMLBuilder implements Serializable{
                     this.lon = MecatorProjection.projectLon(getAttributeByFloat(reader, "lon"));
                     break;
                 case "way":
-                    this.id = getAttributeByLong(reader, "id");   
-                    break;      
-                case "relation":
+                case "relation":    
                     this.id = getAttributeByLong(reader, "id");                  
                     break;
                 case "tag":
                     String k = reader.getAttributeValue(null, "k");
                     String v = reader.getAttributeValue(null, "v");
 
-                        parseTag(k, v);
+                    parseTag(k, v);
                     break;
                 case "nd":
                     TagNode node = XMLReader.getNodeById(getAttributeByLong(reader, "ref"));
@@ -171,7 +171,6 @@ public class XMLBuilder implements Serializable{
                 return;
             }
 
-
             // check if the tag is a type tag and set the type
             for (Type currType : Type.getTypes()){
                 if (k.equals(currType.getKey())){
@@ -185,7 +184,6 @@ public class XMLBuilder implements Serializable{
                                     }
                                 }
                             }
-                            
                             switch (currType) { 
                                 case ROUTE:
                                 case RESTRICTION:
@@ -195,7 +193,7 @@ public class XMLBuilder implements Serializable{
                                     break;
                                 default:
                                     this.type = currType; 
-                                break;
+                                    break;
                             } 
                             this.type = currType;
                             break;
@@ -231,6 +229,10 @@ public class XMLBuilder implements Serializable{
             }
         }
 
+        /**
+         * Parse the street type and set the speed limit.
+         * @param type - The type of the street.
+         */
         public void parseStreet(Type type){
             final short DEFAULT_SPEED = 50;
 

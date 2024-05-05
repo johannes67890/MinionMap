@@ -1,6 +1,7 @@
-package parser;
+package structures;
 import java.util.HashMap;
 
+import parser.Tag;
 import util.Type;
 
 
