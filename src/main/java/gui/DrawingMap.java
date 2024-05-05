@@ -300,7 +300,9 @@ public class DrawingMap {
         double lineWidth = MathUtil.clamp(defaultLineWidth * way.getType().getWidth(), min, max);
         gc.setLineWidth(lineWidth);
 
-
+        if (way.getType() != null){
+            gc.setStroke(way.getType().getColor());
+        }
 
         gc.beginPath();
         gc.moveTo(way.getRefNodes().getFirst().getLon(), -way.getRefNodes().getFirst().getLat());
@@ -540,6 +542,11 @@ public class DrawingMap {
         mapView.draw();
     }
 
+    /**
+     * Updates the zoombar
+     * @param label - The label that shows the range of the zoombar in meters
+     * @param imageView - The image of the zoombar that has its width changed
+     */
     public void zoombarUpdater(Label label, ImageView imageView) {
         label.setText(String.valueOf(zoombar.getRange()) + "m");
         imageView.setFitWidth(metersToPixels(zoombar.getRange()));

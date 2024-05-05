@@ -8,9 +8,6 @@ import structures.KDTree.Point3D;
 
 public class Point3DTest {
 
-
-    
-
     @Test
     public void distanceTo(){
         
