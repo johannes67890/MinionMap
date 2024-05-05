@@ -27,15 +27,16 @@ public class Dijsktra {
     private HashMap<Long, DirectedEdge> edgeTo;    // edgeTo[v] = last edge on shortest s->v path
     private IndexMinPQ<Double> pq;    // priority queue of vertices
     private HashSet<Long> surroundingTags = new HashSet<Long>();
-    private boolean takeShortestRoute = false; // This can be enabled to get a more precise shortest path, but at the cost of perfomance
-    private double distanceBetweenEndPoints; // Distance between start and finish
 
-    private TransportType type;
+    private boolean takeShortestRoute = false; // This can be enabled to get a more precise shortest path, but at the cost of perfomance
+
+    private double distanceBetweenEndPoints;
+
     private TagNode start;
     private TagNode finish;
 
     private Digraph G = new Digraph();
-    private Stack<TagNode> shortestPath = new Stack<TagNode>();
+    private static Stack<TagNode> shortestPath = new Stack<TagNode>();
 
 
     public Dijsktra(Tag _start, Tag _finish, TransportType transportType, boolean shortest) {
@@ -43,14 +44,13 @@ public class Dijsktra {
         edgeTo = new HashMap<Long, DirectedEdge>(G.V());
         costTo = new HashMap<>();
         this.takeShortestRoute = shortest;
-        type = transportType;
 
         this.start = getNearestRoadPoint(_start, transportType);
         this.finish = getNearestRoadPoint(_finish, transportType);
         if(this.start.getId() == this.finish.getId()) throw new IllegalArgumentException("Start and finish are the same");
         //start timer
         long startTime = System.currentTimeMillis();
-        addSurroundingRoadsFancy(start, finish, transportType);
+        addSurroundingRoads(start, finish, transportType);
         long endTime = System.currentTimeMillis();
         System.out.println("Time to add surrounding roads: " + (endTime - startTime) + "ms");
         distanceBetweenEndPoints = start.distance(finish);
@@ -64,6 +64,7 @@ public class Dijsktra {
             }
             if(v.getId() == finish.getId()) {
                 this.finish = v;
+                System.out.println("Found finish!");
                 distTo.put(v.getId(), Double.POSITIVE_INFINITY);
                 costTo.put(v.getId(), distanceBetweenEndPoints);
                 continue;
@@ -107,7 +108,7 @@ public class Dijsktra {
         takeShortestRoute = bool;
     }
 
-    public Stack<TagNode> getShortestPathofTags(){
+    public static Stack<TagNode> getShortestPathofTags(){
         return shortestPath;
     }
     private void addSurroundingRoads(TagNode startTag, TagNode finish, TransportType transportType){
@@ -173,15 +174,15 @@ public class Dijsktra {
                         list.add(tagNode);
                         addSurroundingRoadsFancy(tagNode, finish,transportType);
                     }
+                    //if(tagNode.getNext() == null) continue;
                 } 
             }
         }
     }
 
     private void addRoadFancy(List<TagNode> list, TagWay way){
-        if (list.size() == 1) return;
-        if (list.get(0).equals(list.get(list.size()-1)) && list.size() == 2) return;
-        if (list.get(0).equals(list.get(list.size()-1)) && list.size() > 2){
+        //if (list.size() < 2) return;
+        if (list.get(0).equals(list.get(list.size()-1))){
             //List<TagNode> list2 = list.subList(list.size()/2, list.size());
             for (int i = 1; i < list.size(); i++){
                 addRoadFancy(list.subList(i-1, i+1), way);
@@ -252,19 +253,13 @@ public class Dijsktra {
      */
     private void relax(DirectedEdge e){
         long v = e.from().getId(), w = e.to().getId();
-        double minutes = 1;
-        double weight = 0;
-        double aStarRatio = 0;
+
+        double distance = (e.to().distance(e.from())); // Length of the edge in meters
+        //double distance = G.getNode(w).distanceCheap(G.getNode(v));
         double distanceToDestination = e.to().distance(finish);
-        double distance = e.weight(); // Length of edge in meters
-        if (type.equals(TransportType.CAR)){
-            minutes = ((distance / 1000) / e.from().getParent().getSpeedLimit()) * 60; // Minutes to drive the edge
-        }else if (type.equals(TransportType.FOOT)){
-            minutes = ((distance / 1000) / 5) * 60; // Minutes to walk the edge with default speed 5km/t
-        }else if (type.equals(TransportType.BIKE)){
-            minutes = ((distance / 1000) / 20) * 60; // Minutes to cycle the edge with default speed 20km/t
-        }
-        aStarRatio = type.getAStarRatio(!takeShortestRoute);
+        //double distanceToDestination = G.getNode(w).distanceCheap(finish);
+        double minutes = ((distance / 1000) / e.weight()) * 60;
+        double weight = 0;
         if (takeShortestRoute){
             weight = distance;
         }else{
@@ -281,9 +276,9 @@ public class Dijsktra {
             }
             edgeTo.put(w, e);
             if (pq.contains(w)) {
-                pq.decreaseKey(w, (distTo.get(w)*aStarRatio) + distanceToDestination);
+                pq.decreaseKey(w, distTo.get(w) + distanceToDestination);
             } else {
-                pq.insert(w, (distTo.get(w)*aStarRatio) + distanceToDestination);
+                pq.insert(w, distTo.get(w) + distanceToDestination);
             }
         }
     }
@@ -320,8 +315,8 @@ public class Dijsktra {
     public TLinkedList<TagNode> shortestPath(){
         TLinkedList<TagNode> nodes = new TLinkedList<>();
         if (!hasPathTo(this.finish)) return null;
-        //System.out.println("Weight: " + distTo.get(finish.getId()));
-        //System.out.println("Cost: " + costTo.get(finish.getId()));
+        System.out.println("Weight: " + distTo.get(finish.getId()));
+        System.out.println("Cost: " + costTo.get(finish.getId()));
 
         for (DirectedEdge e : pathTo(this.finish)) {
             if(e.to() == null) break;
@@ -331,27 +326,6 @@ public class Dijsktra {
             nodes.add(node);
         }
         return nodes;
-    }
-
-    public TLinkedList<TagNode> shortestPathDetailed(){
-        TLinkedList<TagNode> nodes = shortestPath();
-        TLinkedList<TagNode> returnList = new TLinkedList<>();
-        for (int i = 1; i < nodes.size(); i++){
-            boolean onPath = false;
-            for (TagNode node : nodes.get(i-1).getParent().getRefNodes()){
-                if (node.equals(nodes.get(i-1))){
-                    onPath = !onPath;
-                }
-                if (onPath){
-                    returnList.add(node);
-                }
-                if (node.equals(nodes.get(i))){
-                    onPath = !onPath;
-                }
-            }
-        }
-
-        return returnList;
     }
     /**
      * This method is for debugging purposes only. It returns all TagWays visited through pathfinding
@@ -412,20 +386,6 @@ public class Dijsktra {
 
         totalDistance = MathUtil.round(totalDistance, 2);
         return Double.toString(totalDistance) + " m";
-    }
-
-    public String getDistanceOfPath(){
-        if (takeShortestRoute){
-            return "" + MathUtil.round(distTo.getOrDefault(this.finish.getId(), 0.0), 2) + "m";
-        }
-        return "" + MathUtil.round(costTo.getOrDefault(this.finish.getId(), 0.0), 2) + "m";
-    }
-
-    public String getMinutesOfPath(){
-        if (takeShortestRoute){
-            return "" + MathUtil.round(costTo.getOrDefault(this.finish.getId(), 0.0), 2) + "min";
-        }
-        return "" + MathUtil.round(distTo.getOrDefault(this.finish.getId(), 0.0), 2) + "min";
     }
 
     
