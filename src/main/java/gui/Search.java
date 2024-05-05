@@ -18,7 +18,6 @@ import util.Type;
 public class Search {
     private Trie trie;
     private MainView mainView;
-    private Dijsktra dijkstra;
     private Trie.TrieNode pointOfInterestNode = null;
 
     public Search(MainView mw){
@@ -61,20 +60,19 @@ public class Search {
      * @param end           The end address of pathfinding
      * @param transportType The type of transportation used to pathfind
      */
-    public void pathfindBetweenTagAddresses(TagAddress start, TagAddress end, TransportType transportType, boolean shortest){
-        TagNode _start = XMLReader.getNodeById(1259354245l);
-        TagNode _finish = XMLReader.getNodeById(1612922840l);
-        dijkstra = new Dijsktra(start, end, transportType, shortest);
+    public Dijsktra pathfindBetweenTagAddresses(TagAddress start, TagAddress end, TransportType transportType, boolean shortest){
+        Dijsktra dijkstra = new Dijsktra(start, end, transportType, shortest);
         ArrayList<Tag> nodes = new ArrayList<>();
-        nodes.addAll(dijkstra.allVisitedPaths());
-        TagWay way = new TagWay((long)0, "Route", dijkstra.shortestPath(), (short)0, Type.PATHWAY);
+        //nodes.addAll(dijkstra.allVisitedPaths());
+        TagWay way = new TagWay((long)0, "Route", dijkstra.shortestPathDetailed(), (short)0, Type.PATHWAY);
+        //System.out.println("Total distance: " + dijkstra.getTotalDistance());
         nodes.add(way);
-        if (nodes.isEmpty()) return;
-        mainView.getDrawingMap().setMarkedTag(nodes);
-    }
-
-    public Dijsktra getDijkstra(){
+        if (!nodes.isEmpty()){
+            mainView.getDrawingMap().setMarkedTag(nodes);
+        }
+        
         return dijkstra;
     }
+
 
 }

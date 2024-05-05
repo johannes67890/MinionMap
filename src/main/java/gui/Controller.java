@@ -36,6 +36,7 @@ import parser.Tag;
 import parser.TagAddress;
 import parser.TagNode;
 import parser.TagWay;
+import pathfinding.Dijsktra;
 import structures.KDTree.Point3D;
 import structures.KDTree.Tree;
 import util.TransportType;
@@ -381,10 +382,10 @@ public class Controller implements Initializable, ControllerInterface{
 
     private void pathfindBetweenTagAddresses(){
         if (startAddress != null && endAddress != null){
-            s.pathfindBetweenTagAddresses(startAddress, endAddress, routeType, shortest);
-            String string = s.getDijkstra().getTotalDistance();
-            distanceText.setText(string);
-            LinkedHashMap<TagWay, Double> path = s.getDijkstra().printPath();
+            Dijsktra dijkstra = s.pathfindBetweenTagAddresses(startAddress, endAddress, routeType, shortest);
+            //distanceText.setText(dijkstra.getDistanceOfPath());
+            //speedText.setText(dijkstra.getMinutesOfPath());
+            LinkedHashMap<TagWay, Double> path = new LinkedHashMap<>();//dijkstra.printPath();
 
             Platform.runLater(() -> {
                 synchronized (pathList) {

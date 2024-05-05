@@ -178,7 +178,6 @@ public class TagNode extends Tag implements TLinkable<TagNode>, Comparable<TagNo
     public TagWay getParent(){
         TagWay p = null;
         TagNode currN = this;
-
         if(currN.hasParent()){
             return currN.parent;
         }else{
