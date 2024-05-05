@@ -95,8 +95,8 @@
                            </graphic>
                         </Button>
 
-                        <!-- <Text fx:id="distanceText" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="texxt" /> -->
-                        <!-- <Text fx:id="speedText" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="texxt" /> -->
+                        <Text fx:id="distanceText" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="texxt" />
+                        <Text fx:id="speedText" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="texxt" />
                      </children>
                   </HBox>
                   <ListView fx:id="routeListView" styleClass="list-cell" />
