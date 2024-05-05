@@ -46,11 +46,10 @@ public enum Type  {
     BORDER("admin_level", new String[]{"9", "8", "7", "6", "5", "4", "3"}, 10, 2, Color.web("#F2EFE9"), Color.web("#F2EFE9").darker(), 5, false),
 
     // Natural, Landuse and main infrastructure (Hierarchy 9)
-
-    MOTORWAY("highway", new String[]{"motorway", "motorway_link"}, 9, 9, Color.web("#E892A2"), 5, true, 6, 100),
-    PRIMARY_ROAD("highway", new String[]{"primary", "trunk"}, 9, 9, Color.web("#FCD6A4"), 5,  true, 6, 100),
-    SECONDARY_ROAD("highway", new String[]{"secondary"}, 9, 9, Color.web("#F3F6B9").interpolate(Color.web("#F3F6B9").darker(), 0.2), 5, true, 6, 75),
-    TERTIARY_ROAD("highway",new String[]{"tertiary", "tertiary_link"},9, 9, Color.DARKGRAY, 4, true, 4, 50),
+    PRIMARY_ROAD("highway", new String[]{"primary"}, 9, 13, Color.web("#FCD6A4"), 5,  true, 12, 100),
+    MOTORWAY("highway", new String[]{"motorway"}, 9, 12, Color.web("#E892A2"), 5, true, 8, 100),
+    SECONDARY_ROAD("highway", new String[]{"secondary"}, 9, 11, Color.web("#F3F6B9").interpolate(Color.web("#F3F6B9").darker(), 0.2), 5, true, 6, 75),
+    TERTIARY_ROAD("highway",new String[]{"tertiary", "tertiary_link"},9, 10, Color.DARKGRAY, 4, true, 5, 50),
     RAILWAY("railway",new String[]{"rail","light_rail","subway"}, 9, 9, Color.DARKGRAY, 2, true, 4, 1000),
     WATER("natural",new String[]{"water"}, 9, 9, Color.web("#AAD3DF"), Color.LIGHTBLUE.darker(), 5, false),
     WATERWAY("waterway",new String[]{""},9, 8, Color.web("#AAD3DF"), 3, true, 2, 25),
@@ -72,13 +71,15 @@ public enum Type  {
  
     NATURALS("natural",new String[]{"scrub","grassland","heath", "wood"}, 8, 5, Color.web("#C8D7AB"), Color.GREENYELLOW.darker(), 5, false),
     WETLAND("natural",new String[]{"wetland"}, 8, 5, Color.web("#D6D99F"), Color.DARKKHAKI, 5, false), 
-    LANDUSE("landuse", new String[]{"commercial","construction","brownfield","greenfield","basin",
-    "cemetery","depot","garages","greenhouse_horticulture","landfill","orchard","plant_nursery",
+    LANDUSE("landuse", new String[]{"commercial","construction","brownfield","greenfield","basin"
+    ,"depot","garages","greenhouse_horticulture","landfill","orchard","plant_nursery",
     "railway","religious","reservoir","retail","salt_pond","village_green","vineyard",
     "winter_sports"}, 8, 7, Color.web("#EBDBE8"), Color.BLANCHEDALMOND.darker(), 5, false),
     ALLOTMENTS("landuse", new String[]{"allotments"}, 8, 8, Color.web("#C9E1BF"), Color.BLANCHEDALMOND.darker(), 5, false),
     TENTS("tents",new String[]{""}, 8, 5, Color.web("#CDEBB0"), Color.GREEN.darker(), 5, false),
     GRAVEYARD("amenity", new String[]{"grave_yard"}, 8, 7, Color.web("#AACBAF"), Color.BLANCHEDALMOND.darker(), 5, false),
+    CEMETERY("landuse", new String[]{"cemetery"}, 8, 7, Color.web("#AACBAF"), Color.BLANCHEDALMOND.darker(), 5, false),
+
     PARKING("amenity", new String[]{"parking"}, 8, 7, Color.web("#EEEEEE"), Color.BLANCHEDALMOND.darker(), 5, false),
     RECREATIONGROUND("landuse", new String[]{"recreation_ground"}, 8, 7, Color.web("#DFFCE2"), Color.BLANCHEDALMOND.darker(), 5, false),
     HOSPITAL("amenity", new String[]{"hospital"}, 8, 8, Color.web("#FFFFE5"), Color.web("#FFFFE5").darker(), 5, false),
@@ -113,11 +114,12 @@ public enum Type  {
     // Other roads (Hierarchy: 4)
     AERIALWAY("aerialway", new String[]{"cable_car", "gondola", "mixed_lift", "chair_lift", "drag_lift", "t-bar", "j-bar", "platter", "rope_tow", "magic_carpet", "zip_line", "goods", "pylon"}, 
     4, 9, Color.LIGHTGRAY, 2, true, 4, 10),
-    AERIALWAYSTATION("aerialway", new String[]{"station"},4, 8, Color.GRAY, Color.GRAY.darker(), 5, false),
-    RESIDENTIAL_ROAD("highway",new String[]{"residential"}, 4, 9, Color.WHITE, 5, true, 2, 7),
-    BIKE_ROAD("cycleway",new String[]{"lane", "oppisite", "opposite_lane", "track", "opposite_track", "share_busway", "shared_lane", "opposite_share_busway"}, 6, 9, Color.WHITE, 5, true, 2, 7),
-    PEDESTRIAN_ROAD("highway",new String[]{"footway", "path", "steps", "bridleway", "service", "living_street", "pedestrian", "unclassified"}, 6, 9, Color.WHITE, 5, true, 2, 7),
-    OTHER_ROAD("highway",new String[]{"cycleway", "road", "mini_roundabout"}, 6, 9, Color.WHITE, 5, true, 2, 7),
+    AERIALWAYSTATION("aerialway", new String[]{"station"},5, 8, Color.GRAY, Color.GRAY.darker(), 5, false),
+    OTHER_ROAD("highway",new String[]{"unclassified", "track", "footway", "cycleway", "path", 
+    "service", "motorway_link", "steps", "living_street", "mini_roundabout", "pedestrian"}, 7, 9, Color.WHITE, 3, true, 2, 2),
+
+    RESIDENTIAL_ROAD("highway",new String[]{"residential"}, 7, 9, Color.WHITE, 5, true, 5, 10),
+
     // Relations (Hierarchy: 3)
     MULTIPOLYGON("nothing must be mutlipolygon", new String[]{"multipolygon"}, 3, Color.BLACK, 0),
     RESTRICTION("type", new String[]{"restriction"}, 3, Color.BLACK, 0),
