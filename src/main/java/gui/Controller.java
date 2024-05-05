@@ -362,8 +362,8 @@ public class Controller implements Initializable, ControllerInterface{
     private void pathfindBetweenTagAddresses(){
         if (startAddress != null && endAddress != null){
             Dijsktra dijkstra = s.pathfindBetweenTagAddresses(startAddress, endAddress, routeType, shortest);
-            //distanceText.setText(dijkstra.getDistanceOfPath());
-            //speedText.setText(dijkstra.getMinutesOfPath());
+            distanceText.setText(dijkstra.getDistanceOfPath());
+            speedText.setText(dijkstra.getMinutesOfPath());
             LinkedHashMap<TagWay, Double> path = new LinkedHashMap<>();//dijkstra.printPath();
 
             Platform.runLater(() -> {
