@@ -373,14 +373,22 @@ public class Dijsktra {
         return tags;
     }
 
-    public double getTotalDistance(){
+    public String getTotalDistance(){
         Double totalDistance = 0.0;
         for (Double length : printPath().values()) {
             totalDistance += length;
         }
 
-        return MathUtil.round(totalDistance, 2);
+        if (totalDistance / 1000 > 1.0){
+            totalDistance = MathUtil.round(totalDistance / 1000, 2);
+            return Double.toString(totalDistance) + " km";
+        }
+
+        totalDistance = MathUtil.round(totalDistance, 2);
+        return Double.toString(totalDistance) + " m";
     }
+
+    
 
     public LinkedHashMap<TagWay, Double> printPath(){        
         LinkedHashMap<TagWay, Double> distToWay = new LinkedHashMap<>();

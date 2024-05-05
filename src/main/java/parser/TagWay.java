@@ -63,11 +63,7 @@ public class TagWay extends Tag implements Comparable<TagWay>{
                 default:
                     break;
             }
-    
-
         }
-       
-
     }
 
     public TagWay(long id, String name, TLinkedList<TagNode> nodes, short speedLimit, Type type) {

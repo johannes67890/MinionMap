@@ -73,7 +73,6 @@ public class Search {
         mainView.getDrawingMap().setMarkedTag(nodes);
     }
 
-
     public Dijsktra getDijkstra(){
         return dijkstra;
     }

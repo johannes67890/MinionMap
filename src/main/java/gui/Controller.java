@@ -29,6 +29,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import parser.Tag;
 import parser.TagAddress;
 import parser.TagNode;
@@ -48,6 +49,8 @@ public class Controller implements Initializable, ControllerInterface{
     @FXML private Button searchButton;
     @FXML private Button pointButton;
     @FXML private Button routeButton;
+    @FXML private Button swapButton;
+
     @FXML private Pane leftBurgerMenu;
 
     @FXML private Pane routeTypeMenu;
@@ -56,6 +59,9 @@ public class Controller implements Initializable, ControllerInterface{
     @FXML private Button carButton;
     @FXML private Button fastButton;
     @FXML private Button shortButton;
+    @FXML private Button findRouteButton;
+    @FXML private Text speedText;
+    @FXML private Text distanceText;
 
 
     @FXML private ComboBox<String> searchBarStart;
@@ -188,6 +194,7 @@ public class Controller implements Initializable, ControllerInterface{
         mainMenuVBox.setVisible(false);
         leftBurgerMenu.setVisible(false);
         routeTypeMenu.setVisible(false);
+        swapButton.setVisible(false);
 
         styleChoiceBox.setItems(style);
         styleChoiceBox.setValue("default");
@@ -232,9 +239,14 @@ public class Controller implements Initializable, ControllerInterface{
             isMenuOpen = !isMenuOpen;
         });
 
+        swapButton.setOnAction((ActionEvent e)-> {
+            switchStartAndDest();
+        });
+
         routeButton.setOnAction((ActionEvent e) -> {
             setEnableDestinationComboBox(!searchBarDestination.isVisible());
             routeTypeMenu.setVisible(!routeTypeMenu.isVisible());
+            swapButton.setVisible(!swapButton.isVisible());
             routeType = TransportType.CAR;
             setStyleClass(carButton, "activeButton");
             setStyleClass(walkButton, "button");
@@ -290,6 +302,10 @@ public class Controller implements Initializable, ControllerInterface{
             setStyleClass(bicycleButton, "button");
         });
 
+        findRouteButton.setOnAction((ActionEvent e)-> {
+            pathfindBetweenTagAddresses();
+        });
+
 
         comboBoxListViewSkinStart.getPopupContent().addEventFilter(KeyEvent.ANY, (event) -> {
             if( event.getCode() == KeyCode.SPACE ) {
@@ -323,6 +339,9 @@ public class Controller implements Initializable, ControllerInterface{
                 if (!hasSearchedForPath){
                     hasSearchedForPath = true;
                     s.pathfindBetweenTagAddresses(startAddress, endAddress, routeType, shortest);
+                    String string = s.getDijkstra().getTotalDistance();
+                    System.out.println(string);
+                    distanceText.setText(string);
                 }
             }
 
@@ -340,6 +359,8 @@ public class Controller implements Initializable, ControllerInterface{
                 if (!hasSearchedForPath){
                     hasSearchedForPath = true;
                     s.pathfindBetweenTagAddresses(startAddress, endAddress, routeType, shortest);
+                    String string = s.getDijkstra().getTotalDistance();
+                    distanceText.setText(string);
                 }
             }
 
@@ -354,6 +375,14 @@ public class Controller implements Initializable, ControllerInterface{
         searchBarDestination.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
             showSuggestions(searchBarDestination, oldValue, newValue);
         });
+    }
+
+    private void pathfindBetweenTagAddresses(){
+        if (startAddress != null && endAddress != null){
+            s.pathfindBetweenTagAddresses(startAddress, endAddress, routeType, shortest);
+            String string = s.getDijkstra().getTotalDistance();
+            distanceText.setText(string);
+        }
     }
 
 
@@ -409,6 +438,23 @@ public class Controller implements Initializable, ControllerInterface{
                 return address;
             }
             return null;
+    }
+
+    private void switchStartAndDest(){
+
+        String startAddressString = searchBarStart.getEditor().textProperty().getValue();
+        String endAddressString = searchBarDestination.getEditor().textProperty().getValue();
+
+        if (startAddressString == ""){
+            searchBarDestination.getEditor().textProperty().setValue(" ");
+        } else{
+            searchBarDestination.getEditor().textProperty().set(startAddressString);
+        }
+        if (endAddressString == ""){
+            searchBarStart.getEditor().textProperty().setValue(" ");
+        } else{
+            searchBarStart.getEditor().textProperty().set(endAddressString);
+        }
     }
 
     /**

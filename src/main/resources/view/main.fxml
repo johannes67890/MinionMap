@@ -13,6 +13,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
 
 <VBox prefHeight="800" prefWidth="1200" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.Controller">
    <children>
@@ -20,7 +21,7 @@
          <children>
             <BorderPane fx:id="mainBorderPane">
                <top>
-                  <HBox fx:id="mainUIHBox">
+                  <HBox fx:id="mainUIHBox" stylesheets="@style.css">
                         <ToggleButton fx:id="menuButton1" mnemonicParsing="false" styleClass="button">
                            <graphic>
                               <ImageView fitHeight="26.0" fitWidth="26.0" preserveRatio="true">
@@ -31,6 +32,15 @@
                            </graphic>
                         </ToggleButton>
                         <ComboBox fx:id="searchBarStart" editable="true" styleClass="combo-box" />
+                     <Button fx:id="swapButton" mnemonicParsing="false">
+                        <graphic>
+                           <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                              <image>
+                                 <Image url="@../visuals/Icon.png" />
+                              </image>
+                           </ImageView>
+                        </graphic>
+                     </Button>
                         <ComboBox fx:id="searchBarDestination" editable="true" styleClass="combo-box" />
                         <Button fx:id="routeButton" minWidth="29.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="29.0">
                            <graphic>
@@ -56,32 +66,47 @@
             </BorderPane>
             <Pane fx:id="routeTypeMenu" maxHeight="301.0" maxWidth="262.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="301.0" prefWidth="262.0" stylesheets="@style.css" StackPane.alignment="BOTTOM_LEFT">
                <children>
-                  <VBox alignment="BOTTOM_LEFT" layoutY="90.0" spacing="10.0" style="-fx-background-color: #CCCCCC;">
+                  <VBox alignment="BOTTOM_LEFT" layoutY="39.0" spacing="10.0" style="-fx-background-color: #CCCCCC;">
                      <children>
+                        <Button fx:id="findRouteButton" alignment="CENTER" mnemonicParsing="false" text="Find Route">
+                           <VBox.margin>
+                              <Insets left="37.0" />
+                           </VBox.margin>
+                        </Button>
                         <HBox alignment="TOP_CENTER" spacing="10.0">
                            <children>
                               <Button fx:id="shortButton" mnemonicParsing="false" text="Shortest" />
                               <Button fx:id="fastButton" mnemonicParsing="false" text="Fastest" />
                            </children>
                         </HBox>
-                        <Button fx:id="walkButton" mnemonicParsing="false" stylesheets="@style.css">
-                           <graphic>
-                              <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../visuals/Walking.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </Button>
-                        <Button fx:id="bicycleButton" mnemonicParsing="false">
-                           <graphic>
-                              <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../visuals/Bicycle.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </Button>
+                        <HBox alignment="BASELINE_LEFT" spacing="10.0">
+                           <children>
+                              <Button fx:id="walkButton" mnemonicParsing="false" stylesheets="@style.css">
+                                 <graphic>
+                                    <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../visuals/Walking.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Text fx:id="distanceText" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="texxt" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="BASELINE_LEFT" spacing="10.0">
+                           <children>
+                              <Button fx:id="bicycleButton" mnemonicParsing="false">
+                                 <graphic>
+                                    <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../visuals/Bicycle.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Text fx:id="speedText" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="texxt" />
+                           </children>
+                        </HBox>
                         <Button fx:id="carButton" mnemonicParsing="false">
                            <graphic>
                               <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">

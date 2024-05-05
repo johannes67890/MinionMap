@@ -26,11 +26,13 @@ public class TrieTest {
     //private XMLReader reader;
     @BeforeEach
     void setUp() {
-        this.reader = new XMLReader("src/test/java/org/ressources/testmap.osm");
+        this.reader = new XMLReader("src\\main\\resources\\testMap.osm");
         assertNotNull(reader);
         assertDoesNotThrow(() -> this.reader);
         trie = XMLReader.getTrie();
     }
+
+    
 
   
     @Test
