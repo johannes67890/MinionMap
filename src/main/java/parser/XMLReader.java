@@ -202,5 +202,6 @@ public class XMLReader {
         nodes = null;
         ways = null;
         relations = null;
+        addresses = null;
     }
 }
