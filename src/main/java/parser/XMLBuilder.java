@@ -1,13 +1,16 @@
 package parser;
 
+import java.io.Serializable;
+
 import java.math.BigDecimal;
 
 import javax.xml.stream.XMLStreamReader;
 
+import javafx.util.Pair;
 import parser.TagAddress.AddressBuilder;
 import parser.TagRelation.RelationBuilder;
 import parser.TagWay.WayBuilder;
-import util.MecatorProjection;
+import util.Type;
 
 /**
 * Builder for a single XML element.
@@ -15,12 +18,13 @@ import util.MecatorProjection;
 * Constructs a instance of the builder, that later can be used to construct a {@link TagNode}, {@link TagWay} or {@link TagRelation}.
 * </p>
 */
-public class XMLBuilder {
+public class XMLBuilder implements Serializable{
         private AddressBuilder addressBuilder = new AddressBuilder();
         private WayBuilder wayBuilder = new WayBuilder();
         private RelationBuilder relationBuilder = new RelationBuilder();
 
         private String name; // name from a <tag> in a parrent element
+        private Type.Place place;
         private Type type;
         private String TypeValue;
         private long id;
@@ -73,6 +77,10 @@ public class XMLBuilder {
         public float getLon(){
             return this.lon;
         }
+
+        public Type.Place getPlace(){
+            return this.place;
+        }
         
         public AddressBuilder getAddressBuilder(){
             return this.addressBuilder;
@@ -85,7 +93,7 @@ public class XMLBuilder {
         }
 
         public String getName(){
-            return this.name;
+            return name;
         }
         public Type getType(){
             return this.type;
@@ -116,9 +124,7 @@ public class XMLBuilder {
                     String k = reader.getAttributeValue(null, "k");
                     String v = reader.getAttributeValue(null, "v");
 
-                    if (this.type == null){
                         parseTag(k, v);
-                    }
                     break;
                 case "nd":
                     TagNode node = XMLReader.getNodeById(getAttributeByLong(reader, "ref"));
@@ -142,18 +148,45 @@ public class XMLBuilder {
                 this.name = v; // set the name of the node
             }
 
+            if(k.equals("place")){
+                for (Type.Place currPlace : Type.Place.getTypes()) {
+                    if (v.equals(currPlace.getValue())) {
+                        this.place = currPlace;
+                        break;
+                    }
+                }
+            }
+
+            if(k.contains("maxspeed")){
+                try {
+                    wayBuilder.setSpeedLimit(Short.parseShort(v));
+                    return;
+                } catch (NumberFormatException e) {
+                   return;
+                }
+            }
+
+            if(k.equals("oneway")){
+                wayBuilder.setOneWay(v.equals("yes") || v.equals("true"));
+                return;
+            }
+
+
             // check if the tag is a type tag and set the type
             for (Type currType : Type.getTypes()){
                 if (k.equals(currType.getKey())){
                     for (String currVal : currType.getValue()) {
                         if (v.equals(currVal) || currVal.equals("")) {
+                            
+                            if(wayBuilder.getSpeedLimit() != 1){
+                                for (Type roadType : Type.getAllRoads()) {
+                                    if(currType.equals(roadType)){
+                                        parseStreet(roadType);
+                                    }
+                                }
+                            }
+                            
                             switch (currType) { 
-                                // Way types
-                                case PRIMARY_ROAD:
-                                case SECONDARY_ROAD:
-                                case TERTIARY_ROAD:
-                                case OTHER_ROAD:
-                                    parseStreet(currType);
                                 case ROUTE:
                                 case RESTRICTION:
                                 case MULTIPOLYGON:
@@ -199,21 +232,25 @@ public class XMLBuilder {
         }
 
         public void parseStreet(Type type){
-            final int DEFAULT_SPEED = 50;
+            final short DEFAULT_SPEED = 50;
 
             switch (type) {
                 case MOTORWAY:
-                    wayBuilder.setSpeedLimit(130);
+                    wayBuilder.setSpeedLimit((short) 130);
                     break;
                 case PRIMARY_ROAD:
                 case SECONDARY_ROAD:
                 case TERTIARY_ROAD:
-                    wayBuilder.setSpeedLimit(80);
+                    wayBuilder.setSpeedLimit((short) 80);
+                    break;
+                case RESIDENTIAL_ROAD:
+                    wayBuilder.setSpeedLimit(DEFAULT_SPEED);
                     break;
                 case OTHER_ROAD:
                     wayBuilder.setSpeedLimit(DEFAULT_SPEED);
                     break;
                 default:
+                    wayBuilder.setSpeedLimit(DEFAULT_SPEED);
                     break;
             }
         }

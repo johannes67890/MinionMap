@@ -72,6 +72,10 @@ public class Digraph {
         return adj.keySet();
     }
 
+    public void remove(TagNode v){
+        adj.remove(v);
+    }
+
     /**
      * Returns the number of edges in this edge-weighted graph.
      *
@@ -90,6 +94,10 @@ public class Digraph {
     public void addEdge(DirectedEdge e) {
         TagNode v = e.from();
         TagNode w = e.to();
+
+        if (e.weight() < 0){
+            throw new IllegalArgumentException("Directed edge " + e + " has a negative weight");
+        }
 
         if (adj.containsKey(v)) {
             adj.get(v).add(e);
@@ -130,9 +138,8 @@ public class Digraph {
 
     
 
-    public TagNode getNode(long id){
+    public TagNode getNode2(long id){
         for(DirectedEdge node : edges()){
-            //System.out.println("edges:" + node.either().getId() + " " + node.other(node.either()).getId() + " " + id);
             if(node.from().getId() == id){
                 return node.from();
             } else if(node.to().getId() == id){
@@ -141,6 +148,15 @@ public class Digraph {
 
         }
         throw new NoSuchElementException("Node not found in graph");
+    }
+
+    public TagNode getNode(long id){
+        for (TagNode node : vertices()){
+            if (node.getId() == id){
+                return node;
+            }
+        }
+        throw new NoSuchElementException("Node not found in graph!");
     }
 
     /**

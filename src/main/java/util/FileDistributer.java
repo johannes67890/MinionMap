@@ -4,10 +4,12 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 public enum FileDistributer {
-    input("input.xml"),
     // Views
     main("view/main.fxml"),
-    start_screen("view/start.fxml");
+    start_screen("view/start.fxml"),
+    // Test Files
+    testMap("testMap.osm"),
+    RebakSopark("testRebakSopark.osm");
 
     
 

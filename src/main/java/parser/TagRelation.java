@@ -1,16 +1,18 @@
 package parser;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import javax.xml.stream.XMLStreamReader;
 
 import gnu.trove.list.linked.TLinkedList;
+import util.Type;
 
 enum Relation {
     ID, INNER, OUTER, WAYS, RELATIONS, NODES, TYPE, TYPEVALUE, NAME, RELATIONTYPE
 }
 
-public class TagRelation extends Tag{
+public class TagRelation extends Tag implements Serializable {
     private ArrayList<TagNode> nodes = new ArrayList<>();
     private ArrayList<TagRelation> relations = new ArrayList<>();
     private ArrayList<TagWay> ways = new ArrayList<>();
@@ -101,7 +103,7 @@ public class TagRelation extends Tag{
         TagNode prevLastTagNode = null;
 
         boolean success = false;
-        int speedLimit = 0;
+        short speedLimit = 0;
         long id = 0;
 
         int wayCount = 0;
@@ -214,7 +216,7 @@ public class TagRelation extends Tag{
     }
     
 
-    public static class RelationBuilder {
+    public static class RelationBuilder implements Serializable {
         public TagRelation relation;
 
         private boolean isEmpty = true;

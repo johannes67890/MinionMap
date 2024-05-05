@@ -6,33 +6,39 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.control.* ?>
+<?import javafx.scene.layout.StackPane ?>
+<?import javafx.scene.layout.BorderPane ?>
+<?import javafx.scene.layout.HBox ?>
+<?import javafx.scene.layout.VBox ?>
+<?import javafx.scene.layout.Region ?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+ <?import javafx.geometry.Insets?>
+
 <?import javafx.scene.text.Text?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" spacing="10.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.StartScreenController">
-   <children>
-      <Label text="Welcome to MapOfDenmark without Malmø" textAlignment="CENTER" wrapText="true">
-         <font>
-            <Font name="System Bold" size="27.0" />
-         </font>
-      </Label>
-      <Label text="Drag and drop a .OSM, .XML or .ZIP file to load a map" textAlignment="CENTER">
-         <font>
-            <Font size="18.0" />
-         </font>
-      </Label>
-      <Label style="-fx-text-fill: #AAAAAA;" text="(If no file is selected when the program is started, then a default file will be loaded)" />
-      <HBox fx:id="contentPane" accessibleHelp="hejsa" accessibleText="hejsa" alignment="CENTER" prefHeight="150.0" style="-fx-background-color: #999999; -fx-background-radius: 25 25 25 25;">
-         <children>
-            <Text fx:id="contentPaneText" strokeType="OUTSIDE" strokeWidth="0.0" text="Drop file here" textAlignment="CENTER" wrappingWidth="280.0" />
-         </children>
-         <VBox.margin>
-            <Insets left="100.0" right="100.0" />
-         </VBox.margin>
+<VBox spacing="15" alignment="CENTER" prefHeight="800" prefWidth="1200" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.StartScreenController">
+   <Label fx:id="titleLabel" text="Map Application" styleClass="title"/>
+   <!-- Sublabel -->
+   <Label fx:id="subTitleLabel" text="Welcome to the Map Application" styleClass="subTitle"/>
+   <!-- Select default maps -->
+   <HBox styleClass="selectDefaultMaps" spacing="20">
+        <Button fx:id="welcomeDenmark" style="-fx-background-image: url('visuals/denmark.png')" styleClass="mapButton">Denmark</Button>
+        <Button fx:id="welcomeCopenhagen" style="-fx-background-image: url('visuals/copenhagen.png')" styleClass="mapButton">Copenhagen</Button>
+   </HBox>
+   <!-- Select file -->
+   <Label fx:id="titleLabel" text="Drag n' drop" styleClass="title"/>
+   <VBox fx:id="startScreen" spacing="10" alignment="TOP_CENTER" VBox.vgrow="ALWAYS" styleClass="startScreen">
+      <HBox fx:id="contentPane" alignment="CENTER" styleClass="dropzone">
+            <Text fx:id="contentPaneText" text="Drop file here" textAlignment="CENTER"/>
       </HBox>
-      <Button fx:id="openFileFinderButton" mnemonicParsing="false" text="Open Filefinder" />
-      <Button fx:id="submitButton" mnemonicParsing="false" text="Launch Map">
-         <font>
-            <Font size="14.0" />
-         </font></Button>
-   </children>
-</VBox>
+      <HBox fx:id="buttonPane" spacing="7" alignment="TOP_CENTER" VBox.vgrow="ALWAYS" styleClass="buttonPane">
+         <Button fx:id="openFileFinderButton" styleClass="button">Open Filefinder</Button>
+         <Button fx:id="submitButton" styleClass="button">Launch Map</Button>
+      </HBox>
+   </VBox>
+ </VBox>

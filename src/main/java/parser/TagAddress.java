@@ -1,8 +1,11 @@
 package parser;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import util.Type;
 
 enum Address{
     ID, LAT, LON, CITY, COUNTRY, STREET, HOUSENUMBER, POSTCODE, MUNICIPALITY;
@@ -15,7 +18,7 @@ enum Address{
  * {@link Address#ID}, {@link Address#LAT}, {@link Address#LON}, {@link Address#STREET}, {@link Address#HOUSENUMBER}, {@link Address#POSTCODE}, {@link Address#MUNICIPALITY}
  * </p>
 */
-public class TagAddress extends Tag  implements Comparable{
+public class TagAddress extends Tag  implements Comparable<TagAddress>{
     long id;
     float lat;
     float lon;
@@ -72,24 +75,48 @@ public class TagAddress extends Tag  implements Comparable{
         return street;
     }
 
+    public void setStreet(String street){
+        this.street = street;
+    }
+
     public String getHouseNumber() {
         return house;
+    }
+
+    public void setHouseNumber(String houseNumber){
+        this.house = houseNumber;
     }
 
     public String getPostcode() {
         return postCode;
     }
 
+    public void setPostCode(String postcode){
+        this.postCode = postcode;
+    }
+
     public String getMunicipality() {
         return municipality;
+    }
+
+    public void setMunicipality(String municipality){
+        this.municipality = municipality;
     }
 
     public String getCity() {
         return city;
     }
 
+    public void setCity(String city){
+        this.city = city;
+    }
+
     public String getCountry() {
         return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
     }
 
     public String toString() {
@@ -106,7 +133,7 @@ public class TagAddress extends Tag  implements Comparable{
      * Constructs a instance of the builder, that later can be used to construct a {@link TagAddress}.
      * </p>
      */
-    public static class AddressBuilder {
+    public static class AddressBuilder  implements Serializable{
         public String street, house, postcode, country, city, municipality;
         private boolean isEmpty = true;
 
@@ -251,18 +278,16 @@ public class TagAddress extends Tag  implements Comparable{
     }
 
     @Override
-    public int compareTo(Object object) {
-        if (object == null){
+    public int compareTo(TagAddress tagAddress) {
+        if (tagAddress == null){
             throw new IllegalArgumentException("Paramenter object is of null");
-        }else if (object instanceof TagAddress){
-            TagAddress tagAdress = (TagAddress) object;
-
-            int comparison = this.city.compareTo(tagAdress.city);
+        }else{
+            int comparison = this.city.compareTo(tagAddress.city);
 
             if (comparison == 0){
-                comparison = this.street.compareTo(tagAdress.street);
+                comparison = this.street.compareTo(tagAddress.street);
                 if (comparison == 0){
-                    return this.house.compareTo(tagAdress.house);
+                    return this.house.compareTo(tagAddress.house);
                 }else{
                     return comparison;
                 }
@@ -270,8 +295,6 @@ public class TagAddress extends Tag  implements Comparable{
                 return comparison;
             }
 
-        }else{
-            throw new IllegalArgumentException("Parameter object is not of type TagAdress!");
         }
     }
 }

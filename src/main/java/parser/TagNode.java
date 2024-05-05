@@ -3,7 +3,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import gnu.trove.list.TLinkable;
+import gnu.trove.list.linked.TLinkedList;
+import javafx.util.Pair;
+import parser.chunking.XMLWriter.ChunkFiles;
+import structures.KDTree.Tree;
+import util.Type;
 
+import java.util.*;
 
 /**
  * Class for storing a {@link HashMap} of a single node.
@@ -15,7 +21,9 @@ import gnu.trove.list.TLinkable;
 public class TagNode extends Tag implements TLinkable<TagNode>, Comparable<TagNode>  {
 
     private long id;
-    private ArrayList<TagWay> parent = new ArrayList<>();
+    private Pair<Type.Place, String> place = null;
+    private TagWay parent;
+    private Type type;
     private float lon;
     private float lat;
     private TagNode next;
@@ -27,7 +35,7 @@ public class TagNode extends Tag implements TLinkable<TagNode>, Comparable<TagNo
         this.lon = lon;
     }
 
-    public TagNode(long id, float lat, float lon, ArrayList<TagWay> way) {
+    public TagNode(long id, float lat, float lon, TagWay way) {
         this.id = id;
         this.lat = lat;
         this.lon = lon;
@@ -43,6 +51,7 @@ public class TagNode extends Tag implements TLinkable<TagNode>, Comparable<TagNo
         this.id = builder.getId();
         this.lon = builder.getLon();
         this.lat = builder.getLat();
+        this.place = new Pair<Type.Place,String>(builder.getPlace(), builder.getName());
     }
     
     public TagNode(TagNode other) {
@@ -70,7 +79,15 @@ public class TagNode extends Tag implements TLinkable<TagNode>, Comparable<TagNo
 
     @Override
     public Type getType() {
-        throw new UnsupportedOperationException("TagNode does not have a type.");
+        return type;
+    }
+
+    public Pair<Type.Place, String> getPlace(){
+        return place;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
     }
 
     public boolean equals(TagNode tN){
@@ -82,14 +99,20 @@ public class TagNode extends Tag implements TLinkable<TagNode>, Comparable<TagNo
 
     }
  
+    public boolean hasIntersection(){
+        return Tree.getTagFromPoint(this).size() > 1;
+    }
+
+    public ArrayList<Tag> getIntersectionTags(){
+        // System.out.println(Tree.getTagFromPoint(this));
+        return Tree.getTagFromPoint(this);
+    }
+
     @Override
     public int compareTo(TagNode o) {
         return Long.compare(this.id, o.getId());
     }
 
-    public double distance(TagNode node){
-        return Math.sqrt(Math.pow(node.getLat() - getLat(), 2) + (Math.pow(node.getLon() - getLon(), 2)));
-    }
 
     @Override
     public String toString() {
@@ -108,11 +131,6 @@ public class TagNode extends Tag implements TLinkable<TagNode>, Comparable<TagNo
     @Override
     public TagNode getPrevious() {
         return prev;
-    }
-
-
-    public ArrayList<TagWay> getParents() {
-        return parent;
     }
 
     @Override
@@ -134,17 +152,50 @@ public class TagNode extends Tag implements TLinkable<TagNode>, Comparable<TagNo
         
     
     }
-    
+ 
+
     public void setParent(TagWay linkable) {
-        parent.add(linkable);
+        parent = linkable;
+    }
+
+    public boolean hasParent(){
+        return this.parent != null;
     }
 
     public boolean hasParent(TagWay way){
-        return parent.contains(way);
+        return this.parent.equals(way);
     }
-
+    
+    /**
+     * Clears the links of the node.
+     * <p>
+     * Sets the next and previous nodes to null.
+     * </p>
+     * @see TLinkable
+     */
     public void clearLinks(){
         next = null;
         prev = null;
+    }
+
+    /**
+     * Iterates backwards through the linked list of nodes to find the parent way.
+     * @return The {@link TagWay} parent of the node.
+     */
+    public TagWay getParent(){
+        TagWay p = null;
+        TagNode currN = this;
+        if(currN.hasParent()){
+            return currN.parent;
+        }else{
+            while(!currN.hasParent()){
+                currN = currN.getPrevious();
+                if(currN.hasParent()){
+                    p = currN.getParent();
+                    break;
+                }
+            }
+        }
+        return p;
     }
 }
