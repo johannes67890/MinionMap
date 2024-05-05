@@ -22,6 +22,7 @@ import structures.Trie;
  */
 public class XMLReader {
     private static TagBound bound;
+    private static TLongObjectHashMap<TagNode> places = new TLongObjectHashMap<TagNode>();
     private static TLongObjectHashMap<TagNode> nodes = new TLongObjectHashMap<TagNode>();
     private static TLongObjectHashMap<TagAddress> addresses = new TLongObjectHashMap<TagAddress>();
     private static TLongObjectHashMap<TagRelation> relations = new TLongObjectHashMap<TagRelation>();
@@ -109,6 +110,14 @@ public class XMLReader {
     }
 
     /**
+     * Get all the {@link TagRelation}s in the XML file.
+     * @return A {@link HashMap} of the keys as {@link Relation#ID} to all the {@link TagRelation}s in the XML file.
+     */
+    public static TLongObjectHashMap<TagNode> getPlaces(){
+        return places;
+    }
+
+    /**
      * Get all the {@link TagWay}s in the XML file.
      * @return A {@link HashMap} of the keys as {@link Way#ID} to all the {@link TagWay}s in the XML file.
      */
@@ -160,6 +169,10 @@ public class XMLReader {
                                     trie.insert(address);
                                     XMLWriter.appendToPool(address);
                                 } else {
+                                    TagNode node = new TagNode(tempBuilder);
+                                    if(node.getPlace().getKey() != null) {
+                                        places.put(node.getId(), node);
+                                    }
                                     nodes.put(tempBuilder.getId(), new TagNode(tempBuilder));
                                 }
                                 tempBuilder = new XMLBuilder(); // Reset the builder
@@ -194,7 +207,8 @@ public class XMLReader {
                     default:
                         break;
                     }
-            }             
+            }           
+            System.out.println("size" + places.size());  
             // nodes = null; // Free up memory
             reader.close();
             XMLWriter.appendToBinary();
