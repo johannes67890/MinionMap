@@ -19,7 +19,7 @@ public abstract class View {
     private ControllerInterface controller;
     private MainView mainView;
     private Scene scene;
-    private Model model;
+    private static Model model;
     private DrawingMap drawingMap;
 
     protected View(MainView mainView, URL url) throws Exception{
