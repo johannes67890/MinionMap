@@ -165,7 +165,7 @@ public class Dijsktra {
         //distance = (distance / 1000) / way.getSpeedLimit();
         G.addEdge(new DirectedEdge(list.get(0), list.get(list.size()-1), distance));
         if (!way.isOneWay()){
-            addOneWayEdge(list.get(list.size()-1), way);
+            G.addEdge(new DirectedEdge(list.get(list.size()-1), list.get(0), distance));
         }
     }
 

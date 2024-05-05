@@ -101,6 +101,7 @@ public class DrawingMap {
         pan(-minlon, maxlat);
         zoom(canvas.getWidth() / (maxlon - minlon), 0, 0);
         isInitialized = true;
+        mapView.draw();
     }
 
     public boolean IsInitialized(){
