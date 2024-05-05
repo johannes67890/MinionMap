@@ -39,6 +39,7 @@ import pathfinding.Dijsktra;
 import structures.KDTree.Point3D;
 import structures.KDTree.Tree;
 import util.TransportType;
+import util.Type;
 import util.AddressComparator;
 import util.MathUtil;
 
@@ -136,13 +137,15 @@ public class Controller implements Initializable, ControllerInterface{
                 double x = bounds[0] + e.getX() / drawingMap.getZoomLevel();
                 double y = bounds[3] - e.getY() / drawingMap.getZoomLevel();
 
-                //Point3D point = Tree.getNearestPointOfType(pointOfInterest, routeType.getRoadTypes());
-                Point3D point = Tree.getKDTree().nearestBruteForce(new Point3D((float)x, (float)y, 0), routeType.getRoadTypes());
-                
+                Point3D point = Tree.getKDTree().nearestBruteForce(new Point3D((float)x, (float)y, 0));
+
+                ArrayList<Tag> nearestTag = Tree.getTagsFromPoint(point);
+
                 ArrayList<Tag> temp = new ArrayList<>();
                 temp.add(new TagNode(point.y(), point.x()));
+                
                 mapView.getDrawingMap().setMarkedTag(temp);
-
+                mapView.getDrawingMap().setPointOfInterest(nearestTag.get(0));
                 mapView.draw();
             }
             
@@ -170,8 +173,6 @@ public class Controller implements Initializable, ControllerInterface{
                 lastX = e.getX();
                 lastY = e.getY();
             }
-
-           
         });
     }
 
@@ -219,7 +220,6 @@ public class Controller implements Initializable, ControllerInterface{
             menuButton1.setSelected(!isMenuOpen);
             leftBurgerMenu.setVisible(!isMenuOpen);
             mainMenuVBox.setVisible(!isMenuOpen);
-            // graphicVBox.setVisible(!isMenuOpen);
             styleChoiceBox.setVisible(!isMenuOpen);
             isMenuOpen = !isMenuOpen;
         });
@@ -229,9 +229,9 @@ public class Controller implements Initializable, ControllerInterface{
         });
 
         routeButton.setOnAction((ActionEvent e) -> {
+            System.out.println("Route button pressed");
             setEnableDestinationComboBox(!searchBarDestination.isVisible());
-          
-            routeTypeMenu.setVisible(!routeTypeMenu.isVisible());            
+                    
             routeTypeMenu.setVisible(!routeTypeMenu.isVisible());
             swapButton.setVisible(!swapButton.isVisible());
             routeType = TransportType.CAR;
@@ -252,6 +252,8 @@ public class Controller implements Initializable, ControllerInterface{
                 pointImage.setImage(imageActive);
             } else{
                 pointImage.setImage(imagePassive);
+                mapView.getDrawingMap().setMarkedTag(null);
+                mapView.draw();
             }
         });
 
@@ -292,7 +294,6 @@ public class Controller implements Initializable, ControllerInterface{
             pathfindBetweenTagAddresses();
         });
 
-
         comboBoxListViewSkinStart.getPopupContent().addEventFilter(KeyEvent.ANY, (event) -> {
             if( event.getCode() == KeyCode.SPACE ) {
                 event.consume();
@@ -325,7 +326,6 @@ public class Controller implements Initializable, ControllerInterface{
                 if (!hasSearchedForPath){
                     hasSearchedForPath = true;
                     pathfindBetweenTagAddresses();
-
                 }
             }
 
@@ -466,6 +466,8 @@ public class Controller implements Initializable, ControllerInterface{
 
         String startAddressString = searchBarStart.getEditor().textProperty().getValue();
         String endAddressString = searchBarDestination.getEditor().textProperty().getValue();
+
+        
 
         if (startAddressString == ""){
             searchBarDestination.getEditor().textProperty().setValue(" ");

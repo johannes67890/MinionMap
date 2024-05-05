@@ -50,7 +50,7 @@ public class DrawingMap {
     private List<TagNode> nodes;
     private List<TagWay> ways;
     private List<TagRelation> relations;
-    private TagNode pointOfInterestNode = null;
+    private Tag pointOfInterestNode = null;
     private Label zoomLabel;
     private ImageView zoomImage;
 
@@ -203,7 +203,7 @@ public class DrawingMap {
         }
     }
 
-    public void setPointOfInterest(TagNode node){
+    public void setPointOfInterest(Tag node){
         pointOfInterestNode = node;
     }
 
@@ -279,39 +279,28 @@ public class DrawingMap {
         double[] yPoints;
 
         double defaultLineWidth = 1/Math.sqrt(transform.determinant());
-        currentColor = way.getType().getColor();
-        gc.setStroke(currentColor);
         int counter = 0;
         xPoints = new double[way.getRefNodes().size()];
         yPoints = new double[way.getRefNodes().size()];
-
+        
         double min = way.getType().getMinWidth();
         double max = way.getType().getMaxWidth();
         double lineWidth = MathUtil.clamp(defaultLineWidth * way.getType().getWidth(), min, max);
         gc.setLineWidth(lineWidth);
-
-        if (way.getType() != null){
-            gc.setStroke(way.getType().getColor());
-        }
-
+        
+        
         gc.beginPath();
         gc.moveTo(way.getRefNodes().getFirst().getLon(), -way.getRefNodes().getFirst().getLat());
-
-            for (TagNode n : way.getRefNodes()) {
-                gc.lineTo(n.getLon(), -n.getLat());
-                xPoints[counter] = n.getLon();
-                yPoints[counter] = -n.getLat();
-                counter++;
-                
-                if(n.getNext() == null) break;
-            }
-
-        //Fills polygons with color
-        if (!way.getType().getIsLine()){
-            gc.setFill(currentColor);
-            gc.fillPolygon(xPoints, yPoints, counter);
+    
+        gc.setStroke(Color.RED);    
+        for (TagNode n : way.getRefNodes()) {
+            gc.lineTo(n.getLon(), -n.getLat());
+            xPoints[counter] = n.getLon();
+            yPoints[counter] = -n.getLat();
+            counter++;
+            
+            if(n.getNext() == null) break;
         }
-        
         gc.stroke();    
     }
 
