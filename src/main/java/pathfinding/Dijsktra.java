@@ -162,7 +162,9 @@ public class Dijsktra {
                 surroundingTags.add(way.getId());
                 //addRoad(way);
                 for (int i = 0; i < way.getRefNodes().size(); i++) {
-                    TagNode tagNode = way.getRefNodes().get(i);
+                    TagNode tagNode = new TagNode(way.getRefNodes().get(i));
+                    tagNode.clearLinks();
+                    tagNode.setParent(way);
                     if(tagNode.getId() == finish.getId()) {
                         System.out.println("Found finish: " + tagNode.getId()); 
                         foundFinish = true;
