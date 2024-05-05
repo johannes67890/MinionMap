@@ -18,7 +18,6 @@ import parser.TagNode;
 import parser.TagRelation;
 import parser.TagWay;
 import util.Type;
-import parser.XMLReader;
 import structures.MinPQ;
 import structures.Trie;
 import structures.KDTree.Rect3D;
@@ -39,13 +38,11 @@ public class DrawingMap {
 
     private final Model model;
     public ResizableCanvas canvas;
-    private XMLReader reader;
     private MapView mapView;
     public double zoomLevel = 1;
     private int hierarchyLevel = 9;
     private int zoombarIntervals = 14;
     private final double zoomLevelMin = 0.0007, zoomLevelMax = 31.8; // These variables changes how much you can zoom in and out. Min is far out and max is closest in
-    private double zoomScalerToMeter; // This is the world meters of how long the scaler in the bottom right corner is. Divide it with the zoomLevel
     private double[] zoomScales = {32, 16, 8, 4, 2, 1, 0.5, 0.1, 0.05, 0.015, 0.0001}; // 32, 16, 8, 4, 2, 1, 0.5, 0.1, 0.05, 0.015, 0.0001
     public Zoombar zoombar;
     private Trie trie;
@@ -90,11 +87,6 @@ public class DrawingMap {
         double minlon = bound.getMinLon();
         double maxlat = bound.getMaxLat();
         double maxlon = bound.getMaxLon();
-        double minlat = bound.getMinLat();
-
-        float[] screenBounds = getScreenBounds();
-
-
 
         zoombar = new Zoombar(zoombarIntervals, zoomLevelMax, zoomLevelMin);
         setBackGroundColor(Color.web("#F2EFE9"));
@@ -132,8 +124,6 @@ public class DrawingMap {
      */
 
     public void DrawMap(Canvas canvas){
-
-        long preTime = System.currentTimeMillis();
         if (!Tree.isLoaded()){
             return;
         }
