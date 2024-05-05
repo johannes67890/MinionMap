@@ -66,6 +66,27 @@ public final class Point3D implements Comparable<Point3D> {
             this.z = z;
     }
 
+    public Point3D(float x, float y, int z) {
+        if (Float.isInfinite(x) || Float.isInfinite(y))
+            throw new IllegalArgumentException("Coordinates must be finite");
+        if (Float.isNaN(x) || Float.isNaN(y))
+            throw new IllegalArgumentException("Coordinates cannot be NaN");
+        if (x == 0.0)
+            this.x = 0.0f; // convert -0.0 to +0.0
+        else
+            this.x = x;
+
+        if (y == 0.0)
+            this.y = 0.0f; // convert -0.0 to +0.0
+        else
+            this.y = y;
+
+        if (z == 0.0)
+            this.z = 0;
+        else
+            this.z = (byte) z;
+    }
+
     /**
      * Returns the x-coordinate.
      * 
@@ -106,6 +127,18 @@ public final class Point3D implements Comparable<Point3D> {
     }
 
     /**
+     * Returns the 2-Dimensional Euclidean distance between this point and that point.
+     * 
+     * @param that the other point
+     * @return the Euclidean distance between this point and that point
+     */
+    public float distance2DTo(Point3D that) {
+        float dx = this.x - that.x;
+        float dy = this.y - that.y;
+        return (float) Math.sqrt(dx * dx + dy * dy);
+    }
+
+    /**
      * Returns the square of the Euclidean distance between this point and that
      * point.
      * 
@@ -118,6 +151,21 @@ public final class Point3D implements Comparable<Point3D> {
         float dy = this.y - that.y;
         float dz = this.z - that.z;
         return dx * dx + dy * dy + dz * dz;
+    }
+    
+
+        /**
+     * Returns the square of the 2D Euclidean distance between this point and that
+     * point.
+     * 
+     * @param that the other point
+     * @return the square of the Euclidean distance between this point and that
+     *         point
+     */
+    public float distance2DSquaredTo(Point3D that) {
+        float dx = this.x - that.x;
+        float dy = this.y - that.y;
+        return dx * dx + dy * dy;
     }
 
     /**

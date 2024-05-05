@@ -1,5 +1,6 @@
 package structures.KDTree;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -9,14 +10,10 @@ import parser.TagBound;
 import parser.TagNode;
 import parser.TagRelation;
 import parser.TagWay;
-import util.Type;
-import parser.TagNode;
-import parser.TagRelation;
-import parser.TagWay;
-import parser.XMLReader;
 import structures.TagGrid;
+import util.Type;
 
-public class Tree {
+public class Tree implements Serializable{
 
     ArrayList<Tag> nodesInBounds;
     ArrayList<TagWay> waysInBounds;
@@ -37,8 +34,6 @@ public class Tree {
             insertTagInTree(tag);
         }
         isLoaded = true;
-       XMLReader.clearTags();
-       
     }
 
     /**
@@ -128,7 +123,7 @@ public class Tree {
      * @return ArrayList of Tag-objects near the point
      */
     public static ArrayList<Tag> getTagsNearTag(Tag tag, List<Type> searchType){
-        return multiTree.nearestTags(new Point3D(tag.getLon(), tag.getLat(), (byte) 0), searchType);
+        return multiTree.nearestTags(new Point3D(tag.getLon(), tag.getLat(), (byte) 10), searchType);
     }
 
     /**
@@ -147,6 +142,10 @@ public class Tree {
      */
     public static Point3D getNearestTag(Tag tag){
         return multiTree.nearest(new Point3D(tag.getLon(), tag.getLat(), (byte) 0));
+    }
+
+    public static Point3D getNearestPointOfType(Tag tag, List<Type> types){
+        return multiTree.nearest(new Point3D(tag.getLon(), tag.getLat(), (byte) 0), types);
     }
 
     /**
@@ -172,11 +171,15 @@ public class Tree {
      * @return ArrayList of tag-objects in the given bounds
      */
     public static ArrayList<Tag> getTagFromPoint(Tag node){
-        return multiTree.getTagsFromPoint(new Point3D(node.getLon(), node.getLat(), (byte) 0));
+        return multiTree.getTagsFromPoint(new Point3D(node.getLon(), node.getLat(), (byte) 10));
     }
 
     public static ArrayList<Tag> getNearestOfType(Tag tag, List<Type> searchType){
-        return multiTree.nearestTags(new Point3D(tag.getLon(), tag.getLat(), (byte) 0), searchType);
+        return multiTree.nearestTags(new Point3D(tag.getLon(), tag.getLat(), (byte) 10), searchType);
+    }
+
+    public static ArrayList<Tag> getNearestOfTypeBruteForce(Tag tag, List<Type> searchType){
+        return multiTree.getTagsFromPoint(multiTree.nearestBruteForce(new Point3D(tag.getLon(), tag.getLat(), (byte) 0), searchType));
     }
 
     /**

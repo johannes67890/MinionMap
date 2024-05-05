@@ -2,6 +2,9 @@ package parser;
 import java.util.ArrayList;
 
 import gnu.trove.list.TLinkable;
+import gnu.trove.list.linked.TLinkedList;
+import javafx.util.Pair;
+import parser.chunking.XMLWriter.ChunkFiles;
 import structures.KDTree.Tree;
 import util.Type;
 
@@ -23,6 +26,7 @@ import util.Type;
 public class TagNode extends Tag implements TLinkable<TagNode> {
 
     private long id;
+    private Pair<Type.Place, String> place = null;
     private TagWay parent;
     private Type type;
     private float lon;
@@ -30,14 +34,16 @@ public class TagNode extends Tag implements TLinkable<TagNode> {
     private TagNode next;
     private TagNode prev;
 
+    
     /**
-     * Create a new TagNode from the {@link XMLBuilder}
-     * @param builder
+     * Create a new TagNode with the given values.
+     * @param builder - The {@link XMLBuilder} to get the values from.
      */
     public TagNode(XMLBuilder builder) {
         this.id = builder.getId();
         this.lon = builder.getLon();
         this.lat = builder.getLat();
+        this.place = new Pair<Type.Place,String>(builder.getPlace(), builder.getName());
     }
 
     /**
@@ -103,6 +109,10 @@ public class TagNode extends Tag implements TLinkable<TagNode> {
     @Override
     public Type getType() {
         return type;
+    }
+
+    public Pair<Type.Place, String> getPlace(){
+        return place;
     }
 
     /**
@@ -231,7 +241,6 @@ public class TagNode extends Tag implements TLinkable<TagNode> {
     public TagWay getParent(){
         TagWay p = null;
         TagNode currN = this;
-
         if(currN.hasParent()){
             return currN.parent;
         }else{

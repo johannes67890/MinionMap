@@ -1,5 +1,6 @@
 package structures;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import parser.TagAddress;
@@ -7,12 +8,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import gnu.trove.map.hash.TCharObjectHashMap;
 
-/**
- * Trie is a data structure used to store a large number of strings in a way that allows for fast searching and retrieval of the strings.
- * @param root is the root node of the Trie
- * @param currentNode is the current node being checked in the Trie
- */
-public class Trie {
+public class Trie implements Serializable {
     private TrieNode root;
     private TrieNode currentNode;
 
@@ -32,7 +28,7 @@ public class Trie {
      * 
      * @param address the TagAddress object to be inserted
      */
-    public void insert(TagAddress address) {
+    public TrieNode insert(TagAddress address) {
         // address is made lowercase to make searching easier for the user, ie.
         // writing "Svanevej" is read the same as "svanevej"
         currentNode = root;
@@ -48,6 +44,7 @@ public class Trie {
         }
         currentNode.setIsEnd();
         currentNode.addHouseNumber(address.getHouseNumber(), address);
+        return currentNode;
     }
 
     /**
@@ -156,7 +153,7 @@ public class Trie {
  * @param endAddress           is a String of the full address contained in the
  *                             Trie, not including the housenumber
  */
-class TrieNode implements Serializable {
+public class TrieNode implements Serializable {
     private boolean isEnd;
     private TCharObjectHashMap<TrieNode> branches;
     private HashMap<String, TagAddress> houseNumberToAddress = new HashMap<>();

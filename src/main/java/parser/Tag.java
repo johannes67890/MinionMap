@@ -114,4 +114,11 @@ public abstract class Tag implements Serializable{
 
         return distance;
     }
+
+    public double distanceCheap(TagNode node){
+        double dx = this.getLon() - node.getLon();
+        double dy = this.getLat() - node.getLat();
+
+        return ((dx*dx+dy*dy));
+    }
 }

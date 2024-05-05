@@ -4,6 +4,8 @@ import static javax.xml.stream.XMLStreamConstants.*;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.io.Serializable;
 import java.util.HashMap;
 
 import javax.xml.stream.XMLInputFactory;
@@ -21,11 +23,10 @@ import structures.Trie;
  * </p>
  * 
  */
-public class XMLReader {
+public class XMLReader implements Serializable{
     private static TagBound bound;
+    private static TLongObjectHashMap<TagNode> places = new TLongObjectHashMap<TagNode>();
     private static TLongObjectHashMap<TagNode> nodes = new TLongObjectHashMap<TagNode>();
-    //TODO: Possibly remove addresses?
-    private static TLongObjectHashMap<TagAddress> addresses = new TLongObjectHashMap<TagAddress>();
     private static TLongObjectHashMap<TagRelation> relations = new TLongObjectHashMap<TagRelation>();
     private static TLongObjectHashMap<TagWay> ways = new TLongObjectHashMap<TagWay>();
     private static Trie trie = new Trie();
@@ -63,18 +64,6 @@ public class XMLReader {
     }
 
     /**
-     * Get a {@link TagAddress} by its id.
-     * <p>
-     * Returns null if the address is not found.
-     * </p>
-     * @param id - The {@link Address#ID} of the address to get.
-     * @return The {@link TagAddress} with the id.
-     */
-    public static TagAddress getAddressById(Long id){
-        return addresses.get(id);
-    }
-
-    /**
      * Get a {@link TagRelation} by its id.
      * <p>
      * Returns null if the relation is not found.
@@ -95,19 +84,19 @@ public class XMLReader {
     }
 
     /**
-     * Get all the {@link TagAddress}' in the XML file.
-     * @return A {@link HashMap} of the keys as {@link Address#ID} to all the {@link TagAddress}s in the XML file.
+     * Get all the {@link TagRelation}s in the XML file.
+     * @return A {@link HashMap} of the keys as {@link Relation#ID} to all the {@link TagRelation}s in the XML file.
      */
-    public static TLongObjectHashMap<TagAddress> getAddresses(){
-        return addresses;
+    public static TLongObjectHashMap<TagRelation> getRelations(){
+        return relations;
     }
 
     /**
      * Get all the {@link TagRelation}s in the XML file.
      * @return A {@link HashMap} of the keys as {@link Relation#ID} to all the {@link TagRelation}s in the XML file.
      */
-    public static TLongObjectHashMap<TagRelation> getRelations(){
-        return relations;
+    public static TLongObjectHashMap<TagNode> getPlaces(){
+        return places;
     }
 
     /**
@@ -129,14 +118,18 @@ public class XMLReader {
      * <p>
      * Uses the {@link XMLStreamReader} to read the file and parse the data into the different classes: {@link TagBound}, {@link TagNode}, {@link TagNode} , {@link TagAddress} and {@link TagWay}.
      * </p>
+<<<<<<< HEAD
      * Each element is read and the data is parsed into the diffrent "Tag-builders" and then parsed into the correct class.
      * @see XMLBuilder
      * @param filepath - The path to the XML file.
+=======
+     * 
+     * @param iS inputstream from file
+>>>>>>> main
      */
-    public XMLReader(String filepath) {
+    public XMLReader(InputStream is) {
         try {
-            XMLInputFactory factory = XMLInputFactory.newInstance();
-            XMLStreamReader reader = factory.createXMLStreamReader(new FileInputStream(filepath));
+            XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(is);
             // start timer
             long start = System.currentTimeMillis();
             while (reader.hasNext()) {                
@@ -155,24 +148,22 @@ public class XMLReader {
                         switch (element) {
                             case "node":
                                 if(!tempBuilder.getAddressBuilder().isEmpty()){
-                                    TagAddress address = new TagAddress(tempBuilder);
-                                    addresses.put(tempBuilder.getId(), address);
-                                    trie.insert(address);
+                                    trie.insert(new TagAddress(tempBuilder));
                                 } else {
+                                    TagNode node = new TagNode(tempBuilder);
+                                    if(node.getPlace().getKey() != null) {
+                                        places.put(node.getId(), node);
+                                    }
                                     nodes.put(tempBuilder.getId(), new TagNode(tempBuilder));
                                 }
                                 tempBuilder = new XMLBuilder(); // Reset the builder
                                 break;
                             case "way":
-                                TagWay way = new TagWay(tempBuilder);
-                        
-                                ways.put(tempBuilder.getId(), way);
+                                ways.put(tempBuilder.getId(), new TagWay(tempBuilder));
                                 tempBuilder = new XMLBuilder();
                                 break;
                             case "relation":
-                                TagRelation relation = new TagRelation(tempBuilder);
-                                relations.put(tempBuilder.getId(), relation);
-                                
+                                relations.put(tempBuilder.getId(), new TagRelation(tempBuilder));
                                 tempBuilder = new XMLBuilder();
                                 break;
                             default:
@@ -182,26 +173,26 @@ public class XMLReader {
                     default:
                         break;
                     }
-            }            
-            nodes = null;  
+            }           
+            // nodes = null; // Free up memory
             reader.close();
+            //XMLWriter.appendToBinary();
       
             // end timer
             long end = System.currentTimeMillis();
             System.out.println("Time total: " + (end - start) + "ms");
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (XMLStreamException e) {
-            
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    public static void clearTags(){
+
+    protected static void clearTags(){
+        bound = null;
         nodes = null;
-        ways = null;
         relations = null;
-        addresses = null;
+        ways = null;
+        trie = null;
     }
 }

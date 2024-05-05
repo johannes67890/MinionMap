@@ -11,11 +11,9 @@ import org.junit.jupiter.api.Test;
 
 import gui.DrawingMap;
 import javafx.scene.canvas.Canvas;
-import junit.framework.Assert;
 import parser.Tag;
 import parser.TagBound;
 import parser.XMLReader;
-import structures.KDTree.Tree;
 
 public class DrawingMapTest {
 

@@ -2,6 +2,7 @@ package gui;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -19,6 +20,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.skin.ComboBoxListViewSkin;
 import javafx.scene.image.Image;
@@ -29,14 +31,17 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import parser.Tag;
 import parser.TagAddress;
 import parser.TagNode;
 import parser.TagWay;
+import pathfinding.Dijsktra;
 import structures.KDTree.Point3D;
 import structures.KDTree.Tree;
 import util.TransportType;
 import util.AddressComparator;
+import util.MathUtil;
 
 public class Controller implements Initializable, ControllerInterface{
     
@@ -45,15 +50,23 @@ public class Controller implements Initializable, ControllerInterface{
         "default", "dark", "gray scale");
 
     @FXML private ToggleButton menuButton1;
+    @FXML private ToggleButton pointButton;
+    @FXML private ToggleButton routeButton;
     @FXML private Button searchButton;
-    @FXML private Button pointButton;
-    @FXML private Button routeButton;
     @FXML private Pane leftBurgerMenu;
 
     @FXML private Pane routeTypeMenu;
     @FXML private Button walkButton;
     @FXML private Button bicycleButton;
     @FXML private Button carButton;
+    @FXML private Button fastButton;
+    @FXML private Button shortButton;
+    @FXML private Button findRouteButton;
+    @FXML private ListView<String> routeListView;
+
+    @FXML private Text speedText;
+    @FXML private Text distanceText;
+
 
     @FXML private ComboBox<String> searchBarStart;
     @FXML private ComboBox<String> searchBarDestination;
@@ -67,18 +80,16 @@ public class Controller implements Initializable, ControllerInterface{
     @FXML private Label zoomLevelText;
     @FXML private ImageView zoomLevelImage;
     @FXML private ImageView pointImage;
+    @FXML private Button swapButton;
 
-
-    //private Image activePoint = new Image(getClass().getResourceAsStream("gui/resources/visual/pointofinterest.png"));
-
-    //System.out.println("HELO")
-    //src\main\java\gui\pointofinterestoff.png
 
 
     private boolean pointofInterestState = false;
     private boolean isMenuOpen = false;
-    private static MainView mainView;
+    private MapView mapView;
     private ObservableList<String> searchList = FXCollections.observableArrayList();
+    private ObservableList<String> pathList = FXCollections.observableArrayList();
+
 
     private List<TagAddress> addresses = new ArrayList<>();
 
@@ -86,6 +97,7 @@ public class Controller implements Initializable, ControllerInterface{
     private TagAddress endAddress = null;
     private Search s;
     private boolean hasSearchedForPath = false;
+    private boolean shortest;
 
     TransportType routeType = TransportType.CAR;
 
@@ -96,77 +108,65 @@ public class Controller implements Initializable, ControllerInterface{
 
     long timer = 0;
     
-    public void start(MainView mw){ // this is only ran after the stage is shown
-        mainView = mw;
-
-        ResizableCanvas c = new ResizableCanvas(mainView);
-        Pane p = new Pane(c);
-        mainBorderPane.setCenter(p);
-        mainView.setCanvas(c);
-        mainView.loadDrawingMap();
-
-        c.widthProperty().bind(p.widthProperty());
-        c.heightProperty().bind(p.heightProperty());
-        s = new Search(mw);
+    public void start(View view) { // this is only ran after the stage is shown
+        mapView = (MapView) view;
+        
+        s = new Search(mapView);
+        mainBorderPane.setCenter(mapView.getPane());
+        mapView.getResizeableCanvas().widthProperty().bind(mapView.getPane().widthProperty());
+        mapView.getResizeableCanvas().heightProperty().bind(mapView.getPane().heightProperty());
+ 
         System.out.println("DRAWING MAP");
-        mainView.getDrawingMap().setZoomImage(zoomLevelImage);
-        mainView.getDrawingMap().setZoomLabel(zoomLevelText);
+        mapView.getDrawingMap().setZoomImage(zoomLevelImage);
+        mapView.getDrawingMap().setZoomLabel(zoomLevelText);
         panZoomInitialize();
     }
 
-    private void panZoomInitialize(){ 
-
-        
-        mainView.canvas.setOnMousePressed(e -> {
+    private void panZoomInitialize(){
+        mapView.getResizeableCanvas().setOnMousePressed(e -> {
             lastX = e.getX();
             lastY = e.getY();
         });
 
-        mainView.canvas.setOnMouseClicked(e -> {
+        mapView.getResizeableCanvas().setOnMouseClicked(e -> {
             if (pointofInterestState){
-
-
-                DrawingMap drawingMap = mainView.getDrawingMap();
-
-                float currentY =  (float) e.getY() ;
-                float currentX =  (float) e.getX() ;
+                DrawingMap drawingMap = mapView.getDrawingMap();
 
                 float[] bounds = drawingMap.getScreenBounds();
               
                 double x = bounds[0] + e.getX() / drawingMap.getZoomLevel();
                 double y = bounds[3] - e.getY() / drawingMap.getZoomLevel();
-       
 
-                Point2D clickedPoint = mainView.getDrawingMap().getTransform().transform(currentX, currentY);
-
-                TagNode pointofInterest = new TagNode((float) y, (float) x);
+                //Point3D point = Tree.getNearestPointOfType(pointOfInterest, routeType.getRoadTypes());
+                Point3D point = Tree.getKDTree().nearestBruteForce(new Point3D((float)x, (float)y, 0), routeType.getRoadTypes());
+                
                 ArrayList<Tag> temp = new ArrayList<>();
-                temp.add(pointofInterest);
+                temp.add(new TagNode(point.y(), point.x()));
+                mapView.getDrawingMap().setMarkedTag(temp);
 
-                mainView.getDrawingMap().setMarkedTag(temp);
-
-                mainView.draw();
+                mapView.draw();
             }
             
         
         });
-        
-        mainView.canvas.setOnScroll(event -> {
+
+        mapView.getResizeableCanvas().setOnScroll(event -> {
 
             if (System.currentTimeMillis() - timer > 500){
                 timer = System.currentTimeMillis();
             }
             
-            mainView.getDrawingMap().zoom(Math.pow(zoomMultiplier,event.getDeltaY()), event.getX(), event.getY());
+            mapView.getDrawingMap().zoom(Math.pow(zoomMultiplier,event.getDeltaY()), event.getX(), event.getY());
 
+            mapView.getDrawingMap().zoombarUpdater(zoomLevelText, zoomLevelImage);
         });
 
-        mainView.canvas.setOnMouseDragged(e -> {
+        mapView.getResizeableCanvas().setOnMouseDragged(e -> {
 
             if (!pointofInterestState){
                 double dx = e.getX() - lastX;
                 double dy = e.getY() - lastY;
-                mainView.getDrawingMap().pan(dx, dy);
+                mapView.getDrawingMap().pan(dx, dy);
     
                 lastX = e.getX();
                 lastY = e.getY();
@@ -185,9 +185,14 @@ public class Controller implements Initializable, ControllerInterface{
         mainMenuVBox.setVisible(false);
         leftBurgerMenu.setVisible(false);
         routeTypeMenu.setVisible(false);
+        swapButton.setVisible(false);
 
-        styleChoiceBox.setItems(style);
         styleChoiceBox.setValue("default");
+        styleChoiceBox.setItems(style);
+
+        shortest = false;
+        setStyleClass(fastButton, "activeButton");
+        setStyleClass(shortButton, "button");
 
         styleChoiceBox.setOnAction((ActionEvent e) -> {
             switch(styleChoiceBox.getValue()){
@@ -204,20 +209,15 @@ public class Controller implements Initializable, ControllerInterface{
                     break;
                 }
             }
-            mainView.draw();
+            mapView.draw();
         });
 
         mainMenuButton.setOnAction((ActionEvent e) -> {
-            mainView.drawScene(StageSelect.MainMenu);
+            mapView.drawScene();
         });
 
         menuButton1.setOnAction((ActionEvent e) -> {
             menuButton1.setSelected(!isMenuOpen);
-            if(isMenuOpen){
-                menuButton1.getStyleClass().add("button-selected");
-            }else{
-                menuButton1.getStyleClass().remove("button-selected");
-            }
             leftBurgerMenu.setVisible(!isMenuOpen);
             mainMenuVBox.setVisible(!isMenuOpen);
             // graphicVBox.setVisible(!isMenuOpen);
@@ -225,9 +225,20 @@ public class Controller implements Initializable, ControllerInterface{
             isMenuOpen = !isMenuOpen;
         });
 
+        swapButton.setOnAction((ActionEvent e)-> {
+            switchStartAndDest();
+        });
+
         routeButton.setOnAction((ActionEvent e) -> {
             setEnableDestinationComboBox(!searchBarDestination.isVisible());
+          
             routeTypeMenu.setVisible(!routeTypeMenu.isVisible());            
+            routeTypeMenu.setVisible(!routeTypeMenu.isVisible());
+            swapButton.setVisible(!swapButton.isVisible());
+            routeType = TransportType.CAR;
+            setStyleClass(carButton, "activeButton");
+            setStyleClass(walkButton, "button");
+            setStyleClass(bicycleButton, "button"); 
         });
 
         pointButton.setOnAction((ActionEvent e) ->{
@@ -235,7 +246,6 @@ public class Controller implements Initializable, ControllerInterface{
 
             File filePassive = new File(System.getProperty("user.dir").toString() + "\\src\\main\\resources\\visuals\\pointofinterestpassive.png");
             File fileActive = new File(System.getProperty("user.dir").toString() + "\\src\\main\\resources\\visuals\\pointofinterest.png");
-
 
             Image imagePassive = new Image(filePassive.toURI().toString());
             Image imageActive = new Image(fileActive.toURI().toString());
@@ -246,16 +256,41 @@ public class Controller implements Initializable, ControllerInterface{
             }
         });
 
+        fastButton.setOnAction((ActionEvent e) -> {
+            shortest = false;
+            setStyleClass(fastButton, "activeButton");
+            setStyleClass(shortButton, "button");
+        });
+
+        shortButton.setOnAction((ActionEvent e) -> {
+            shortest = true;
+            setStyleClass(shortButton, "activeButton");
+            setStyleClass(fastButton, "button");
+        });
+
         walkButton.setOnAction((ActionEvent e) -> {
             routeType = TransportType.FOOT;
+            setStyleClass(walkButton, "activeButton");
+            setStyleClass(bicycleButton, "button");
+            setStyleClass(carButton, "button");
         });
 
         bicycleButton.setOnAction((ActionEvent e) ->{
             routeType = TransportType.BIKE;
+            setStyleClass(bicycleButton, "activeButton");
+            setStyleClass(carButton, "button");
+            setStyleClass(walkButton, "button");
         });
 
         carButton.setOnAction((ActionEvent e) ->{
             routeType = TransportType.CAR;
+            setStyleClass(carButton, "activeButton");
+            setStyleClass(walkButton, "button");
+            setStyleClass(bicycleButton, "button");
+        });
+
+        findRouteButton.setOnAction((ActionEvent e)-> {
+            pathfindBetweenTagAddresses();
         });
 
 
@@ -290,7 +325,8 @@ public class Controller implements Initializable, ControllerInterface{
             }else{
                 if (!hasSearchedForPath){
                     hasSearchedForPath = true;
-                    s.pathfindBetweenTagAddresses(startAddress, endAddress, routeType);
+                    pathfindBetweenTagAddresses();
+
                 }
             }
 
@@ -307,7 +343,7 @@ public class Controller implements Initializable, ControllerInterface{
             }else{
                 if (!hasSearchedForPath){
                     hasSearchedForPath = true;
-                    s.pathfindBetweenTagAddresses(startAddress, endAddress, routeType);
+                    pathfindBetweenTagAddresses();
                 }
             }
 
@@ -322,6 +358,60 @@ public class Controller implements Initializable, ControllerInterface{
         searchBarDestination.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
             showSuggestions(searchBarDestination, oldValue, newValue);
         });
+    }
+
+    private void pathfindBetweenTagAddresses(){
+        if (startAddress != null && endAddress != null){
+            Dijsktra dijkstra = s.pathfindBetweenTagAddresses(startAddress, endAddress, routeType, shortest);
+            //distanceText.setText(dijkstra.getDistanceOfPath());
+            //speedText.setText(dijkstra.getMinutesOfPath());
+            LinkedHashMap<TagWay, Double> path = new LinkedHashMap<>();//dijkstra.printPath();
+
+            Platform.runLater(() -> {
+                synchronized (pathList) {
+                    double distance = 0;
+                    String tempName = "";
+                    String distanceString = "";
+
+                    if (!routeListView.getItems().isEmpty()) {
+                        routeListView.getItems().clear();
+                    }
+                    for (TagWay way : path.keySet()){
+
+                        distance += path.get(way);
+
+                        if (way.getName() != null && !way.getName().equals(tempName)){
+                            tempName = way.getName();
+                            if (distance / 1000 > 1.0){
+                                distance = MathUtil.round(distance / 1000, 2);
+                                distanceString = Double.toString(distance) + " km";
+                            }
+                            else{
+                                distance = MathUtil.round(distance, 0);
+                                distanceString = Double.toString(distance) + " m";
+                            }
+                            pathList.add(way.getName() + ", for " + distanceString);
+                            distance = 0;
+                        }
+
+                    }
+                    routeListView.getItems().setAll(pathList);
+                    pathList.clear();
+                    if (!routeListView.isVisible() && routeListView.getItems().size() > 0){
+                        routeListView.setVisible(true);
+                    }
+                }
+            });
+            
+
+
+        }
+    }
+
+
+    private void setStyleClass(Button b, String s){
+        b.getStyleClass().clear();
+        b.getStyleClass().add(s);
     }
 
     /**
@@ -373,13 +463,29 @@ public class Controller implements Initializable, ControllerInterface{
             return null;
     }
 
+    private void switchStartAndDest(){
+
+        String startAddressString = searchBarStart.getEditor().textProperty().getValue();
+        String endAddressString = searchBarDestination.getEditor().textProperty().getValue();
+
+        if (startAddressString == ""){
+            searchBarDestination.getEditor().textProperty().setValue(" ");
+        } else{
+            searchBarDestination.getEditor().textProperty().set(startAddressString);
+        }
+        if (endAddressString == ""){
+            searchBarStart.getEditor().textProperty().setValue(" ");
+        } else{
+            searchBarStart.getEditor().textProperty().set(endAddressString);
+        }
+    }
+
     /**
      * Searches for addresses in the combobox
      * @param address The address to search for
      * @param searchBar The combobox to search in
      */
     private void search(String address, ComboBox<String> searchBar) {
-        
         if (startAddress != null && searchBar.getEditor().textProperty().getValue().equals(startAddress.toString())) return;
         if (endAddress != null && searchBar.getEditor().textProperty().getValue().equals(endAddress.toString())) return;
         if (!address.isEmpty() && address.charAt(address.length() - 1) != ' ') {
@@ -418,7 +524,7 @@ public class Controller implements Initializable, ControllerInterface{
      * @param tagAddress The address to show
      */
     private void showAddress(TagAddress tagAddress){
-        DrawingMap drawingMap = mainView.getDrawingMap();
+        DrawingMap drawingMap = mapView.getDrawingMap();
 
         float[] bounds = drawingMap.getScreenBounds();
         double x = ((bounds[2] - bounds[0]) / 2) + bounds[0];
@@ -449,7 +555,7 @@ public class Controller implements Initializable, ControllerInterface{
         temp.add(tagAddress);
         drawingMap.setMarkedTag(temp);
 
-        mainView.getDrawingMap().pan(-deltaX, deltaY);
+        mapView.getDrawingMap().pan(-deltaX, deltaY);
 
 
     }

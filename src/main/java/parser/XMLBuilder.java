@@ -1,9 +1,12 @@
 package parser;
 
+import java.io.Serializable;
+
 import java.math.BigDecimal;
 
 import javax.xml.stream.XMLStreamReader;
 
+import javafx.util.Pair;
 import parser.TagAddress.AddressBuilder;
 import parser.TagRelation.RelationBuilder;
 import parser.TagWay.WayBuilder;
@@ -15,12 +18,13 @@ import util.Type;
 * Constructs a instance of the builder, that later can be used to construct a {@link TagNode}, {@link TagWay} or {@link TagRelation}.
 * </p>
 */
-public class XMLBuilder {
+public class XMLBuilder implements Serializable{
         private AddressBuilder addressBuilder = new AddressBuilder();
         private WayBuilder wayBuilder = new WayBuilder();
         private RelationBuilder relationBuilder = new RelationBuilder();
 
         private String name; // name from a <tag> in a parrent element
+        private Type.Place place;
         private Type type;
         private String TypeValue;
         private long id;
@@ -39,6 +43,10 @@ public class XMLBuilder {
 
         public boolean isEmpty(){
             return this.getAddressBuilder().isEmpty() || this.getWayBuilder().isEmpty() || this.getRelationBuilder().isEmpty();
+        }
+        
+        public Type.Place getPlace(){
+            return this.place;
         }
 
         public String getName(){
@@ -138,6 +146,15 @@ public class XMLBuilder {
         private void parseTag(String k, String v){
             if(k.equals("name")){
                 this.name = v; // set the name of the node
+            }
+
+            if(k.equals("place")){
+                for (Type.Place currPlace : Type.Place.getTypes()) {
+                    if (v.equals(currPlace.getValue())) {
+                        this.place = currPlace;
+                        break;
+                    }
+                }
             }
 
             if(k.contains("maxspeed")){

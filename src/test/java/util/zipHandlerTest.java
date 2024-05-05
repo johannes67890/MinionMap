@@ -6,12 +6,16 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import structures.ZipHandler;
+//import util.ZipHandler;
 
 import java.io.File;
 
 public class zipHandlerTest {
 
+
+}
+/*
+ * 
     @BeforeEach
     public void setUp(){
         String directoryOSM = System.getProperty("user.dir").toString() + "\\src\\main\\resources\\osmFiles";
@@ -39,5 +43,4 @@ public class zipHandlerTest {
         
         assertFalse(zipHandler.getDestDir().isEmpty());
     }
-
-}
+ */

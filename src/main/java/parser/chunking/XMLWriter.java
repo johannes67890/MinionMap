@@ -113,6 +113,7 @@ public class XMLWriter {
         }
 
         pool.shutdown();
+        
         try {
             pool.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
