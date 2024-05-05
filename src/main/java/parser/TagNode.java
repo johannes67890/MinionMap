@@ -105,6 +105,10 @@ public class TagNode extends Tag implements TLinkable<TagNode> {
         return type;
     }
 
+    /**
+     * Set the type of the node.
+     * @param type - The {@link Type} of the node.
+     */
     public void setType(Type type) {
         this.type = type;
     }

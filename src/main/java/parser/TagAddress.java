@@ -94,26 +94,50 @@ public class TagAddress extends Tag  implements Comparable<TagAddress>{
         throw new UnsupportedOperationException("TagAddress does not have a type.");
     }
 
+    /**
+     * Get the street of the address.
+     * @return The street of the address.
+     */
     public String getStreet() {
         return street;
     }
 
+    /**
+     * Set the street of the address.
+     * @param street - The street of the address.
+     */
     public void setStreet(String street){
         this.street = street;
     }
 
+    /**
+     * Get the house number of the address.
+     * @return The house number of the address.
+     */
     public String getHouseNumber() {
         return house;
     }
 
+    /**
+     * Set the house number of the address.
+     * @param houseNumber - The house number of the address.
+     */
     public void setHouseNumber(String houseNumber){
         this.house = houseNumber;
     }
 
+    /**
+     * Get the post code of the address.
+     * @return The post code of the address.
+     */
     public String getPostcode() {
         return postCode;
     }
 
+    /**
+     * Set the post code of the address.
+     * @param postcode - The post code of the address.
+     */
     public void setPostCode(String postcode){
         this.postCode = postcode;
     }
