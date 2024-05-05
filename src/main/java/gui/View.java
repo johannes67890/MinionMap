@@ -57,10 +57,13 @@ public abstract class View {
         }
     }
     private void setScene(Scene scene){
+        scene.getStylesheets().add(getClass().getResource("/view/style.css").toExternalForm());
+
         this.scene = scene;
     }
     protected void initializeView(){
         controller.start(this); // To initialize the controller with a reference to this object
+
         setScene(new Scene(vBox));
     }
 
