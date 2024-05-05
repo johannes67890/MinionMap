@@ -33,17 +33,17 @@
                                  </graphic>
                               </ToggleButton>
                         </HBox>
-                         <HBox  alignment="CENTER" styleClass="combo-box-container" spacing="4">
+                         <HBox alignment="CENTER" styleClass="combo-box-container" spacing="4">
                               <ComboBox fx:id="searchBarStart" styleClass="combo-box" editable="true" promptText="Location" />
+                                 <Button fx:id="swapButton" styleClass="button" mnemonicParsing="false">
+                                    <graphic>
+                                       <ImageView fitHeight="20.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
+                                             <Image url="@../visuals/Icon.png" />
+                                       </ImageView>
+                                    </graphic>
+                                 </Button>
                               <ComboBox fx:id="searchBarDestination"  styleClass="combo-box" editable="true" promptText="Destination"/>
                         </HBox>
-                              <Button fx:id="swapButton" mnemonicParsing="false">
-                                 <graphic>
-                                    <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
-                                          <Image url="@../visuals/Icon.png" />
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
                         <HBox alignment="CENTER_RIGHT" spacing="5">
                            <ToggleButton fx:id="routeButton" styleClass="button" mnemonicParsing="false">
                               <graphic>

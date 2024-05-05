@@ -118,14 +118,8 @@ public class XMLReader implements Serializable{
      * <p>
      * Uses the {@link XMLStreamReader} to read the file and parse the data into the different classes: {@link TagBound}, {@link TagNode}, {@link TagNode} , {@link TagAddress} and {@link TagWay}.
      * </p>
-<<<<<<< HEAD
-     * Each element is read and the data is parsed into the diffrent "Tag-builders" and then parsed into the correct class.
-     * @see XMLBuilder
-     * @param filepath - The path to the XML file.
-=======
      * 
      * @param iS inputstream from file
->>>>>>> main
      */
     public XMLReader(InputStream is) {
         try {
