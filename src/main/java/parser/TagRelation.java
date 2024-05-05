@@ -12,7 +12,7 @@ enum Relation {
     ID, INNER, OUTER, WAYS, RELATIONS, NODES, TYPE, TYPEVALUE, NAME, RELATIONTYPE
 }
 
-public class TagRelation extends Tag implements Serializable {
+public class TagRelation extends Tag {
     private ArrayList<TagNode> nodes = new ArrayList<>();
     private ArrayList<TagRelation> relations = new ArrayList<>();
     private ArrayList<TagWay> ways = new ArrayList<>();

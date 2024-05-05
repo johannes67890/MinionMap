@@ -6,7 +6,6 @@ import java.util.List;
 
 
 import gnu.trove.map.hash.TLongObjectHashMap;
-import gui.Search;
 import structures.Trie;
 import structures.KDTree.Tree;
 

@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import java.io.Serializable;
-import gnu.trove.list.linked.TLinkedList;
 
 enum Way {
     ID, REFS, NAME, TYPE, SPEEDLIMIT
@@ -217,8 +216,6 @@ public class TagWay extends Tag implements Comparable<TagWay>{
                 minLat = tag.getLat();
             }
         }
-
-        int counter = 0;
 
         for (float i = minLon; i < maxLon; i += 200){
             for (float j = minLat; j < maxlat; j += 200){

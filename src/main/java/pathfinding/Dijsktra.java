@@ -2,24 +2,19 @@ package pathfinding;
 
 import parser.TagNode;
 import parser.TagWay;
-import parser.XMLReader;
 import structures.IndexMinPQ;
 import structures.KDTree.Tree;
-import util.FileDistributer;
 import util.MathUtil;
 import util.TransportType;
 import util.Type;
 
-import java.text.DecimalFormat;
 import java.util.*;
 
 
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.Stack;
-import edu.princeton.cs.algs4.StdOut;
 import gnu.trove.list.linked.TLinkedList;
 import parser.Tag;
-import parser.TagAddress;
 
 public class Dijsktra {
     private HashMap<Long, Double> distTo;          // distTo[v] = distance  of shortest s->v path
@@ -167,15 +162,6 @@ public class Dijsktra {
         if (!way.isOneWay()){
             G.addEdge(new DirectedEdge(list.get(list.size()-1), list.get(0), distance));
         }
-    }
-
-    private void addTwoWayEdges(TagNode node, TagWay way){
-        G.addEdge(new DirectedEdge(node, node.getNext(), way.getSpeedLimit()));
-        G.addEdge(new DirectedEdge(node.getNext(), node, way.getSpeedLimit()));
-    }
-
-    private void addOneWayEdge(TagNode node, TagWay way){
-        G.addEdge(new DirectedEdge(node, node.getNext(), way.getSpeedLimit()));
     }
 
     public TagNode getNearestRoadPoint(Tag tag, TransportType transportType){

@@ -1,9 +1,6 @@
 package structures;
 
 import java.util.NoSuchElementException;
-
-import parser.TagNode;
-
 import java.util.HashMap;
 
 public class IndexMinPQ<Key extends Comparable<Key>>  {

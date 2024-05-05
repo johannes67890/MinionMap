@@ -4,7 +4,6 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import parser.Model;
 
 public class MainView {
 

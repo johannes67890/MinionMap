@@ -1,7 +1,5 @@
 package gui;
 
-
-import edu.princeton.cs.algs4.Draw;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
@@ -11,15 +9,13 @@ import parser.Model;
 
 import java.net.URL;
 
-
-
 public abstract class View {
     private FXMLLoader loader;
     private VBox vBox;
     private ControllerInterface controller;
     private MainView mainView;
     private Scene scene;
-    private static Model model;
+    private Model model;
     private DrawingMap drawingMap;
 
     protected View(MainView mainView, URL url) throws Exception{

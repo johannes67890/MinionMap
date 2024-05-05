@@ -1,14 +1,11 @@
 package gui;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import parser.TagAddress;
-import parser.TagNode;
 import parser.TagWay;
 import parser.Model;
 import parser.Tag;
-import parser.XMLReader;
 import pathfinding.Dijsktra;
 import structures.Trie;
 import util.TransportType;

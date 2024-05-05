@@ -17,7 +17,6 @@ public class FileHandler implements Serializable{
 
     private static final String osmPath = System.getProperty("user.dir").toString() + "\\src\\main\\resources\\files\\osmFile\\";
     private static String savePath = System.getProperty("user.dir").toString() + "\\src\\main\\resources\\files\\savedFile\\";
-    private String absoluteBinaryFilePath;
 
 
 

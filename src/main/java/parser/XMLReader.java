@@ -2,8 +2,6 @@ package parser;
 
 import static javax.xml.stream.XMLStreamConstants.*;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.HashMap;
@@ -13,7 +11,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import gnu.trove.map.hash.TLongObjectHashMap;
-import parser.chunking.XMLWriter;
 import structures.Trie;
 
 /**
