@@ -147,6 +147,7 @@ public class Controller implements Initializable, ControllerInterface{
                 
                 mapView.getDrawingMap().setMarkedTag(temp);
                 mapView.getDrawingMap().setPointOfInterest(nearestTag.get(0));
+                Tree.getNearestOfClassBruteForce(new TagNode(point.y(), point.x()), TagAddress.class).get(0);
                 mapView.draw();
             }
             

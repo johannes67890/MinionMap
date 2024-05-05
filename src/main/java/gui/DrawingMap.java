@@ -214,7 +214,7 @@ public class DrawingMap {
     }
 
     public void setPointOfInterest(Tag node){
-        pointOfInterestNode = node;
+            pointOfInterestNode = node;
     }
 
     public void setMarkedTag(ArrayList<Tag> tag){

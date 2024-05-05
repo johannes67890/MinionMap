@@ -31,6 +31,7 @@ public class Model implements Serializable{
         ways = XMLReader.getWays();
         tags.addAll(List.copyOf(ways.valueCollection()));
         tags.addAll(List.copyOf(relations.valueCollection()));
+        tags.addAll(List.copyOf(addresses.valueCollection()));
         Tree.initialize(tags);
         clearReadertags();
     }

@@ -442,6 +442,32 @@ public class K3DTree {
 
         return best;
     }
+
+    public Point3D nearestBruteForce(Point3D point, Class<?> classType){
+        Point3D best = null;
+        for (Point2D other : pointToTag.keySet()){
+            boolean isOfClass = false;
+            Point3D other3D = new Point3D((float)other.x(), (float)other.y(), (byte)0);
+            for (Tag tag : getMap(other3D)){
+                if (tag.getClass() == classType){
+                    isOfClass = true;
+                    break;
+                }
+            }
+
+            if (isOfClass && best == null){
+                best = other3D;
+                continue;
+            }
+
+            if (isOfClass && point.distance2DTo(other3D) < point.distance2DTo(best)){
+                best = other3D;
+            }
+        }
+
+        return best;
+    }
+    
     
 
     /**
@@ -480,7 +506,7 @@ public class K3DTree {
      * @param point The given key point
      * @param tag   The given tag that needs to be associated with the key
      */
-    private void putMap(Point3D point, Tag tag){
+    public void putMap(Point3D point, Tag tag){
         ArrayList<Tag> tempList = pointToTag.getOrDefault(new Point2D(point.x(), point.y()), new ArrayList<>());
         tempList.add(tag);
         pointToTag.put(new Point2D(point.x(), point.y()), tempList);
