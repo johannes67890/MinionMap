@@ -6,6 +6,7 @@ import java.util.List;
 import parser.TagAddress;
 import parser.TagNode;
 import parser.TagWay;
+import parser.Model;
 import parser.Tag;
 import parser.XMLReader;
 import pathfinding.Dijsktra;
@@ -20,7 +21,7 @@ public class Search {
     public Search(MapView mw){
         //mainview to be used with dijsktra
         mapView = mw;
-        trie = XMLReader.getTrie();
+        trie = Model.getTrie();
     }
 
     /**
@@ -49,8 +50,6 @@ public class Search {
      * @param transportType The type of transportation used to pathfind
      */
     public void pathfindBetweenTagAddresses(TagAddress start, TagAddress end, TransportType transportType){
-        TagNode _start = XMLReader.getNodeById(1259354245l);
-        TagNode _finish = XMLReader.getNodeById(1612922840l);
         Dijsktra djiktra = new Dijsktra(start, end, transportType);
         ArrayList<Tag> nodes = djiktra.allVisitedPaths();
         System.out.println("Size of markedtag: " + nodes.size());

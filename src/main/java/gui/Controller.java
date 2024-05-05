@@ -77,7 +77,6 @@ public class Controller implements Initializable, ControllerInterface{
 
     private boolean pointofInterestState = false;
     private boolean isMenuOpen = false;
-    private static MainView mainView;
     private MapView mapView;
     private ObservableList<String> searchList = FXCollections.observableArrayList();
 
@@ -99,6 +98,7 @@ public class Controller implements Initializable, ControllerInterface{
     
     public void start(View view) { // this is only ran after the stage is shown
         mapView = (MapView) view;
+        s = new Search(mapView);
         mainBorderPane.setCenter(mapView.getPane());
         mapView.getResizeableCanvas().widthProperty().bind(mapView.getPane().widthProperty());
         mapView.getResizeableCanvas().heightProperty().bind(mapView.getPane().heightProperty());
@@ -366,7 +366,6 @@ public class Controller implements Initializable, ControllerInterface{
      * @param searchBar The combobox to search in
      */
     private void search(String address, ComboBox<String> searchBar) {
-        
         if (startAddress != null && searchBar.getEditor().textProperty().getValue().equals(startAddress.toString())) return;
         if (endAddress != null && searchBar.getEditor().textProperty().getValue().equals(endAddress.toString())) return;
         if (!address.isEmpty() && address.charAt(address.length() - 1) != ' ') {

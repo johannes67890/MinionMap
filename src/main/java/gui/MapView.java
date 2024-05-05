@@ -1,11 +1,9 @@
 package gui;
 
-import javafx.fxml.FXMLLoader;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import parser.Model;
+
 import util.FileDistributer;
 
 import java.net.URL;
