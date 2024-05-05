@@ -129,25 +129,18 @@ public class Controller implements Initializable, ControllerInterface{
         mainView.canvas.setOnMouseClicked(e -> {
             if (pointofInterestState){
 
-
                 DrawingMap drawingMap = mainView.getDrawingMap();
-
-                float currentY =  (float) e.getY() ;
-                float currentX =  (float) e.getX() ;
 
                 float[] bounds = drawingMap.getScreenBounds();
               
                 double x = bounds[0] + e.getX() / drawingMap.getZoomLevel();
                 double y = bounds[3] - e.getY() / drawingMap.getZoomLevel();
-       
-
-                Point2D clickedPoint = mainView.getDrawingMap().getTransform().transform(currentX, currentY);
 
                 s.setPointOfInterest((float) x, (float) y);
                 TagNode pointOfInterest = new TagNode((float) y, (float) x);
 
-                Point3D point = Tree.getNearestPoint(new Point3D(pointOfInterest.getLon(), pointOfInterest.getLat(), (byte)0));
-
+                //Point3D point = Tree.getNearestPointOfType(pointOfInterest, routeType.getRoadTypes());
+                Point3D point = Tree.getKDTree().nearestBruteForce(new Point3D((float)x, (float)y, 0), routeType.getRoadTypes());
                 
                 ArrayList<Tag> temp = new ArrayList<>();
                 temp.add(new TagNode(point.y(), point.x()));
@@ -198,6 +191,10 @@ public class Controller implements Initializable, ControllerInterface{
 
         styleChoiceBox.setItems(style);
         styleChoiceBox.setValue("default");
+
+        shortest = false;
+        setStyleClass(fastButton, "activeButton");
+        setStyleClass(shortButton, "button");
 
         styleChoiceBox.setOnAction((ActionEvent e) -> {
             switch(styleChoiceBox.getValue()){

@@ -153,6 +153,10 @@ public class Tree {
         return multiTree.nearest(new Point3D(tag.getLon(), tag.getLat(), (byte) 0));
     }
 
+    public static Point3D getNearestPointOfType(Tag tag, List<Type> types){
+        return multiTree.nearest(new Point3D(tag.getLon(), tag.getLat(), (byte) 0), types);
+    }
+
     /**
      * Returns the tags in a given bounds
      * @param rect Bounds to search in
@@ -181,6 +185,10 @@ public class Tree {
 
     public static ArrayList<Tag> getNearestOfType(Tag tag, List<Type> searchType){
         return multiTree.nearestTags(new Point3D(tag.getLon(), tag.getLat(), (byte) 10), searchType);
+    }
+
+    public static ArrayList<Tag> getNearestOfTypeBruteForce(Tag tag, List<Type> searchType){
+        return multiTree.getTagsFromPoint(multiTree.nearestBruteForce(new Point3D(tag.getLon(), tag.getLat(), (byte) 0), searchType));
     }
 
     public static boolean isLoaded(){

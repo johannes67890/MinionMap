@@ -65,9 +65,8 @@ public class Search {
         TagNode _start = XMLReader.getNodeById(1259354245l);
         TagNode _finish = XMLReader.getNodeById(1612922840l);
         dijkstra = new Dijsktra(start, end, transportType, shortest);
-        ArrayList<Tag> nodes = dijkstra.allVisitedPaths();
-        System.out.println("Size of markedtag: " + nodes.size());
-        //ArrayList<Tag> nodes = new ArrayList<>();
+        ArrayList<Tag> nodes = new ArrayList<>();
+        nodes.addAll(dijkstra.allVisitedPaths());
         TagWay way = new TagWay((long)0, "Route", dijkstra.shortestPath(), (short)0, Type.PATHWAY);
         nodes.add(way);
         if (nodes.isEmpty()) return;

@@ -297,6 +297,7 @@ public class DrawingMap {
 
         double defaultLineWidth = 1/Math.sqrt(transform.determinant());
         currentColor = way.getType().getColor();
+        gc.setStroke(currentColor);
         int counter = 0;
         xPoints = new double[way.getRefNodes().size()];
         yPoints = new double[way.getRefNodes().size()];
