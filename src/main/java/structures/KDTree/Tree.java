@@ -25,6 +25,11 @@ public class Tree {
 
     static K3DTree multiTree;
 
+    /**
+     * Initializes the K3DTree with all the associated Tag and their Point3Ds,
+     * and resets XMLReader
+     * @param tags
+     */
     public static void initialize(ArrayList<Tag> tags){
         multiTree = new K3DTree();
         multiTree.setBound(Float.MIN_VALUE, Float.MIN_VALUE, Byte.MIN_VALUE, Float.MAX_VALUE, Float.MAX_VALUE, Byte.MAX_VALUE);
@@ -126,16 +131,6 @@ public class Tree {
         return multiTree.nearestTags(new Point3D(tag.getLon(), tag.getLat(), (byte) 0), searchType);
     }
 
-    // TODO:
-    /**
-     * Returns the tags near a {@link Tag}
-     * @param point Point to search near
-     * @return ArrayList of Tag-objects near the point
-     */
-    // public static ArrayList<Tag> getTagsNearTag(Tag tag, List<Type> searchType){
-    //     return kdtree.nearestTags(new Point2D(tag.getLon(), tag.getLat()), searchType);
-    // }
-
     /**
      * Returns the nearest point in the tree to a given point
      * @param point Point to search near
@@ -184,10 +179,16 @@ public class Tree {
         return multiTree.nearestTags(new Point3D(tag.getLon(), tag.getLat(), (byte) 0), searchType);
     }
 
+    /**
+     * @return returns true if the K3DTree has been initialized
+     */
     public static boolean isLoaded(){
         return isLoaded;
     }
 
+    /**
+     * @return returns the K3DTree
+     */
     public static K3DTree getKDTree(){
         return multiTree;
     }

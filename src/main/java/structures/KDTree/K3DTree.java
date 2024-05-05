@@ -13,23 +13,6 @@ import parser.TagRelation;
 import parser.TagWay;
 import util.Type;
 
-/*
- * Copyright (C) 2016 Michael <GrubenM@GMail.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 /**
  * 
  * This datastructure is made for finding points within a Rect3D.
@@ -51,8 +34,8 @@ public class K3DTree {
     }
     
     /**
-     * Checks if there is a node at the root, if not it
-     * is safe to assume that the tree is empty.
+     * Checks to see if there is any root node.
+     * If not then there havent been inserted any nodes
      * 
      * @return {@code true} if this set is empty;
      *         {@code false} otherwise
@@ -62,7 +45,7 @@ public class K3DTree {
     }
     
     /**
-     * @return the number of points in the set.
+     * @return the number of Point3Ds in the set.
      */
     public int size() {
         return size;
@@ -89,6 +72,8 @@ public class K3DTree {
      * y-coordinates and then last z-coordinates. After that it goes
      * back to x-coordinates and so forth.
      * 
+     * This is a recursive function.
+     * 
      * It also uses a Tag to bind the point3d to the tag within a hashmap.
      * 
      * @param p the point to add
@@ -114,8 +99,6 @@ public class K3DTree {
     private Node insert(Node n, Point3D p, int xyz, float[] coords) {
         if (n == null) {
             size++;
-            // double xmin, double ymin, double xmax, double ymax
-            //System.out.println("xmin: " + coords[0] + "| ymin: " + coords[1] + "| xmax: " + coords[2] + "| ymax: " + coords[3]);
             return new Node(p, coords);
         }
         
@@ -127,18 +110,11 @@ public class K3DTree {
         }
         
         /**
-         * Traverse down the BST.
+         * Traverse down the K3DTree.
          * 
-         * In subsequent levels, the orientation is orthogonal
-         * to the current orientation.
-         * 
-         * Place the point in the left or right nodes accordingly.
-         * 
-         * If the comparison is not affirmatively left or right, then it could
-         * be that we're considering literally the same point, in which case
-         * the size shouldn't increase, or that we're considering a point
-         * which lies on the same partition line, which would need to be added
-         * to the BST and increase the size accordingly.
+         * Every level of the tree is a different dimension. First x-levels,
+         * next y-levels, last z-levels. This means there are 2 sides of every dimension.
+         * A lower or a higher number.
          */
         
         // Handle Nodes which should be inserted to the left
@@ -181,61 +157,16 @@ public class K3DTree {
          * Handle Nodes which lie on the same partition line, 
          * but aren't the same point.
          * 
-         * As per the checklist, these "ties" are resolved in favor of the
-         * right subtree.
-         * 
-         * It is assumed that the Rect3D to be created cannot be shrunk
-         * at all, and so none of coords[] values are updated here.
          */
         else if (!n.p.equals(p))
             n.rtf = insert(n.rtf, p, xyztemp, coords);
         
         /**
-         * Do nothing for a point which is already in the BST.
-         * This is because the BST contains a "set" of points.
-         * Hence, duplicates are silently dropped, rather than
-         * being added.
+         * If the Point3D already exists in the K3DTree then do nothing.
          */
         return n;
     }
     
-    /**
-     * Does the set contain point p?
-     * 
-     * In the worst case, this implementation takes time proportional to the
-     * logarithm of the number of points in the set.
-     * 
-     * @param p the point to look for
-     * @return {@code true} if the set contains point p;
-     *         {@code false} otherwise
-     * @throws NullPointerException if {@code p} is {@code null}
-     */
-    public boolean contains(Point3D p) {
-        if (p == null) throw new java.lang.NullPointerException(
-                "called contains() with a null Point3D");
-        return contains(root, p, 0);
-    }
-    
-    private boolean contains(Node n, Point3D p, int xyz) {
-
-        // Handle reaching the end of the search
-        if (n == null) return false;
-        
-        // Check whether the search point matches the current Node's point
-        if (n.p.equals(p)) return true;
-        
-        double cmp = comparePoints(p, n, xyz);
-        
-        int temp = xyz + 1;
-        if (xyz > 2){
-            temp = 0;
-        }
-        // Traverse the left path when necessary
-        if (cmp < 0) return contains(n.lbb, p, temp);
-        
-        // Traverse the right path when necessary, and as tie-breaker
-        else return contains(n.rtf, p, temp); 
-    }
     
     /**
      * All points that are inside the rectangle.
@@ -382,14 +313,9 @@ public class K3DTree {
     }
 
     /**
-     * A nearest neighbor in the set to point p; null if the set is empty.
+     * Finds the nearest neighbor of the Point3D. 
      * 
-     * In the worst case, this implementation takes time
-     * proportional to the number of points in the set.
-     * 
-     * However, unlike PointSET.nearest(), in the best case, this
-     * implementation takes time proportional to the logarithm of
-     * the number of points in the set.
+     * This does not WORK!
      * 
      * @param p the point from which to search for a neighbor
      * @return the nearest neighbor to the given point p,
@@ -422,17 +348,7 @@ public class K3DTree {
         
         /**
          * Calculate the distance from the search point to the current
-         * Node's partition line.
-         * 
-         * Primarily, the sign of this calculation is useful in determining
-         * which side of the Node to traverse next.
-         * 
-         * Additionally, the magnitude to toPartitionLine is useful for pruning.
-         * 
-         * Specifically, if we find a champion whose distance is shorter than
-         * to a previous partition line, then we know we don't have to check any
-         * of the points on the other side of that partition line, because none
-         * can be closer.
+         * Node's partition line. Also calculates the next dimension to look at.
          */
         double toPartitionLine = comparePoints(p, n, xyz);
         int temp = xyz + 1;
@@ -455,12 +371,6 @@ public class K3DTree {
         /**
          * Handle the search point being to the right of or above
          * the current Node's point.
-         * 
-         * Note that, since insert() above breaks point comparison ties
-         * by placing the inserted point on the right branch of the current
-         * Node, traversal must also break ties by going to the right branch
-         * of the current Node (i.e. to the right or top, depending on
-         * the level of the current Node).
          */
         else {
             champion = nearest(n.rtf, p, champion, temp, types);
@@ -476,6 +386,14 @@ public class K3DTree {
     }
     
 
+    /**
+     * A function to determine if a Point3D have a Way or Relation of specific
+     * type associated with it.
+     * @param p     The point in question
+     * @param types The types in question
+     * @return      Returns true if the Point3D have an associated tag to it of the specified type,
+     * else return false.
+     */
     private boolean isPointOfTypes(Point3D p, List<Type> types){
         for (Tag tag : getMap(p)){
             if (tag instanceof TagWay){
@@ -513,18 +431,6 @@ public class K3DTree {
     public ArrayList<Tag> nearestTags(Point3D point, List<Type> searchClass){
         return getMap(nearest(point, searchClass));
     }
-
-
-    // TODO::
-    /**
-     * This method gets an ArrayList of tags (Tag<?>) which is associated with the nearest Point2D in relation to the {@link point}
-     * in the parameters
-     * @param point the point from where the search starts from
-     * @return a list of Tags thats is connected to the the nearest Point2D in the KDTree
-     */
-    // public ArrayList<Tag> nearestTags(Point3D point, List<Type> searchClass){
-    //     return getMap(nearest(point, searchClass));
-    // }
     
     /**
      * This method gets the Tags ({@link Tag}) related to the point given in the parameters
@@ -586,7 +492,7 @@ public class K3DTree {
     }
     
     /**
-     * The data structure from which a KdTree is created.
+     * The data structure from which a K3DTree is created.
      */
     private static class Node {
         
