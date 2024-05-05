@@ -1,5 +1,6 @@
 package parser;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import javax.xml.stream.XMLStreamReader;
@@ -11,7 +12,7 @@ enum Relation {
     ID, INNER, OUTER, WAYS, RELATIONS, NODES, TYPE, TYPEVALUE, NAME, RELATIONTYPE
 }
 
-public class TagRelation extends Tag{
+public class TagRelation extends Tag implements Serializable {
     private ArrayList<TagNode> nodes = new ArrayList<>();
     private ArrayList<TagRelation> relations = new ArrayList<>();
     private ArrayList<TagWay> ways = new ArrayList<>();
@@ -215,7 +216,7 @@ public class TagRelation extends Tag{
     }
     
 
-    public static class RelationBuilder {
+    public static class RelationBuilder implements Serializable {
         public TagRelation relation;
 
         private boolean isEmpty = true;

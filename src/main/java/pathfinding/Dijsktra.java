@@ -351,33 +351,4 @@ public class Dijsktra {
         
         return distToWay;
     }
-
-
-
-    public static void main(String[] args) {
-        
-        
-
-        new XMLReader(FileDistributer.testMap.getFilePath());
-        Tree.initialize(new ArrayList<Tag>(XMLReader.getWays().valueCollection()));;
-        
-        // default
-
-        TagNode start = XMLReader.getNodeById(248419951l);
-        TagNode finish = XMLReader.getNodeById(24343192l);
-        // Default addresses
-        // TagAddress start = XMLReader.getAddressById(1447913335l);
-        // TagNode finish = XMLReader.getNodeById(1447911293l);
-      
-        // bolmholm
-        // TagNode finish = XMLReader.getNodeById(5351948945l);
-        // TagNode start = XMLReader.getNodeById(379686625l);
-      
-
-       Dijsktra d = new Dijsktra(start, finish, TransportType.CAR);
-       System.out.println(d.shortestPath().toString() + "\n");
-        d.printPath().forEach((k, v) -> System.out.println(k.getId() + " " + v));
-        System.out.println("Total distance: " + d.getTotalDistance());
-       
-    }
 }

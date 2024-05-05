@@ -1,5 +1,7 @@
 package parser;
 
+import java.io.Serializable;
+
 import java.math.BigDecimal;
 
 import javax.xml.stream.XMLStreamReader;
@@ -16,7 +18,7 @@ import util.Type;
 * Constructs a instance of the builder, that later can be used to construct a {@link TagNode}, {@link TagWay} or {@link TagRelation}.
 * </p>
 */
-public class XMLBuilder {
+public class XMLBuilder implements Serializable{
         private AddressBuilder addressBuilder = new AddressBuilder();
         private WayBuilder wayBuilder = new WayBuilder();
         private RelationBuilder relationBuilder = new RelationBuilder();

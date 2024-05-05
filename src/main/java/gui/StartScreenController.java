@@ -25,16 +25,17 @@ public class StartScreenController implements Initializable, ControllerInterface
     @FXML private HBox contentPane;
     @FXML private Text contentPaneText;
 
-    private static MainView mainView;
+    private LobbyView lobbyView;
     private File droppedFile;
     private ArrayList<String> listOfAcceptedTypes = new ArrayList<>(){{
         add("*.osm");
         add("*.zip");
         add("*.xml");
+        add("*.bin");
     }};
 
-    public void start(MainView mw){
-        mainView = mw;
+    public void start(View view){
+        this.lobbyView = (LobbyView) view;
     }
 
     @Override
@@ -46,21 +47,22 @@ public class StartScreenController implements Initializable, ControllerInterface
             fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("osm,xml,zip", listOfAcceptedTypes)
             );
-            File file = fileChooser.showOpenDialog(mainView.stage);
+            File file = fileChooser.showOpenDialog(lobbyView.getStage());
             if (file != null) {
                 droppedFile = file;
                 contentPaneText.setText(droppedFile.getAbsolutePath());
             }
-            
+
         });
 
         submitButton.setOnAction((ActionEvent e) -> {
+            File finalFile;
             if (droppedFile != null){
-                mainView.loadXMLReader(droppedFile.getAbsolutePath());
+                finalFile = droppedFile;
             }else{
-                mainView.loadXMLReader(FileDistributer.testMap.getFilePath());
+                finalFile = new File(FileDistributer.testMap.getFilePath());
             }
-            mainView.drawScene(StageSelect.MapView);
+            lobbyView.initializeMap(finalFile);
         });
 
         contentPane.setOnDragOver(new EventHandler<DragEvent>() {

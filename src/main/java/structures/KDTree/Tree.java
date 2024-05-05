@@ -1,5 +1,6 @@
 package structures.KDTree;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -11,12 +12,8 @@ import parser.TagRelation;
 import parser.TagWay;
 import util.Type;
 import parser.TagGrid;
-import parser.TagNode;
-import parser.TagRelation;
-import parser.TagWay;
-import parser.XMLReader;
 
-public class Tree {
+public class Tree implements Serializable{
 
     ArrayList<Tag> nodesInBounds;
     ArrayList<TagWay> waysInBounds;
@@ -32,7 +29,6 @@ public class Tree {
             insertTagInTree(tag);
         }
         isLoaded = true;
-       // XMLReader.clearTags();
     }
 
     /**

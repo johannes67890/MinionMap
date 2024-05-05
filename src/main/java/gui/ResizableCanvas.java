@@ -3,16 +3,16 @@ import javafx.scene.canvas.Canvas;
 
 public class ResizableCanvas extends Canvas {
  
-    private MainView mainView;
+    private MapView mapView;
 
-    public ResizableCanvas(MainView mainView) {
-        this.mainView = mainView;
+    public ResizableCanvas(MapView mapView) {
+        this.mapView = mapView;
         widthProperty().addListener(evt -> draw());
         heightProperty().addListener(evt -> draw());
     }
     
     public void draw() {
-        mainView.draw();
+        this.mapView.draw();
     }
 
     // The only reason that the canvas can resize with the window, besides the listeners

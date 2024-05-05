@@ -15,9 +15,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) {
-
         mainView = new MainView(stage);
-
         stage.show();
 
     }
@@ -27,13 +25,7 @@ public class Main extends Application {
     }
 
     public void stop(){
-        String destDir = System.getProperty("user.dir").toString() + "\\src\\main\\resources\\osmFiles\\";
-        File file = new File(destDir);
-        if(file.isDirectory()){
-            for(File f : file.listFiles()){
-                f.delete();
-            }
-        }
+    
     }
 
 }

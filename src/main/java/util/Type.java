@@ -72,13 +72,15 @@ public enum Type  {
  
     NATURALS("natural",new String[]{"scrub","grassland","heath", "wood"}, 8, 5, Color.web("#C8D7AB"), Color.GREENYELLOW.darker(), 5, false),
     WETLAND("natural",new String[]{"wetland"}, 8, 5, Color.web("#D6D99F"), Color.DARKKHAKI, 5, false), 
-    LANDUSE("landuse", new String[]{"commercial","construction","brownfield","greenfield","basin",
-    "cemetery","depot","garages","greenhouse_horticulture","landfill","orchard","plant_nursery",
+    LANDUSE("landuse", new String[]{"commercial","construction","brownfield","greenfield","basin"
+    ,"depot","garages","greenhouse_horticulture","landfill","orchard","plant_nursery",
     "railway","religious","reservoir","retail","salt_pond","village_green","vineyard",
     "winter_sports"}, 8, 7, Color.web("#EBDBE8"), Color.BLANCHEDALMOND.darker(), 5, false),
     ALLOTMENTS("landuse", new String[]{"allotments"}, 8, 8, Color.web("#C9E1BF"), Color.BLANCHEDALMOND.darker(), 5, false),
     TENTS("tents",new String[]{""}, 8, 5, Color.web("#CDEBB0"), Color.GREEN.darker(), 5, false),
     GRAVEYARD("amenity", new String[]{"grave_yard"}, 8, 7, Color.web("#AACBAF"), Color.BLANCHEDALMOND.darker(), 5, false),
+    CEMETERY("landuse", new String[]{"cemetery"}, 8, 7, Color.web("#AACBAF"), Color.BLANCHEDALMOND.darker(), 5, false),
+
     PARKING("amenity", new String[]{"parking"}, 8, 7, Color.web("#EEEEEE"), Color.BLANCHEDALMOND.darker(), 5, false),
     RECREATIONGROUND("landuse", new String[]{"recreation_ground"}, 8, 7, Color.web("#DFFCE2"), Color.BLANCHEDALMOND.darker(), 5, false),
     HOSPITAL("amenity", new String[]{"hospital"}, 8, 8, Color.web("#FFFFE5"), Color.web("#FFFFE5").darker(), 5, false),

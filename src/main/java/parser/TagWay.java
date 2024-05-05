@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import java.io.Serializable;
 import gnu.trove.list.linked.TLinkedList;
 
 enum Way {
@@ -245,7 +246,7 @@ public class TagWay extends Tag implements Comparable<TagWay>{
     * Constructs an instance of the builder, that later can be used to construct a {@link TagWay}.
     * </p>
     */
-    public static class WayBuilder {
+    public static class WayBuilder implements Serializable{
         private List<TagNode> refNodes = new ArrayList<TagNode>();
         private TLinkedList<TagNode> refNodesList = new TLinkedList<TagNode>();
         private boolean isEmpty = true;

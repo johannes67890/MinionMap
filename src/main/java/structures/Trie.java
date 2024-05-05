@@ -1,5 +1,6 @@
 package structures;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import parser.TagAddress;
@@ -10,7 +11,7 @@ import java.util.HashMap;
 import gnu.trove.map.hash.TCharObjectHashMap;
 import parser.TagAddress;
 
-public class Trie {
+public class Trie implements Serializable {
     private TrieNode root;
     private TrieNode currentNode;
 

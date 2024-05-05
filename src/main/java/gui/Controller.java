@@ -78,6 +78,7 @@ public class Controller implements Initializable, ControllerInterface{
     private boolean pointofInterestState = false;
     private boolean isMenuOpen = false;
     private static MainView mainView;
+    private MapView mapView;
     private ObservableList<String> searchList = FXCollections.observableArrayList();
 
     private List<TagAddress> addresses = new ArrayList<>();
@@ -96,37 +97,27 @@ public class Controller implements Initializable, ControllerInterface{
 
     long timer = 0;
     
-    public void start(MainView mw){ // this is only ran after the stage is shown
-        mainView = mw;
+    public void start(View view) { // this is only ran after the stage is shown
+        mapView = (MapView) view;
+        mainBorderPane.setCenter(mapView.getPane());
+        mapView.getResizeableCanvas().widthProperty().bind(mapView.getPane().widthProperty());
+        mapView.getResizeableCanvas().heightProperty().bind(mapView.getPane().heightProperty());
 
-        ResizableCanvas c = new ResizableCanvas(mainView);
-        Pane p = new Pane(c);
-        mainBorderPane.setCenter(p);
-        mainView.setCanvas(c);
-        mainView.loadDrawingMap();
-
-        c.widthProperty().bind(p.widthProperty());
-        c.heightProperty().bind(p.heightProperty());
-        s = new Search(mw);
         System.out.println("DRAWING MAP");
-        mainView.getDrawingMap().setZoomImage(zoomLevelImage);
-        mainView.getDrawingMap().setZoomLabel(zoomLevelText);
+        mapView.getDrawingMap().setZoomImage(zoomLevelImage);
+        mapView.getDrawingMap().setZoomLabel(zoomLevelText);
         panZoomInitialize();
     }
 
-    private void panZoomInitialize(){ 
-
-        
-        mainView.canvas.setOnMousePressed(e -> {
+    private void panZoomInitialize(){
+        mapView.getResizeableCanvas().setOnMousePressed(e -> {
             lastX = e.getX();
             lastY = e.getY();
         });
 
-        mainView.canvas.setOnMouseClicked(e -> {
+        mapView.getResizeableCanvas().setOnMouseClicked(e -> {
             if (pointofInterestState){
-
-
-                DrawingMap drawingMap = mainView.getDrawingMap();
+                DrawingMap drawingMap = mapView.getDrawingMap();
 
                 float currentY =  (float) e.getY() ;
                 float currentX =  (float) e.getX() ;
@@ -137,36 +128,36 @@ public class Controller implements Initializable, ControllerInterface{
                 double y = bounds[3] - e.getY() / drawingMap.getZoomLevel();
        
 
-                Point2D clickedPoint = mainView.getDrawingMap().getTransform().transform(currentX, currentY);
+                Point2D clickedPoint = mapView.getDrawingMap().getTransform().transform(currentX, currentY);
 
                 TagNode pointofInterest = new TagNode((float) y, (float) x);
                 ArrayList<Tag> temp = new ArrayList<>();
                 temp.add(pointofInterest);
+                mapView.getDrawingMap().setMarkedTag(temp);
 
-                mainView.getDrawingMap().setMarkedTag(temp);
-
-                mainView.draw();
+                mapView.draw();
             }
             
         
         });
-        
-        mainView.canvas.setOnScroll(event -> {
+
+        mapView.getResizeableCanvas().setOnScroll(event -> {
 
             if (System.currentTimeMillis() - timer > 500){
                 timer = System.currentTimeMillis();
             }
             
-            mainView.getDrawingMap().zoom(Math.pow(zoomMultiplier,event.getDeltaY()), event.getX(), event.getY());
+            mapView.getDrawingMap().zoom(Math.pow(zoomMultiplier,event.getDeltaY()), event.getX(), event.getY());
 
+            mapView.getDrawingMap().zoombarUpdater(zoomLevelText, zoomLevelImage);
         });
 
-        mainView.canvas.setOnMouseDragged(e -> {
+        mapView.getResizeableCanvas().setOnMouseDragged(e -> {
 
             if (!pointofInterestState){
                 double dx = e.getX() - lastX;
                 double dy = e.getY() - lastY;
-                mainView.getDrawingMap().pan(dx, dy);
+                mapView.getDrawingMap().pan(dx, dy);
     
                 lastX = e.getX();
                 lastY = e.getY();
@@ -204,11 +195,11 @@ public class Controller implements Initializable, ControllerInterface{
                     break;
                 }
             }
-            mainView.draw();
+            mapView.draw();
         });
 
         mainMenuButton.setOnAction((ActionEvent e) -> {
-            mainView.drawScene(StageSelect.MainMenu);
+            mapView.drawScene();
         });
 
         menuButton1.setOnAction((ActionEvent e) -> {
@@ -414,7 +405,7 @@ public class Controller implements Initializable, ControllerInterface{
      * @param tagAddress The address to show
      */
     private void showAddress(TagAddress tagAddress){
-        DrawingMap drawingMap = mainView.getDrawingMap();
+        DrawingMap drawingMap = mapView.getDrawingMap();
 
         float[] bounds = drawingMap.getScreenBounds();
         double x = ((bounds[2] - bounds[0]) / 2) + bounds[0];
@@ -445,7 +436,7 @@ public class Controller implements Initializable, ControllerInterface{
         temp.add(tagAddress);
         drawingMap.setMarkedTag(temp);
 
-        mainView.getDrawingMap().pan(-deltaX, deltaY);
+        mapView.getDrawingMap().pan(-deltaX, deltaY);
 
 
     }

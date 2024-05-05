@@ -4,12 +4,14 @@ import java.util.HashSet;
 import java.util.List;
 
 import gui.GraphicsHandler.GraphicStyle;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
+import parser.Model;
 import parser.Tag;
 import parser.TagAddress;
 import parser.TagBound;
@@ -30,13 +32,16 @@ import util.MathUtil;
  * The class that processes all ways and relations, and draws them using their types.
  * 
  */
+@SuppressWarnings("ALL")
 public class DrawingMap {
 
 
     static Affine transform = new Affine();
+
+    private final Model model;
     public ResizableCanvas canvas;
     private XMLReader reader;
-    private MainView mainView;
+    private MapView mapView;
     public double zoomLevel = 1;
     private int hierarchyLevel = 9;
     private int zoombarIntervals = 14;
@@ -44,9 +49,6 @@ public class DrawingMap {
     private double zoomScalerToMeter; // This is the world meters of how long the scaler in the bottom right corner is. Divide it with the zoomLevel
     private double[] zoomScales = {32, 16, 8, 4, 2, 1, 0.5, 0.1, 0.05, 0.015, 0.0001}; // 32, 16, 8, 4, 2, 1, 0.5, 0.1, 0.05, 0.015, 0.0001
     public Zoombar zoombar;
-
-     //
-
     private Trie trie;
     private List<Tag> markedTag;
     private List<TagNode> nodes;
@@ -64,16 +66,12 @@ public class DrawingMap {
     private List<TagWay> waysToDrawWithType;
     private List<TagWay> waysToDrawWithoutType;
 
-    private float[] tempBounds = new float[4];
 
 
-
-    public DrawingMap(MainView mainView, XMLReader reader){
-        this.mainView = mainView;
-        this.reader = reader;
-        ways = List.copyOf(XMLReader.getWays().valueCollection());
-        relations = List.copyOf(XMLReader.getRelations().valueCollection());
-        trie = new Trie();
+    public DrawingMap(MapView mapView, Model model){
+        
+        this.mapView = mapView;
+        this.model = model;
     }
 
     /**
@@ -86,24 +84,22 @@ public class DrawingMap {
     public void initialize(ResizableCanvas canvas){
 
         this.canvas = canvas;
-
-        TagBound bound = XMLReader.getBound();
-
+        
+        TagBound bound = this.mapView.getModel().getBound();
+        
         double minlon = bound.getMinLon();
         double maxlat = bound.getMaxLat();
         double maxlon = bound.getMaxLon();
         double minlat = bound.getMinLat();
+
         float[] screenBounds = getScreenBounds();
-        ArrayList<Tag> tempList = new ArrayList<>();
-        tempList.addAll(List.copyOf(XMLReader.getWays().valueCollection()));
-        tempList.addAll(List.copyOf(XMLReader.getRelations().valueCollection()));
-        Tree.initialize(tempList);
+
+
+
         zoombar = new Zoombar(zoombarIntervals, zoomLevelMax, zoomLevelMin);
         setBackGroundColor(Color.web("#F2EFE9"));
-        pan(-minlon, minlat + (screenBounds[3] - screenBounds[1]));
+        pan(-minlon, maxlat);
         zoom(canvas.getWidth() / (maxlon - minlon), 0, 0);
-        //pan(0, canvas.getHeight() * 1.20);
-        tempBounds = getScreenBounds();
     }
 
     public Trie getTrie(){
@@ -113,6 +109,15 @@ public class DrawingMap {
     public void setBackGroundColor(Color c){
         backGroundColor = c;
     }
+
+    public double getZoomLevelMax(){
+        return zoomLevelMax;
+    }
+
+    public double getZoomLevelMin(){
+        return zoomLevelMin;
+    }
+
 
     /**
      * Directly draws the map, starting by filling the canvas with white, followed by drawing lines and polygons
@@ -202,8 +207,7 @@ public class DrawingMap {
 
     public void setMarkedTag(ArrayList<Tag> tag){
         markedTag = tag;
-    
-        mainView.draw();
+        mapView.draw();
     }
 
     /**
@@ -348,13 +352,9 @@ public class DrawingMap {
                     gc.setStroke(tagWay.getType().getPolyLineColor()); 
                 }
             }
-
-
            
             gc.setLineWidth(lineWidth);
 
-
-            
             gc.beginPath();
             gc.moveTo(tagWay.getRefNodes().getFirst().getLon(), -tagWay.getRefNodes().getFirst().getLat());
             
@@ -482,7 +482,7 @@ public class DrawingMap {
      * @param dx - Distance to pan on the x-axis
      * @param dy - Distance to pan on the y-axis
      */
-    void zoom(double factor, double dx, double dy){
+    public void zoom(double factor, double dx, double dy){
         double zoomLevelNext = zoomLevel * factor;
         if (zoomLevelNext < zoomLevelMax && zoomLevelNext > zoomLevelMin){
             zoomLevel = zoomLevelNext;
@@ -499,11 +499,11 @@ public class DrawingMap {
             transform.prependScale(factor, factor);
             pan(dx, dy);
         }
-        else if(zoomLevel > zoomLevelMax){
-            zoomLevel = zoomLevelMax - 1;
+        else if(zoomLevelNext > zoomLevelMax){
+            zoomLevel = zoomLevelMax - 0.000001;
         }
-        else if (zoomLevel < zoomLevelMin){
-            zoomLevel = zoomLevelMin + 1;
+        else if (zoomLevelNext < zoomLevelMin){
+            zoomLevel = zoomLevelMin + 0.000001;
         }
 
         zoombar.setRange(zoomLevel);
@@ -527,7 +527,7 @@ public class DrawingMap {
      */
     public void pan(double dx, double dy) {
         transform.prependTranslation(dx, dy);
-        mainView.draw();
+        mapView.draw();
     }
 
     public void zoombarUpdater(Label label, ImageView imageView) {
@@ -553,7 +553,7 @@ public class DrawingMap {
     }
     public void append(double dx, double dy) {
         transform.appendTranslation(dx, dy);
-        mainView.draw();
+        mapView.draw();
     }
 
     public void setZoomLabel(Label label){

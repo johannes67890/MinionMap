@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import parser.TagAddress;
-import parser.TagAddress.SearchAddress;
 import parser.TagNode;
 import parser.TagWay;
 import parser.Tag;
@@ -16,11 +15,11 @@ import util.Type;
 
 public class Search {
     private Trie trie;
-    private MainView mainView;
+    private MapView mapView;
 
-    public Search(MainView mw){
+    public Search(MapView mw){
         //mainview to be used with dijsktra
-        mainView = mw;
+        mapView = mw;
         trie = XMLReader.getTrie();
     }
 
@@ -59,6 +58,6 @@ public class Search {
         TagWay way = new TagWay((long)0, "Route", djiktra.shortestPath(), (short)0, Type.PATHWAY);
         nodes.add(way);
         if (nodes.isEmpty()) return;
-        mainView.getDrawingMap().setMarkedTag(nodes);
+        mapView.getDrawingMap().setMarkedTag(nodes);
     }
 }

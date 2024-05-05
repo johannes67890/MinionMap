@@ -1,5 +1,6 @@
 package parser;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -132,7 +133,7 @@ public class TagAddress extends Tag  implements Comparable<TagAddress>{
      * Constructs a instance of the builder, that later can be used to construct a {@link TagAddress}.
      * </p>
      */
-    public static class AddressBuilder {
+    public static class AddressBuilder  implements Serializable{
         public String street, house, postcode, country, city, municipality;
         private boolean isEmpty = true;
 
