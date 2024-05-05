@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 import javax.xml.stream.XMLStreamReader;
 
+import javafx.util.Pair;
 import parser.TagAddress.AddressBuilder;
 import parser.TagRelation.RelationBuilder;
 import parser.TagWay.WayBuilder;
@@ -21,6 +22,7 @@ public class XMLBuilder {
         private RelationBuilder relationBuilder = new RelationBuilder();
 
         private String name; // name from a <tag> in a parrent element
+        private Type.Place place;
         private Type type;
         private String TypeValue;
         private long id;
@@ -72,6 +74,10 @@ public class XMLBuilder {
         }
         public float getLon(){
             return this.lon;
+        }
+
+        public Type.Place getPlace(){
+            return this.place;
         }
         
         public AddressBuilder getAddressBuilder(){
@@ -138,6 +144,15 @@ public class XMLBuilder {
         private void parseTag(String k, String v){
             if(k.equals("name")){
                 this.name = v; // set the name of the node
+            }
+
+            if(k.equals("place")){
+                for (Type.Place currPlace : Type.Place.getTypes()) {
+                    if (v.equals(currPlace.getValue())) {
+                        this.place = currPlace;
+                        break;
+                    }
+                }
             }
 
             if(k.contains("maxspeed")){

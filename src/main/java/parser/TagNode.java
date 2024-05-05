@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import gnu.trove.list.TLinkable;
 import gnu.trove.list.linked.TLinkedList;
+import javafx.util.Pair;
 import parser.chunking.XMLWriter.ChunkFiles;
 import structures.KDTree.Tree;
 import util.Type;
@@ -20,6 +21,7 @@ import java.util.*;
 public class TagNode extends Tag implements TLinkable<TagNode>, Comparable<TagNode>  {
 
     private long id;
+    private Pair<Type.Place, String> place = null;
     private TagWay parent;
     private Type type;
     private float lon;
@@ -49,6 +51,7 @@ public class TagNode extends Tag implements TLinkable<TagNode>, Comparable<TagNo
         this.id = builder.getId();
         this.lon = builder.getLon();
         this.lat = builder.getLat();
+        this.place = new Pair<Type.Place,String>(builder.getPlace(), builder.getName());
     }
     
     public TagNode(TagNode other) {
@@ -77,6 +80,10 @@ public class TagNode extends Tag implements TLinkable<TagNode>, Comparable<TagNo
     @Override
     public Type getType() {
         return type;
+    }
+
+    public Pair<Type.Place, String> getPlace(){
+        return place;
     }
 
     public void setType(Type type) {

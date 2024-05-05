@@ -126,6 +126,75 @@ public enum Type  {
     UNKNOWN("", new String[]{""}, 0, 9, Color.BLACK, 5, true, 2, 7);
 
 
+    public enum Place {
+        // Administratively declared places
+        COUNTRY("country", 10, 2),
+        STATE("state", 10, 2),
+        REGION("region", 10, 2),
+        MUNICIPALITY("municipality", 10, 2),
+
+        // Populated settlements, urban areas
+        CITY("city", 10, 2),
+        BOROUGH("borough", 10, 2),
+        SUBURB("suburb", 10, 2),
+        QUARTER("quarter", 10, 2),
+        NEIGHBOURHOOD("neighbourhood", 10, 2),
+        // Populated settlements, urban and rural areas'
+        TOWN("town", 10, 2),
+        HAMLET("hamlet", 10, 2),
+        VILLAGE("village", 10, 2),
+        // Other places
+        ISLAND("island", 10, 2),
+        ARCHIPELAGO("archipelago", 10, 2),
+        ISLET("islet", 10, 2),
+        SQUARE("square", 10, 2);
+
+
+        private final String key = "place"; // key of the tag
+        private final String value; // value of the tag
+        private final int hierarchy; // hierarchy of the tag - How important is it to display
+        private final int layer; // The layer of where the object should be drawn
+
+        Place(String value, int hierarchy, int layer) {
+            this.value = value;
+            this.hierarchy = hierarchy;
+            this.layer = 0;
+        }
+
+        public String getKey() {
+            return key;
+        }
+    
+        public String getValue() {
+            return value;
+        }
+    
+        public static Place[] getTypes(){
+            return Place.values();
+        }
+
+        public static String[] getValues(){
+            return Place.getValues();
+        }
+
+         /**
+         * Returns the hierarchy of the {@link Place}. Used for optimization of the map, with priority rendering.
+         * @param type - The {@link Place} to get the hierarchy of.
+         * @return The hierarchy of the {@link Place} from 0 (least important) to 9 (most important).
+         */
+        public static int getHierarchy(Place type){
+            return type.hierarchy;
+        }
+            
+        public int getThisHierarchy(){
+            return hierarchy;
+        }
+
+        public int getLayer(){
+            return layer;
+        }
+    }
+
 
     private final String key; // key of the tag
     private final String[] value; // value of the tag
