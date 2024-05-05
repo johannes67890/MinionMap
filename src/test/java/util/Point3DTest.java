@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
-import util.Point3D;
+import structures.KDTree.Point3D;
 
 public class Point3DTest {
 

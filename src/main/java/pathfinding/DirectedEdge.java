@@ -34,7 +34,10 @@ import parser.TagNode;
      */
     public DirectedEdge(TagNode v, TagNode w, double speed) {
         if (Double.isNaN(speed)) throw new IllegalArgumentException("Speed is NaN");
-        if (v.equals(w)) throw new IllegalArgumentException("Edges cannot be self loops");
+        if (v.equals(w)){
+            System.out.println("V: " + v.getId() + " | W: " + w.getId());
+            throw new IllegalArgumentException("Edges cannot be self loops");
+        } 
         this.v = v;
         this.w = w;
         //this.weight = v.distance(w)/ speed;

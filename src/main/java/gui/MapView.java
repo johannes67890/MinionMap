@@ -9,7 +9,6 @@ import util.FileDistributer;
 import java.net.URL;
 
 public class MapView extends View{
-
     private GraphicsContext gc;
     private ResizableCanvas c;
     private Pane p;
@@ -23,12 +22,13 @@ public class MapView extends View{
     }
 
     public void draw(){
+        if(!super.getDrawingMap().IsInitialized()) return;
         this.gc = getResizeableCanvas().getGraphicsContext2D();
         gc.setFill(Color.RED);
         gc.fillRect(0, 0, getResizeableCanvas().getWidth(), getResizeableCanvas().getHeight());
         getDrawingMap().DrawMap(getResizeableCanvas());
-
     }
+
     public void initializeDrawingMap(){
         getDrawingMap().initialize(getResizeableCanvas());
     }

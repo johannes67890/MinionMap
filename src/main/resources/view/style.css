@@ -17,9 +17,9 @@
     -fx-margin-left: 20px;
 }
 
-.button {
+.button, .activeButton {
     -fx-background-color: #fff;
-    -fx-min-width: 100px;
+    -fx-min-width: 50px;
     -fx-color: #0f1111;
     -fx-cursor: hand;
     -fx-border-color: #686868;
@@ -43,13 +43,27 @@
     -fx-width: 125px;
 }
 
+.texxt{
+
+    -fx-text-fill: black;
+    -fx-font-family: "Amazon Ember",sans-serif;
+    -fx-font-size: 16px;
+    -fx-font-weight: normal;
+
+}
+
+.activeButton{
+    -fx-background-color: #008296;
+    -fx-text-fill: rgb(255, 255, 255);
+}
+
 .button:hover {
     -fx-border-color: #008296;
     -fx-box-shadow: rgba(213, 217, 217, .5) 0 2px 5px 0;
     -fx-outline: 0;
 }
 
-.button:focus {
+.button:active {
     -fx-border-color: #008296;
     -fx-box-shadow: rgba(213, 217, 217, .5) 0 2px 5px 0;
     -fx-outline: 0;
@@ -137,6 +151,7 @@
     -fx-min-height: 40px;
 }
 
+
 .combo-box .list-cell 
 {
     -fx-background: white;
@@ -157,7 +172,6 @@
 .combo-box-popup .list-view .list-cell 
 {
     /* -fx-padding: 2 0 2 3; */
-
     /* No alternate highlighting */
     -fx-background-color: white;
 }
@@ -250,6 +264,46 @@
 
 
 
-   
+.routeContainer {
+    -fx-background-color: #f7fafa;
+    -fx-border-radius: 10px;
+    -fx-min-width: 250px;
+    -fx-min-height: 300px;
+    -fx-pref-width: 300px;
+    -fx-pref-height: 500px;
+    -fx-max-width: 300px;
+    -fx-max-height: 600px
+}
 
+.routeGroup{
+    -fx-padding: 35px;
+    -fx-display: flex;
+    -fx-flex-direction: column;
+    -fx-justify-content: center;
+    -fx-align-items: center;
+    -fx-border-radius: 10px;
+}
+
+.list-cell {
+   -fx-padding: 35px;
+   -fx-min-width: 250px;
+   -fx-min-height: 300px;
+   -fx-pref-width: 300px;
+   -fx-pref-height: 500px;
+   -fx-max-width: 300px;
+}
+
+.list-cell:filled:selected:focused, .list-cell:filled:selected {
+    -fx-background-color: linear-gradient(#328BDB 0%, #207BCF 25%, #1973C9 75%, #0A65BF 100%);
+    -fx-text-fill: white;
+}
+
+.list-cell:even { /* <=== changed to even */
+    -fx-background-color: white;
+}
+
+.list-cell:filled:hover {
+    -fx-background-color: #0093ff;
+    -fx-text-fill: white;
+}
 

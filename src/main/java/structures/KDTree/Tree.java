@@ -118,7 +118,7 @@ public class Tree implements Serializable{
      * @return ArrayList of Tag-objects near the point
      */
     public static ArrayList<Tag> getTagsNearTag(Tag tag, List<Type> searchType){
-        return multiTree.nearestTags(new Point3D(tag.getLon(), tag.getLat(), (byte) 0), searchType);
+        return multiTree.nearestTags(new Point3D(tag.getLon(), tag.getLat(), (byte) 10), searchType);
     }
 
     // TODO:
@@ -149,6 +149,10 @@ public class Tree implements Serializable{
         return multiTree.nearest(new Point3D(tag.getLon(), tag.getLat(), (byte) 0));
     }
 
+    public static Point3D getNearestPointOfType(Tag tag, List<Type> types){
+        return multiTree.nearest(new Point3D(tag.getLon(), tag.getLat(), (byte) 0), types);
+    }
+
     /**
      * Returns the tags in a given bounds
      * @param rect Bounds to search in
@@ -172,11 +176,15 @@ public class Tree implements Serializable{
      * @return ArrayList of tag-objects in the given bounds
      */
     public static ArrayList<Tag> getTagFromPoint(Tag node){
-        return multiTree.getTagsFromPoint(new Point3D(node.getLon(), node.getLat(), (byte) 0));
+        return multiTree.getTagsFromPoint(new Point3D(node.getLon(), node.getLat(), (byte) 10));
     }
 
     public static ArrayList<Tag> getNearestOfType(Tag tag, List<Type> searchType){
-        return multiTree.nearestTags(new Point3D(tag.getLon(), tag.getLat(), (byte) 0), searchType);
+        return multiTree.nearestTags(new Point3D(tag.getLon(), tag.getLat(), (byte) 10), searchType);
+    }
+
+    public static ArrayList<Tag> getNearestOfTypeBruteForce(Tag tag, List<Type> searchType){
+        return multiTree.getTagsFromPoint(multiTree.nearestBruteForce(new Point3D(tag.getLon(), tag.getLat(), (byte) 0), searchType));
     }
 
     public static boolean isLoaded(){

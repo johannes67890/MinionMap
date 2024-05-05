@@ -8,8 +8,6 @@ import parser.Model;
 
 public class MainView {
 
-    private Model model;
-
     enum StageSelect {
 
         MainMenu,
@@ -27,7 +25,6 @@ public class MainView {
     public DrawingMap drawView;
 
     public MainView(Stage stage){
-
         MainView.stage = stage;
         screenBounds = Screen.getPrimary().getVisualBounds();
         MainView.stage.setMinWidth(sizeX);
@@ -35,7 +32,6 @@ public class MainView {
         MainView.stage.setResizable(true);
 
         drawScene(StageSelect.MainMenu);
-
     }
 
     public Stage getStage(){
@@ -67,10 +63,5 @@ public class MainView {
         stage.show();
     }
 
-    //refactored loadDrawingmapinto mapview
-
-    //refactored Loadmodel into LobbyView
-
 
 }
-// Path: src/main/java/gui/ControllerInterface.java

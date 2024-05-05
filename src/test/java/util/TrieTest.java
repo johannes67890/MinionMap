@@ -1,4 +1,4 @@
-package org;
+package util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -14,8 +14,8 @@ import org.junit.jupiter.api.BeforeEach;
 import parser.Tag;
 import parser.TagAddress;
 import parser.XMLReader;
-import util.Tree;
-import util.Trie;
+import structures.KDTree.*;
+import structures.Trie;
 import java.util.List;
 
 public class TrieTest {
@@ -26,11 +26,13 @@ public class TrieTest {
     //private XMLReader reader;
     @BeforeEach
     void setUp() {
-        this.reader = new XMLReader("src/test/java/org/ressources/testmap.osm");
+        this.reader = new XMLReader("src\\main\\resources\\testMap.osm");
         assertNotNull(reader);
         assertDoesNotThrow(() -> this.reader);
         trie = XMLReader.getTrie();
     }
+
+    
 
   
     @Test

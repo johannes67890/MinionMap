@@ -1,11 +1,11 @@
-package org;
+package util;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
-import util.Point3D;
-import util.Rect3D;
+import structures.KDTree.Point3D;
+import structures.KDTree.Rect3D;
 
 public class Rect3DTest {
 

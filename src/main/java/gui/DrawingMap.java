@@ -7,7 +7,6 @@ import gui.GraphicsHandler.GraphicStyle;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
@@ -54,9 +53,11 @@ public class DrawingMap {
     private List<TagNode> nodes;
     private List<TagWay> ways;
     private List<TagRelation> relations;
+    private TagNode pointOfInterestNode = null;
     private Label zoomLabel;
     private ImageView zoomImage;
 
+    private boolean isInitialized = false;
     private Color currentColor;
     private Color backGroundColor;
     private boolean backGroundSet;
@@ -69,7 +70,6 @@ public class DrawingMap {
 
 
     public DrawingMap(MapView mapView, Model model){
-        
         this.mapView = mapView;
         this.model = model;
     }
@@ -85,7 +85,7 @@ public class DrawingMap {
 
         this.canvas = canvas;
         
-        TagBound bound = this.mapView.getModel().getBound();
+        TagBound bound = mapView.getModel().getBound();
         
         double minlon = bound.getMinLon();
         double maxlat = bound.getMaxLat();
@@ -100,6 +100,11 @@ public class DrawingMap {
         setBackGroundColor(Color.web("#F2EFE9"));
         pan(-minlon, maxlat);
         zoom(canvas.getWidth() / (maxlon - minlon), 0, 0);
+        isInitialized = true;
+    }
+
+    public boolean IsInitialized(){
+        return isInitialized;
     }
 
     public Trie getTrie(){
@@ -125,10 +130,9 @@ public class DrawingMap {
      * @param canvas - The canvas that get drawn
      */
 
-    public void DrawMap(ResizableCanvas canvas){
+    public void DrawMap(Canvas canvas){
 
         long preTime = System.currentTimeMillis();
-        this.canvas = canvas;
         if (!Tree.isLoaded()){
             return;
         }
@@ -198,11 +202,18 @@ public class DrawingMap {
  
         drawWays(sortedWaysToDraw);
 
-        if (markedTag == null) return;
-        for (Tag tag : markedTag){
-            drawMarkedTag(tag);
+        if (markedTag != null){
+            for (Tag tag : markedTag){
+                drawMarkedTag(tag);
+            }
         }
-            
+        if (pointOfInterestNode != null){
+            drawMarkedTag(pointOfInterestNode);
+        }
+    }
+
+    public void setPointOfInterest(TagNode node){
+        pointOfInterestNode = node;
     }
 
     public void setMarkedTag(ArrayList<Tag> tag){
@@ -255,7 +266,7 @@ public class DrawingMap {
 
     private void drawPoint(Tag node){
 
-        double radius = 25 * 1/Math.sqrt(transform.determinant());
+        double radius = 10 * 1/Math.sqrt(transform.determinant());
         gc.fillOval(node.getLon() - radius / 2, -(node.getLat()) - radius / 2, radius, radius);
 
     }
@@ -278,6 +289,7 @@ public class DrawingMap {
 
         double defaultLineWidth = 1/Math.sqrt(transform.determinant());
         currentColor = way.getType().getColor();
+        gc.setStroke(currentColor);
         int counter = 0;
         xPoints = new double[way.getRefNodes().size()];
         yPoints = new double[way.getRefNodes().size()];
@@ -287,9 +299,7 @@ public class DrawingMap {
         double lineWidth = MathUtil.clamp(defaultLineWidth * way.getType().getWidth(), min, max);
         gc.setLineWidth(lineWidth);
 
-        if (way.getType() != null){
-            gc.setStroke(way.getType().getColor());
-        }
+
 
         gc.beginPath();
         gc.moveTo(way.getRefNodes().getFirst().getLon(), -way.getRefNodes().getFirst().getLat());
@@ -443,7 +453,6 @@ public class DrawingMap {
         
         float[] bounds = new float[4]; // x_min ; y_min ; x_max ; y_max
         double width = ((canvas.getWidth()) / zoomLevel);
-        
         double height = ((canvas.getHeight()) / zoomLevel);
         bounds[0] = (float) -(transform.getTx() / Math.sqrt(transform.determinant()));
         bounds[1] = (float) ((transform.getTy()) / Math.sqrt(transform.determinant()) - height);

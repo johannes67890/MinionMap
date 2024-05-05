@@ -310,7 +310,8 @@ public class K3DTree {
         if (p == null) throw new java.lang.NullPointerException(
                 "called contains() with a null Point3D");
         if (isEmpty()) return null;
-        return nearest(root, p, root.p, 0);
+        Point3D point = nearest(root, p, root.p, 0);
+        return point;
     }
     
     private Point3D nearest(Node n, Point3D p, Point3D champion, int xyz) {
@@ -352,8 +353,7 @@ public class K3DTree {
             champion = nearest(n.lbb, p, champion, temp);
             
             // Since champion may have changed, recalculate distance
-            if (champion.distanceSquaredTo(p) >=
-                    toPartitionLine * toPartitionLine) {
+            if (champion.distanceSquaredTo(p) >= toPartitionLine * toPartitionLine) {
                 champion = nearest(n.rtf, p, champion, temp);
             }
         }
@@ -372,8 +372,7 @@ public class K3DTree {
             champion = nearest(n.rtf, p, champion, temp);
             
             // Since champion may have changed, recalculate distance
-            if (champion.distanceSquaredTo(p) >=
-                    toPartitionLine * toPartitionLine) {
+            if (champion.distanceSquaredTo(p) <= toPartitionLine * toPartitionLine) {
                 champion = nearest(n.lbb, p, champion, temp);
             }
         }
@@ -405,6 +404,7 @@ public class K3DTree {
 
     private Point3D nearest(Node n, Point3D p, Point3D champion, int xyz, List<Type> types) {
         
+
         // Handle reaching the end of the tree
         if (n == null){
             return champion;
@@ -416,7 +416,7 @@ public class K3DTree {
         }
         
         // Determine if the current Node's point beats the existing champion
-        if (n.p.distanceSquaredTo(p) < champion.distanceSquaredTo(p) && isPointOfTypes(n.p, types)){
+        if (n.p.distance2DTo(p) < champion.distance2DTo(p) && isPointOfTypes(n.p, types)){
             champion = n.p;
         }
         
@@ -437,6 +437,7 @@ public class K3DTree {
         double toPartitionLine = comparePoints(p, n, xyz);
         int temp = xyz + 1;
         if (xyz > 2){
+            //toPartitionLine = 0;
             temp = 0;
         }
         /**
@@ -445,7 +446,6 @@ public class K3DTree {
          */
         if (toPartitionLine < 0) {
             champion = nearest(n.lbb, p, champion, temp, types);
-            
             // Since champion may have changed, recalculate distance
             if (champion.distanceSquaredTo(p) >= toPartitionLine * toPartitionLine) {
                 champion = nearest(n.rtf, p, champion, temp, types);
@@ -464,10 +464,8 @@ public class K3DTree {
          */
         else {
             champion = nearest(n.rtf, p, champion, temp, types);
-            
             // Since champion may have changed, recalculate distance
-            if (champion.distanceSquaredTo(p) >=
-            toPartitionLine * toPartitionLine) {
+            if (champion.distanceSquaredTo(p) >= toPartitionLine * toPartitionLine) {
                 champion = nearest(n.lbb, p, champion, temp, types);
             }
         }
@@ -490,6 +488,41 @@ public class K3DTree {
             }
         }
         return false;
+    }
+
+    public Point3D nearestBruteForce(Point3D point){
+        Point3D best = null;
+        for (Point2D other : pointToTag.keySet()){
+            Point3D other3D = new Point3D((float)other.x(), (float)other.y(), (byte)0);
+            if (best == null){
+                best = other3D;
+                continue;
+            }
+
+            if (point.distance2DTo(other3D) < point.distance2DTo(best)){
+                best = other3D;
+            }
+        }
+
+        return best;
+    }
+
+    public Point3D nearestBruteForce(Point3D point, List<Type> types){
+        Point3D best = null;
+        for (Point2D other : pointToTag.keySet()){
+            Point3D other3D = new Point3D((float)other.x(), (float)other.y(), (byte)0);
+            boolean isType = isPointOfTypes(other3D, types);
+            if (isType && best == null){
+                best = other3D;
+                continue;
+            }
+
+            if (isType && point.distance2DTo(other3D) < point.distance2DTo(best)){
+                best = other3D;
+            }
+        }
+
+        return best;
     }
     
 
@@ -582,6 +615,23 @@ public class K3DTree {
             return p.y() - n.p.y();
         }else{
             return p.z() - n.p.z();
+        }
+    }
+
+    /**
+     * A version of comparePoints that ignores the z axis
+     * @param p the point in question
+     * @param n the Node in question
+     * @param xyz are we looking a x-level, y-level or z-level?
+     * @return
+     */
+    private double comparePoints2D(Point3D p, Node n, int xyz){
+        if (xyz == 0) {
+            return p.x() - n.p.x();
+        }else if (xyz == 1){
+            return p.y() - n.p.y();
+        }else{
+            return 0;
         }
     }
     
