@@ -22,6 +22,12 @@ public final class MathUtil {
         return Math.max(min, Math.min(max, val));
     }
 
+    /**
+     * This non-functional function is made as an attempt to reduce polygon size
+     * @param nodes
+     * @param minDistance
+     * @return
+     */
     public static ArrayList<TagNode> reduce(ArrayList<TagNode> nodes, double minDistance) {
         ArrayList<TagNode> simplified = new ArrayList<TagNode>();
         int size = nodes.size();
@@ -46,6 +52,15 @@ public final class MathUtil {
         return simplified;
     }
 
+    /**
+     * Douglas-Peucker algorithm. Another attempt to decrease the polygon size.
+     * 
+     * https://dyn4j.org/2021/06/2021-06-10-simple-polygon-simplification/
+     * 
+     * @param polyline
+     * @param max
+     * @return
+     */
     public static ArrayList<TagNode> dp(ArrayList<TagNode> polyline, double max) {
         int size = polyline.size();
         TagNode first = polyline.get(0);
@@ -81,6 +96,13 @@ public final class MathUtil {
         }
     }
 
+    /**
+     * A homemade sublist implementation
+     * @param startindex    Inclusive
+     * @param endIndex      Exclusive
+     * @param list          The list in question
+     * @return              Return the sublistet list
+     */
     public static ArrayList<TagNode> sublist(int startindex, int endIndex, ArrayList<TagNode> list){
 
 
@@ -110,12 +132,14 @@ public final class MathUtil {
         / Math.sqrt(Math.pow(l2.getLon() - l1.getLon(), 2) + Math.pow(l2.getLat() - l1.getLon(), 2));
     }
 
+    /**
+     * Rounds the value to the given precision value by the number of digits
+     * @param value     The value in question
+     * @param precision The number of digits that needs to be rounded to
+     * @return          The rounded number
+     */
     public static double round (double value, int precision) {
         int scale = (int) Math.pow(10, precision);
         return (double) Math.round(value * scale) / scale;
     }
-
-        
-
-    
 }
