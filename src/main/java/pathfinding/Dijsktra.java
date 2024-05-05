@@ -113,43 +113,6 @@ public class Dijsktra {
     public Stack<TagNode> getShortestPathofTags(){
         return shortestPath;
     }
-    private void addSurroundingRoads(TagNode startTag, TagNode finish, TransportType transportType){
-        
-        if(startTag.hasIntersection()){
-            for (Tag tag : startTag.getIntersectionTags()) {
-                if(tag instanceof TagWay){
-                    TagWay way = (TagWay) tag;
-                    if(!transportType.getRoadTypes().contains(tag.getType()) || tag.getType() == null) continue;
-                    if(surroundingTags.contains(way.getId())) continue;
-                    surroundingTags.add(way.getId());
-                    addRoad(way);
-                    for (TagNode tagNode : way.getRefNodes()) {
-                        if(tagNode.getId() == finish.getId()) {
-                            System.out.println("Found finish");
-                            this.finish = tagNode;
-                            distTo.put(tagNode.getId(), Double.POSITIVE_INFINITY);
-                            return;
-                        }
-                        if(tagNode.hasIntersection()) addSurroundingRoads(tagNode, finish,transportType);
-                        if(tagNode.getNext() == null) continue;
-                    } 
-                }
-            }
-        } else{
-            addRoad(startTag.getParent());
-            for (TagNode tagNode : startTag.getParent().getRefNodes()) {
-                if(tagNode.getId() == finish.getId()) {
-                    System.out.println("Found finish");
-                    this.finish = tagNode;
-                    distTo.put(tagNode.getId(), Double.POSITIVE_INFINITY);
-                    return;
-                }
-                
-                if(tagNode.hasIntersection()) addSurroundingRoads(tagNode,finish, transportType);
-                if(tagNode.getNext() == null) continue;
-            }
-        }
-    }
 
     private void addSurroundingRoadsFancy(TagNode startTag, TagNode finish, TransportType transportType){
         if (foundFinish) return;
@@ -160,13 +123,12 @@ public class Dijsktra {
                 if(!transportType.getRoadTypes().contains(tag.getType()) || tag.getType() == null) continue;
                 if(surroundingTags.contains(way.getId())) continue;
                 surroundingTags.add(way.getId());
-                //addRoad(way);
+
                 for (int i = 0; i < way.getRefNodes().size(); i++) {
                     TagNode tagNode = new TagNode(way.getRefNodes().get(i));
                     tagNode.clearLinks();
                     tagNode.setParent(way);
                     if(tagNode.getId() == finish.getId()) {
-                        System.out.println("Found finish: " + tagNode.getId()); 
                         foundFinish = true;
                         distTo.put(tagNode.getId(), Double.POSITIVE_INFINITY);
                     }
@@ -199,23 +161,12 @@ public class Dijsktra {
         for (int i = 1; i < list.size(); i++){
             distance += list.get(i-1).distance(list.get(i));
         }
+
         //distance = (distance / 1000) / way.getSpeedLimit();
         G.addEdge(new DirectedEdge(list.get(0), list.get(list.size()-1), distance));
         if (!way.isOneWay()){
-            G.addEdge(new DirectedEdge(list.get(list.size()-1), list.get(0), distance));
+            addOneWayEdge(list.get(list.size()-1), way);
         }
-    }
-
-    private void addRoad(TagWay way){
-        for (TagNode node : way.getRefNodes()) {
-            if(node.getNext() == null) return;
-            if(way.isOneWay()){
-                addOneWayEdge(node, way);
-            } else {
-                addTwoWayEdges(node, way);
-            }
-        }
-
     }
 
     private void addTwoWayEdges(TagNode node, TagWay way){
@@ -326,9 +277,7 @@ public class Dijsktra {
 
     public TLinkedList<TagNode> shortestPath(){
         TLinkedList<TagNode> nodes = new TLinkedList<>();
-        if (!hasPathTo(this.finish)) return null;
-        //System.out.println("Weight: " + distTo.get(finish.getId()));
-        //System.out.println("Cost: " + costTo.get(finish.getId()));
+        if (!hasPathTo(this.finish)) throw new IllegalArgumentException("No path to finish");
 
         for (DirectedEdge e : pathTo(this.finish)) {
             if(e.to() == null) break;
@@ -341,22 +290,21 @@ public class Dijsktra {
     }
 
     public TLinkedList<TagNode> shortestPathDetailed(){
-        System.out.println(G.getNode(finish.getId()));
+
         TLinkedList<TagNode> nodes = shortestPath();
+
         TLinkedList<TagNode> returnList = new TLinkedList<>();
-        for (int i = 1; i < nodes.size(); i++){
-            boolean onPath = false;
-            for (TagNode node : nodes.get(i-1).getParent().getRefNodes()){
-                if (node.equals(nodes.get(i-1))){
-                    onPath = !onPath;
-                }
-                if (onPath){
-                    returnList.add(node);
-                }
-                if (node.equals(nodes.get(i))){
-                    onPath = !onPath;
-                }
+        for (TagNode n : nodes) {
+            for (TagNode nWay : n.getParent().getRefNodes()) {
+                TagNode a = new TagNode(n);
+                a.clearLinks();
+                returnList.add(a);
+                if(nWay.getNext() != null || nodes.contains(nWay.getNext())) break;
             }
+            TagNode a = new TagNode(n);
+            a.clearLinks();
+            returnList.add(a);
+            if(n.getNext() == null) break;
         }
 
         return returnList;
