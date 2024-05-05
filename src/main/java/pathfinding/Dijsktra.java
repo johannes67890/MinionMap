@@ -30,6 +30,8 @@ public class Dijsktra {
     private boolean takeShortestRoute = false; // This can be enabled to get a more precise shortest path, but at the cost of perfomance
     private double distanceBetweenEndPoints; // Distance between start and finish
 
+    private boolean foundFinish = false;
+
     private TransportType type;
     private TagNode start;
     private TagNode finish;
@@ -86,6 +88,7 @@ public class Dijsktra {
                 relax(e);
             }
             if (hasPathTo(finish)){
+                System.out.println("Found path!");
                 break;
             }
         }
@@ -149,7 +152,7 @@ public class Dijsktra {
     }
 
     private void addSurroundingRoadsFancy(TagNode startTag, TagNode finish, TransportType transportType){
-        
+        if (foundFinish) return;
         for (Tag tag : startTag.getIntersectionTags()) {
             if(tag instanceof TagWay){
                 TagWay way = (TagWay) tag;
@@ -161,13 +164,14 @@ public class Dijsktra {
                 for (int i = 0; i < way.getRefNodes().size(); i++) {
                     TagNode tagNode = way.getRefNodes().get(i);
                     if(tagNode.getId() == finish.getId()) {
-                        System.out.println("Found finish"); 
+                        System.out.println("Found finish: " + tagNode.getId()); 
+                        foundFinish = true;
                         distTo.put(tagNode.getId(), Double.POSITIVE_INFINITY);
                     }
 
                     list.add(tagNode);
 
-                    if(tagNode.hasIntersection() || i == way.getRefNodes().size()){
+                    if(tagNode.hasIntersection() || i == way.getRefNodes().size() || tagNode.getId() == finish.getId()){
                         addRoadFancy(list, way);
                         list = new ArrayList<>();
                         list.add(tagNode);
@@ -179,8 +183,9 @@ public class Dijsktra {
     }
 
     private void addRoadFancy(List<TagNode> list, TagWay way){
+        
         if (list.size() == 1) return;
-        if (list.get(0).equals(list.get(list.size()-1)) && list.size() == 2) return;
+        //if (list.get(0).equals(list.get(list.size()-1)) && list.size() == 2) return;
         if (list.get(0).equals(list.get(list.size()-1)) && list.size() > 2){
             //List<TagNode> list2 = list.subList(list.size()/2, list.size());
             for (int i = 1; i < list.size(); i++){
@@ -334,6 +339,7 @@ public class Dijsktra {
     }
 
     public TLinkedList<TagNode> shortestPathDetailed(){
+        System.out.println(G.getNode(finish.getId()));
         TLinkedList<TagNode> nodes = shortestPath();
         TLinkedList<TagNode> returnList = new TLinkedList<>();
         for (int i = 1; i < nodes.size(); i++){
