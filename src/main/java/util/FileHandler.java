@@ -9,7 +9,7 @@ import java.util.zip.ZipInputStream;
 import parser.Model;
 import parser.XMLReader;
 
-public class FileHandler implements Serializable{
+public class FileHandler {
     
     //buffer size for reading and writing in kb
     private static final int BUFFER_SIZE = 4096;
@@ -19,11 +19,13 @@ public class FileHandler implements Serializable{
     private static String savePath = System.getProperty("user.dir").toString() + "\\src\\main\\resources\\files\\savedFile\\";
     private String absoluteBinaryFilePath;
 
+    @Serial
+    private static final long serialVersionUID = 1L;
 
 
     public static Object getModel(File file) throws IOException{
-        // return loadUnknownFile(file);
-        return new Model(new XMLReader(new FileInputStream(file)));
+        return loadUnknownFile(file);
+        //return new Model(new XMLReader(new FileInputStream(file)));
     }
 
     /**
@@ -58,6 +60,7 @@ public class FileHandler implements Serializable{
     private static Object loadFile(File file) {
         String path = savePath + getBinaryFileName(file);
         convertToBinary(createModel(file),path);
+        System.out.println(path);
         return loadBin(new File(path));
     }
 
@@ -79,6 +82,7 @@ public class FileHandler implements Serializable{
         } catch (FileNotFoundException e) {
             System.out.println("Failed at Fileinputstream, with file" + file + " error: " + e.getMessage());
         }
+
         return null;
     }
 
@@ -125,11 +129,12 @@ public class FileHandler implements Serializable{
      * @param
      * @param destDir the directory to save the file
      */
-    private static void convertToBinary(Serializable objectToBeBinaried, String destDir) {
+    private static void convertToBinary(Model objectToBeBinaried, String destDir) {
         try {
             var out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(destDir)));
             out.writeObject(objectToBeBinaried);
             out.close();
+            System.out.println("Created object " + objectToBeBinaried + " in binary");
         } catch (IOException e) {
             System.out.println("Failed at converting stage: " + e.getMessage());
         }

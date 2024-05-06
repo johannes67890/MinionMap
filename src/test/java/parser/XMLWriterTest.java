@@ -3,6 +3,7 @@ package parser;
 import util.FileDistributer;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -30,7 +31,7 @@ public class XMLWriterTest {
     @BeforeEach
     public synchronized void setUp() {
         assertDoesNotThrow(() -> {
-            new XMLReader(FileDistributer.testMap.getFilePath());
+            new XMLReader(new FileInputStream(FileDistributer.testMap.getFilePath()));
         });
 
     }

@@ -1,5 +1,6 @@
 package parser;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 import gnu.trove.map.hash.TLongObjectHashMap;
@@ -8,6 +9,7 @@ import structures.KDTree.Tree;
 
 
 public class Model implements Serializable{
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private static TagBound bound;
@@ -77,9 +79,7 @@ public class Model implements Serializable{
 
         Thread addAddresses = new Thread(() ->{
             long start = System.currentTimeMillis();
-            int t = 0;
             for(Tag tag : addresses.valueCollection()){
-                System.out.println(t++);
                 Tree.insertTagAdressInTree(tag);
             }
 

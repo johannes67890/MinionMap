@@ -7,33 +7,35 @@ import org.junit.jupiter.api.Test;
 import edu.princeton.cs.algs4.Point2D;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import parser.TagAddress;
-import parser.TagWay;
-import parser.XMLReader;
+import parser.*;
 import pathfinding.Dijsktra;
 import structures.KDTree.Tree;
 import util.FileDistributer;
 import util.Type;
-import parser.Tag;
 import parser.TagAddress;
 
 public class DijstraTest {
-    private XMLReader reader;
+    private Model model;
+
+
     @BeforeEach
-    void testXMLReaderStartup() {
-        this.reader = new XMLReader("src/test/java/org/ressources/testMap.osm");
-        assertNotNull(reader);
-        assertDoesNotThrow(() -> this.reader);
-        Tree.initialize(new ArrayList<Tag>(XMLReader.getWays().valueCollection()));;
+    void testModelStartup() {
+        assertDoesNotThrow(() -> {
+            this.model = new Model(new XMLReader(new FileInputStream(FileDistributer.testMap.getFilePath())));
+        });
+        assertNotNull(model);
+        assertDoesNotThrow(() -> this.model);
+
     }
 
     @Test
     void testGetNearestRoad(){
         TagAddress start = XMLReader.getAddressById(1447913335l);
-        Tree.insertTagInTree(start);
+        Tree.insertTagAdressInTree(start);
         ArrayList<Tag> road = Tree.getNearestOfType(start, Arrays.asList(Type.RESIDENTIAL_ROAD));
         assertNotNull(road);
         assertTrue(road.get(0) instanceof TagWay);

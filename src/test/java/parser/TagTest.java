@@ -3,13 +3,18 @@ package parser;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import util.FileDistributer;
+
+import java.io.FileInputStream;
 
 public class TagTest {
     private XMLReader reader;
 
     @BeforeEach
     void testXMLReaderStartup() {
-        this.reader = new XMLReader("src/test/java/org/ressources/testMap.osm");
+        assertDoesNotThrow(() -> {
+            new Model(new XMLReader(new FileInputStream(FileDistributer.testMap.getFilePath())));
+        });
         assertNotNull(reader);
         assertDoesNotThrow(() -> this.reader);
     }
