@@ -304,7 +304,11 @@ public class DrawingMap {
         gc.beginPath();
         gc.moveTo(way.getRefNodes().getFirst().getLon(), -way.getRefNodes().getFirst().getLat());
     
-        gc.setStroke(Color.RED);    
+        if (way.getType() != null && way.getType() == Type.PATHGRID){
+            gc.setStroke(way.getType().getColor());
+        } else{
+            gc.setStroke(Color.RED);    
+        }
         for (TagNode n : way.getRefNodes()) {
             gc.lineTo(n.getLon(), -n.getLat());
             xPoints[counter] = n.getLon();

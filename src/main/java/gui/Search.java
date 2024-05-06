@@ -62,14 +62,6 @@ public class Search {
      */
     public Dijsktra pathfindBetweenTagAddresses(TagAddress start, TagAddress end, TransportType transportType, boolean shortest){
         Dijsktra dijkstra = new Dijsktra(start, end, transportType, shortest);
-        ArrayList<Tag> nodes = new ArrayList<>();
-        //nodes.addAll(dijkstra.allVisitedPaths());
-        TagWay way = new TagWay((long)0, "Route", dijkstra.shortestPathDetailed(), (short)0, Type.PATHWAY);
-        //System.out.println("Total distance: " + dijkstra.getTotalDistance());
-        nodes.add(way);
-        if (!nodes.isEmpty()){
-            mapView.getDrawingMap().setMarkedTag(nodes);
-        }
         
         return dijkstra;
     }
