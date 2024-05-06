@@ -27,8 +27,8 @@ public class FileHandler {
     protected String zipPath = null;
     private static final String osmPath = System.getProperty("user.dir").toString() + "\\src\\main\\resources\\files\\osmFile\\";
     private static String savePath = System.getProperty("user.dir").toString() + "\\src\\main\\resources\\files\\savedFile\\";
+    
     public static Object getModel(File file){
-
         return loadUnknownFile(file);
         //return new Model(new XMLReader(new FileInputStream(file)));
     }
@@ -227,7 +227,7 @@ public class FileHandler {
     /**
      * Clears all osm files from the directory of where osm files are stored
      */
-    private void clearOsmFiles() {
+    public static void clearOsmFiles() {
         File file = new File(osmPath);
         System.out.println(file.listFiles());
 

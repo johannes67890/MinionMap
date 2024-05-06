@@ -11,6 +11,7 @@ public enum FileDistributer {
     bornholmZip("files/defaultFile/map.zip"),
     // Test Files
     testMap("testMap.osm"),
+    testMapInZip("testMap.zip"),
     RebakSopark("testRebakSopark.osm");
 
 
