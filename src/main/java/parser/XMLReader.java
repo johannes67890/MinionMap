@@ -52,6 +52,7 @@ public class XMLReader implements Serializable{
         return nodes.get(id);
     }
 
+    public static TagAddress getAddressById(Long id) {return addresses.get(id);}
     /**
      * Get a {@link TagWay} by its id.
      * <p>
@@ -125,7 +126,7 @@ public class XMLReader implements Serializable{
      * Uses the {@link XMLStreamReader} to read the file and parse the data into the different classes: {@link TagBound}, {@link TagNode}, {@link TagNode} , {@link TagAddress} and {@link TagWay}.
      * </p>
      * 
-     * @param iS inputstream from file
+     * @param is inputstream from file
      */
     public XMLReader(InputStream is) {
         try {
@@ -148,6 +149,7 @@ public class XMLReader implements Serializable{
                         switch (element) {
                             case "node":
                                 if(!tempBuilder.getAddressBuilder().isEmpty()){
+                                    System.out.println("x" + addresses.size());
                                     addresses.put(tempBuilder.getId(), new TagAddress(tempBuilder));
                                     trie.insert(new TagAddress(tempBuilder));
                                 } else {
@@ -189,12 +191,19 @@ public class XMLReader implements Serializable{
         }
     }
 
+    protected static void clearWays(){
+        ways = null;
+    }
+
+    protected static void clearAddresses(){
+        addresses = null;
+    }
+
+    protected static void clearRelations() {relations = null;}
+
     protected static void clearTags(){
         bound = null;
         nodes = null;
-        relations = null;
-        ways = null;
-        addresses = null;
         trie = null;
     }
 }
