@@ -4,11 +4,13 @@ import java.util.HashSet;
 import java.util.List;
 
 import gui.GraphicsHandler.GraphicStyle;
+import javafx.geometry.VPos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
+import javafx.scene.text.TextAlignment;
 import javafx.scene.transform.Affine;
 import parser.Model;
 import parser.Tag;
@@ -152,16 +154,13 @@ public class DrawingMap {
 
         float[] canvasBounds = getScreenBoundsBigger(0.2);
         Rect3D rect = new Rect3D(canvasBounds[0], canvasBounds[1], hierarchyLevel, canvasBounds[2], canvasBounds[3], 100);
-        nodes = new ArrayList<>();
         ways = new ArrayList<>();
         relations = new ArrayList<>();
 
         HashSet<Tag> tags = Tree.getTagsInBounds(rect);
         backGroundSet = false;
         for(Tag tag : tags){
-            if (tag instanceof TagNode){
-                nodes.add((TagNode) tag);
-            }else if (tag instanceof TagWay){
+            if (tag instanceof TagWay){
                 TagWay way = (TagWay) tag;
                 ways.add(way);
             }else if (tag instanceof TagRelation){
@@ -173,6 +172,7 @@ public class DrawingMap {
                 }
             }
         }
+
 
         if (!backGroundSet){
             setBackGroundColor(Color.web("#F2EFE9"));
@@ -287,7 +287,11 @@ public class DrawingMap {
         gc.beginPath();
         gc.moveTo(way.getRefNodes().getFirst().getLon(), -way.getRefNodes().getFirst().getLat());
     
-        gc.setStroke(Color.RED);    
+        if (way.getType() != null && way.getType() == Type.PATHGRID){
+            gc.setStroke(way.getType().getColor());
+        } else{
+            gc.setStroke(Color.RED);    
+        }
         for (TagNode n : way.getRefNodes()) {
             gc.lineTo(n.getLon(), -n.getLat());
             xPoints[counter] = n.getLon();
