@@ -2,6 +2,15 @@ package util;
 
 import java.util.*;
 
+/**
+ * This is a grouping of types used for pathfinding. 
+ * It is grouped into 3 groups:
+ * - CAR
+ * - BIKE
+ * - FOOT
+ * 
+ * These have grouped specific types from the class {@link Type}
+ */
 public enum TransportType {
     
     CAR(Type.getAllCarRoads()),
@@ -14,6 +23,10 @@ public enum TransportType {
         this.roadTypes = roadTypes;
     }
 
+    /**
+     * Returns the assigned {@link Type}s to this {@link TransportType}
+     * @return the assigned {@link Type}s to this {@link TransportType}
+     */
     public List<Type> getRoadTypes(){
         return roadTypes;
     }
