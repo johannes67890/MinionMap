@@ -9,7 +9,16 @@ import gnu.trove.map.hash.TLongObjectHashMap;
 import structures.Trie;
 import structures.KDTree.Tree;
 
-
+/**
+ * The Model class is responsible for initializing the model values
+ * It is a singleton class that initializes the model values from the input stream by utilizing the XMLReader class to parse all needed values from the input stream
+ * Needed values are the bound, trie, nodes and addresses for the model
+ * The Model class initializes the tree by calling the Tree class and adding the ways, relations and addresses to the tree
+ * The Model class is serializable
+ * The Model class has a private constructor
+ * The Model class has a static instance of the Model class
+ * 
+ */
 public class Model implements Serializable{
     @Serial
     private static final long serialVersionUID = 1L;
@@ -21,10 +30,13 @@ public class Model implements Serializable{
     private TLongObjectHashMap<TagAddress> addresses = new TLongObjectHashMap<TagAddress>();
     private Trie trie = new Trie();
 
-    private static Model instanceModel;
+    private static Model instanceModel; // Singleton instance of the Model class
 
 
-
+    /**
+     * Returns the instance of the Model class
+     * @return the instance of the Model class
+     */
     public static Model getInstanceModel(){
         if(instanceModel == null) {
             instanceModel = new Model();
@@ -33,10 +45,20 @@ public class Model implements Serializable{
         return instanceModel;
     }
 
+    /**
+     * Updates the model values
+     * @param is the input stream
+     * @return the updated instance of the Model class
+     */
     public static Model updateModelValues(InputStream is){
         return getInstanceModel().setModelValues(is);
     }
 
+    /**
+     * Sets the model values from the input stream
+     * @param is the input stream
+     * @return the instance of the Model class
+     */
     private Model setModelValues(InputStream is){
         this.reader = new XMLReader(is);
         bound = reader.getBound();
@@ -55,15 +77,35 @@ public class Model implements Serializable{
         return getInstanceModel();
     }
 
+    /**
+     * Private constructor for the Model class
+     * Initializes the Model class
+     */
     private Model() {
     }
 
-    public TagBound getBound(){return this.bound;}
+    /**
+     * Getter for the bounds
+     * @return bound
+     */
+    public TagBound getBound(){return bound;}
 
+    /**
+     * Getter for the trie
+     * @return trie
+     */
     public Trie getTrie(){return trie;}
 
+    /**
+     * Getter for the nodes
+     * @return nodes
+     */
     public TLongObjectHashMap<TagNode> getNodes(){return nodes;}
 
+    /**
+     * initializes the static Tree
+     * Adds the ways, relations and addresses to the tree clearing them afterwards
+     */
     private void initializeTrees(){
 
         Tree.initializeTree();
