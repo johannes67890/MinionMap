@@ -7,7 +7,7 @@ import parser.TagNode;
 /**
  * Helper class containing various mathematical methods.
  */
-public final class MathUtil {
+public class MathUtil {
 
     /**
      * 
