@@ -54,9 +54,7 @@ public final class MathUtil {
 
     /**
      * Douglas-Peucker algorithm. Another attempt to decrease the polygon size.
-     * 
      * https://dyn4j.org/2021/06/2021-06-10-simple-polygon-simplification/
-     * 
      * @param polyline
      * @param max
      * @return
@@ -97,7 +95,7 @@ public final class MathUtil {
     }
 
     /**
-     * A homemade sublist implementation
+     * A homemade implementation of sublist
      * @param startindex    Inclusive
      * @param endIndex      Exclusive
      * @param list          The list in question
@@ -117,9 +115,7 @@ public final class MathUtil {
     }
 
     /**
-     * 
      * Calculates distance between a point from a line, using hardcoded mercatorprojections for Denmark.
-     * 
      * @param point - Point distanced from the line
      * @param l1 - Startpoint of line
      * @param l2 - Endpoint of line
