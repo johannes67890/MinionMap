@@ -26,7 +26,7 @@ public class FileHandler {
     private static Model model;
     public static Object getModel(File file){
 
-        return Model.updateModelValues(getFileInputStream(file));
+        return loadUnknownFile(file);
         //return new Model(new XMLReader(new FileInputStream(file)));
     }
 
@@ -35,15 +35,17 @@ public class FileHandler {
      * @param file the file to load
      * @return the path to the binary file
      */
-    private static Object loadUnknownFile(File file) {
+    private static Model loadUnknownFile(File file) {
 
         switch (getFileExtension(file)){
             case ".bin":
-                return loadBin(file);
+                break;
+                //return loadBin(file);
             case ".zip":
-                return loadZip(file);
+                return Model.updateModelValues(getFileInputStream(unzip(file)));
             case ".osm", ".xml":
-                return loadFile(file);
+                return Model.updateModelValues(getFileInputStream(file));
+                //return loadFile(file);
             default:
                 System.out.println("File not supported");
         }
