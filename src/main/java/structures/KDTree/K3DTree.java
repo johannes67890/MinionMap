@@ -18,6 +18,8 @@ import util.Type;
  * The datastructure sorts the Point3D into dimensions, throught the Node class.
  * Great for maps!
  * 
+ * This datastructue is based off of Kevin Wayne and Robert Sedgewicks datastructure of KDTree.
+ * 
  */
 public class K3DTree {
     private Node root;

@@ -1,8 +1,8 @@
 package structures.KDTree;
 
 /**
- * This class is heavily inspired by Kevin Waynes RectHV class, but
- * this one is 3D.
+ * This class is heavily inspired by Kevin Wayne and Robert Sedgewicks RectHV class, but
+ * this one is modified to support 3D rectangles.
  */
 
 public final class Rect3D {
