@@ -19,7 +19,7 @@ import structures.KDTree.Tree;
 
 public class TreeTest {
     private XMLReader reader;
-    private Tree tree;
+    
     @BeforeEach
     void setUp() {
         reader = new XMLReader(FileHandler.getFileInputStream(new File(FileDistributer.testMap.getFilePath())));
@@ -64,4 +64,17 @@ public class TreeTest {
 
         assertTrue(Tree.getTagsFromPoint(point).size() > 0);
     }   
+
+    @Test
+    void getNearestOfClassBruteForce(){
+        assertEquals(26154396, Tree.getNearestOfClassBruteForce(reader.getNodeById((long)286405539), TagWay.class).get(0).getId());
+    }
+
+    @Test
+    void getNearestOfTypeBruteForce(){
+        ArrayList<Type> types = new ArrayList<>();
+        types.add(Type.BUILDING);
+        assertEquals(131326887, Tree.getNearestOfTypeBruteForce(reader.getNodeById((long)286405539), types).get(0).getId());
+    }
+
 }
