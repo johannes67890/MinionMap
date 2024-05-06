@@ -1,8 +1,8 @@
 package structures.KDTree;
 
 /**
- * This class is heavily inspired by Kevin Waynes RectHV class, but
- * this one is 3D.
+ * This class is heavily inspired by Kevin Wayne and Robert Sedgewicks RectHV class, but
+ * this one is modified to support 3D rectangles.
  */
 
 public final class Rect3D {
@@ -90,10 +90,18 @@ public final class Rect3D {
         return ymax;
     }
 
+    /**
+     * Returns the minimum <em>z</em>-coordinate of any point in this rectangle.
+     * @return the minimum <em>z</em>-coordinate of any point in this rectangle.
+     */
     public double zmin() {
         return zmin;
     }
 
+    /**
+     * Returns the maximum <em>y</em>-coordinate of any point in this rectangle.
+     * @return the maximum <em>y</em>-coordinate of any point in this rectangle.
+     */
     public double zmax() {
         return zmax;
     }

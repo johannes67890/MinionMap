@@ -2,9 +2,7 @@ package parser;
 import java.util.ArrayList;
 
 import gnu.trove.list.TLinkable;
-import gnu.trove.list.linked.TLinkedList;
 import javafx.util.Pair;
-import parser.chunking.XMLWriter.ChunkFiles;
 import structures.KDTree.Tree;
 import util.Type;
 

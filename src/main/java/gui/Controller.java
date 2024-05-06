@@ -8,7 +8,6 @@ import java.util.ResourceBundle;
 
 
 import gui.GraphicsHandler.GraphicStyle;
-import gui.MainView.StageSelect;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -33,7 +32,12 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import parser.*;
+import parser.MecatorProjection;
+import parser.Tag;
+import parser.TagAddress;
+import parser.TagNode;
+import parser.TagRelation;
+import parser.TagWay;
 import pathfinding.Dijsktra;
 import structures.KDTree.Point3D;
 import structures.KDTree.Tree;
@@ -67,6 +71,7 @@ public class Controller implements Initializable, ControllerInterface{
     @FXML private Text distanceText;
     @FXML private StackPane poiContainer;
     @FXML private Text poiText;
+    @FXML private ListView<String> poiView;
     @FXML private Text poiLoc;
 
     @FXML private ComboBox<String> searchBarStart;
@@ -122,6 +127,9 @@ public class Controller implements Initializable, ControllerInterface{
         panZoomInitialize();
     }
 
+    /**
+     * Initializes the pan and zoom functionality of the map
+     */
     private void panZoomInitialize(){
         mapView.getResizeableCanvas().setOnMousePressed(e -> {
             lastX = e.getX();
@@ -154,15 +162,17 @@ public class Controller implements Initializable, ControllerInterface{
                 if(!(nearestTag.get(0) instanceof TagAddress) && nearestTag.get(0).getType() == Type.BUILDING){
                     TagAddress address = (TagAddress) Model.getInstanceModel().getTree().getNearestOfClassBruteForce(new TagNode(point.y(), point.x()), TagAddress.class).get(0);
                     poiText.setText(address.toString());
-                    poiLoc.setText(address.getLon() + ", " + address.getLat());
+                    poiLoc.setText(MecatorProjection.unprojectLon(address.getLon()) + ", " + MecatorProjection.unprojectLat(address.getLat()));
+                    poiView.getItems().add(address.toString());
                 }else {
                     poiText.setText(nearestTag.get(0).toString()); 
-                    poiLoc.setText(MecatorProjection.unprojectLon(nearestTag.get(0).getLon()) + ", " + MecatorProjection.unprojectLat(nearestTag.get(0).getLat()));  
+                    if (!(nearestTag.get(0) instanceof TagRelation)){
+                        poiLoc.setText(MecatorProjection.unprojectLon(nearestTag.get(0).getLon()) + ", " + MecatorProjection.unprojectLat(nearestTag.get(0).getLat())); 
+                    }
+                    poiView.getItems().add(nearestTag.get(0).toString()); 
                 }
                 mapView.draw();
             }
-            
-        
         });
 
         mapView.getResizeableCanvas().setOnScroll(event -> {
@@ -371,12 +381,15 @@ public class Controller implements Initializable, ControllerInterface{
         });
     }
 
+    /**
+     * Pathfinds between the two addresses in the comboboxes
+     */
     private void pathfindBetweenTagAddresses(){
         if (startAddress != null && endAddress != null){
             Dijsktra dijkstra = s.pathfindBetweenTagAddresses(startAddress, endAddress, routeType, shortest);
             //distanceText.setText(dijkstra.getDistanceOfPath());
             //speedText.setText(dijkstra.getMinutesOfPath());
-            LinkedHashMap<TagWay, Double> path = new LinkedHashMap<>();//dijkstra.printPath();
+            LinkedHashMap<TagWay, Double> path = dijkstra.printPath();
 
             Platform.runLater(() -> {
                 synchronized (pathList) {
@@ -411,6 +424,10 @@ public class Controller implements Initializable, ControllerInterface{
                     if (!routeListView.isVisible() && routeListView.getItems().size() > 0){
                         routeListView.setVisible(true);
                     }
+                    // for (TagWay pathPoint : path.keySet()){
+                    //     System.out.println(pathPoint.getRefNodes().get(0).getLat() + " " + pathPoint.getRefNodes().get(0).getLon());
+                    //     mapView.getDrawingMap().drawPoint(pathPoint.getRefNodes().get(0));
+                    // }
                 }
             });
             
@@ -419,7 +436,11 @@ public class Controller implements Initializable, ControllerInterface{
         }
     }
 
-
+    /**
+     * Sets the style class of a button
+     * @param b The button to set the style class of
+     * @param s The style class to set
+     */
     private void setStyleClass(Button b, String s){
         b.getStyleClass().clear();
         b.getStyleClass().add(s);
@@ -474,6 +495,9 @@ public class Controller implements Initializable, ControllerInterface{
             return null;
     }
 
+    /**
+     * Switches the start and destination addresses in the comboboxes
+     */
     private void switchStartAndDest(){
 
         String startAddressString = searchBarStart.getEditor().textProperty().getValue();

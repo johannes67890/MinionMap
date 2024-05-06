@@ -22,7 +22,12 @@ public class AddressComparator implements Comparator<TagAddress> {
         return address1.getCity().compareTo(address2.getCity());
     }
     
-    // Custom method to compare house numbers
+    /**
+     * Custom method to compare house numbers
+     * @param house1    The first housenumber
+     * @param house2    The second housenumber
+     * @return          Returns -1 if second is higher and +1 if the first is higher
+     */
     private int compareHouseNumbers(String house1, String house2) {
         // Extract numeric parts from house numbers
         int number1 = extractNumber(house1);
@@ -39,7 +44,11 @@ public class AddressComparator implements Comparator<TagAddress> {
         }
     }
     
-    // Helper method to extract numeric part from house number
+    /**
+     * Helper method to extract numeric part from house number
+     * @param houseNumber   The address string
+     * @return              Returns only the housenumber
+     */
     private int extractNumber(String houseNumber) {
         try {
             return Integer.parseInt(houseNumber.replaceAll("[^0-9]", ""));

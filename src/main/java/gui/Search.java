@@ -1,14 +1,11 @@
 package gui;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import parser.TagAddress;
-import parser.TagNode;
 import parser.TagWay;
 import parser.Model;
 import parser.Tag;
-import parser.XMLReader;
 import pathfinding.Dijsktra;
 import structures.Trie;
 import util.TransportType;
@@ -17,11 +14,9 @@ import util.Type;
 public class Search {
     private Trie trie;
     private MapView mapView;
-    private MainView mainView;
     private Trie.TrieNode pointOfInterestNode = null;
 
     public Search(MapView mw){
-        //mainview to be used with dijsktra
         mapView = mw;
         trie = Model.getInstanceModel().getTrie();
     }
@@ -59,6 +54,7 @@ public class Search {
      * @param start         The start address of pathfinding
      * @param end           The end address of pathfinding
      * @param transportType The type of transportation used to pathfind
+     * @param shortest      A boolean to determine if the shortest or fastest path should be found
      */
     public Dijsktra pathfindBetweenTagAddresses(TagAddress start, TagAddress end, TransportType transportType, boolean shortest){
         Dijsktra dijkstra = new Dijsktra(start, end, transportType, shortest);

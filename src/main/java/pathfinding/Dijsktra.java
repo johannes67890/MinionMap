@@ -2,25 +2,27 @@ package pathfinding;
 
 import parser.TagNode;
 import parser.TagWay;
-import parser.XMLReader;
 import structures.IndexMinPQ;
 import structures.KDTree.Tree;
-import util.FileDistributer;
 import util.MathUtil;
 import util.TransportType;
 import util.Type;
 
-import java.text.DecimalFormat;
 import java.util.*;
 
 
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.Stack;
-import edu.princeton.cs.algs4.StdOut;
 import gnu.trove.list.linked.TLinkedList;
 import parser.Tag;
-import parser.TagAddress;
 
+/**
+ * An implementation of the Dijkstra algorithm, with the addition of A-Star. This implementation
+ * is based of Edsger Dijkstra original paper, and Kevin Wayne and Robert Sedgewicks interpretation of the algorithm.
+ * 
+ * The algorithm is to find the shortest path in a directed weighted graph, where this graph is based off of 
+ * the road-network on a given map.
+ */
 public class Dijsktra {
     private HashMap<Long, Double> distTo;          // distTo[v] = distance  of shortest s->v path
     private HashMap<Long, Double> costTo;
@@ -37,9 +39,21 @@ public class Dijsktra {
     private TagNode finish;
 
     private Digraph G = new Digraph();
-    private Stack<TagNode> shortestPath = new Stack<TagNode>();
 
-
+    /**
+     * A contructor for the dijkstra algorithm. Where the class costructs the road network into a digraph and 
+     * travels through the graph based on Dijkstra algorithm, where it relaxes the edges of the graph every time
+     * an edge is added to the Priority Queue. When relaxing it calculates the individual cost to get to the 
+     * individual edge. 
+     * 
+     * When the algorithm is finished. The TagNode finish should contain a cost, that proves that the algorithm
+     * was succesfully done.
+     * 
+     * @param _start        Starting TagNode of the path
+     * @param _finish       Finishing TagNode of the path
+     * @param transportType The type of transportation used
+     * @param shortest      The type of pathfinding. If true then speed is ignored. If false then the weight is minutes of travel
+     */
     public Dijsktra(Tag _start, Tag _finish, TransportType transportType, boolean shortest) {
         distTo = new HashMap<>();
         edgeTo = new HashMap<Long, DirectedEdge>(G.V());
@@ -52,7 +66,7 @@ public class Dijsktra {
         if(this.start.getId() == this.finish.getId()) throw new IllegalArgumentException("Start and finish are the same");
         //start timer
         long startTime = System.currentTimeMillis();
-        addSurroundingRoadsFancy(start, finish, transportType);
+        addSurroundingRoads(start, finish, transportType);
         long endTime = System.currentTimeMillis();
         System.out.println("Time to add surrounding roads: " + (endTime - startTime) + "ms");
         distanceBetweenEndPoints = start.distance(finish);
@@ -97,24 +111,25 @@ public class Dijsktra {
         //printPath();
     }   
 
+    /**
+     * Returns the directed weighted graph ({@link Digraph})
+     * @return the directed weighted graph ({@link Digraph})
+     */
     public Digraph getGraph(){
         return G;
     }
 
     /**
-     * This can be enabled on the cost of perfomance, but you get a shorter route. 
-     * It needs to be set before finding route, after creating object.
-     * @param bool
+     * This function adds the roads to the directed graph {@link Digraph}, until it reached the finish {@link TagNode}.
+     * It is a recursive function that calls itself everytime it encounters an intersection. The function also
+     * pools the {@link TagNode}s together between intersection to make the amount of edges and vertices as small
+     * as possible.
+     * 
+     * @param startTag      the starting {@link TagNode} of the path
+     * @param finish        the finish {@link TagNode} of the path
+     * @param transportType the type of transportation {@link TransportType} used on the path
      */
-    public void setPrecisionMode(boolean bool){
-        takeShortestRoute = bool;
-    }
-
-    public Stack<TagNode> getShortestPathofTags(){
-        return shortestPath;
-    }
-
-    private void addSurroundingRoadsFancy(TagNode startTag, TagNode finish, TransportType transportType){
+    private void addSurroundingRoads(TagNode startTag, TagNode finish, TransportType transportType){
         if (foundFinish) return;
         for (Tag tag : startTag.getIntersectionTags()) {
             if(tag instanceof TagWay){
@@ -136,24 +151,31 @@ public class Dijsktra {
                     list.add(tagNode);
 
                     if(tagNode.hasIntersection() || i == way.getRefNodes().size() || tagNode.getId() == finish.getId()){
-                        addRoadFancy(list, way);
+                        addRoad(list, way);
                         list = new ArrayList<>();
                         list.add(tagNode);
-                        addSurroundingRoadsFancy(tagNode, finish,transportType);
+                        addSurroundingRoads(tagNode, finish,transportType);
                     }
                 } 
             }
         }
     }
 
-    private void addRoadFancy(List<TagNode> list, TagWay way){
+    /**
+     * A given list of {@link TagNode}s that needs to be pooled together to make one weighted edge
+     * and add it to the directed weighted graph {@link Digraph}
+     * 
+     * @param list  the list of {@link TagNode}s that needs to be made into an edge
+     * @param way   the parent {@link TagWay} of the {@link TagNode}s
+     */
+    private void addRoad(List<TagNode> list, TagWay way){
         
         if (list.size() == 1) return;
         //if (list.get(0).equals(list.get(list.size()-1)) && list.size() == 2) return;
         if (list.get(0).equals(list.get(list.size()-1)) && list.size() > 2){
             //List<TagNode> list2 = list.subList(list.size()/2, list.size());
             for (int i = 1; i < list.size(); i++){
-                addRoadFancy(list.subList(i-1, i+1), way);
+                addRoad(list.subList(i-1, i+1), way);
             }
             return;
         }
@@ -169,15 +191,13 @@ public class Dijsktra {
         }
     }
 
-    private void addTwoWayEdges(TagNode node, TagWay way){
-        G.addEdge(new DirectedEdge(node, node.getNext(), way.getSpeedLimit()));
-        G.addEdge(new DirectedEdge(node.getNext(), node, way.getSpeedLimit()));
-    }
-
-    private void addOneWayEdge(TagNode node, TagWay way){
-        G.addEdge(new DirectedEdge(node, node.getNext(), way.getSpeedLimit()));
-    }
-
+    /**
+     * Gets the nearest {@link TagNode} from a given {@link Tag} by a specific {@link TransportType}.
+     * 
+     * @param tag           the {@link TagNode} from which the searches origin point
+     * @param transportType the {@link TransportType} is what type of transport the returned {@link TagNode} needs to be
+     * @return              the nearest {@link TagNode} of {@link TransportType}
+     */
     public TagNode getNearestRoadPoint(Tag tag, TransportType transportType){
         if(tag instanceof TagNode) return (TagNode) tag;
         // TODO: getNearestOfType is wrong in some edge cases
@@ -205,8 +225,8 @@ public class Dijsktra {
     }
     
     /**
-     * Relax edge if its changed
-     * @param e The fortunate edge
+     * Relaxes the given edge if its changed
+     * @param e the given {@link DirectedEdge} that needs to be relaxed
      */
     private void relax(DirectedEdge e){
         long v = e.from().getId(), w = e.to().getId();
@@ -275,6 +295,11 @@ public class Dijsktra {
         return path;
     }
 
+    /**
+     * Returns the chosen path from the Djikstra algorithm in a {@link TLinkedList} of {@link TagNode}s
+     * 
+     * @return the chosen path from the Djikstra algorithm in a {@link TLinkedList} of {@link TagNode}s
+     */
     public TLinkedList<TagNode> shortestPath(){
         TLinkedList<TagNode> nodes = new TLinkedList<>();
         if (!hasPathTo(this.finish)) throw new IllegalArgumentException("No path to finish");
@@ -289,26 +314,38 @@ public class Dijsktra {
         return nodes;
     }
 
+    /**
+     * Returns a recreated path from the simplified {@link Digraph} edges.
+     * 
+     * @return a recreated path from the simplified {@link Digraph} edges.
+     */
     public TLinkedList<TagNode> shortestPathDetailed(){
 
-        TLinkedList<TagNode> nodes = shortestPath();
-
         TLinkedList<TagNode> returnList = new TLinkedList<>();
-        for (TagNode n : nodes) {
-            for (TagNode nWay : n.getParent().getRefNodes()) {
+        try{
+            TLinkedList<TagNode> nodes = shortestPath();
+    
+            for (TagNode n : nodes) {
+                for (TagNode nWay : n.getParent().getRefNodes()) {
+                    TagNode a = new TagNode(n);
+                    a.clearLinks();
+                    returnList.add(a);
+                    if(nWay.getNext() != null || nodes.contains(nWay.getNext())) break;
+                }
                 TagNode a = new TagNode(n);
                 a.clearLinks();
                 returnList.add(a);
-                if(nWay.getNext() != null || nodes.contains(nWay.getNext())) break;
+                if(n.getNext() == null) break;
             }
-            TagNode a = new TagNode(n);
-            a.clearLinks();
-            returnList.add(a);
-            if(n.getNext() == null) break;
+    
+            
+        }catch (Exception e){
+            System.err.println("Error happened when pathfinding!");
+            e.printStackTrace();
         }
-
         return returnList;
     }
+
     /**
      * This method is for debugging purposes only. It returns all TagWays visited through pathfinding
      * @return All TagWays visited through pathfinding
@@ -355,21 +392,10 @@ public class Dijsktra {
         return tags;
     }
 
-    public String getTotalDistance(){
-        Double totalDistance = 0.0;
-        for (Double length : printPath().values()) {
-            totalDistance += length;
-        }
-
-        if (totalDistance / 1000 > 1.0){
-            totalDistance = MathUtil.round(totalDistance / 1000, 2);
-            return Double.toString(totalDistance) + " km";
-        }
-
-        totalDistance = MathUtil.round(totalDistance, 2);
-        return Double.toString(totalDistance) + " m";
-    }
-
+    /**
+     * Returns the total distance of the path to the finish point
+     * @return the total distance of the path to the finish point
+     */
     public String getDistanceOfPath(){
         if (takeShortestRoute){
             return "" + MathUtil.round(distTo.getOrDefault(this.finish.getId(), 0.0), 2) + "m";
@@ -377,6 +403,10 @@ public class Dijsktra {
         return "" + MathUtil.round(costTo.getOrDefault(this.finish.getId(), 0.0), 2) + "m";
     }
 
+    /**
+     * Returns the estimated time it takes to traverse the path in minutes
+     * @return the estimated time it takes to traverse the path in minutes
+     */
     public String getMinutesOfPath(){
         if (takeShortestRoute){
             return "" + MathUtil.round(costTo.getOrDefault(this.finish.getId(), 0.0), 2) + "min";
@@ -384,8 +414,11 @@ public class Dijsktra {
         return "" + MathUtil.round(distTo.getOrDefault(this.finish.getId(), 0.0), 2) + "min";
     }
 
-    
-
+    /**
+     * Returns a {@link LinkedHashMap} of type {@link TagWay} and {@link Double}. 
+     * Where the key is the way used and the value is the distance traveled
+     * @return a {@link LinkedHashMap} of type {@link TagWay} and {@link Double}. 
+     */
     public LinkedHashMap<TagWay, Double> printPath(){        
         LinkedHashMap<TagWay, Double> distToWay = new LinkedHashMap<>();
         double distance = 0;
