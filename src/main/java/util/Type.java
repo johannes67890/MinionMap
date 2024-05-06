@@ -259,13 +259,17 @@ public enum Type  {
     }
     
 
-    /**** Groups ****/    
-    public static List<Type> getAllRoads() {
+    /**
+     * @return - A list of Types for pathfinding with all possible roads.
+    */public static List<Type> getAllRoads() {
         return Arrays.stream(Type.values())
             .filter(type -> type.getKey().contains("highway"))
             .collect(Collectors.toList());
     }
 
+    /**
+     * @return - A list of Types for pathfinding with the {@link TransportType}.CAR setting
+     */
     public static List<Type> getAllCarRoads() {
         String[] unAllowed = {"footway", "steps", "cycleway", "bridleway", "path", 
         "pedestrian", "track", "mini_roundabout"};
@@ -278,6 +282,9 @@ public enum Type  {
             .collect(Collectors.toList());
     }
 
+    /**
+     * @return - A list of Types for pathfinding with the {@link TransportType}.BIKE setting
+     */
     public static List<Type> getAllBikeRoads() {
         String[] unAllowed = {"motorway", "primary", "trunk"};
         // A group that contains all types of roads that are for bikes
@@ -288,6 +295,9 @@ public enum Type  {
             .collect(Collectors.toList());
     }
 
+    /**
+     * @return - A list of Types for pathfinding with the {@link TransportType}.FOOT setting
+     */
     public static List<Type> getAllPedestrianRoads() {
         String[] unAllowed = {"motorway", "motorway_link", "primary", "primary_link", "trunk", "trunk_link"};
         // A group that contains all types of roads that are for pedestrians
@@ -298,8 +308,13 @@ public enum Type  {
             .collect(Collectors.toList());
     }
 
+    /**
+     * Returns all possible Types within a given hierarchy.
+     * @param i
+     * @return
+     */
     public static List<Type> getTypesOfHierarchy(int i) {
-        if(i < 0 || i > 9) throw new IllegalArgumentException("Hierarchy must be between 0 and 9");
+        if(i < 0 || i > 13) throw new IllegalArgumentException("Hierarchy must be between 0 and 13");
         return Arrays.stream(Type.values())
             .filter(type -> Type.getHierarchy(type) == i)
             .collect(Collectors.toList());
@@ -322,12 +337,6 @@ public enum Type  {
 
     public String[] getValue() {
         return value;
-    }
-
-    public void toggleToShow(){
-        if(toShow){
-            toShow = false;
-        } else toShow = true;
     }
 
     public static Type[] getTypes(){
