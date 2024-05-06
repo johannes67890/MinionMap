@@ -297,8 +297,8 @@ public enum Type  {
 
     /**
      * Returns all possible Types within a given hierarchy.
-     * @param i
-     * @return
+     * @param i - The hierarchy to get the Types from.
+     * @return A list of Types within the given hierarchy.
      */
     public static List<Type> getTypesOfHierarchy(int i) {
         if(i < 0 || i > 13) throw new IllegalArgumentException("Hierarchy must be between 0 and 13");
@@ -307,14 +307,26 @@ public enum Type  {
             .collect(Collectors.toList());
     }
 
+    /**
+     * 
+     * @return The key of the {@link Type} as a string.
+     */
     public String getKey() {
         return key;
     }
 
+    /**
+     * 
+     * @return The value of the {@link Type} as an array of strings.
+     */
     public String[] getValue() {
         return value;
     }
 
+    /**
+     * 
+     * @return An array of Types.
+     */
     public static Type[] getTypes(){
         return Type.values();
     }
