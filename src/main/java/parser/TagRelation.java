@@ -100,7 +100,9 @@ public class TagRelation extends Tag {
     /**
      * Constructs the outer ways as multiple connected polygons or lines,
      * by assuming that ways with identical start- or endnodes should be merged into one way.
-     * 
+     * ways will be weaved together appropriately by chronologically going through the
+     * {@link #actualOuter} collection. The method handles in what direction a {@link TagWay}'s TagNodes
+     * should be read from, which will be added to the constructing of a new way.
      */
     public void constructOuterWays(){
         TLinkedList<TagNode> tempNodes = new TLinkedList<>();

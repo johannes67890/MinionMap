@@ -2,10 +2,10 @@ package structures;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-
-import parser.TagAddress;
 import java.util.HashMap;
+
 import gnu.trove.map.hash.TCharObjectHashMap;
+import parser.TagAddress;
 
 
 
