@@ -17,6 +17,10 @@ public enum FileDistributer {
 
     private String filePath;
 
+    /**
+     * Constructor for the FileDistributer class
+     * @param fileName the name of the file
+     */
     FileDistributer(String fileName) {
         try {
             ClassLoader classLoader = getClass().getClassLoader();
