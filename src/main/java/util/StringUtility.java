@@ -84,5 +84,17 @@ public final class StringUtility {
         return p[n];
        
     }
+    public static String formatString(String input) {
+        String[] words = input.toLowerCase().split("_");
+
+        StringBuilder result = new StringBuilder();
     
+        for (String word : words) {
+            result.append(word.substring(0, 1).toUpperCase());
+            result.append(word.substring(1));
+            result.append(" ");
+        }
+    
+        return result.toString().trim();
+    }
 }

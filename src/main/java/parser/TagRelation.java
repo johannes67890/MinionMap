@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import javax.xml.stream.XMLStreamReader;
 
 import gnu.trove.list.linked.TLinkedList;
+import util.StringUtility;
 import util.Type;
 
 enum Relation {
@@ -164,6 +165,13 @@ public class TagRelation extends Tag implements Serializable {
         return name;
     }
     
+    @Override
+    public String toString(){
+        if(name == null){
+            return "Unknown relation " + StringUtility.formatString(this.getType().name()) + " ";
+        }
+        return name;
+    }
 
     public static class RelationBuilder implements Serializable {
         public TagRelation relation;

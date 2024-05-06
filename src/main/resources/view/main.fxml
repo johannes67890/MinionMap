@@ -94,7 +94,6 @@
                               </ImageView>
                            </graphic>
                         </Button>
-
                         <!-- <Text fx:id="distanceText" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="texxt" /> -->
                         <!-- <Text fx:id="speedText" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="texxt" /> -->
                      </children>
@@ -104,21 +103,35 @@
             </Pane>
             <Pane fx:id="leftBurgerMenu" translateY="55.0" visible="false" StackPane.alignment="CENTER_LEFT">
                   <VBox fx:id="mainMenuVBox" spacing="10" StackPane.alignment="CENTER" styleClass="burgermenu" visible="false">
-                     <Label text="Press the button below to generate a new map using a new file" wrapText="true" />
-                     <Button fx:id="mainMenuButton" mnemonicParsing="false" text="Upload new file" />
-                     <ChoiceBox fx:id="styleChoiceBox" styleClass="choice-box"/>
+                     <HBox spacing="10" alignment="CENTER">
+                        <Label alignment="CENTER" styleClass="texxt">
+                           Color scheme
+                        </Label>
+                        <ChoiceBox fx:id="styleChoiceBox" styleClass="choice-box"/>
+                     </HBox>
+
                   </VBox>
             </Pane>
-             <VBox maxHeight="30.0" maxWidth="0.0" StackPane.alignment="BOTTOM_RIGHT">
-               <children>
-                  <Label fx:id="zoomLevelText" alignment="CENTER" maxWidth="2000000.0" text="100m" VBox.vgrow="ALWAYS" />
-                  <ImageView fx:id="zoomLevelImage" fitHeight="20.0" fitWidth="70.0" pickOnBounds="true" VBox.vgrow="ALWAYS">
-                     <image>
-                        <Image url="@../visuals/UnitRuler2.png" />
-                     </image>
-                  </ImageView>
-               </children>
-            </VBox>
-      </StackPane>
+               <VBox maxHeight="30.0" maxWidth="0.0" StackPane.alignment="BOTTOM_RIGHT">
+                  <children>
+                     <Label fx:id="zoomLevelText" alignment="CENTER" maxWidth="2000000.0" text="100m" VBox.vgrow="ALWAYS" />
+                     <ImageView fx:id="zoomLevelImage" fitHeight="20.0" fitWidth="70.0" pickOnBounds="true" VBox.vgrow="ALWAYS">
+                        <image>
+                           <Image url="@../visuals/UnitRuler2.png" />
+                        </image>
+                     </ImageView>
+                  </children>
+               </VBox>    
+            <StackPane fx:id="poiContainer" styleClass="borderContainer" translateY="-20" StackPane.alignment="BOTTOM_CENTER" visible="false">
+                 <!-- <Button StackPane.alignment="TOP_LEFT" styleClass="star" translateX="-20" translateY="-20" pickOnBounds="true">
+                  </Button> -->
+               <VBox alignment="BOTTOM_CENTER">
+                     <VBox styleClass="poiContainer" alignment="CENTER" spacing="2">
+                        <Text fx:id="poiText" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="poiHeader" />
+                        <Text fx:id="poiLoc" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="poiLocation" />
+                     </VBox>
+               </VBox>  
+            </StackPane>  
+      </StackPane>     
    </children>
 </VBox>

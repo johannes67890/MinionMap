@@ -2,6 +2,7 @@ package parser;
 
 import gnu.trove.list.linked.TLinkedList;
 import structures.TagGrid;
+import util.StringUtility;
 import util.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -112,12 +113,12 @@ public class TagWay extends Tag implements Comparable<TagWay>{
         return id;
     }
     public float getLat() {
-        throw new UnsupportedOperationException("TagWay does not have a latitude value.");
+        return nodes.getFirst().getLat();
     }
 
 
     public float getLon() {
-        throw new UnsupportedOperationException("TagWay does not have a longitude value.");
+        return nodes.getFirst().getLon();
     }
 
     public short getSpeedLimit(){
@@ -178,7 +179,12 @@ public class TagWay extends Tag implements Comparable<TagWay>{
 
     @Override
     public String toString() {
-        return "Way: " + id + " name: " + name + " type " + type + " limit " + speedLimit + " oneway: " + isOneWay;
+
+        if (name == null) {
+            return "Unknown " + StringUtility.formatString(this.getType().name()) + " ";
+        } else {
+            return name;
+        }
     }
 
     public int compareTo(TagWay tW){

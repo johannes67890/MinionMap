@@ -293,6 +293,10 @@ public class DrawingMap {
         xPoints = new double[way.getRefNodes().size()];
         yPoints = new double[way.getRefNodes().size()];
         
+        if(way.getType() == null){
+            way.setType(Type.UNKNOWN);
+        }
+
         double min = way.getType().getMinWidth();
         double max = way.getType().getMaxWidth();
         double lineWidth = MathUtil.clamp(defaultLineWidth * way.getType().getWidth(), min, max);
