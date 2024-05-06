@@ -3,24 +3,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-
-import edu.princeton.cs.algs4.Point2D;
-
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-
-import parser.TagAddress;
 import parser.TagWay;
 import parser.XMLReader;
-import pathfinding.Dijkstra;
 import structures.KDTree.Tree;
 import util.FileDistributer;
 import util.FileHandler;
 import util.TransportType;
-import util.Type;
-import parser.Tag;
-import parser.TagAddress;
 
 public class DijkstraTest {
     private XMLReader reader;

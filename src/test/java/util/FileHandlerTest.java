@@ -1,24 +1,18 @@
 package util;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
-
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.reporting.shadow.org.opentest4j.reporting.events.core.Tag;
 
 import parser.Model;
 
-//Has to be run by itself due to the static nature of the Model class
-//This is because the Model class is a singleton and the tests will interfere with each other
-//If run together
-
+/**
+ * WARNING: This test has to be run by itself due to the static nature of the Model class
+ * This is because the Model class is a singleton and the tests will interfere with each other
+ * If run together
+ */
 public class FileHandlerTest {
     
     @Test
