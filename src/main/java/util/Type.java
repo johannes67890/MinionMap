@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 
 import gui.GraphicsHandler;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 
 
 
@@ -63,7 +62,6 @@ public enum Type  {
     HELIPAD("aeroway", new String[]{"helipad", "heliport"}, 8, 9, Color.web("#E9E7E2"), Color.LIGHTGRAY.darker(), 5, false),
     AERODROME("aerodrome", new String[]{""}, 8, 3, Color.web("#E9E7E2"), Color.LIGHTGRAY.darker(), 5, false),
     BEACH("natural",new String[]{"beach"}, 8, 3, Color.web("#FBEDB7"), Color.YELLOW.darker(), 5, false),
-    FOREST("landuse",new String[]{"forest"}, 8, 4, Color.web("#ADD19E"), Color.GREEN.darker(), 5, false),
     ALLOTMENTS("landuse", new String[]{"allotments"}, 8, 8, Color.web("#C9E1BF"), Color.BLANCHEDALMOND.darker(), 5, false),
     GRAVEYARD("amenity", new String[]{"grave_yard"}, 8, 7, Color.web("#AACBAF"), Color.BLANCHEDALMOND.darker(), 5, false),
     CEMETERY("landuse", new String[]{"cemetery"}, 8, 7, Color.web("#AACBAF"), Color.BLANCHEDALMOND.darker(), 5, false),
@@ -72,6 +70,7 @@ public enum Type  {
     PORT("industrial", new String[]{"port"}, 8, 0, Color.TRANSPARENT, Color.TRANSPARENT, 5, false),
     
     // Urban and natural (Hierarchy: 7)
+    FOREST("landuse",new String[]{"forest"}, 7, 4, Color.web("#ADD19E"), Color.GREEN.darker(), 5, false),
     INDUSTRIAL("landuse", new String[]{"industrial"}, 7, 8, Color.web("#EBDBE8"), Color.PLUM.darker(), 1, false),
     FARMFIELD("landuse", new String[]{"farmland"}, 7, 6, Color.web("#EEF0D5"), Color.web("#EEF0D5").darker(), 5, false),
     GRASS("landuse",new String[]{"meadow","grass"}, 7, 5, Color.web("#CDEBB0"), Color.web("#CDEBB0").darker(), 5, false),
@@ -204,7 +203,6 @@ public enum Type  {
     private final Color polyLineColor;
     private final double width;
     private final boolean isLine;
-    private boolean toShow = true;
     private final double minWidth;
     private final double maxWidth;
 
@@ -299,8 +297,8 @@ public enum Type  {
 
     /**
      * Returns all possible Types within a given hierarchy.
-     * @param i
-     * @return
+     * @param i - The hierarchy to get the Types from.
+     * @return A list of Types within the given hierarchy.
      */
     public static List<Type> getTypesOfHierarchy(int i) {
         if(i < 0 || i > 13) throw new IllegalArgumentException("Hierarchy must be between 0 and 13");
@@ -309,25 +307,26 @@ public enum Type  {
             .collect(Collectors.toList());
     }
 
-    // /* Utility Methods */
-    // private List<String> filteredType(String[] unAllowed){
-    //     List<String> res = new ArrayList<>();
-    //         for (String str : this.getValue() ) {
-    //             if(!Arrays.asList(unAllowed).contains(str)){
-    //                 res.add(str);
-    //             }
-    //         }
-    //     return res;
-    // }
-
+    /**
+     * 
+     * @return The key of the {@link Type} as a string.
+     */
     public String getKey() {
         return key;
     }
 
+    /**
+     * 
+     * @return The value of the {@link Type} as an array of strings.
+     */
     public String[] getValue() {
         return value;
     }
 
+    /**
+     * 
+     * @return An array of Types.
+     */
     public static Type[] getTypes(){
         return Type.values();
     }
@@ -395,13 +394,6 @@ public enum Type  {
     }
     
     /**
-     * TODO - Remove this method?
-     * @return The color of the {@link Type} as a {@link Paint}.
-     */
-    public Paint getPaint() {
-        return color;
-    }
-    /**
      * 
      * @return The color of the {@link Type}. Color is determined by the {@link GraphicsHandler}.
      */
@@ -456,13 +448,5 @@ public enum Type  {
     public double getMaxWidth(){
         return maxWidth;
     }
-
-    /* 
-    public boolean equals(Type type) {
-        if(this instanceof Type){
-            return this.getKey().equals(type.getKey());   
-        }
-        return false;
-    }*/
 
 }

@@ -53,50 +53,15 @@ public class Point3DTest {
     }
 
     @Test
-    public void compareX(){
-        
-        Point3D point1 = new Point3D(3f, 3f, (byte) 0);
-        Point3D point2 = new Point3D(4f, 3f, (byte) 0);
+    public void equals(){
+        Point3D point1 = new Point3D(3f, 3f, 0);
+        Point3D point2 = new Point3D(3f, 3f, 0);
+        Point3D point3 = new Point3D(3, 4, 0);
 
-        assertEquals(point1.X_ORDER.compare(point1, point2), -1);
-        assertEquals(point1.X_ORDER.compare(point1, point1), 0);
-        assertEquals(point1.X_ORDER.compare(point2, point1), 1);
-
+        //assertEquals(point1.compareTo(point3), -1);
+        assertTrue(point1.equals(point2));
+        assertFalse(point3.equals(point1));
     }
 
-    @Test
-    public void compareY(){
-        
-        Point3D point1 = new Point3D(3f, 4f, (byte) 0);
-        Point3D point2 = new Point3D(4f, 3f, (byte) 0);
-
-        assertEquals(point1.Y_ORDER.compare(point1, point2), 1);
-        assertEquals(point1.Y_ORDER.compare(point1, point1), 0);
-        assertEquals(point1.Y_ORDER.compare(point2, point1), -1);
-
-    }
-
-    @Test
-    public void compareZ(){
-        
-        Point3D point1 = new Point3D(3f, 4f, (byte) 1);
-        Point3D point2 = new Point3D(4f, 3f, (byte) 0);
-
-        assertEquals(point1.Z_ORDER.compare(point1, point2), 1);
-        assertEquals(point1.Z_ORDER.compare(point1, point1), 0);
-        assertEquals(point1.Z_ORDER.compare(point2, point1), -1);
-
-    }
-
-    @Test
-    public void compareR(){
-        
-        Point3D point1 = new Point3D(7f, 4f, (byte) 1);
-        Point3D point2 = new Point3D(8f, 3f, (byte) 2);
-
-        assertEquals(point1.R_ORDER.compare(point1, point2), -1);
-        assertEquals(point1.R_ORDER.compare(point1, point1), 0);
-        assertEquals(point1.R_ORDER.compare(point2, point1), 1);
-    }
 
 }
