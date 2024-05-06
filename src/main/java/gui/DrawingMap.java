@@ -17,12 +17,12 @@ import parser.TagBound;
 import parser.TagNode;
 import parser.TagRelation;
 import parser.TagWay;
-import util.Type;
 import structures.MinPQ;
 import structures.Trie;
 import structures.KDTree.Rect3D;
 import structures.KDTree.Tree;
 import util.MathUtil;
+import util.Type;
 
 
 /**
@@ -228,33 +228,12 @@ public class DrawingMap {
         }
     }
 
-    private void drawInnerWays(){
-
-
-        waysToDrawWithType = new ArrayList<>();
-
-        ways = new ArrayList<>();
-
-        for (TagRelation relation : relations){
-
-            if (relation.getId() == 12332811){
-                System.out.println(relation.getActualInner().get(0).getType());
-            }
-
-            handleWays(relation.getActualInner());
-        }
-
-        MinPQ<TagWay> sortedWaysToDraw = new MinPQ<>(waysToDrawWithType.size());
-
-
-        for (TagWay way : waysToDrawWithType){
-            sortedWaysToDraw.insert(way);
-        }
-
-        drawWays(sortedWaysToDraw);
-
-    }
-
+    /**
+     * 
+     * 
+     * 
+     * @param node
+     */
     public void drawPoint(Tag node){
         double radius = 10 * 1/Math.sqrt(transform.determinant());
         gc.fillOval(node.getLon() - radius / 2, -(node.getLat()) - radius / 2, radius, radius);

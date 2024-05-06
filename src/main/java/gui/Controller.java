@@ -36,6 +36,7 @@ import parser.MecatorProjection;
 import parser.Tag;
 import parser.TagAddress;
 import parser.TagNode;
+import parser.TagRelation;
 import parser.TagWay;
 import pathfinding.Dijsktra;
 import structures.KDTree.Point3D;
@@ -165,7 +166,9 @@ public class Controller implements Initializable, ControllerInterface{
                     poiView.getItems().add(address.toString());
                 }else {
                     poiText.setText(nearestTag.get(0).toString()); 
-                    poiLoc.setText(MecatorProjection.unprojectLon(nearestTag.get(0).getLon()) + ", " + MecatorProjection.unprojectLat(nearestTag.get(0).getLat())); 
+                    if (!(nearestTag.get(0) instanceof TagRelation)){
+                        poiLoc.setText(MecatorProjection.unprojectLon(nearestTag.get(0).getLon()) + ", " + MecatorProjection.unprojectLat(nearestTag.get(0).getLat())); 
+                    }
                     poiView.getItems().add(nearestTag.get(0).toString()); 
                 }
                 mapView.draw();
