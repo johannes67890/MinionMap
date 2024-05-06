@@ -1,12 +1,7 @@
 package parser;
 
 import java.io.Serializable;
-
-import java.math.BigDecimal;
-
 import javax.xml.stream.XMLStreamReader;
-
-import javafx.util.Pair;
 import parser.TagAddress.AddressBuilder;
 import parser.TagRelation.RelationBuilder;
 import parser.TagWay.WayBuilder;

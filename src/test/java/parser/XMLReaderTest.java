@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 
@@ -25,7 +27,9 @@ public class XMLReaderTest {
 
     @BeforeEach
     void testXMLReaderStartup() {
-        this.reader = new XMLReader(FileDistributer.testMap.getFilePath());
+        assertDoesNotThrow(() -> {
+            this.reader =  new XMLReader(new FileInputStream(FileDistributer.testMap.getFilePath()));
+        });
         assertNotNull(reader);
         assertDoesNotThrow(() -> this.reader);
     }

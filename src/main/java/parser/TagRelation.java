@@ -9,11 +9,36 @@ import gnu.trove.list.linked.TLinkedList;
 import util.StringUtility;
 import util.Type;
 
+/**
+ * Enum representing the different relations in the OSM XML file.
+ */
 enum Relation {
     ID, INNER, OUTER, WAYS, RELATIONS, NODES, TYPE, TYPEVALUE, NAME, RELATIONTYPE
 }
 
-public class TagRelation extends Tag implements Serializable {
+/**
+ * Class representing a relation in the OSM XML file.
+ * 
+ * <p>
+ * A relation is represented by a list of nodes, ways and relations.
+ * <ul>
+ * <li>{@link #id} - The id of the relation.</li>
+ * <li>{@link #nodes} - The list of nodes in the relation.</li>
+ * <li>{@link #relations} - The list of relations in the relation.</li>
+ * <li>{@link #ways} - The list of ways in the relation.</li>
+ * <li>{@link #inner} - The list of inner ways in the relation.</li>
+ * <li>{@link #outer} - The list of outer ways in the relation.</li>
+ * <li>{@link #actualOuter} - The list of outer ways in the relation.</li>
+ * <li>{@link #actualInner} - The list of inner ways in the relation.</li>
+ * <li>{@link #handledOuter} - The list of outer ways in the relation.</li>
+ * </ul>
+ * </p>
+ */
+public class TagRelation extends Tag {
+    long id;
+    String name;
+    Type type, relationType;
+
     private ArrayList<TagNode> nodes = new ArrayList<>();
     private ArrayList<TagRelation> relations = new ArrayList<>();
     private ArrayList<TagWay> ways = new ArrayList<>();
@@ -24,9 +49,6 @@ public class TagRelation extends Tag implements Serializable {
 
     private ArrayList<TagWay> handledOuter = new ArrayList<>();
     
-    long id;
-    String name;
-    Type type, relationType;
 
     public TagRelation(){}
 
@@ -78,7 +100,9 @@ public class TagRelation extends Tag implements Serializable {
     /**
      * Constructs the outer ways as multiple connected polygons or lines,
      * by assuming that ways with identical start- or endnodes should be merged into one way.
-     * 
+     * ways will be weaved together appropriately by chronologically going through the
+     * {@link #actualOuter} collection. The method handles in what direction a {@link TagWay}'s TagNodes
+     * should be read from, which will be added to the constructing of a new way.
      */
     public void constructOuterWays(){
         TLinkedList<TagNode> tempNodes = new TLinkedList<>();

@@ -19,13 +19,12 @@ import parser.TagBound;
 import parser.TagNode;
 import parser.TagRelation;
 import parser.TagWay;
-import util.Type;
-import parser.XMLReader;
 import structures.MinPQ;
 import structures.Trie;
 import structures.KDTree.Rect3D;
 import structures.KDTree.Tree;
 import util.MathUtil;
+import util.Type;
 
 
 /**
@@ -38,17 +37,13 @@ public class DrawingMap {
 
 
     static Affine transform = new Affine();
-
-    private final Model model;
     public ResizableCanvas canvas;
-    private XMLReader reader;
     private MapView mapView;
     public double zoomLevel = 1;
     private int hierarchyLevel = 9;
     private int zoombarIntervals = 14;
     private final double zoomLevelMin = 0.0007, zoomLevelMax = 31.8; // These variables changes how much you can zoom in and out. Min is far out and max is closest in
-    private double zoomScalerToMeter; // This is the world meters of how long the scaler in the bottom right corner is. Divide it with the zoomLevel
-    private double[] zoomScales = {32, 16, 8, 4, 2, 1, 0.5, 0.1, 0.05, 0.015, 0.0001}; // 32, 16, 8, 4, 2, 1, 0.5, 0.1, 0.05, 0.015, 0.0001
+    private double[] zoomScales = {32, 16, 8, 4, 2, 1, 0.25, 0.1, 0.05, 0.015, 0.0001}; // 32, 16, 8, 4, 2, 1, 0.5, 0.1, 0.05, 0.015, 0.0001
     public Zoombar zoombar;
     private Trie trie;
     private List<Tag> markedTag;
@@ -71,15 +66,14 @@ public class DrawingMap {
 
 
 
-    public DrawingMap(MapView mapView, Model model){
+    public DrawingMap(MapView mapView){
         this.mapView = mapView;
-        this.model = model;
+
     }
 
     /**
-     * 
+     * Initialization of the drawing map.
      * The first drawing of the map.
-     * 
      * @param canvas - the canvas to be drawn.
      */
 
@@ -87,16 +81,11 @@ public class DrawingMap {
 
         this.canvas = canvas;
         
-        TagBound bound = mapView.getModel().getBound();
+        TagBound bound = Model.getInstanceModel().getBound();
         
         double minlon = bound.getMinLon();
         double maxlat = bound.getMaxLat();
         double maxlon = bound.getMaxLon();
-        double minlat = bound.getMinLat();
-
-        float[] screenBounds = getScreenBounds();
-
-
 
         zoombar = new Zoombar(zoombarIntervals, zoomLevelMax, zoomLevelMin);
         setBackGroundColor(Color.web("#F2EFE9"));
@@ -106,22 +95,41 @@ public class DrawingMap {
         mapView.draw();
     }
 
+    /**
+     * @return isInitialized Boolean value that tells if the map is initialized
+     */
     public boolean IsInitialized(){
         return isInitialized;
     }
 
+    /**
+     * Getter for the trie
+     * @return trie - The trie that is used to search for tags
+     */
     public Trie getTrie(){
         return trie;
     }
 
+    /**
+     * Setter for the background color
+     * @param c - The color that the background should be set to
+     */
     public void setBackGroundColor(Color c){
         backGroundColor = c;
     }
 
+    /**
+     * Getter for the zoomLevelMax
+     * @return zoomLevelMax - The maximum zoom level 
+     */
     public double getZoomLevelMax(){
         return zoomLevelMax;
     }
 
+    /**
+     * Getter for the zoomLevelMin
+     * @return zoomLevelMin - The minimum zoom level
+     */
     public double getZoomLevelMin(){
         return zoomLevelMin;
     }
@@ -132,10 +140,7 @@ public class DrawingMap {
      * @param gc - Graphicscontext, which ensures that the position of the vertices are placed correctly
      * @param canvas - The canvas that get drawn
      */
-
     public void DrawMap(Canvas canvas){
-
-        long preTime = System.currentTimeMillis();
         if (!Tree.isLoaded()){
             return;
         }
@@ -213,6 +218,10 @@ public class DrawingMap {
         }
     }
 
+    /**
+     * Sets the point of interest node
+     * @param node - The node that is set as the point of interest
+     */
     public void setPointOfInterest(Tag node){
             pointOfInterestNode = node;
     }
@@ -224,64 +233,38 @@ public class DrawingMap {
 
     /**
      * Draws a specified tag with a different color to mark it on the map
-     * @param tag the tag to be marked
+     * @param tag - the tag to be marked
      */
     private void drawMarkedTag(Tag tag){
         gc.setFill(Color.PINK.interpolate(Color.RED, 0.5));
         gc.setStroke(Color.RED);
-        if (tag instanceof TagRelation){
-            drawRelation((TagRelation)tag);
-        }else if(tag instanceof TagWay){
+        if(tag instanceof TagWay){
             drawWay((TagWay) tag, true);
         }else if(tag instanceof TagNode || tag instanceof TagAddress){
             drawPoint(tag);
         }
     }
 
-    private void drawInnerWays(){
-
-
-        waysToDrawWithType = new ArrayList<>();
-
-        ways = new ArrayList<>();
-
-        for (TagRelation relation : relations){
-
-            if (relation.getId() == 12332811){
-                System.out.println(relation.getActualInner().get(0).getType());
-            }
-
-            handleWays(relation.getActualInner());
-        }
-
-        MinPQ<TagWay> sortedWaysToDraw = new MinPQ<>(waysToDrawWithType.size());
-
-
-        for (TagWay way : waysToDrawWithType){
-            sortedWaysToDraw.insert(way);
-        }
-
-        drawWays(sortedWaysToDraw);
-
-    }
-
+    /**
+     * 
+     * Draws a red circle from a single coordinate.
+     * 
+     * @param node
+     */
     public void drawPoint(Tag node){
         double radius = 10 * 1/Math.sqrt(transform.determinant());
         gc.fillOval(node.getLon() - radius / 2, -(node.getLat()) - radius / 2, radius, radius);
     }
 
-    private void drawRelation(TagRelation relation){
-        boolean isStarted = false;
-        for (TagWay way : relation.getWays()){
-            if (!isStarted){
-                drawWay(way, true);
-                isStarted = true;
-            }else{
-                drawWay(way, false);
-            }
-        }
-    }
-    
+    /**
+     * 
+     * Draws ways based on a marked {@link TagWay}.
+     * Fills the way with a trasparent red color, and outlines with a red color
+     * Will be drawn no matter what zoom level, the drawingMap is set to.
+     * 
+     * @param way
+     * @param starting
+     */
     private void drawWay(TagWay way, boolean starting){
         double[] xPoints;
         double[] yPoints;
@@ -317,7 +300,13 @@ public class DrawingMap {
             
             if(n.getNext() == null) break;
         }
-        gc.stroke();    
+        gc.stroke();
+
+        if (!way.getType().getIsLine()){
+            gc.setFill(Color.RED.interpolate(Color.TRANSPARENT, 0.7));
+            gc.fillPolygon(xPoints, yPoints, counter);
+        }
+        
     }
 
     
@@ -325,7 +314,6 @@ public class DrawingMap {
     /**
      * 
      * Gets all ways in a priorityqueue and draws them based on individual TagWay Types
-     * 
      * @param ways - the ways to be drawn
      */
     private void drawWays(MinPQ<TagWay> ways){
@@ -562,10 +550,6 @@ public class DrawingMap {
         double metersPerPixelRatio = canvas.getWidth() / widthInMeter; //Divided by 2 because the width is from the center of the screen
 
         return metersPerPixelRatio * meters;
-    }
-    public void append(double dx, double dy) {
-        transform.appendTranslation(dx, dy);
-        mapView.draw();
     }
 
     public void setZoomLabel(Label label){

@@ -5,8 +5,6 @@ import java.util.ResourceBundle;
 
 import util.FileDistributer;
 
-import gui.MainView.StageSelect;
-
 import java.util.ArrayList;
 
 import javafx.event.ActionEvent;

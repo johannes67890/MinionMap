@@ -2,12 +2,20 @@ package structures;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-
-import parser.TagAddress;
-import java.io.Serializable;
 import java.util.HashMap;
-import gnu.trove.map.hash.TCharObjectHashMap;
 
+import gnu.trove.map.hash.TCharObjectHashMap;
+import parser.TagAddress;
+
+
+
+/**
+ * This data-structure is made to ensure quick auto-completion of a string search.
+ * 
+ * Through the use of a tree structure, where the children of a nodes describes the next possible
+ * character in the word. Such when reaching the end og a branch you get a full address and can choose
+ * to search for a specific house number.
+ */
 public class Trie implements Serializable {
     private TrieNode root;
     private TrieNode currentNode;
@@ -29,8 +37,7 @@ public class Trie implements Serializable {
      * @param address the TagAddress object to be inserted
      */
     public TrieNode insert(TagAddress address) {
-        // address is made lowercase to make searching easier for the user, ie.
-        // writing "Svanevej" is read the same as "svanevej"
+        // address is made lowercase and all spaces are removed
         currentNode = root;
         String addressString = address.getStreet() + " " + address.getPostcode() + " " + address.getCity();
         String treatedAddressString = addressString.toLowerCase().replaceAll(" ", "");
@@ -126,6 +133,11 @@ public class Trie implements Serializable {
         }
     }
 
+    /**
+     * Method to move through the Trie
+     * @param searchInput - The input string to search for
+     * @return A boolean to determine if the searchInput is in the Trie
+     */
     private boolean moveThroughTree(String searchInput) {
         currentNode = root;
         searchInput = searchInput.toLowerCase().replaceAll(" ", "");

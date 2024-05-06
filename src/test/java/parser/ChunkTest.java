@@ -18,6 +18,7 @@ import parser.TagBound;
 import parser.TagNode;
 
 import java.io.File;
+import java.io.FileInputStream;
 
 public class ChunkTest {
     private Chunk chunck;
@@ -25,7 +26,7 @@ public class ChunkTest {
     @BeforeEach
     public void setUp() {
         assertDoesNotThrow(() -> {
-            new XMLReader(FileDistributer.testMap.getFilePath());
+            new Model(new XMLReader(new FileInputStream(FileDistributer.testMap.getFilePath())));
         });       
         chunck = new Chunk(XMLReader.getBound()); 
     }

@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 
 import gui.GraphicsHandler;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 
 
 
@@ -58,50 +57,39 @@ public enum Type  {
     
     // Landuse (Hierarchy: 8)
     RESIDENTIAL("landuse", new String[]{"residential"}, 8, 6, Color.web("#E0DFDF"), Color.LIGHTGRAY, 1, false),
-    INDUSTRIAL("landuse", new String[]{"industrial"}, 8, 8, Color.web("#EBDBE8"), Color.PLUM.darker(), 1, false),
     AEROWAY("aeroway", new String[]{"apron", "hangar", "spaceport", "terminal"}, 8, 8, Color.web("#DADAE0"), Color.LIGHTGRAY.darker(), 5, false),
     AEROWAYLINE("aeroway", new String[]{"taxiway", "runway"}, 8, 9, Color.web("#BDBDCE"), 5, true, 6, 75),
-    FARMFIELD("landuse", new String[]{"farmland"}, 8, 6, Color.web("#EEF0D5"), Color.web("#EEF0D5").darker(), 5, false),
     HELIPAD("aeroway", new String[]{"helipad", "heliport"}, 8, 9, Color.web("#E9E7E2"), Color.LIGHTGRAY.darker(), 5, false),
     AERODROME("aerodrome", new String[]{""}, 8, 3, Color.web("#E9E7E2"), Color.LIGHTGRAY.darker(), 5, false),
-
-
     BEACH("natural",new String[]{"beach"}, 8, 3, Color.web("#FBEDB7"), Color.YELLOW.darker(), 5, false),
-    FOREST("landuse",new String[]{"forest"}, 8, 4, Color.web("#ADD19E"), Color.GREEN.darker(), 5, false),
-    GRASS("landuse",new String[]{"meadow","grass"}, 8, 5, Color.web("#CDEBB0"), Color.web("#CDEBB0").darker(), 5, false),
- 
-    NATURALS("natural",new String[]{"scrub","grassland","heath", "wood"}, 8, 5, Color.web("#C8D7AB"), Color.GREENYELLOW.darker(), 5, false),
-    WETLAND("natural",new String[]{"wetland"}, 8, 5, Color.web("#D6D99F"), Color.DARKKHAKI, 5, false), 
-    LANDUSE("landuse", new String[]{"commercial","construction","brownfield","greenfield","basin"
-    ,"depot","garages","greenhouse_horticulture","landfill","orchard","plant_nursery",
-    "railway","religious","reservoir","retail","salt_pond","village_green","vineyard",
-    "winter_sports"}, 8, 7, Color.web("#EBDBE8"), Color.BLANCHEDALMOND.darker(), 5, false),
     ALLOTMENTS("landuse", new String[]{"allotments"}, 8, 8, Color.web("#C9E1BF"), Color.BLANCHEDALMOND.darker(), 5, false),
-    TENTS("tents",new String[]{""}, 8, 5, Color.web("#CDEBB0"), Color.GREEN.darker(), 5, false),
     GRAVEYARD("amenity", new String[]{"grave_yard"}, 8, 7, Color.web("#AACBAF"), Color.BLANCHEDALMOND.darker(), 5, false),
     CEMETERY("landuse", new String[]{"cemetery"}, 8, 7, Color.web("#AACBAF"), Color.BLANCHEDALMOND.darker(), 5, false),
-
     PARKING("amenity", new String[]{"parking"}, 8, 7, Color.web("#EEEEEE"), Color.BLANCHEDALMOND.darker(), 5, false),
-    RECREATIONGROUND("landuse", new String[]{"recreation_ground"}, 8, 7, Color.web("#DFFCE2"), Color.BLANCHEDALMOND.darker(), 5, false),
-    HOSPITAL("amenity", new String[]{"hospital"}, 8, 8, Color.web("#FFFFE5"), Color.web("#FFFFE5").darker(), 5, false),
-    
-
-
-    QUARRY("landuse", new String[]{"quarry"}, 8, 7, Color.web("#C5C3C3"), Color.BLANCHEDALMOND.darker(), 5, false),
-    
-    FARMYARD("landuse", new String[]{"farmyard", "farm"}, 8, 7, Color.web("#F5DCBA"), Color.BLANCHEDALMOND.darker(), 5, false),
-    
-    ROCK("natural", new String[]{"arch", "bare_rock", "blockfield", "cave_entrance", "dune", "fumarole", "hill", "rock", "sand", "scree", "sinkhole", "stone"}, 8, 7, Color.web("#DBD6D0"), Color.LIGHTGRAY, 5, false),
-    ROCKLINE("natural", new String[]{"arete", "cliff", "earth_bank", "ridge", "valley"}, 8, 9, Color.web("#DBD6D0"), 5, true, 2, 50),
     SAND("natural", new String[]{"sand", "dune"}, 8, 7, Color.web("#F7EDD1"), Color.SANDYBROWN, 5, false),
-
     PORT("industrial", new String[]{"port"}, 8, 0, Color.TRANSPARENT, Color.TRANSPARENT, 5, false),
-
-
+    
     // Urban and natural (Hierarchy: 7)
+    FOREST("landuse",new String[]{"forest"}, 7, 4, Color.web("#ADD19E"), Color.GREEN.darker(), 5, false),
+    INDUSTRIAL("landuse", new String[]{"industrial"}, 7, 8, Color.web("#EBDBE8"), Color.PLUM.darker(), 1, false),
+    FARMFIELD("landuse", new String[]{"farmland"}, 7, 6, Color.web("#EEF0D5"), Color.web("#EEF0D5").darker(), 5, false),
+    GRASS("landuse",new String[]{"meadow","grass"}, 7, 5, Color.web("#CDEBB0"), Color.web("#CDEBB0").darker(), 5, false),
+    NATURALS("natural",new String[]{"scrub","grassland","heath", "wood"}, 7, 5, Color.web("#C8D7AB"), Color.GREENYELLOW.darker(), 5, false),
+    WETLAND("natural",new String[]{"wetland"}, 7, 5, Color.web("#D6D99F"), Color.DARKKHAKI, 5, false), 
+    LANDUSE("landuse", new String[]{"brownfield","greenfield","basin","greenhouse_horticulture",
+    "landfill","orchard","plant_nursery","religious","reservoir","retail","salt_pond","village_green","vineyard","winter_sports"}, 
+    7, 7, Color.web("#EBDBE8"), Color.BLANCHEDALMOND.darker(), 5, false),
+    LANDUSE_URBAN("landuse", new String[]{"commercial","construction","depot", "garages", "railway"}, 7, 7,Color.web("#EBDBE8"), Color.BLANCHEDALMOND.darker(), 5, false),
+    TENTS("tents",new String[]{""}, 7, 5, Color.web("#CDEBB0"), Color.GREEN.darker(), 5, false),
+    HOSPITAL("amenity", new String[]{"hospital"}, 7, 8, Color.web("#FFFFE5"), Color.web("#FFFFE5").darker(), 5, false),
+    RECREATIONGROUND("landuse", new String[]{"recreation_ground"}, 7, 7, Color.web("#DFFCE2"), Color.BLANCHEDALMOND.darker(), 5, false),
+    QUARRY("landuse", new String[]{"quarry"}, 7, 7, Color.web("#C5C3C3"), Color.BLANCHEDALMOND.darker(), 5, false),
+    FARMYARD("landuse", new String[]{"farmyard", "farm"}, 7, 7, Color.web("#F5DCBA"), Color.BLANCHEDALMOND.darker(), 5, false),
+    ROCK("natural", new String[]{"arch", "bare_rock", "blockfield", "cave_entrance", "dune", "fumarole", "hill", "rock", "sand", "scree", "sinkhole", "stone"}, 7, 7, Color.web("#DBD6D0"), Color.LIGHTGRAY, 5, false),
+    ROCKLINE("natural", new String[]{"arete", "cliff", "earth_bank", "ridge", "valley"}, 7, 9, Color.web("#DBD6D0"), 5, true, 2, 50),
     ABANDONEDRAIL("railway",new String[]{"abandoned"}, 5, 9, Color.DARKGRAY, 2, true, 4, 1000),
-    MILITARY("landuse", new String[]{"military"}, 7, 10, Color.SALMON.interpolate(Color.WHITE.TRANSPARENT, 0.5), Color.SALMON.interpolate(Color.WHITE, 0.5).darker(), 5, false),
-    BUILDING("building",new String[]{"", "yes"},7, 9, Color.web("#D9D0C9"), Color.web("#D9D0C9").darker(), 5, false),
+    MILITARY("landuse", new String[]{"military"}, 7, 10, Color.SALMON.interpolate(Color.TRANSPARENT, 0.5), Color.SALMON.interpolate(Color.WHITE, 0.5).darker(), 5, false),
+    BUILDING("building",new String[]{"", "yes"},5, 9, Color.web("#D9D0C9"), Color.web("#D9D0C9").darker(), 5, false),
     LEISURE("leisure",new String[]{"park", "dog_park", "garden", "horse_riding", "miniature_golf", 
     "pitch", "playground", "resort", "stadium", "summer_camp", "track", "sports_centre", "fitness_station", "disc_golf_course"},7, 8, Color.web("#C8FACC"), Color.web("#C8FACC").darker(), 5, false),
     GOLF("leisure",new String[]{"golf_course"},7, 8, Color.web("#DEF6C0"), Color.web("#DEF6C0").darker(), 5, false),
@@ -118,17 +106,17 @@ public enum Type  {
     AERIALWAYSTATION("aerialway", new String[]{"station"},5, 8, Color.GRAY, Color.GRAY.darker(), 5, false),
     RESIDENTIAL_ROAD("highway",new String[]{"residential"}, 7, 9, Color.WHITE, 5, true, 2, 7),
     UNCLASSIFIED("highway",new String[]{"unclassified"}, 7, 9, Color.WHITE, 5, true, 2, 7),
-    LIVING_STREET("highway",new String[]{"living_street"}, 7, 9, Color.WHITE, 5, true, 2, 7),
+    LIVING_STREET("highway",new String[]{"living_street"}, 6, 9, Color.WHITE, 5, true, 2, 7),
 
     ROAD("highway",new String[]{"road"}, 7, 9, Color.WHITE, 5, true, 2, 7),
 
 
-    SERVICE("highway",new String[]{"service"}, 7, 9, Color.WHITE, 5, true, 2, 7),
-    TRACK("highway",new String[]{"track"}, 7, 9, Color.WHITE, 5, true, 2, 7),
+    SERVICE("highway",new String[]{"service"}, 6, 9, Color.WHITE, 5, true, 2, 7),
+    TRACK("highway",new String[]{"track"}, 6, 9, Color.WHITE, 5, true, 2, 7),
 
-    BIKE_ROAD("cycleway",new String[]{"lane", "oppisite", "opposite_lane", "track", "opposite_track", "share_busway", "shared_lane", "opposite_share_busway"}, 7, 9, Color.WHITE, 5, true, 2, 7),
-    PEDESTRIAN_ROAD("highway",new String[]{"footway", "path", "steps", "bridleway", "pedestrian"}, 7, 9, Color.WHITE, 5, true, 2, 7),
-    OTHER_ROAD("highway",new String[]{"cycleway", "mini_roundabout"}, 7, 9, Color.WHITE, 5, true, 2, 2),
+    BIKE_ROAD("cycleway",new String[]{"lane", "oppisite", "opposite_lane", "track", "opposite_track", "share_busway", "shared_lane", "opposite_share_busway"}, 6, 9, Color.WHITE, 5, true, 2, 7),
+    PEDESTRIAN_ROAD("highway",new String[]{"footway", "path", "steps", "bridleway", "pedestrian"}, 6, 9, Color.WHITE, 5, true, 2, 7),
+    OTHER_ROAD("highway",new String[]{"cycleway", "mini_roundabout"}, 6, 9, Color.WHITE, 5, true, 2, 2),
     // Relations (Hierarchy: 3)
     MULTIPOLYGON("nothing must be mutlipolygon", new String[]{"multipolygon"}, 3, Color.BLACK, 0),
     RESTRICTION("type", new String[]{"restriction"}, 3, Color.BLACK, 0),
@@ -215,7 +203,6 @@ public enum Type  {
     private final Color polyLineColor;
     private final double width;
     private final boolean isLine;
-    private boolean toShow = true;
     private final double minWidth;
     private final double maxWidth;
 
@@ -259,13 +246,17 @@ public enum Type  {
     }
     
 
-    /**** Groups ****/    
-    public static List<Type> getAllRoads() {
+    /**
+     * @return - A list of Types for pathfinding with all possible roads.
+    */public static List<Type> getAllRoads() {
         return Arrays.stream(Type.values())
             .filter(type -> type.getKey().contains("highway"))
             .collect(Collectors.toList());
     }
 
+    /**
+     * @return - A list of Types for pathfinding with the {@link TransportType}.CAR setting
+     */
     public static List<Type> getAllCarRoads() {
         String[] unAllowed = {"footway", "steps", "cycleway", "bridleway", "path", 
         "pedestrian", "track", "mini_roundabout"};
@@ -278,6 +269,9 @@ public enum Type  {
             .collect(Collectors.toList());
     }
 
+    /**
+     * @return - A list of Types for pathfinding with the {@link TransportType}.BIKE setting
+     */
     public static List<Type> getAllBikeRoads() {
         String[] unAllowed = {"motorway", "primary", "trunk"};
         // A group that contains all types of roads that are for bikes
@@ -288,6 +282,9 @@ public enum Type  {
             .collect(Collectors.toList());
     }
 
+    /**
+     * @return - A list of Types for pathfinding with the {@link TransportType}.FOOT setting
+     */
     public static List<Type> getAllPedestrianRoads() {
         String[] unAllowed = {"motorway", "motorway_link", "primary", "primary_link", "trunk", "trunk_link"};
         // A group that contains all types of roads that are for pedestrians
@@ -298,38 +295,38 @@ public enum Type  {
             .collect(Collectors.toList());
     }
 
+    /**
+     * Returns all possible Types within a given hierarchy.
+     * @param i - The hierarchy to get the Types from.
+     * @return A list of Types within the given hierarchy.
+     */
     public static List<Type> getTypesOfHierarchy(int i) {
-        if(i < 0 || i > 9) throw new IllegalArgumentException("Hierarchy must be between 0 and 9");
+        if(i < 0 || i > 13) throw new IllegalArgumentException("Hierarchy must be between 0 and 13");
         return Arrays.stream(Type.values())
             .filter(type -> Type.getHierarchy(type) == i)
             .collect(Collectors.toList());
     }
 
-    // /* Utility Methods */
-    // private List<String> filteredType(String[] unAllowed){
-    //     List<String> res = new ArrayList<>();
-    //         for (String str : this.getValue() ) {
-    //             if(!Arrays.asList(unAllowed).contains(str)){
-    //                 res.add(str);
-    //             }
-    //         }
-    //     return res;
-    // }
-
+    /**
+     * 
+     * @return The key of the {@link Type} as a string.
+     */
     public String getKey() {
         return key;
     }
 
+    /**
+     * 
+     * @return The value of the {@link Type} as an array of strings.
+     */
     public String[] getValue() {
         return value;
     }
 
-    public void toggleToShow(){
-        if(toShow){
-            toShow = false;
-        } else toShow = true;
-    }
-
+    /**
+     * 
+     * @return An array of Types.
+     */
     public static Type[] getTypes(){
         return Type.values();
     }
@@ -372,21 +369,34 @@ public enum Type  {
     }
 
         
+    /**
+     * 
+     * @return The hierarchy of the {@link Type} from 0 (least important) to 9 (most important) as an integer.
+     */
     public int getThisHierarchy(){
         return hierarchy;
     }
 
+    /**
+     * 
+     * @return The layer of the {@link Type} from 0 (far behind) to 9 (up front) as an integer.
+     */
     public int getLayer(){
         return layer;
     }
 
+    /**
+     * 
+     * @return The width of the {@link Type} as a double.
+     */
     public double getWidth(){
         return width;
     }
     
-    public Paint getPaint() {
-        return color;
-    }
+    /**
+     * 
+     * @return The color of the {@link Type}. Color is determined by the {@link GraphicsHandler}.
+     */
     public Color getColor(){
         switch (GraphicsHandler.getGraphicStyle()) {
             case DEFAULT:
@@ -398,6 +408,11 @@ public enum Type  {
             default: return color;
         }
     }
+
+    /**
+     * 
+     * @return The color of the polygon line. Color is determined by the {@link GraphicsHandler}.
+     */
     public Color getPolyLineColor(){
         switch (GraphicsHandler.getGraphicStyle()) {
             case DEFAULT:
@@ -409,23 +424,29 @@ public enum Type  {
             default: return polyLineColor;
         }
     }
+
+    /**
+     * 
+     * @return A boolean to determine if the {@link Type} should be drawn as a line.
+     */
     public boolean getIsLine(){
         return isLine;
     }
 
+    /**
+     * 
+     * @return The minimum width of the {@link Type} as a double.
+     */
     public double getMinWidth(){
         return minWidth;
     }
+
+    /**
+     * 
+     * @return The maximum width of the {@link Type} as a double.
+     */
     public double getMaxWidth(){
         return maxWidth;
     }
-
-    /* 
-    public boolean equals(Type type) {
-        if(this instanceof Type){
-            return this.getKey().equals(type.getKey());   
-        }
-        return false;
-    }*/
 
 }

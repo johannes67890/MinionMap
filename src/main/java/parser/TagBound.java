@@ -1,6 +1,7 @@
 package parser;
 
 import javax.xml.stream.XMLStreamReader;
+
 import util.Type;
 
 enum Bounds {
@@ -117,6 +118,9 @@ public class TagBound extends Tag implements Comparable<TagBound>{
         return false;
     }
 
+    /**
+     * Compares two TagBounds, prioritizing their lattitude values first, following the longitude.
+     */
     @Override
     public int compareTo(TagBound o) {
         if (Double.valueOf(this.getMaxLat()).compareTo(Double.valueOf(o.getMaxLat())) == 0) {

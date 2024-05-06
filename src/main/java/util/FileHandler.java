@@ -1,29 +1,33 @@
 package util;
 
-import java.io.*;
-
-
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import parser.Model;
 import parser.XMLReader;
 
-public class FileHandler implements Serializable{
+public class FileHandler {
     
     //buffer size for reading and writing in kb
     private static final int BUFFER_SIZE = 4096;
     protected String zipPath = null;
-
     private static final String osmPath = System.getProperty("user.dir").toString() + "\\src\\main\\resources\\files\\osmFile\\";
     private static String savePath = System.getProperty("user.dir").toString() + "\\src\\main\\resources\\files\\savedFile\\";
-    private String absoluteBinaryFilePath;
+    private static Model model;
+    public static Object getModel(File file){
 
-
-
-    public static Object getModel(File file) throws IOException{
-        // return loadUnknownFile(file);
-        return new Model(new XMLReader(new FileInputStream(file)));
+        return Model.updateModelValues(getFileInputStream(file));
+        //return new Model(new XMLReader(new FileInputStream(file)));
     }
 
     /**
@@ -57,20 +61,10 @@ public class FileHandler implements Serializable{
 
     private static Object loadFile(File file) {
         String path = savePath + getBinaryFileName(file);
-        convertToBinary(createModel(file),path);
+        File binaryFile = new File(path);
+        convertToBinary(file,binaryFile);
+        System.out.println(path);
         return loadBin(new File(path));
-    }
-
-    private static Model createModel(File file){
-        Model model = new Model(createXMLReader(getFileInputStream(file)));
-        System.out.println("Created model " + model);
-        return model;
-    }
-
-    private static XMLReader createXMLReader(FileInputStream fIS){
-        XMLReader reader = new XMLReader(fIS);
-        System.out.println("Created XMLreader " + reader);
-        return reader;
     }
 
     private static FileInputStream getFileInputStream(File file) {
@@ -79,21 +73,22 @@ public class FileHandler implements Serializable{
         } catch (FileNotFoundException e) {
             System.out.println("Failed at Fileinputstream, with file" + file + " error: " + e.getMessage());
         }
+
         return null;
     }
 
     private static Object loadObject(File file) {
 
-        Object model = null;
-
         try {
             ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(getFileInputStream(file)));
-            model = in.readObject();
+            Object object = in.readObject();
             in.close();
+            return  object;
         } catch (IOException | ClassNotFoundException e) {
             System.out.println("Failed at loadModelStage" + e.getMessage());
         }
-        return model;
+
+        return null;
     }
 
 
@@ -125,14 +120,20 @@ public class FileHandler implements Serializable{
      * @param
      * @param destDir the directory to save the file
      */
-    private static void convertToBinary(Serializable objectToBeBinaried, String destDir) {
-        try {
-            var out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(destDir)));
-            out.writeObject(objectToBeBinaried);
-            out.close();
-        } catch (IOException e) {
-            System.out.println("Failed at converting stage: " + e.getMessage());
-        }
+    private static void convertToBinary(File file,File binaryFile) {
+        Model.updateModelValues(getFileInputStream(file));
+        new Thread(() -> {
+            try (var out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(binaryFile)))) {
+                long start = System.currentTimeMillis();
+                out.writeObject(Model.getInstanceModel());
+                System.out.println("Created object " + Model.getInstanceModel() + " in binary");
+                long end = System.currentTimeMillis();
+                System.out.println("Time to binary - total: " + (end - start) + "ms");
+
+            } catch (Exception e) {
+                System.out.println("Failed at converting stage: " + e.getMessage());
+            }
+        }).start();
     }
 
     private static void testDir(String path){
