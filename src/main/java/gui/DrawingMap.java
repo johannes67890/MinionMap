@@ -244,9 +244,7 @@ public class DrawingMap {
     private void drawMarkedTag(Tag tag){
         gc.setFill(Color.PINK.interpolate(Color.RED, 0.5));
         gc.setStroke(Color.RED);
-        if (tag instanceof TagRelation){
-            drawRelation((TagRelation)tag);
-        }else if(tag instanceof TagWay){
+        if(tag instanceof TagWay){
             drawWay((TagWay) tag, true);
         }else if(tag instanceof TagNode || tag instanceof TagAddress){
             drawPoint(tag);
@@ -255,7 +253,7 @@ public class DrawingMap {
 
     /**
      * 
-     * 
+     * Draws a red circle from a single coordinate.
      * 
      * @param node
      */
@@ -264,18 +262,15 @@ public class DrawingMap {
         gc.fillOval(node.getLon() - radius / 2, -(node.getLat()) - radius / 2, radius, radius);
     }
 
-    private void drawRelation(TagRelation relation){
-        boolean isStarted = false;
-        for (TagWay way : relation.getWays()){
-            if (!isStarted){
-                drawWay(way, true);
-                isStarted = true;
-            }else{
-                drawWay(way, false);
-            }
-        }
-    }
-    
+    /**
+     * 
+     * Draws ways based on a marked {@link TagWay}.
+     * Fills the way with a trasparent red color, and outlines with a red color
+     * Will be drawn no matter what zoom level, the drawingMap is set to.
+     * 
+     * @param way
+     * @param starting
+     */
     private void drawWay(TagWay way, boolean starting){
         double[] xPoints;
         double[] yPoints;
@@ -307,7 +302,13 @@ public class DrawingMap {
             
             if(n.getNext() == null) break;
         }
-        gc.stroke();    
+        gc.stroke();
+
+        if (!way.getType().getIsLine()){
+            gc.setFill(Color.RED.interpolate(Color.TRANSPARENT, 0.7));
+            gc.fillPolygon(xPoints, yPoints, counter);
+        }
+        
     }
 
     
@@ -315,7 +316,6 @@ public class DrawingMap {
     /**
      * 
      * Gets all ways in a priorityqueue and draws them based on individual TagWay Types
-     * 
      * @param ways - the ways to be drawn
      */
     private void drawWays(MinPQ<TagWay> ways){
@@ -552,10 +552,6 @@ public class DrawingMap {
         double metersPerPixelRatio = canvas.getWidth() / widthInMeter; //Divided by 2 because the width is from the center of the screen
 
         return metersPerPixelRatio * meters;
-    }
-    public void append(double dx, double dy) {
-        transform.appendTranslation(dx, dy);
-        mapView.draw();
     }
 
     public void setZoomLabel(Label label){
