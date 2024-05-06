@@ -265,11 +265,9 @@ public class DrawingMap {
 
     }
 
-    private void drawPoint(Tag node){
-
+    public void drawPoint(Tag node){
         double radius = 10 * 1/Math.sqrt(transform.determinant());
         gc.fillOval(node.getLon() - radius / 2, -(node.getLat()) - radius / 2, radius, radius);
-
     }
 
     private void drawRelation(TagRelation relation){

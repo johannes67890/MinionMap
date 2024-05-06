@@ -71,6 +71,7 @@ public class Controller implements Initializable, ControllerInterface{
     @FXML private Text distanceText;
     @FXML private StackPane poiContainer;
     @FXML private Text poiText;
+    @FXML private ListView<String> poiView;
     @FXML private Text poiLoc;
 
     @FXML private ComboBox<String> searchBarStart;
@@ -158,15 +159,15 @@ public class Controller implements Initializable, ControllerInterface{
                 if(!(nearestTag.get(0) instanceof TagAddress) && nearestTag.get(0).getType() == Type.BUILDING){
                     TagAddress address = (TagAddress) Tree.getNearestOfClassBruteForce(new TagNode(point.y(), point.x()), TagAddress.class).get(0);
                     poiText.setText(address.toString());
-                    poiLoc.setText(address.getLon() + ", " + address.getLat());
+                    poiLoc.setText(MecatorProjection.unprojectLon(address.getLon()) + ", " + MecatorProjection.unprojectLat(address.getLat()));
+                    poiView.getItems().add(address.toString());
                 }else {
                     poiText.setText(nearestTag.get(0).toString()); 
-                    poiLoc.setText(MecatorProjection.unprojectLon(nearestTag.get(0).getLon()) + ", " + MecatorProjection.unprojectLat(nearestTag.get(0).getLat()));  
+                    poiLoc.setText(MecatorProjection.unprojectLon(nearestTag.get(0).getLon()) + ", " + MecatorProjection.unprojectLat(nearestTag.get(0).getLat())); 
+                    poiView.getItems().add(nearestTag.get(0).toString()); 
                 }
                 mapView.draw();
             }
-            
-        
         });
 
         mapView.getResizeableCanvas().setOnScroll(event -> {
@@ -380,7 +381,7 @@ public class Controller implements Initializable, ControllerInterface{
             Dijsktra dijkstra = s.pathfindBetweenTagAddresses(startAddress, endAddress, routeType, shortest);
             //distanceText.setText(dijkstra.getDistanceOfPath());
             //speedText.setText(dijkstra.getMinutesOfPath());
-            LinkedHashMap<TagWay, Double> path = new LinkedHashMap<>();//dijkstra.printPath();
+            LinkedHashMap<TagWay, Double> path = dijkstra.printPath();
 
             Platform.runLater(() -> {
                 synchronized (pathList) {
@@ -415,6 +416,10 @@ public class Controller implements Initializable, ControllerInterface{
                     if (!routeListView.isVisible() && routeListView.getItems().size() > 0){
                         routeListView.setVisible(true);
                     }
+                    // for (TagWay pathPoint : path.keySet()){
+                    //     System.out.println(pathPoint.getRefNodes().get(0).getLat() + " " + pathPoint.getRefNodes().get(0).getLon());
+                    //     mapView.getDrawingMap().drawPoint(pathPoint.getRefNodes().get(0));
+                    // }
                 }
             });
             
