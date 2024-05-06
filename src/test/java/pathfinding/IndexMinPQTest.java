@@ -51,7 +51,7 @@ public class IndexMinPQTest {
         }
 
         @Test
-        void testGreater() {
+        public void testGreater() {
             IndexMinPQ<Double> pq = new IndexMinPQ<>();
             pq.insert(3, 5.6);
             pq.insert(4, 7.6);
@@ -65,7 +65,7 @@ public class IndexMinPQTest {
          * Test case for the exch() method of the IndexMinPQ class.
          */
         @Test
-        void testExch() {
+        public void testExch() {
             IndexMinPQ<Double> pq = new IndexMinPQ<>();
             pq.insert(3, 5.6);
             pq.insert(4, 7.6);
