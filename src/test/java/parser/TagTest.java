@@ -67,4 +67,9 @@ public class TagTest {
     public void testIsProjected(){
         assertFalse(XMLReader.getNodeById(3711179682l).isProjected());
     }
+
+    @Test
+    public void testdistanceCheap(){
+        assertEquals(79543.265625, XMLReader.getNodeById(3711179682l).distanceCheap(MecatorProjection.project(new TagNode(1, 55.6572610f, 12.4685185f))));
+    }
 }
