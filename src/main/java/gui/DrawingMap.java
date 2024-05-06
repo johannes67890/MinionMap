@@ -65,16 +65,19 @@ public class DrawingMap {
     private List<TagWay> waysToDrawWithoutType;
 
 
-
+    /**
+     * Constructor for the DrawingMap class
+     * @param mapView - The mapview that the map is drawn on
+     * @param model - The model that the map is based on
+     */
     public DrawingMap(MapView mapView, Model model){
         this.mapView = mapView;
         this.model = model;
     }
 
     /**
-     * 
+     * Initialization of the drawing map.
      * The first drawing of the map.
-     * 
      * @param canvas - the canvas to be drawn.
      */
 
@@ -96,22 +99,41 @@ public class DrawingMap {
         mapView.draw();
     }
 
+    /**
+     * @return isInitialized Boolean value that tells if the map is initialized
+     */
     public boolean IsInitialized(){
         return isInitialized;
     }
 
+    /**
+     * Getter for the trie
+     * @return trie - The trie that is used to search for tags
+     */
     public Trie getTrie(){
         return trie;
     }
 
+    /**
+     * Setter for the background color
+     * @param c - The color that the background should be set to
+     */
     public void setBackGroundColor(Color c){
         backGroundColor = c;
     }
 
+    /**
+     * Getter for the zoomLevelMax
+     * @return zoomLevelMax - The maximum zoom level 
+     */
     public double getZoomLevelMax(){
         return zoomLevelMax;
     }
 
+    /**
+     * Getter for the zoomLevelMin
+     * @return zoomLevelMin - The minimum zoom level
+     */
     public double getZoomLevelMin(){
         return zoomLevelMin;
     }
@@ -122,7 +144,6 @@ public class DrawingMap {
      * @param gc - Graphicscontext, which ensures that the position of the vertices are placed correctly
      * @param canvas - The canvas that get drawn
      */
-
     public void DrawMap(Canvas canvas){
         if (!Tree.isLoaded()){
             return;
@@ -203,6 +224,10 @@ public class DrawingMap {
         }
     }
 
+    /**
+     * Sets the point of interest node
+     * @param node - The node that is set as the point of interest
+     */
     public void setPointOfInterest(Tag node){
             pointOfInterestNode = node;
     }
@@ -214,7 +239,7 @@ public class DrawingMap {
 
     /**
      * Draws a specified tag with a different color to mark it on the map
-     * @param tag the tag to be marked
+     * @param tag - the tag to be marked
      */
     private void drawMarkedTag(Tag tag){
         gc.setFill(Color.PINK.interpolate(Color.RED, 0.5));
