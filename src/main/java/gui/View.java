@@ -41,7 +41,7 @@ public abstract class View {
     }
 
     protected Model getModel(){
-        return model;
+        return Model.getInstanceModel();
     }
     protected void setModel(Model model){
         this.model = model;

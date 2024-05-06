@@ -37,7 +37,7 @@ public class MapView extends View{
         return super.getDrawingMap();
     }
     public void setDrawingMap() {
-        super.setDrawingMap(new DrawingMap(this, super.getModel()));
+        super.setDrawingMap(new DrawingMap(this));
     }
 
     public ResizableCanvas getResizeableCanvas(){

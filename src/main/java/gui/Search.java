@@ -23,7 +23,7 @@ public class Search {
     public Search(MapView mw){
         //mainview to be used with dijsktra
         mapView = mw;
-        trie = Model.getTrie();
+        trie = Model.getInstanceModel().getTrie();
     }
 
     /**

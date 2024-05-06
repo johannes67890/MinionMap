@@ -36,8 +36,6 @@ public class DrawingMap {
 
 
     static Affine transform = new Affine();
-
-    private final Model model;
     public ResizableCanvas canvas;
     private XMLReader reader;
     private MapView mapView;
@@ -69,9 +67,9 @@ public class DrawingMap {
 
 
 
-    public DrawingMap(MapView mapView, Model model){
+    public DrawingMap(MapView mapView){
         this.mapView = mapView;
-        this.model = model;
+
     }
 
     /**
@@ -85,7 +83,7 @@ public class DrawingMap {
 
         this.canvas = canvas;
         
-        TagBound bound = mapView.getModel().getBound();
+        TagBound bound = Model.getInstanceModel().getBound();
         
         double minlon = bound.getMinLon();
         double maxlat = bound.getMaxLat();

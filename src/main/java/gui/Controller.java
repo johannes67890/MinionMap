@@ -33,11 +33,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import parser.MecatorProjection;
-import parser.Tag;
-import parser.TagAddress;
-import parser.TagNode;
-import parser.TagWay;
+import parser.*;
 import pathfinding.Dijsktra;
 import structures.KDTree.Point3D;
 import structures.KDTree.Tree;
@@ -156,7 +152,7 @@ public class Controller implements Initializable, ControllerInterface{
                 }
 
                 if(!(nearestTag.get(0) instanceof TagAddress) && nearestTag.get(0).getType() == Type.BUILDING){
-                    TagAddress address = (TagAddress) Tree.getNearestOfClassBruteForce(new TagNode(point.y(), point.x()), TagAddress.class).get(0);
+                    TagAddress address = (TagAddress) Model.getInstanceModel().getTree().getNearestOfClassBruteForce(new TagNode(point.y(), point.x()), TagAddress.class).get(0);
                     poiText.setText(address.toString());
                     poiLoc.setText(address.getLon() + ", " + address.getLat());
                 }else {

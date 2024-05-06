@@ -3,6 +3,7 @@ package util;
 import java.io.*;
 
 
+import java.sql.Time;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -61,23 +62,10 @@ public class FileHandler {
 
     private static Object loadFile(File file) {
         String path = savePath + getBinaryFileName(file);
-        convertToBinary(createModel(file),path);
+        File binaryFile = new File(path);
+        convertToBinary(file,binaryFile);
         System.out.println(path);
         return loadBin(new File(path));
-    }
-
-    private static Model createModel(File file){
-
-        createXMLReader(getFileInputStream(file));
-        Model model = XMLReader.getModelInstance();
-        System.out.println("Created model " + model);
-        return model;
-    }
-
-    private static XMLReader createXMLReader(FileInputStream fIS){
-        XMLReader reader = new XMLReader(fIS);
-        System.out.println("Created XMLreader " + reader);
-        return reader;
     }
 
     private static FileInputStream getFileInputStream(File file) {
@@ -133,25 +121,20 @@ public class FileHandler {
      * @param
      * @param destDir the directory to save the file
      */
-    private static void convertToBinary(Serializable objectToBeBinaried, String destDir) {
-        try {
+    private static void convertToBinary(File file,File binaryFile) {
+        Model.updateModelValues(getFileInputStream(file));
+        new Thread(() -> {
+            try (var out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(binaryFile)))) {
+                long start = System.currentTimeMillis();
+                out.writeObject(Model.getInstanceModel());
+                System.out.println("Created object " + Model.getInstanceModel() + " in binary");
+                long end = System.currentTimeMillis();
+                System.out.println("Time to binary - total: " + (end - start) + "ms");
 
-            ByteArrayOutputStream bao = new ByteArrayOutputStream();
-            ObjectOutputStream out = new ObjectOutputStream(bao);
-            FileOutputStream binFile = new FileOutputStream(destDir);
-
-            //bos.close();
-            //var out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(destDir)));
-            out.writeObject(objectToBeBinaried);
-
-            bao.writeTo(binFile);
-
-
-            out.close();
-            System.out.println("Created object " + objectToBeBinaried + " in binary");
-        } catch (IOException e) {
-            System.out.println("Failed at converting stage: " + e.getMessage());
-        }
+            } catch (Exception e) {
+                System.out.println("Failed at converting stage: " + e.getMessage());
+            }
+        }).start();
     }
 
     private static void testDir(String path){

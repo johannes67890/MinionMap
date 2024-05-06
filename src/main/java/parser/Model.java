@@ -1,8 +1,10 @@
 package parser;
 
+import java.io.InputStream;
 import java.io.Serial;
 import java.io.Serializable;
 
+import edu.princeton.cs.algs4.In;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import structures.Trie;
 import structures.KDTree.Tree;
@@ -12,56 +14,60 @@ public class Model implements Serializable{
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private static TagBound bound;
-    private static TLongObjectHashMap<TagNode> nodes = new TLongObjectHashMap<TagNode>();
+    private XMLReader reader;
+    private TagBound bound;
+    private TLongObjectHashMap<TagNode> nodes = new TLongObjectHashMap<TagNode>();
 
-    private static TLongObjectHashMap<TagAddress> addresses = new TLongObjectHashMap<TagAddress>();
-    private static Trie trie = new Trie();
-
-    private static Model instanceModel;
+    private TLongObjectHashMap<TagAddress> addresses = new TLongObjectHashMap<TagAddress>();
+    private Trie trie = new Trie();
 
     private Tree tree;
 
-    static {
-        instanceModel = new Model();
-    }
+    private static Model instanceModel;
+
+
 
     public static Model getInstanceModel(){
-        if(instanceModel == null){
+        if(instanceModel == null) {
             instanceModel = new Model();
         }
 
         return instanceModel;
     }
 
-    private Model() {
-        bound = XMLReader.getBound();
-        trie = XMLReader.getTrie();
-        nodes = XMLReader.getNodes();
-        addresses = XMLReader.getAddresses();
+    public static Model updateModelValues(InputStream is){
+        return getInstanceModel().setModelValues(is);
+    }
 
-        clearReadertags();
+    private Model setModelValues(InputStream is){
+        this.reader = new XMLReader(is);
+        bound = reader.getBound();
+        trie = reader.getTrie();
+        nodes = reader.getNodes();
+        addresses = reader.getAddresses();
+        reader.clearTags();
         System.gc();
         System.out.println("Initializing tree: ");
         long startTree = System.currentTimeMillis();
         initializeTrees();
         long stopTree = System.currentTimeMillis();
         System.out.println("Time to tree - total: " + (stopTree - startTree) + "ms");
+
+        return getInstanceModel();
+    }
+
+    private Model() {
     }
 
     public Tree getTree(){
         return this.tree;
     }
 
-    public static TagBound getBound(){return bound;}
+    public TagBound getBound(){return this.bound;}
 
-    public static Trie getTrie(){return trie;}
+    public Trie getTrie(){return trie;}
 
-    public static TLongObjectHashMap<TagNode> getNodes(){return nodes;}
-
-    private static void clearReadertags(){
-        XMLReader.clearTags();
-    }
+    public TLongObjectHashMap<TagNode> getNodes(){return nodes;}
 
     private void initializeTrees(){
 
@@ -118,13 +124,13 @@ public class Model implements Serializable{
 
         addWays.start();
         addRelations.start();
-        addAddresses.start();
+        //addAddresses.start();
 
 
         try{
             addWays.join();
             addRelations.join();
-            addAddresses.join();
+            //addAddresses.join();
 
         } catch (Exception e) {
             System.out.println(e.getStackTrace()+ " Failed at threadjoining " + e.getMessage());

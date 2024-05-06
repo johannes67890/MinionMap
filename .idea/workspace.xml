@@ -6,17 +6,14 @@
   <component name="ChangeListManager">
     <list default="true" id="3dc9cf24-bd1d-4512-abe4-fcab9aeaf2a3" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/gui/Controller.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/gui/Controller.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/gui/DrawingMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/gui/DrawingMap.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/gui/MapView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/gui/MapView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/gui/Search.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/gui/Search.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/gui/View.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/gui/View.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/parser/Model.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/parser/Model.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/parser/XMLReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/parser/XMLReader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/structures/KDTree/Tree.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/structures/KDTree/Tree.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/util/FileHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/util/FileHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/files/savedFile/3 - Copy (32) - Copy - Copy.bin" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/files/savedFile/3 - Copy (32) - Copy - Copy.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/files/savedFile/3 - Copy (33) - Copy - Copy.bin" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/files/savedFile/3 - Copy (37) - Copy - Copy.bin" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/files/savedFile/born.bin" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/files/savedFile/testMap.bin" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -74,22 +71,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Gradle.MapOfDenmark [build].executor": "Run",
-    "Gradle.MapOfDenmark [run].executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "binLastChance",
-    "last_opened_file_path": "C:/Users/Andre/IntellijProjects/MapOfDenmark",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Gradle.MapOfDenmark [build].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.MapOfDenmark [run].executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;binLastChance&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Andre/IntellijProjects/MapOfDenmark&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected="Gradle.MapOfDenmark [run]">
     <configuration name="MapOfDenmark [build]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>

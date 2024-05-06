@@ -192,10 +192,6 @@ public class XMLReader implements Serializable{
         }
     }
 
-    public static Model getModelInstance(){
-        return Model.getInstanceModel();
-    }
-
     protected static void clearWays(){
         ways = null;
     }
