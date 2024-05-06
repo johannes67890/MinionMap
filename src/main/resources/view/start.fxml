@@ -21,25 +21,40 @@
 
 <?import javafx.scene.text.Text?>
 
-<VBox spacing="15" alignment="CENTER" prefHeight="800" prefWidth="1200" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.StartScreenController">
-   <Label fx:id="titleLabel" text="Map Application" styleClass="title"/>
-   <!-- Sublabel -->
-   <Label fx:id="subTitleLabel" text="Welcome to the Map Application" styleClass="subTitle"/>
-   <!-- Select default maps -->
-   <HBox styleClass="selectDefaultMaps" spacing="20">
-
-        <Button fx:id="welcomeCopenhagen" style="-fx-background-image: url('visuals/copenhagen.png')" styleClass="mapButton">Copenhagen</Button>
-       <Button fx:id="welcomeBornholm" style="-fx-background-image: url('visuals/denmark.png')" styleClass="mapButton">Bornholm</Button>
-   </HBox>
-   <!-- Select file -->
-   <Label fx:id="titleLabel" text="Drag n' drop" styleClass="title"/>
-   <VBox fx:id="startScreen" spacing="10" alignment="TOP_CENTER" VBox.vgrow="ALWAYS" styleClass="startScreen">
-      <HBox fx:id="contentPane" alignment="CENTER" styleClass="dropzone">
-            <Text fx:id="contentPaneText" text="Drop file here" textAlignment="CENTER"/>
+<VBox  prefHeight="800" prefWidth="1200" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.StartScreenController">
+   <VBox spacing="10" translateY="15" alignment="CENTER">
+      <VBox alignment="CENTER" spacing="25" styleClass="">
+         <Label fx:id="titleLabel" text="Minion Map" styleClass="title"/>
+         <ImageView fitHeight="150.0" fitWidth="150.0" preserveRatio="true">
+            <image>
+               <Image url="@../visuals/MinionEyes.png" />
+            </image>
+         </ImageView>
+      </VBox>
+      <!-- Sublabel -->
+      <VBox spacing="5" alignment="CENTER">
+         <Label fx:id="subTitleLabel" text="Welcome to Minion Map" styleClass="subTitle"/>
+         <Label text="a GIS application that can display data from OpenStreetMap" styleClass="sText"/>
+      </VBox>
+      <Label text="Choose one of two default files" styleClass="title"/>
+      <!-- Select default maps -->
+      <HBox styleClass="selectDefaultMaps" spacing="20">
+         <Button fx:id="welcomeCopenhagen" style="-fx-background-image: url('visuals/copenhagen.png')" styleClass="mapButton">Copenhagen</Button>
+         <Button fx:id="welcomeBornholm" style="-fx-background-image: url('visuals/denmark.png')" styleClass="mapButton">Bornholm</Button>
       </HBox>
-      <HBox fx:id="buttonPane" spacing="7" alignment="TOP_CENTER" VBox.vgrow="ALWAYS" styleClass="buttonPane">
-         <Button fx:id="openFileFinderButton" styleClass="button">Open Filefinder</Button>
-         <Button fx:id="submitButton" styleClass="button">Launch Map</Button>
-      </HBox>
+      <!-- Select file -->
+      <VBox spacing="5" alignment="CENTER">
+         <Label fx:id="titleLabel" text="Choose your own file" styleClass="title"/>
+         <Label text="Support files are .OSM, .XML and .ZIP" styleClass="nText"/>
+      </VBox>
+      <VBox fx:id="startScreen" spacing="10" alignment="TOP_CENTER" VBox.vgrow="ALWAYS" styleClass="startScreen">
+         <HBox fx:id="contentPane" alignment="CENTER" styleClass="dropzone">
+               <Text fx:id="contentPaneText" text="Drop file here" textAlignment="CENTER"/>
+         </HBox>
+         <HBox fx:id="buttonPane" spacing="7" alignment="TOP_CENTER" VBox.vgrow="ALWAYS" styleClass="buttonPane">
+            <Button fx:id="openFileFinderButton" styleClass="button">Open Filefinder</Button>
+            <Button fx:id="submitButton" styleClass="button">Launch Map</Button>
+         </HBox>
+      </VBox>
    </VBox>
  </VBox>
