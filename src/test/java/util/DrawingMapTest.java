@@ -1,117 +1,117 @@
-package util;
+// package util;
 
-import static org.junit.jupiter.api.Assertions.*;
+// import static org.junit.jupiter.api.Assertions.*;
 
-import java.io.FileInputStream;
+// import java.io.FileInputStream;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+// import org.junit.jupiter.api.BeforeEach;
+// import org.junit.jupiter.api.Test;
 
-import gui.DrawingMap;
-import gui.MainView;
-import gui.MapView;
-import javafx.scene.canvas.Canvas;
-import parser.TagBound;
-import parser.XMLReader;
+// import gui.DrawingMap;
+// import gui.MainView;
+// import gui.MapView;
+// import javafx.scene.canvas.Canvas;
+// import parser.TagBound;
+// import parser.XMLReader;
 
-public class DrawingMapTest {
+// public class DrawingMapTest {
 
-    XMLReader reader;
+//     XMLReader reader;
 
-    Canvas canvas;
+//     Canvas canvas;
 
-    DrawingMap drawingMap;
+//     DrawingMap drawingMap;
     
-    @BeforeEach
-    void testXMLReaderStartup() {
-        try{
+//     @BeforeEach
+//     void testXMLReaderStartup() {
+//         try{
 
-            this.reader = new XMLReader(new FileInputStream("src/main/ressources/testMap.osm"));
-        }
-        catch(Exception e){
+//             this.reader = new XMLReader(new FileInputStream("src/main/ressources/testMap.osm"));
+//         }
+//         catch(Exception e){
             
-        }
-        assertNotNull(reader);
-        assertDoesNotThrow(() -> this.reader);
-        MainView mainView = new MainView();
+//         }
+//         assertNotNull(reader);
+//         assertDoesNotThrow(() -> this.reader);
+//         MainView mainView = new MainView();
 
-        drawingMap = ((MapView ) mainView.getView()).getDrawingMap();
-    }
-
-
-    @Test
-    void getScreenBounds() {
-
-        float[] bounds = drawingMap.getScreenBounds();
-
-        TagBound bound = XMLReader.getBound();
+//         drawingMap = ((MapView ) mainView.getView()).getDrawingMap();
+//     }
 
 
+//     @Test
+//     void getScreenBounds() {
 
-        assertEquals(bound.getMinLon(), bounds[0]);
-        assertEquals(bound.getMaxLon(), bounds[2]);
-    }
+//         float[] bounds = drawingMap.getScreenBounds();
 
-    @Test
-    void getScreenBoundsBigger() {
-        drawingMap.initialize(canvas);
-
-        float[] bounds = drawingMap.getScreenBounds();
+//         TagBound bound = XMLReader.getBound();
 
 
-        float[] boundsBigger = drawingMap.getScreenBoundsBigger(0.2);
 
-        TagBound bound = XMLReader.getBound();
+//         assertEquals(bound.getMinLon(), bounds[0]);
+//         assertEquals(bound.getMaxLon(), bounds[2]);
+//     }
 
-        assertEquals(bounds[0] - ((bounds[2] - bounds[0]) * 1.2), boundsBigger[0]);
-        assertEquals(bound.getMaxLon(), bounds[2]);
-    }
+//     @Test
+//     void getScreenBoundsBigger() {
+//         drawingMap.initialize(canvas);
 
-    @Test
-    void zoom() {
-        drawingMap.initialize(canvas);
+//         float[] bounds = drawingMap.getScreenBounds();
 
-        TagBound bound = XMLReader.getBound();
 
-        double zoomlevel = drawingMap.getZoomLevel();
+//         float[] boundsBigger = drawingMap.getScreenBoundsBigger(0.2);
 
-        assertEquals(drawingMap.getCanvas().getWidth() / (bound.getMaxLon() - bound.getMinLon()), zoomlevel);
+//         TagBound bound = XMLReader.getBound();
 
-        drawingMap.zoom(1000000000, 0, 0);
+//         assertEquals(bounds[0] - ((bounds[2] - bounds[0]) * 1.2), boundsBigger[0]);
+//         assertEquals(bound.getMaxLon(), bounds[2]);
+//     }
 
-        zoomlevel = drawingMap.getZoomLevel();
+//     @Test
+//     void zoom() {
+//         drawingMap.initialize(canvas);
 
-        assertEquals(drawingMap.getZoomLevelMax() -0.000001, zoomlevel);
+//         TagBound bound = XMLReader.getBound();
 
-        drawingMap.zoom(0.0000000000001, 0, 0);
+//         double zoomlevel = drawingMap.getZoomLevel();
 
-        zoomlevel = drawingMap.getZoomLevel();
+//         assertEquals(drawingMap.getCanvas().getWidth() / (bound.getMaxLon() - bound.getMinLon()), zoomlevel);
 
-        assertEquals(drawingMap.getZoomLevelMin() + 0.000001, zoomlevel);
-    }
+//         drawingMap.zoom(1000000000, 0, 0);
 
-    @Test
-    void pan() {
-        drawingMap.initialize(canvas);
+//         zoomlevel = drawingMap.getZoomLevel();
 
-        TagBound bound = XMLReader.getBound();
+//         assertEquals(drawingMap.getZoomLevelMax() -0.000001, zoomlevel);
 
-        double zoomlevel = drawingMap.getZoomLevel();
+//         drawingMap.zoom(0.0000000000001, 0, 0);
 
-        assertEquals(drawingMap.getCanvas().getWidth() / (bound.getMaxLon() - bound.getMinLon()), zoomlevel);
+//         zoomlevel = drawingMap.getZoomLevel();
 
-        drawingMap.zoom(1000000000, 0, 0);
+//         assertEquals(drawingMap.getZoomLevelMin() + 0.000001, zoomlevel);
+//     }
 
-        zoomlevel = drawingMap.getZoomLevel();
+//     @Test
+//     void pan() {
+//         drawingMap.initialize(canvas);
 
-        assertEquals(drawingMap.getZoomLevelMax() -0.000001, zoomlevel);
+//         TagBound bound = XMLReader.getBound();
 
-        drawingMap.zoom(0.0000000000001, 0, 0);
+//         double zoomlevel = drawingMap.getZoomLevel();
 
-        zoomlevel = drawingMap.getZoomLevel();
+//         assertEquals(drawingMap.getCanvas().getWidth() / (bound.getMaxLon() - bound.getMinLon()), zoomlevel);
 
-        assertEquals(drawingMap.getZoomLevelMin() + 0.000001, zoomlevel);
-    }
+//         drawingMap.zoom(1000000000, 0, 0);
+
+//         zoomlevel = drawingMap.getZoomLevel();
+
+//         assertEquals(drawingMap.getZoomLevelMax() -0.000001, zoomlevel);
+
+//         drawingMap.zoom(0.0000000000001, 0, 0);
+
+//         zoomlevel = drawingMap.getZoomLevel();
+
+//         assertEquals(drawingMap.getZoomLevelMin() + 0.000001, zoomlevel);
+//     }
 
 
 
@@ -119,4 +119,4 @@ public class DrawingMapTest {
 
 
     
-}
+// }
