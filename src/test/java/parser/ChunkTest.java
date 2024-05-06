@@ -1,9 +1,7 @@
 package parser;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -19,18 +17,17 @@ import java.io.File;
 
 public class ChunkTest {
     private Chunk chunck;
-    private XMLReader reader;
 
     @BeforeEach
     void setUp() {
-        reader = new XMLReader(FileHandler.getFileInputStream(new File(FileDistributer.testMap.getFilePath())));
-        assertNotNull(reader);
-        assertDoesNotThrow(() -> this.reader);
-        Tree.initializeTree();
-        for (TagWay way : reader.getWays().valueCollection()){
-            Tree.insertTagWayInTree(way);
+        synchronized(this){
+            new XMLReader(FileHandler.getFileInputStream(new File(FileDistributer.testMap.getFilePath())));
+            Tree.initializeTree();
+            for (TagWay way : XMLReader.getWays().valueCollection()){
+                Tree.insertTagWayInTree(way);
+            }
         }
-        this.chunck = new Chunk(reader.getBound());
+        this.chunck = new Chunk(XMLReader.getBound());
     }
 
 

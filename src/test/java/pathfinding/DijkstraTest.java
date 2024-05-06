@@ -15,16 +15,18 @@ public class DijkstraTest {
     private XMLReader reader;
     private Dijkstra d;
     @BeforeEach
-    void testXMLReaderStartup() {
-        reader = new XMLReader(FileHandler.getFileInputStream(new File(FileDistributer.testMap.getFilePath())));
-        assertNotNull(reader);
-        assertDoesNotThrow(() -> this.reader);
-        Tree.initializeTree();
-        for (TagWay way : reader.getWays().valueCollection()){
-            Tree.insertTagWayInTree(way);
+    void  testXMLReaderStartup() {
+        synchronized(this) {
+            reader = new XMLReader(FileHandler.getFileInputStream(new File(FileDistributer.testMap.getFilePath())));
+            assertNotNull(reader);
+            assertDoesNotThrow(() -> this.reader);
+            Tree.initializeTree();
+            for (TagWay way : reader.getWays().valueCollection()){
+                Tree.insertTagWayInTree(way);
+            }
+    
+            d = new Dijkstra(reader.getNodeById(3711179713l), reader.getNodeById(7798538748l), TransportType.CAR, true);
         }
-
-        d = new Dijkstra(reader.getNodeById(3711179713l), reader.getNodeById(7798538748l), TransportType.CAR, true);
     }
 
 

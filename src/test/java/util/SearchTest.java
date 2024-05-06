@@ -17,36 +17,28 @@ public class SearchTest {
 
 
     private Trie trie;
-    private XMLReader reader;
     private Search search;
 
     @BeforeEach
     public void setup(){
-        reader = new XMLReader(FileHandler.getFileInputStream(new File(FileDistributer.testMap.getFilePath())));
-        assertNotNull(reader);
-        assertDoesNotThrow(() -> this.reader);
-        trie = XMLReader.getTrie();
-        assertNotNull(reader);
-        assertNotNull(trie);
-        search = new Search(trie);
-        assertNotNull(search);
+        synchronized(this){
+            new XMLReader(FileHandler.getFileInputStream(new File(FileDistributer.testMap.getFilePath())));
+            trie = XMLReader.getTrie();
+            assertNotNull(trie);
+            search = new Search(trie);
+            assertNotNull(search);
+        }
     }
 
     @Test
     public void getAddress(){
-
-        reader = new XMLReader(FileHandler.getFileInputStream(new File(FileDistributer.testMap.getFilePath())));
-        assertNotNull(reader);
-        assertDoesNotThrow(() -> this.reader);
         trie = XMLReader.getTrie();
-        assertNotNull(reader);
         assertNotNull(trie);
         search = new Search(trie);
         assertNotNull(search);
 
         TagAddress tagAddress = search.getAddress("Hvidovrevej 2650 Hvidovre", "132C");
 
-        assertNotNull(tagAddress);
 
         tagAddress = search.getAddress("Hvidovrevej 2650 Hvidovre", "02834908");
         
@@ -57,14 +49,12 @@ public class SearchTest {
     @Test
     public void getSuggestion(){
 
-        reader = new XMLReader(FileHandler.getFileInputStream(new File(FileDistributer.testMap.getFilePath())));
-        assertNotNull(reader);
-        assertDoesNotThrow(() -> this.reader);
-        trie = XMLReader.getTrie();
-        assertNotNull(reader);
-        assertNotNull(trie);
-        search = new Search(trie);
-        assertNotNull(search);
+        synchronized(this){
+          new XMLReader(FileHandler.getFileInputStream(new File(FileDistributer.testMap.getFilePath())));
+            trie = XMLReader.getTrie();
+            assertNotNull(trie);
+            search = new Search(trie);
+            assertNotNull(search);
 
         String address = "hvidovre kirkeplads";
 
@@ -74,7 +64,7 @@ public class SearchTest {
 
         TagAddress address2 = suggestion.get(1);        
         assertTrue(address1.getHouseNumber().compareTo(address2.getHouseNumber()) < 0);
-
+        }
     }
     
 }

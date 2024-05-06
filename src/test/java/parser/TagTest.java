@@ -13,9 +13,11 @@ public class TagTest {
 
     @BeforeEach
     void testXMLReaderStartup() {
-        reader = new XMLReader(FileHandler.getFileInputStream(new File(FileDistributer.testMap.getFilePath())));
-        assertNotNull(reader);
-        assertDoesNotThrow(() -> this.reader);
+        synchronized(this) {
+            reader = new XMLReader(FileHandler.getFileInputStream(new File(FileDistributer.testMap.getFilePath())));
+            assertNotNull(reader);
+            assertDoesNotThrow(() -> this.reader);
+        }
     }
     @Test
     public void testIsInBounds(){

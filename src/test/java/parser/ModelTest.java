@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import util.FileDistributer;
@@ -14,11 +15,16 @@ import java.io.File;
 
 public class ModelTest {
 
+    @BeforeEach
+    void setUp() {
+        synchronized(this) {
+            new XMLReader(FileHandler.getFileInputStream(new File(FileDistributer.testMap.getFilePath())));
+        }
+    }
     
     @Test
     public void testGetNodes() {
 
-        new XMLReader(FileHandler.getFileInputStream(new File(FileDistributer.testMap.getFilePath())));
         int size = XMLReader.getNodes().valueCollection().size();
 
         Model.updateModelValues(FileHandler.getFileInputStream(new File(FileDistributer.testMap.getFilePath())));

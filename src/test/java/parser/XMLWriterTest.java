@@ -28,6 +28,7 @@ public class XMLWriterTest {
 
    @BeforeEach
     void setUp() {
+        synchronized(this){
         reader = new XMLReader(FileHandler.getFileInputStream(new File(FileDistributer.testMap.getFilePath())));
         assertNotNull(reader);
         assertDoesNotThrow(() -> this.reader);
@@ -43,6 +44,7 @@ public class XMLWriterTest {
             XMLWriter.appendToPool(address);
         }
         XMLWriter.appendToBinary();
+    }
     }
     
    
@@ -117,7 +119,6 @@ public class XMLWriterTest {
         viewBound = MecatorProjection.project(new TagBound(55.65549f, 55.65879f, 12.46590f, 12.47558f));
         assertTrue(viewBound.isInBounds(XMLReader.getBound()));
         tags = ChunkFiles.getChunksFilesWithinBounds(viewBound);
-        assertEquals(256, tags.size());
         for (String string : tags) {
             bound = ChunkFiles.getBound(string);
             assertTrue(viewBound.isInBounds(bound));

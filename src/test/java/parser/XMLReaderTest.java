@@ -15,9 +15,11 @@ public class XMLReaderTest {
 
     @BeforeEach
     void testXMLReaderStartup() {
-        reader = new XMLReader(FileHandler.getFileInputStream(new File(FileDistributer.testMap.getFilePath())));
-        assertNotNull(reader);
-        assertDoesNotThrow(() -> this.reader);
+        synchronized(this) {
+            reader = new XMLReader(FileHandler.getFileInputStream(new File(FileDistributer.testMap.getFilePath())));
+            assertNotNull(reader);
+            assertDoesNotThrow(() -> this.reader);
+        }
     }
     
     @Test
@@ -33,7 +35,6 @@ public class XMLReaderTest {
     @Test
     void testSetBounds() {
         //Bounds in file:   <bounds minlat="55.6562600" minlon="12.4677300" maxlat="55.6581600" maxlon="12.4734000"/>
-
         
         assertInstanceOf(TagBound.class, XMLReader.getBound());
         assertEquals(MecatorProjection.unproject(XMLReader.getBound()).getMinLat(), 55.6562600f);

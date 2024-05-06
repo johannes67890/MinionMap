@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import parser.Model;
@@ -14,16 +16,25 @@ import parser.Model;
  * If run together
  */
 public class FileHandlerTest {
-    
+    @BeforeEach
+    void setUp() {
+        synchronized(this) {
+            FileHandler.clearOsmFiles();
+        }
+    }
+
     @Test
     public void testGetModelFromOsm() {
-        FileHandler.getModel(new File(FileDistributer.testMap.getFilePath()));
-        assertTrue(FileDistributer.testMap.getFilePath().contains(".osm"));
-        assertTrue(Model.getInstanceModel() != null);
+        synchronized(this) {
+            FileHandler.getModel(new File(FileDistributer.testMap.getFilePath()));
+            assertTrue(FileDistributer.testMap.getFilePath().contains(".osm"));
+            assertTrue(Model.getInstanceModel() != null);
+        }
     }
 
     @Test
     public void testGetModelFromZip() {
+        synchronized(this) {
         FileHandler.clearOsmFiles();
         File file = new File(System.getProperty("user.dir").toString() + "\\src\\main\\resources\\files\\osmFile\\");
         int sizeBefore = file.listFiles().length;
@@ -31,14 +42,17 @@ public class FileHandlerTest {
         FileHandler.getModel(new File(FileDistributer.testMapInZip.getFilePath()));
         assertTrue(FileDistributer.testMapInZip.getFilePath().contains(".zip"));
         assertTrue(sizeBefore < file.listFiles().length);
+        }
     }
 
     @Test
     public void testClearOsmFiles() {
+        synchronized(this) {
         FileHandler.getModel(new File(FileDistributer.testMapInZip.getFilePath()));
         File file = new File(System.getProperty("user.dir").toString() + "\\src\\main\\resources\\files\\osmFile\\");
         FileHandler.clearOsmFiles();
         
         assertEquals(0, file.listFiles().length);
+        }
     }
 }

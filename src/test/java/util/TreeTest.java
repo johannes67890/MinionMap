@@ -22,12 +22,14 @@ public class TreeTest {
     
     @BeforeEach
     void setUp() {
-        reader = new XMLReader(FileHandler.getFileInputStream(new File(FileDistributer.testMap.getFilePath())));
-        assertNotNull(reader);
-        assertDoesNotThrow(() -> this.reader);
-        Tree.initializeTree();
-        for (TagWay way : reader.getWays().valueCollection()){
-            Tree.insertTagWayInTree(way);
+        synchronized(this) {
+            reader = new XMLReader(FileHandler.getFileInputStream(new File(FileDistributer.testMap.getFilePath())));
+            assertNotNull(reader);
+            assertDoesNotThrow(() -> this.reader);
+            Tree.initializeTree();
+            for (TagWay way : reader.getWays().valueCollection()){
+                Tree.insertTagWayInTree(way);
+            }
         }
     }
 
