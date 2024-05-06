@@ -8,11 +8,11 @@ import java.util.ArrayList;
 
 /**
  * <p>
- * IMPORTANT NOTE: This class is made from inspiration from the <a href="https://algs4.cs.princeton.edu/">Princeton University Algorithms Library</a>.
+ * <b>IMPORTANT NOTE</b>: This class is made from inspiration from the <a href="https://algs4.cs.princeton.edu/">Princeton University Algorithms Library</a>.
  * </p>
  * 
- *  The {@code Digraph} class represents a directed graph of vertices
- *  named 0 through <em>V</em> - 1.
+ *  The {@code Digraph} class represents a directed graph of vertices of type {@link TagNode}. The vertices are
+ *  from 0 through <em>V</em> - 1 and support edges with weight.
  *  It supports the following two primary operations: add an edge to the digraph,
  *  iterate over all of the vertices adjacent from a given vertex.
  *  It also provides
@@ -31,7 +31,8 @@ import java.util.ArrayList;
  *  <p>
  *  @see <a href="https://algs4.cs.princeton.edu/42digraph">Section 4.2</a> of
  *  <i>Algorithms, 4th Edition</i> by Robert Sedgewick and Kevin Wayne.
- *
+ *  @see {@link Digraph} The graph that supports this edge
+ *  @see {@link Dijsktra} The algorithm that uses this graph
  *  @author Robert Sedgewick
  *  @author Kevin Wayne
  */
