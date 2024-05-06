@@ -136,7 +136,7 @@
                         </Label>
                         <ListView fx:id="poiView" styleClass="list-cell" />
                      </VBox>
-                     <VBox alignment="CENTER" spacing="2">
+                     <VBox alignment="CENTER" spacing="10">
                         <Label alignment="CENTER" styleClass="nText">
                               Made by:
                         </Label>
@@ -160,6 +160,11 @@
                                  Johannes Gunge Jørgensen (jgjo)
                            </Label>
                         </VBox>
+                           <ImageView  fitHeight="35.0" fitWidth="35.0" preserveRatio="true">
+                              <image>
+                                 <Image url="@../visuals/MinionEyes.png" />
+                              </image>
+                           </ImageView>
                      </VBox>
                   </VBox>
             </Pane>

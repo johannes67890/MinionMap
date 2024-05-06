@@ -184,10 +184,12 @@ public class TagWay extends Tag implements Comparable<TagWay>{
     @Override
     public String toString() {
 
-        if (name == null) {
+        if (name == null && this.getType() != null) {
             return "Unknown " + StringUtility.formatString(this.getType().name()) + " ";
-        } else {
+        } else if (name != null && !name.isBlank()) {
             return name;
+        }else{
+            return "Unknown";
         }
     }
 

@@ -5,7 +5,7 @@ package util;
  * UtilityClass for containing various methods for handling strings.
  * 
  */
-public final class StringUtility {
+public class StringUtility {
 
 
     /**
