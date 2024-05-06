@@ -51,6 +51,7 @@ java -jar build/libs/MapOfDenmark.jar
 ```
 
 ### Running test suite
+`Note`: Some test suites may fail if not run individually. This can be due to various reasons, check the individual test suite for more information.
 
 To run the test suite, run the following command:
 ```
