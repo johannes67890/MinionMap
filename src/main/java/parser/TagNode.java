@@ -138,11 +138,7 @@ public class TagNode extends Tag implements TLinkable<TagNode>, Comparable<TagNo
 
     @Override
     public String toString() {
-        return "TagNode{" +
-                "id=" + id +
-                ", lon=" + lon +
-                ", lat=" + lat +
-                '}';
+        return place.getValue() + " " + parent;
     }
 
     /**

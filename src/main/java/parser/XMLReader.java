@@ -23,6 +23,7 @@ import structures.Trie;
 public class XMLReader implements Serializable{
     private static TagBound bound;
     private static TLongObjectHashMap<TagNode> places = new TLongObjectHashMap<TagNode>();
+    private static TLongObjectHashMap<TagAddress> addresses = new TLongObjectHashMap<TagAddress>();
     private static TLongObjectHashMap<TagNode> nodes = new TLongObjectHashMap<TagNode>();
     private static TLongObjectHashMap<TagRelation> relations = new TLongObjectHashMap<TagRelation>();
     private static TLongObjectHashMap<TagWay> ways = new TLongObjectHashMap<TagWay>();
@@ -79,6 +80,11 @@ public class XMLReader implements Serializable{
     public static TLongObjectHashMap<TagNode> getNodes(){
         return nodes;
     }
+
+    public static TLongObjectHashMap<TagAddress> getAddresses(){
+        return addresses;
+    }
+
 
     /**
      * Get all the {@link TagRelation}s in the XML file.
@@ -139,6 +145,7 @@ public class XMLReader implements Serializable{
                         switch (element) {
                             case "node":
                                 if(!tempBuilder.getAddressBuilder().isEmpty()){
+                                    addresses.put(tempBuilder.getId(), new TagAddress(tempBuilder));
                                     trie.insert(new TagAddress(tempBuilder));
                                 } else {
                                     TagNode node = new TagNode(tempBuilder);
@@ -184,6 +191,7 @@ public class XMLReader implements Serializable{
         nodes = null;
         relations = null;
         ways = null;
+        addresses = null;
         trie = null;
     }
 }

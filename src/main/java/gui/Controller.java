@@ -29,8 +29,10 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import parser.MecatorProjection;
 import parser.Tag;
 import parser.TagAddress;
 import parser.TagNode;
@@ -66,11 +68,13 @@ public class Controller implements Initializable, ControllerInterface{
 
     @FXML private Text speedText;
     @FXML private Text distanceText;
-
+    @FXML private StackPane poiContainer;
+    @FXML private Text poiText;
+    @FXML private ListView<String> poiView;
+    @FXML private Text poiLoc;
 
     @FXML private ComboBox<String> searchBarStart;
     @FXML private ComboBox<String> searchBarDestination;
-    @FXML private Button mainMenuButton;
     @FXML private VBox mainMenuVBox;
     @FXML private VBox graphicVBox;
     
@@ -146,10 +150,23 @@ public class Controller implements Initializable, ControllerInterface{
                 
                 mapView.getDrawingMap().setMarkedTag(temp);
                 mapView.getDrawingMap().setPointOfInterest(nearestTag.get(0));
+
+                if(!pointofInterestState){
+                    poiText.setText("Click a point of interest");
+                }
+
+                if(!(nearestTag.get(0) instanceof TagAddress) && nearestTag.get(0).getType() == Type.BUILDING){
+                    TagAddress address = (TagAddress) Tree.getNearestOfClassBruteForce(new TagNode(point.y(), point.x()), TagAddress.class).get(0);
+                    poiText.setText(address.toString());
+                    poiLoc.setText(MecatorProjection.unprojectLon(address.getLon()) + ", " + MecatorProjection.unprojectLat(address.getLat()));
+                    poiView.getItems().add(address.toString());
+                }else {
+                    poiText.setText(nearestTag.get(0).toString()); 
+                    poiLoc.setText(MecatorProjection.unprojectLon(nearestTag.get(0).getLon()) + ", " + MecatorProjection.unprojectLat(nearestTag.get(0).getLat())); 
+                    poiView.getItems().add(nearestTag.get(0).toString()); 
+                }
                 mapView.draw();
             }
-            
-        
         });
 
         mapView.getResizeableCanvas().setOnScroll(event -> {
@@ -212,10 +229,6 @@ public class Controller implements Initializable, ControllerInterface{
             mapView.draw();
         });
 
-        mainMenuButton.setOnAction((ActionEvent e) -> {
-            mapView.drawScene();
-        });
-
         menuButton1.setOnAction((ActionEvent e) -> {
             menuButton1.setSelected(!isMenuOpen);
             leftBurgerMenu.setVisible(!isMenuOpen);
@@ -242,7 +255,9 @@ public class Controller implements Initializable, ControllerInterface{
 
         pointButton.setOnAction((ActionEvent e) ->{
             pointofInterestState = !pointofInterestState;
-
+            poiContainer.setVisible(pointofInterestState);
+            poiText.setText("Click a point of interest");
+            
             File filePassive = new File(System.getProperty("user.dir").toString() + "\\src\\main\\resources\\visuals\\pointofinterestpassive.png");
             File fileActive = new File(System.getProperty("user.dir").toString() + "\\src\\main\\resources\\visuals\\pointofinterest.png");
 
@@ -253,6 +268,7 @@ public class Controller implements Initializable, ControllerInterface{
             } else{
                 pointImage.setImage(imagePassive);
                 mapView.getDrawingMap().setMarkedTag(null);
+                poiText.setText("Click a point of interest");
                 mapView.draw();
             }
         });
@@ -362,9 +378,9 @@ public class Controller implements Initializable, ControllerInterface{
     private void pathfindBetweenTagAddresses(){
         if (startAddress != null && endAddress != null){
             Dijsktra dijkstra = s.pathfindBetweenTagAddresses(startAddress, endAddress, routeType, shortest);
-            distanceText.setText(dijkstra.getDistanceOfPath());
-            speedText.setText(dijkstra.getMinutesOfPath());
-            LinkedHashMap<TagWay, Double> path = new LinkedHashMap<>();//dijkstra.printPath();
+            //distanceText.setText(dijkstra.getDistanceOfPath());
+            //speedText.setText(dijkstra.getMinutesOfPath());
+            LinkedHashMap<TagWay, Double> path = dijkstra.printPath();
 
             Platform.runLater(() -> {
                 synchronized (pathList) {
@@ -399,6 +415,10 @@ public class Controller implements Initializable, ControllerInterface{
                     if (!routeListView.isVisible() && routeListView.getItems().size() > 0){
                         routeListView.setVisible(true);
                     }
+                    // for (TagWay pathPoint : path.keySet()){
+                    //     System.out.println(pathPoint.getRefNodes().get(0).getLat() + " " + pathPoint.getRefNodes().get(0).getLon());
+                    //     mapView.getDrawingMap().drawPoint(pathPoint.getRefNodes().get(0));
+                    // }
                 }
             });
             

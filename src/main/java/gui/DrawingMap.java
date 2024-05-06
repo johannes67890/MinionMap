@@ -204,7 +204,7 @@ public class DrawingMap {
     }
 
     public void setPointOfInterest(Tag node){
-        pointOfInterestNode = node;
+            pointOfInterestNode = node;
     }
 
     public void setMarkedTag(ArrayList<Tag> tag){
@@ -255,11 +255,9 @@ public class DrawingMap {
 
     }
 
-    private void drawPoint(Tag node){
-
+    public void drawPoint(Tag node){
         double radius = 10 * 1/Math.sqrt(transform.determinant());
         gc.fillOval(node.getLon() - radius / 2, -(node.getLat()) - radius / 2, radius, radius);
-
     }
 
     private void drawRelation(TagRelation relation){
@@ -283,6 +281,10 @@ public class DrawingMap {
         xPoints = new double[way.getRefNodes().size()];
         yPoints = new double[way.getRefNodes().size()];
         
+        if(way.getType() == null){
+            way.setType(Type.UNKNOWN);
+        }
+
         double min = way.getType().getMinWidth();
         double max = way.getType().getMaxWidth();
         double lineWidth = MathUtil.clamp(defaultLineWidth * way.getType().getWidth(), min, max);

@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import parser.Tag;
+import parser.TagAddress;
 import parser.TagBound;
 import parser.TagNode;
 import parser.TagRelation;
@@ -96,6 +97,8 @@ public class Tree implements Serializable{
                     multiTree.insert(temp, tag);
                 }
             }
+        } else if (tag instanceof TagAddress){
+            multiTree.putMap(new Point3D(tag.getLon(), tag.getLat(), (byte) 0), tag);
         }
     }
     
@@ -180,6 +183,10 @@ public class Tree implements Serializable{
 
     public static ArrayList<Tag> getNearestOfTypeBruteForce(Tag tag, List<Type> searchType){
         return multiTree.getTagsFromPoint(multiTree.nearestBruteForce(new Point3D(tag.getLon(), tag.getLat(), (byte) 0), searchType));
+    }
+
+    public static ArrayList<Tag> getNearestOfClassBruteForce(Tag tag, Class<?> classType){
+        return multiTree.getTagsFromPoint(multiTree.nearestBruteForce(new Point3D(tag.getLon(), tag.getLat(), (byte) 0), classType));
     }
 
     /**
