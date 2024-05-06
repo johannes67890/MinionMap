@@ -43,7 +43,7 @@ public class DrawingMap {
     private int hierarchyLevel = 9;
     private int zoombarIntervals = 14;
     private final double zoomLevelMin = 0.0007, zoomLevelMax = 31.8; // These variables changes how much you can zoom in and out. Min is far out and max is closest in
-    private double[] zoomScales = {32, 16, 8, 4, 2, 1, 0.5, 0.1, 0.05, 0.015, 0.0001}; // 32, 16, 8, 4, 2, 1, 0.5, 0.1, 0.05, 0.015, 0.0001
+    private double[] zoomScales = {32, 16, 8, 4, 2, 1, 0.25, 0.1, 0.05, 0.015, 0.0001}; // 32, 16, 8, 4, 2, 1, 0.5, 0.1, 0.05, 0.015, 0.0001
     public Zoombar zoombar;
     private Trie trie;
     private List<Tag> markedTag;
