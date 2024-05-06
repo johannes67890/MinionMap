@@ -77,7 +77,7 @@ public class MainView {
             e.printStackTrace();
         }
     }
-
+    
     /**
      * Initializes the stage with the scene
      * @param scene the Scene object
