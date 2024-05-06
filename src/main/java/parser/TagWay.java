@@ -1,21 +1,23 @@
 package parser;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 import gnu.trove.list.linked.TLinkedList;
 import structures.TagGrid;
 import util.StringUtility;
 import util.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import java.io.Serializable;
 
 enum Way {
     ID, REFS, NAME, TYPE, SPEEDLIMIT
 }
 
 /**
- * Class for storing a {@link HashMap} of a single way.
+ * Class for storing a {@link TLinkedList} of a single of a collection of nodes.
+ * Extends from the {@link Tag}, and implements {@link Comparable},
+ * Ways will be drawn as either polygons or lines, and gets a lot of data through its {@link Type}
+ * <p>
  * Contains the following tags:
  * <p>
  * {@link Way#ID}, {@link Way#REFS}, {@link Way#NAME}, {@link Way#TYPE}
@@ -75,9 +77,7 @@ public class TagWay extends Tag implements Comparable<TagWay>{
     }
 
     /**
-     * 
      * TagWay that is created from Relation's Outer ways.
-     * 
      * @param builder
      */
     public TagWay(TagRelation relation, long id, TLinkedList<TagNode> nodes, short speedLimit) {
@@ -98,16 +98,12 @@ public class TagWay extends Tag implements Comparable<TagWay>{
                     break;
             }
         }
-    
-
-
     }
 
     /**
      * Get the id of the way.
      * @return The id of the way.
      */
-
      public long getId(){
         return id;
     }
@@ -150,6 +146,11 @@ public class TagWay extends Tag implements Comparable<TagWay>{
         return isOneWay;
     }
 
+    /**
+     * Checks if the {@link TagWay} loops by comparing the last node and the first node.
+     * It is assumed that a TagWay cannot loop with its middle nodes.
+     * @return - true if loops, and false otherwise.
+     */
     public boolean loops(){
         if(getRefNodes().getFirst().getId() == getRefNodes().getLast().getId()){
             return true;
@@ -166,8 +167,10 @@ public class TagWay extends Tag implements Comparable<TagWay>{
         return nodes;
     }
 
-    
-
+    /**
+     * @return - The value which is defined from the way's {@link Type}.
+     * If it has no type, then the TagWay will be a line.
+     */
     public boolean isLine(){
         return isLine;
     }
@@ -186,6 +189,11 @@ public class TagWay extends Tag implements Comparable<TagWay>{
         }
     }
 
+    /**
+     * Compares a tagWay by comparing via its type's layer value.
+     * This TagWay will be perceived as "bigger", 
+     * if its layervalue is, larger than the other's.
+     */
     public int compareTo(TagWay tW){
 
         int tWLayer = tW.getType().getLayer();
@@ -200,6 +208,14 @@ public class TagWay extends Tag implements Comparable<TagWay>{
         }
     }
 
+    /**
+     * Constructs a grid with with the {@link TagGrid} object. 
+     * When constructing a grid, a rectangle is made
+     * by getting the minimum and maximum x- and y-value.
+     * Then Grids are created through rows and columns,
+     * with a hardcoded distance in width and height.
+     * 
+     */
     public void constructGrid(){
 
         float minLon = Float.MAX_VALUE;
