@@ -1,6 +1,3 @@
-
-
-
 package gui;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
@@ -16,10 +13,8 @@ import javafx.stage.Stage;
 public class MainView {
 
     enum StageSelect {
-
         MainMenu,
         MapView
-
     }
 
     private static Stage stage;
@@ -31,7 +26,6 @@ public class MainView {
     static Rectangle2D screenBounds;
     public DrawingMap drawView;
     private View view;
-
 
     /**
      * Constructor for the MainView class
@@ -78,10 +72,10 @@ public class MainView {
     protected void drawScene(StageSelect selected){
         selectedStage = selected;
         try{
-            if (selectedStage == StageSelect.MainMenu){
+            if(selectedStage == StageSelect.MainMenu){
                 view = new LobbyView(this);
                 stageInitializer(view.getScene());
-            }else if(selectedStage == StageSelect.MapView){ // else its mapView
+            } else if(selectedStage == StageSelect.MapView){ // else its mapView
                 view = new MapView(this);
                 stageInitializer(view.getScene());
                 ((MapView) view).initializeDrawingMap();
@@ -106,6 +100,4 @@ public class MainView {
     public MapView getView(){
         return (MapView) view;
     }
-
-
 }

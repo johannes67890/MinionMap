@@ -1,17 +1,67 @@
-# MapOfDenmark
-First year project at ITU - Parse n' read map of Denmark 
+<p align="center">
+<img src="https://github.com/johannes67890/MapOfDenmark/tree/main/src/main/resources/visuals/minionEyes.png" alt="Minion Eyes" width="200" height="200">
+</p>
 
-# How to run
-1. Clone the repository `$ git clone www.github.com/itu-summer/MapOfDenmark.git`
-2. Navigate to the repository `$ cd MapOfDenmark`
-3. Run the program `$ ./gradlew run` or `$ gradlew run`
+# Minion Maps
 
-# Contributors
-- [Johannes Jørgensen](https://github.com/johannes67890)
-- [Marius Cornelius Wisniewski Larsen](https://github.com/MessiGames30)
-- [Kevin Skovgaard Gravesen](https://github.com/Hopsasasa)
-- [Elias Lildholdt](https://github.com/Spurberino)
-- [Andreas Løvsgren Nielsen](https://github.com/AndreasLN)
+Minion Map is a [Geographic information system](https://en.wikipedia.org/wiki/Geographic_information_system)  with the capablebility of displaying data from [OpenStreetMap](https://www.openstreetmap.org/) in the formats ZIP and OSM.
 
-# UML Diagram
-_In the works_
+## Preview
+
+<img src="https://github.com/johannes67890/MapOfDenmark/tree/main/src/main/resources/visuals/MinionMap.png" alt="Minion Map preview">
+
+## Running the application
+Download the [latest release]() as a .jar file.
+
+To run the application, this file should be executed by opening it directly.
+
+It is also possible to run it .jar file from the command line like so:
+
+```
+java -jar MapOfDenmark.jar
+```
+
+Keep in mind that the application depends on JavaFX, and you will have to have JavaFX SDK installed on your machine.
+Here you will need to specify the path to the JavaFX SDK when you run the .jar file.
+Do it like so:
+    
+```
+java --module-path "path/to/javafx/sdk" --add-modules javafx.controls,javafx.fxml -jar MapOfDenmark.jar
+```
+
+### Running the application directly from source files
+
+With the source files downloaded, run the following command in the root of the project.
+
+```
+./gradlew run
+```
+
+### Building an executable jar from source
+
+```
+./gradlew jar
+```
+
+### Running the generated executable `.jar`
+Assuming an executable `.jar` file is located at the default location, run the following command at the project root:
+
+```
+java -jar build/libs/MapOfDenmark.jar
+```
+
+### Running test suite
+`Note`: Some test suites may fail if not run individually. This can be due to various reasons, check the individual test suite for more information.
+
+To run the test suite, run the following command:
+```
+./gradlew test
+```
+
+To generate a test coverage report using [JaCoCo](https://www.eclemma.org/jacoco/), run `gradlew test` and then run the following command:
+
+```
+./gradlew jacocoTestReport
+```
+
+The report is viewed by opening the generated `build\reports\jacoco\test\html\index.html` HTML file in your browser.

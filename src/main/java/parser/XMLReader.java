@@ -22,7 +22,6 @@ import structures.Trie;
  */
 public class XMLReader implements Serializable{
     private static TagBound bound;
-    private static TLongObjectHashMap<TagNode> places = new TLongObjectHashMap<TagNode>();
     private static TLongObjectHashMap<TagAddress> addresses = new TLongObjectHashMap<TagAddress>();
     private static TLongObjectHashMap<TagNode> nodes = new TLongObjectHashMap<TagNode>();
     private static TLongObjectHashMap<TagRelation> relations = new TLongObjectHashMap<TagRelation>();
@@ -96,14 +95,6 @@ public class XMLReader implements Serializable{
     }
 
     /**
-     * Get all the {@link TagRelation}s in the XML file.
-     * @return A {@link HashMap} of the keys as {@link Relation#ID} to all the {@link TagRelation}s in the XML file.
-     */
-    public static TLongObjectHashMap<TagNode> getPlaces(){
-        return places;
-    }
-
-    /**
      * Get all the {@link TagWay}s in the XML file.
      * @return A {@link HashMap} of the keys as {@link Way#ID} to all the {@link TagWay}s in the XML file.
      */
@@ -111,9 +102,14 @@ public class XMLReader implements Serializable{
         return ways;
     }
 
+    /**
+     * Get the {@link Trie} of the XML file.
+     * @return The {@link Trie} of the XML file.
+     */
     public static Trie getTrie(){
         return trie;
     }
+
 
     private XMLBuilder tempBuilder = new XMLBuilder();
 
@@ -123,7 +119,6 @@ public class XMLReader implements Serializable{
      * <p>
      * Uses the {@link XMLStreamReader} to read the file and parse the data into the different classes: {@link TagBound}, {@link TagNode}, {@link TagNode} , {@link TagAddress} and {@link TagWay}.
      * </p>
-     * 
      * @param is inputstream from file
      */
     public XMLReader(InputStream is) {
@@ -150,10 +145,6 @@ public class XMLReader implements Serializable{
                                     addresses.put(tempBuilder.getId(), new TagAddress(tempBuilder));
                                     trie.insert(new TagAddress(tempBuilder));
                                 } else {
-                                    TagNode node = new TagNode(tempBuilder);
-                                    if(node.getPlace().getKey() != null) {
-                                        places.put(node.getId(), node);
-                                    }
                                     nodes.put(tempBuilder.getId(), new TagNode(tempBuilder));
                                 }
                                 tempBuilder = new XMLBuilder(); // Reset the builder
@@ -189,16 +180,30 @@ public class XMLReader implements Serializable{
         }
     }
 
+    /**
+     * Clear the list in the XMLReader containing all {@link TagWay} from the XML file.
+     */
     protected static void clearWays(){
         ways = null;
     }
 
+    /**
+     * Clear the list in the XMLReader containing all {@link TagAddresses} from the XML file.
+     */
     protected static void clearAddresses(){
         addresses = null;
     }
 
+    /**
+     * Clear the list in the XMLReader containing all {@link TagRelation} from the XML file.
+     */
     protected static void clearRelations() {relations = null;}
 
+    /**
+     * Clear the list in the XMLReader containing all {@link TagBound} from the XML file.
+     * Clear the list in the XMLReader containing all {@link TagNode} from the XML file.
+     * Nulls the {@link Trie} in the XMLReader.
+     */
     protected static void clearTags(){
         bound = null;
         nodes = null;

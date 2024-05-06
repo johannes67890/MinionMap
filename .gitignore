@@ -32,6 +32,7 @@ bin
 
 # Added input files that are local to your machine
 src/main/resources/inputFiles_ignored/*
+src/main/references/files/osmFile/*
 src/main/resources/chunks
 
 

@@ -2,23 +2,23 @@ package gui;
 
 import java.util.ArrayList;
 
-import parser.TagAddress;
-import parser.TagWay;
 import parser.Model;
-import parser.Tag;
-import pathfinding.Dijsktra;
+import parser.TagAddress;
+import pathfinding.Dijkstra;
 import structures.Trie;
 import util.TransportType;
-import util.Type;
+
+ 
 
 public class Search {
     private Trie trie;
-    private MapView mapView;
-    private Trie.TrieNode pointOfInterestNode = null;
 
     public Search(MapView mw){
-        mapView = mw;
         trie = Model.getInstanceModel().getTrie();
+    }
+
+    public Search(Trie trie){
+        this.trie = trie;
     }
 
     /**
@@ -30,15 +30,6 @@ public class Search {
         return trie.getAddressSuggestions(input, 5);
     }
 
-    public void setPointOfInterest(float x, float y){
-        TagAddress point = new TagAddress(0, y, x, "PointOfInterest", "1", " ", " ", " ", " ");
-        if (pointOfInterestNode == null){
-            pointOfInterestNode = trie.insert(point);
-        }else{
-            pointOfInterestNode.addHouseNumber(" ", point);
-        }
-    }
-
     /**
      * A method to get the address object from the trie
      * @param input - The input string to search for
@@ -46,6 +37,7 @@ public class Search {
      * @return The TagAddress object
      */
     public TagAddress getAddress(String input, String houseNumber){
+        System.out.println(input);
         return trie.getAddressObject(input, houseNumber);
     }
 
@@ -56,8 +48,8 @@ public class Search {
      * @param transportType The type of transportation used to pathfind
      * @param shortest      A boolean to determine if the shortest or fastest path should be found
      */
-    public Dijsktra pathfindBetweenTagAddresses(TagAddress start, TagAddress end, TransportType transportType, boolean shortest){
-        Dijsktra dijkstra = new Dijsktra(start, end, transportType, shortest);
+    public Dijkstra pathfindBetweenTagAddresses(TagAddress start, TagAddress end, TransportType transportType, boolean shortest){
+        Dijkstra dijkstra = new Dijkstra(start, end, transportType, shortest);
         
         return dijkstra;
     }

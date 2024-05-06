@@ -23,7 +23,7 @@ import parser.Tag;
  * The algorithm is to find the shortest path in a directed weighted graph, where this graph is based off of 
  * the road-network on a given map.
  */
-public class Dijsktra {
+public class Dijkstra {
     private HashMap<Long, Double> distTo;          // distTo[v] = distance  of shortest s->v path
     private HashMap<Long, Double> costTo;
     private HashMap<Long, DirectedEdge> edgeTo;    // edgeTo[v] = last edge on shortest s->v path
@@ -54,7 +54,7 @@ public class Dijsktra {
      * @param transportType The type of transportation used
      * @param shortest      The type of pathfinding. If true then speed is ignored. If false then the weight is minutes of travel
      */
-    public Dijsktra(Tag _start, Tag _finish, TransportType transportType, boolean shortest) {
+    public Dijkstra(Tag _start, Tag _finish, TransportType transportType, boolean shortest) {
         distTo = new HashMap<>();
         edgeTo = new HashMap<Long, DirectedEdge>(G.V());
         costTo = new HashMap<>();
@@ -150,7 +150,7 @@ public class Dijsktra {
 
                     list.add(tagNode);
 
-                    if(tagNode.hasIntersection() || i == way.getRefNodes().size() || tagNode.getId() == finish.getId()){
+                    if(tagNode.hasIntersection() || i == way.getRefNodes().size() || tagNode.getId() == finish.getId() || tagNode.getId() == start.getId()){
                         addRoad(list, way);
                         list = new ArrayList<>();
                         list.add(tagNode);

@@ -1,8 +1,6 @@
 package parser;
 
 import java.io.Serializable;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import util.Type;
 

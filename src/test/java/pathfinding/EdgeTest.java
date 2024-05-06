@@ -40,7 +40,7 @@ public class EdgeTest {
     }
 
     @Test
-    void EdgeTest(){
+    void initEdgeTest(){
         assertThrows(IllegalArgumentException.class,() -> new DirectedEdge(node0, node0, 1d));
         assertThrows(IllegalArgumentException.class,() -> new DirectedEdge(node0, node1, Double.NaN));
     }

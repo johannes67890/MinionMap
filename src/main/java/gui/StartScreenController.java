@@ -15,7 +15,10 @@ import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
-
+/**
+ * The StartScreenController class is responsible for handling user input on the start screen
+ * It is a subclass of the ControllerInterface class
+ */
 public class StartScreenController implements Initializable, ControllerInterface{
 
     @FXML private Button submitButton;
@@ -27,17 +30,26 @@ public class StartScreenController implements Initializable, ControllerInterface
 
     private LobbyView lobbyView;
     private File droppedFile;
+    // List of accepted file types
     private ArrayList<String> listOfAcceptedTypes = new ArrayList<>(){{
         add("*.osm");
         add("*.zip");
         add("*.xml");
         add("*.bin");
     }};
-
+    /**
+     * Starts the controller
+     * @param view - the view object to be associated with the controller
+     */
     public void start(View view){
         this.lobbyView = (LobbyView) view;
     }
 
+    /**
+     * Initializes the controller
+     * @param location the URL location
+     * @param resources the ResourceBundle resources
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 

@@ -5,7 +5,7 @@ package util;
  * UtilityClass for containing various methods for handling strings.
  * 
  */
-public final class StringUtility {
+public class StringUtility {
 
 
     /**
@@ -84,6 +84,12 @@ public final class StringUtility {
         return p[n];
        
     }
+
+    /**
+     * Utility method for formatting a string, where the first letter of each word is capitalized.
+     * @param input The string to be formatted
+     * @return A formatted string, where the first letter of each word is capitalized
+     */
     public static String formatString(String input) {
         String[] words = input.toLowerCase().split("_");
 

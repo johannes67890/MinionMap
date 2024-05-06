@@ -2,7 +2,6 @@ package parser;
 import java.util.ArrayList;
 
 import gnu.trove.list.TLinkable;
-import javafx.util.Pair;
 import structures.KDTree.Tree;
 import util.Type;
 
@@ -24,7 +23,6 @@ import util.Type;
 public class TagNode extends Tag implements TLinkable<TagNode>, Comparable<TagNode> {
 
     private long id;
-    private Pair<Type.Place, String> place = null;
     private TagWay parent;
     private Type type;
     private float lon;
@@ -41,7 +39,6 @@ public class TagNode extends Tag implements TLinkable<TagNode>, Comparable<TagNo
         this.id = builder.getId();
         this.lon = builder.getLon();
         this.lat = builder.getLat();
-        this.place = new Pair<Type.Place,String>(builder.getPlace(), builder.getName());
     }
 
     /**
@@ -109,10 +106,6 @@ public class TagNode extends Tag implements TLinkable<TagNode>, Comparable<TagNo
         return type;
     }
 
-    public Pair<Type.Place, String> getPlace(){
-        return place;
-    }
-
     /**
      * Set the type of the node.
      * @param type - The {@link Type} of the node.
@@ -134,11 +127,6 @@ public class TagNode extends Tag implements TLinkable<TagNode>, Comparable<TagNo
     @Override
     public int compareTo(TagNode o) {
         return Long.compare(this.id, o.getId());
-    }
-
-    @Override
-    public String toString() {
-        return place.getValue() + " " + parent;
     }
 
     /**

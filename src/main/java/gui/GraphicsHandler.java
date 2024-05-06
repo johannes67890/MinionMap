@@ -13,11 +13,9 @@ public final class GraphicsHandler {
      * The GraphicStyle enum defines the available styles
      */
     public enum GraphicStyle{
-
         DEFAULT,
         DARKMODE,
         GRAYSCALE,
-
     }
 
     /**

@@ -11,12 +11,17 @@ public enum FileDistributer {
     bornholmZip("files/defaultFile/map.zip"),
     // Test Files
     testMap("testMap.osm"),
+    testMapInZip("testMap.zip"),
     RebakSopark("testRebakSopark.osm");
 
 
 
     private String filePath;
 
+    /**
+     * Constructor for the FileDistributer class
+     * @param fileName the name of the file
+     */
     FileDistributer(String fileName) {
         try {
             ClassLoader classLoader = getClass().getClassLoader();

@@ -1,4 +1,5 @@
 package gui;
+
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
@@ -38,7 +39,7 @@ import parser.TagAddress;
 import parser.TagNode;
 import parser.TagRelation;
 import parser.TagWay;
-import pathfinding.Dijsktra;
+import pathfinding.Dijkstra;
 import structures.KDTree.Point3D;
 import structures.KDTree.Tree;
 import util.AddressComparator;
@@ -50,12 +51,14 @@ public class Controller implements Initializable, ControllerInterface{
     ObservableList<String> style = FXCollections.observableArrayList(
         "default", "dark", "gray scale");
 
+    // Menu Buttons
     @FXML private ToggleButton menuButton1;
     @FXML private ToggleButton pointButton;
     @FXML private ToggleButton routeButton;
     @FXML private Button searchButton;
     @FXML private Pane leftBurgerMenu;
 
+    // Route Buttons
     @FXML private Pane routeTypeMenu;
     @FXML private Button walkButton;
     @FXML private Button bicycleButton;
@@ -67,35 +70,32 @@ public class Controller implements Initializable, ControllerInterface{
     @FXML private ListView<String> routeListView;
     @FXML private Label routeDistanceLable;
     @FXML private Label routeTimeLabel;
-
     @FXML private Text speedText;
     @FXML private Text distanceText;
+    // Point of Interest
     @FXML private StackPane poiContainer;
     @FXML private Text poiText;
     @FXML private ListView<String> poiView;
+    @FXML private ImageView pointImage;
     @FXML private Text poiLoc;
-
+    // Search Bar
     @FXML private ComboBox<String> searchBarStart;
     @FXML private ComboBox<String> searchBarDestination;
     @FXML private VBox mainMenuVBox;
     @FXML private VBox graphicVBox;
-    
+    @FXML private Button swapButton;
+    // Main UI
     @FXML private HBox mainUIHBox;
     @FXML private BorderPane mainBorderPane;
     @FXML private ChoiceBox<String> styleChoiceBox;
     @FXML private Label zoomLevelText;
     @FXML private ImageView zoomLevelImage;
-    @FXML private ImageView pointImage;
-    @FXML private Button swapButton;
-
-
 
     private boolean pointofInterestState = false;
     private boolean isMenuOpen = false;
     private MapView mapView;
     private ObservableList<String> searchList = FXCollections.observableArrayList();
     private ObservableList<String> pathList = FXCollections.observableArrayList();
-
 
     private List<TagAddress> addresses = new ArrayList<>();
 
@@ -196,12 +196,10 @@ public class Controller implements Initializable, ControllerInterface{
             }
             
             mapView.getDrawingMap().zoom(Math.pow(zoomMultiplier,event.getDeltaY()), event.getX(), event.getY());
-
             mapView.getDrawingMap().zoombarUpdater(zoomLevelText, zoomLevelImage);
         });
 
         mapView.getResizeableCanvas().setOnMouseDragged(e -> {
-
             if (!pointofInterestState){
                 double dx = e.getX() - lastX;
                 double dy = e.getY() - lastY;
@@ -400,14 +398,10 @@ public class Controller implements Initializable, ControllerInterface{
      */
     private void pathfindBetweenTagAddresses(){
         if (startAddress != null && endAddress != null){
-            Dijsktra dijkstra = s.pathfindBetweenTagAddresses(startAddress, endAddress, routeType, shortest);
-            //distanceText.setText(dijkstra.getDistanceOfPath());
-            //speedText.setText(dijkstra.getMinutesOfPath());
+            Dijkstra dijkstra = s.pathfindBetweenTagAddresses(startAddress, endAddress, routeType, shortest);
 
             ArrayList<Tag> nodes = new ArrayList<>();
-            //nodes.addAll(dijkstra.allVisitedPaths());
             TagWay sWay = new TagWay((long)0, "Route", dijkstra.shortestPathDetailed(), (short)0, Type.PATHWAY);
-            //System.out.println("Total distance: " + dijkstra.getTotalDistance());
             
             if(showAllRoutesCheckBox.isSelected()){
                 ArrayList<Tag> allPaths = dijkstra.allVisitedPaths();
@@ -560,7 +554,6 @@ public class Controller implements Initializable, ControllerInterface{
                 endAddress = null;
             }
             hasSearchedForPath = false;
-            // Update UI on JavaFX Application Thread
             Platform.runLater(() -> {
                 synchronized (searchList) {
                     if (!searchBar.getItems().isEmpty()) {

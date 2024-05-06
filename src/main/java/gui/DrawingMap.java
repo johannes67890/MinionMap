@@ -4,13 +4,11 @@ import java.util.HashSet;
 import java.util.List;
 
 import gui.GraphicsHandler.GraphicStyle;
-import javafx.geometry.VPos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
-import javafx.scene.text.TextAlignment;
 import javafx.scene.transform.Affine;
 import parser.Model;
 import parser.Tag;
@@ -25,7 +23,6 @@ import structures.KDTree.Rect3D;
 import structures.KDTree.Tree;
 import util.MathUtil;
 import util.Type;
-
 
 /**
  * 
@@ -47,7 +44,6 @@ public class DrawingMap {
     public Zoombar zoombar;
     private Trie trie;
     private List<Tag> markedTag;
-    private List<TagNode> nodes;
     private List<TagWay> ways;
     private List<TagRelation> relations;
     private Tag pointOfInterestNode = null;
@@ -64,14 +60,9 @@ public class DrawingMap {
     private List<TagWay> waysToDrawWithType;
     private List<TagWay> waysToDrawWithoutType;
 
-
-
     public DrawingMap(MapView mapView){
         this.mapView = mapView;
-
     }
-
-
 
     /**
      * Initialization of the drawing map.
@@ -173,7 +164,6 @@ public class DrawingMap {
             }
         }
 
-
         if (!backGroundSet){
             setBackGroundColor(Color.web("#F2EFE9"));
         }
@@ -250,9 +240,7 @@ public class DrawingMap {
     }
 
     /**
-     * 
      * Draws a red circle from a single coordinate.
-     * 
      * @param node
      */
     public void drawPoint(Tag node){
@@ -470,9 +458,7 @@ public class DrawingMap {
     }
 
     /**
-     * 
-     * Zoomns in or out on the map dependent on the mouseposition
-     * 
+     * Zooms in or out on the map dependent on the mouseposition
      * @param factor - The strength of which the map is zoomed
      * @param dx - Distance to pan on the x-axis
      * @param dy - Distance to pan on the y-axis
@@ -539,23 +525,27 @@ public class DrawingMap {
      * @param meters the amount of meters you want to know the pixel value of
      * @return the amount of pixels that corresponds to the amount of meters
      */
-
-     private double metersToPixels(int meters){
+    private double metersToPixels(int meters){
         float[] bounds = getScreenBounds();
         TagNode left = new TagNode(0, bounds[1]);
         TagNode right = new TagNode(0, bounds[3]);
         double widthInMeter =  left.distance(right);
-
-        
-        double metersPerPixelRatio = canvas.getWidth() / widthInMeter; //Divided by 2 because the width is from the center of the screen
-
+        double metersPerPixelRatio = canvas.getWidth() / widthInMeter; 
         return metersPerPixelRatio * meters;
     }
 
+    /**
+     * Sets the zoom label
+     * @param label - The label that shows the range of the zoombar in meters
+     */
     public void setZoomLabel(Label label){
         this.zoomLabel = label;
     }
 
+    /**
+     * Sets the zoom image
+     * @param imageView 
+     */
     public void setZoomImage(ImageView imageView){
         this.zoomImage = imageView;
     }

@@ -2,9 +2,7 @@ package parser;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-
 import javax.xml.stream.XMLStreamReader;
-
 import gnu.trove.list.linked.TLinkedList;
 import util.StringUtility;
 import util.Type;

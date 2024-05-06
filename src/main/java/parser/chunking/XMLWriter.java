@@ -221,7 +221,6 @@ public class XMLWriter {
                 }
             }
         }catch (Exception e){
-            System.out.println("ooof");
            e.printStackTrace();
         }
         return objectList;
