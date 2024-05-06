@@ -4,7 +4,6 @@ import java.io.InputStream;
 import java.io.Serial;
 import java.io.Serializable;
 
-import edu.princeton.cs.algs4.In;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import structures.Trie;
 import structures.KDTree.Tree;
@@ -26,7 +25,6 @@ public class Model implements Serializable{
     private XMLReader reader;
     private TagBound bound;
     private TLongObjectHashMap<TagNode> nodes = new TLongObjectHashMap<TagNode>();
-
     private TLongObjectHashMap<TagAddress> addresses = new TLongObjectHashMap<TagAddress>();
     private Trie trie = new Trie();
 
