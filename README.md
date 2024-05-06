@@ -8,7 +8,7 @@ Minion Map is a [Geographic information system](https://en.wikipedia.org/wiki/Ge
 
 ## Preview
 
-<img src="https://github.com/johannes67890/MapOfDenmark/tree/main/src/main/resources/visuals/MapOfDenmark" alt="Minion Map preview">
+<img src="https://github.com/johannes67890/MapOfDenmark/tree/main/src/main/resources/visuals/MinionMap.png" alt="Minion Map preview">
 
 ## Running the application
 Download the [latest release]() as a .jar file.
