@@ -177,14 +177,40 @@ public class Tree implements Serializable{
         return multiTree.getTagsFromPoint(new Point3D(node.getLon(), node.getLat(), (byte) 10));
     }
 
+    /**
+     * Returns an ArrayList<Tag> that is associated with the nearest Point3D in the K3DTree with a specific Type.
+     * This uses the build-in function from the K3DTree that searches through the tree.
+     * 
+     * @param tag           The specified tag of which you need to search for the nearest Point3D
+     * @param searchType    The specified List<Type> that contains all the allowed types
+     * @return              An ArrayList<Tag> that is associated with the nearest Point3D in the K3DTree with a specific Type
+     */
     public static ArrayList<Tag> getNearestOfType(Tag tag, List<Type> searchType){
         return multiTree.nearestTags(new Point3D(tag.getLon(), tag.getLat(), (byte) 10), searchType);
     }
 
+    /**
+     * Returns an ArrayList<Tag> that is associated with the nearest Point3D in the K3DTree with a specific Type.
+     * This uses a brute-force method of comparing every Point2D in the HashMap in K3DTree and find the Point3D
+     * that is closest to the parameter tag.
+     * 
+     * @param tag           The specified tag of which you need to search for the nearest Point3D
+     * @param searchType    The specified List<Type> that contains all the allowed types
+     * @return              An ArrayList<Tag> that is associated with the nearest Point3D in the K3DTree with a specific Type
+     */
     public static ArrayList<Tag> getNearestOfTypeBruteForce(Tag tag, List<Type> searchType){
         return multiTree.getTagsFromPoint(multiTree.nearestBruteForce(new Point3D(tag.getLon(), tag.getLat(), (byte) 0), searchType));
     }
 
+    /**
+     * Returns an ArrayList<Tag> that is associated with the nearest Point3D in the K3DTree of a specific Class type.
+     * This uses a brute-force method of comparing every Point2D in the HashMap in K3DTree and find the Point3D
+     * that is closest to the parameter tag.
+     * 
+     * @param tag           The specified tag of which you need to search for the nearest Point3D
+     * @param classType     The specified Class type, that the returned Tags should be of.
+     * @return              An ArrayList<Tag> that is associated with the nearest Point3D in the K3DTree with a specific Type
+     */
     public static ArrayList<Tag> getNearestOfClassBruteForce(Tag tag, Class<?> classType){
         return multiTree.getTagsFromPoint(multiTree.nearestBruteForce(new Point3D(tag.getLon(), tag.getLat(), (byte) 0), classType));
     }

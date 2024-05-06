@@ -82,14 +82,27 @@ public class MinPQ<Key extends Comparable<Key>> {
     }
 
 
+    /**
+     * Exchanges the value on index k with its parent until it becomes the root,
+     * or the value is between its childdren's values. 
+     * 
+     * @param k - the index of the value to swim
+     */
     private void swim(int k){
-        while (k  > 1 && more(k/2, k)){
+        while (k > 1 && more(k/2, k)){
             exch(k/2, k);
             k = k/2;
         }
 
     }
 
+    /**
+     * Exchanges the value on index k with one of its children,
+     * until the value is between its children's values, or it
+     * becomes a leaf.
+     * 
+     * @param k - the index of the value.
+     */
     private void sink(int k){
         while (2*k <= N){
             int j = 2*k;

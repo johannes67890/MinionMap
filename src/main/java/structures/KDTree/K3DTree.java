@@ -15,6 +15,7 @@ import util.Type;
 /**
  * 
  * This datastructure is made for finding points within a Rect3D.
+ * The datastructure sorts the Point3D into dimensions, throught the Node class.
  * Great for maps!
  * 
  */
@@ -442,6 +443,13 @@ public class K3DTree {
         return best;
     }
 
+    /**
+     * Returns the neaerst Point3D through brute-force. Looking through all Points in the HashMap<Point2D, Tag>,
+     * returning the Point3D with the shortest distance to the parameter point, with the Class type of classType.
+     * @param point     The Point3D from which the nearest search should start
+     * @param classType The type of class in question, needed for whitelist
+     * @return          The nearest Point3D with a Tag of Class type classType
+     */
     public Point3D nearestBruteForce(Point3D point, Class<?> classType){
         Point3D best = null;
         for (Point2D other : pointToTag.keySet()){
@@ -550,7 +558,7 @@ public class K3DTree {
     }
     
     /**
-     * The data structure from which a K3DTree is created.
+     * The data structure from which a K3DTree is created. This is created for each Point3D in the K3DTree.
      */
     private static class Node {
         
