@@ -27,8 +27,9 @@
    <Label fx:id="subTitleLabel" text="Welcome to the Map Application" styleClass="subTitle"/>
    <!-- Select default maps -->
    <HBox styleClass="selectDefaultMaps" spacing="20">
-        <Button fx:id="welcomeDenmark" style="-fx-background-image: url('visuals/denmark.png')" styleClass="mapButton">Denmark</Button>
+
         <Button fx:id="welcomeCopenhagen" style="-fx-background-image: url('visuals/copenhagen.png')" styleClass="mapButton">Copenhagen</Button>
+       <Button fx:id="welcomeBornholm" style="-fx-background-image: url('visuals/denmark.png')" styleClass="mapButton">Bornholm</Button>
    </HBox>
    <!-- Select file -->
    <Label fx:id="titleLabel" text="Drag n' drop" styleClass="title"/>

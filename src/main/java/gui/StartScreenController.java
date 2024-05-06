@@ -22,6 +22,8 @@ public class StartScreenController implements Initializable, ControllerInterface
     @FXML private Button openFileFinderButton;
     @FXML private HBox contentPane;
     @FXML private Text contentPaneText;
+    @FXML private Button welcomeCopenhagen;
+    @FXML private Button welcomeBornholm;
 
     private LobbyView lobbyView;
     private File droppedFile;
@@ -63,6 +65,15 @@ public class StartScreenController implements Initializable, ControllerInterface
             lobbyView.initializeMap(finalFile);
         });
 
+        welcomeCopenhagen.setOnAction((ActionEvent e) -> {
+            File finalFile = new File(FileDistributer.copenhagenZip.getFilePath());
+            lobbyView.initializeMap(finalFile);
+        });
+
+        welcomeBornholm.setOnAction((ActionEvent e) -> {
+            File finalFile = new File(FileDistributer.bornholmZip.getFilePath());
+            lobbyView.initializeMap(finalFile);
+        });
         contentPane.setOnDragOver(new EventHandler<DragEvent>() {
 
             @Override
