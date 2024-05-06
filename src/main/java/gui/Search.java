@@ -6,7 +6,7 @@ import parser.TagAddress;
 import parser.TagWay;
 import parser.Model;
 import parser.Tag;
-import pathfinding.Dijsktra;
+import pathfinding.Dijkstra;
 import structures.Trie;
 import util.TransportType;
 import util.Type;
@@ -58,8 +58,8 @@ public class Search {
      * @param transportType The type of transportation used to pathfind
      * @param shortest      A boolean to determine if the shortest or fastest path should be found
      */
-    public Dijsktra pathfindBetweenTagAddresses(TagAddress start, TagAddress end, TransportType transportType, boolean shortest){
-        Dijsktra dijkstra = new Dijsktra(start, end, transportType, shortest);
+    public Dijkstra pathfindBetweenTagAddresses(TagAddress start, TagAddress end, TransportType transportType, boolean shortest){
+        Dijkstra dijkstra = new Dijkstra(start, end, transportType, shortest);
         
         return dijkstra;
     }
