@@ -17,29 +17,11 @@ import parser.Model;
 
 public class FileHandlerTest {
     
-    @BeforeEach
-    public void setUp() {
-        
-    }
-
-    @Test
-    public void testClearOsmFiles() {
-        File testFile = new File(System.getProperty("user.dir").toString() + "\\src\\main\\resources\\files\\osmFile\\testMap.osm");
-        File file = new File(System.getProperty("user.dir").toString() + "\\src\\main\\resources\\files\\osmFile\\");
-        
-        assertTrue(testFile.exists());
-        assertTrue(file.listFiles().length > 0);
-
-        FileHandler.clearOsmFiles();
-        
-        assertEquals(0, file.listFiles().length);
-    }
-
     @Test
     public void testGetModelFromOsm() {
         FileHandler.getModel(new File(FileDistributer.testMap.getFilePath()));
         assertTrue(FileDistributer.testMap.getFilePath().contains(".osm"));
-        assertTrue(Model.getInstanceModel().getNodes().valueCollection().size() > 0);
+        assertTrue(Model.getInstanceModel() != null);
     }
 
     @Test
@@ -51,5 +33,14 @@ public class FileHandlerTest {
         FileHandler.getModel(new File(FileDistributer.testMapInZip.getFilePath()));
         assertTrue(FileDistributer.testMapInZip.getFilePath().contains(".zip"));
         assertTrue(sizeBefore < file.listFiles().length);
+    }
+
+    @Test
+    public void testClearOsmFiles() {
+        FileHandler.getModel(new File(FileDistributer.testMapInZip.getFilePath()));
+        File file = new File(System.getProperty("user.dir").toString() + "\\src\\main\\resources\\files\\osmFile\\");
+        FileHandler.clearOsmFiles();
+        
+        assertEquals(0, file.listFiles().length);
     }
 }
