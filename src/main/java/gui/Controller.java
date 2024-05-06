@@ -126,6 +126,9 @@ public class Controller implements Initializable, ControllerInterface{
         panZoomInitialize();
     }
 
+    /**
+     * Initializes the pan and zoom functionality of the map
+     */
     private void panZoomInitialize(){
         mapView.getResizeableCanvas().setOnMousePressed(e -> {
             lastX = e.getX();
@@ -375,6 +378,9 @@ public class Controller implements Initializable, ControllerInterface{
         });
     }
 
+    /**
+     * Pathfinds between the two addresses in the comboboxes
+     */
     private void pathfindBetweenTagAddresses(){
         if (startAddress != null && endAddress != null){
             Dijsktra dijkstra = s.pathfindBetweenTagAddresses(startAddress, endAddress, routeType, shortest);
@@ -427,7 +433,11 @@ public class Controller implements Initializable, ControllerInterface{
         }
     }
 
-
+    /**
+     * Sets the style class of a button
+     * @param b The button to set the style class of
+     * @param s The style class to set
+     */
     private void setStyleClass(Button b, String s){
         b.getStyleClass().clear();
         b.getStyleClass().add(s);
@@ -482,6 +492,9 @@ public class Controller implements Initializable, ControllerInterface{
             return null;
     }
 
+    /**
+     * Switches the start and destination addresses in the comboboxes
+     */
     private void switchStartAndDest(){
 
         String startAddressString = searchBarStart.getEditor().textProperty().getValue();
