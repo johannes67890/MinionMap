@@ -1,12 +1,11 @@
 package gui;
 
+import java.net.URL;
+
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-
 import util.FileDistributer;
-
-import java.net.URL;
 /**
  * The MapView class is responsible for drawing the map view
  * It extends the View class and uses the DrawingMap class to draw the map
@@ -60,6 +59,7 @@ public class MapView extends View{
      * Calls setDrawingMap function inside View class
      */
     public void setDrawingMap() {
+        
         super.setDrawingMap(new DrawingMap(this, super.getModel()));
     }
 

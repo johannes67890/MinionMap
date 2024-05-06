@@ -75,6 +75,8 @@ public class DrawingMap {
         this.model = model;
     }
 
+
+
     /**
      * Initialization of the drawing map.
      * The first drawing of the map.

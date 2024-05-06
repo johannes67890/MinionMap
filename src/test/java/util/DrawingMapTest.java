@@ -1,17 +1,16 @@
 package util;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.ArrayList;
+import java.io.FileInputStream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import gui.DrawingMap;
+import gui.MainView;
+import gui.MapView;
 import javafx.scene.canvas.Canvas;
-import parser.Tag;
 import parser.TagBound;
 import parser.XMLReader;
 
@@ -25,17 +24,23 @@ public class DrawingMapTest {
     
     @BeforeEach
     void testXMLReaderStartup() {
-        this.reader = new XMLReader("src/test/java/org/ressources/testMap.osm");
+        try{
+
+            this.reader = new XMLReader(new FileInputStream("src/main/ressources/testMap.osm"));
+        }
+        catch(Exception e){
+            
+        }
         assertNotNull(reader);
         assertDoesNotThrow(() -> this.reader);
-        canvas = new Canvas(300, 250);
-        drawingMap = new DrawingMap(reader);
+        MainView mainView = new MainView();
+
+        drawingMap = ((MapView ) mainView.getView()).getDrawingMap();
     }
 
 
     @Test
     void getScreenBounds() {
-        drawingMap.initialize(canvas);
 
         float[] bounds = drawingMap.getScreenBounds();
 

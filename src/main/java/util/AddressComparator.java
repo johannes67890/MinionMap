@@ -1,8 +1,13 @@
 package util;
 
 import java.util.Comparator;
+
 import parser.TagAddress;
 
+/**
+ * Comparater for the {@link TagAddress} object, which is used to sort, the suggestionlist while the user
+ * searches for an address.
+ */
 public class AddressComparator implements Comparator<TagAddress> {
     @Override
     public int compare(TagAddress address1, TagAddress address2) {
