@@ -69,7 +69,7 @@ public class FileHandler {
         return loadBin(new File(path));
     }
 
-    private static FileInputStream getFileInputStream(File file) {
+    public static FileInputStream getFileInputStream(File file) {
         try{
             return new FileInputStream(file);
         } catch (FileNotFoundException e) {
