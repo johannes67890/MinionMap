@@ -32,7 +32,7 @@ import java.util.ArrayList;
  *  @see <a href="https://algs4.cs.princeton.edu/42digraph">Section 4.2</a> of
  *  <i>Algorithms, 4th Edition</i> by Robert Sedgewick and Kevin Wayne.
  *  @see {@link Digraph} The graph that supports this edge
- *  @see {@link Dijsktra} The algorithm that uses this graph
+ *  @see {@link Dijkstra} The algorithm that uses this graph
  *  @author Robert Sedgewick
  *  @author Kevin Wayne
  */
