@@ -3,7 +3,7 @@ package pathfinding;
 import parser.TagNode;
 /**
  * <p>
- *  <b>IMPORTANT NOTE</b>: This class is made from inspiration from the <a href="https://algs4.cs.princeton.edu/">Princeton University Algorithms Library</a>.
+ *  <b>IMPORTANT NOTE</b>: This class is made from the <a href="https://algs4.cs.princeton.edu/">Princeton University Algorithms Library</a>.
  * </p>
  * 
  *  The {@code DirectedEdge} class represents a weighted edge in an

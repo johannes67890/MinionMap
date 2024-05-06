@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 /**
  * <p>
- * <b>IMPORTANT NOTE</b>: This class is made from inspiration from the <a href="https://algs4.cs.princeton.edu/">Princeton University Algorithms Library</a>.
+ *  <b>IMPORTANT NOTE</b>: This class is made from the <a href="https://algs4.cs.princeton.edu/">Princeton University Algorithms Library</a>.
  * </p>
  * 
  *  The {@code Digraph} class represents a directed graph of vertices of type {@link TagNode}. The vertices are
