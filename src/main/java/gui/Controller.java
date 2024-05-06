@@ -6,9 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ResourceBundle;
 
-
 import gui.GraphicsHandler.GraphicStyle;
-import gui.MainView.StageSelect;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -41,10 +39,10 @@ import parser.TagWay;
 import pathfinding.Dijsktra;
 import structures.KDTree.Point3D;
 import structures.KDTree.Tree;
-import util.TransportType;
-import util.Type;
 import util.AddressComparator;
 import util.MathUtil;
+import util.TransportType;
+import util.Type;
 
 public class Controller implements Initializable, ControllerInterface{
     
@@ -494,12 +492,16 @@ public class Controller implements Initializable, ControllerInterface{
             searchBarDestination.getEditor().textProperty().setValue(" ");
         } else{
             searchBarDestination.getEditor().textProperty().set(startAddressString);
+
         }
         if (endAddressString == ""){
             searchBarStart.getEditor().textProperty().setValue(" ");
         } else{
             searchBarStart.getEditor().textProperty().set(endAddressString);
         }
+
+        startAddress = comboBoxAddress(searchBarStart);
+        endAddress = comboBoxAddress(searchBarDestination);
     }
 
     /**
