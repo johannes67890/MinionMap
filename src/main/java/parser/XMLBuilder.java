@@ -19,7 +19,6 @@ public class XMLBuilder implements Serializable{
         private RelationBuilder relationBuilder = new RelationBuilder();
 
         private String name; // name from a <tag> in a parrent element
-        private Type.Place place;
         private Type type;
         private String TypeValue;
         private long id;
@@ -38,10 +37,6 @@ public class XMLBuilder implements Serializable{
 
         public boolean isEmpty(){
             return this.getAddressBuilder().isEmpty() || this.getWayBuilder().isEmpty() || this.getRelationBuilder().isEmpty();
-        }
-        
-        public Type.Place getPlace(){
-            return this.place;
         }
 
         public String getName(){
@@ -141,15 +136,6 @@ public class XMLBuilder implements Serializable{
         private void parseTag(String k, String v){
             if(k.equals("name")){
                 this.name = v; // set the name of the node
-            }
-
-            if(k.equals("place")){
-                for (Type.Place currPlace : Type.Place.getTypes()) {
-                    if (v.equals(currPlace.getValue())) {
-                        this.place = currPlace;
-                        break;
-                    }
-                }
             }
 
             if(k.contains("maxspeed")){

@@ -38,7 +38,7 @@ import parser.TagAddress;
 import parser.TagNode;
 import parser.TagRelation;
 import parser.TagWay;
-import pathfinding.Dijsktra;
+import pathfinding.Dijkstra;
 import structures.KDTree.Point3D;
 import structures.KDTree.Tree;
 import util.AddressComparator;
@@ -400,7 +400,7 @@ public class Controller implements Initializable, ControllerInterface{
      */
     private void pathfindBetweenTagAddresses(){
         if (startAddress != null && endAddress != null){
-            Dijsktra dijkstra = s.pathfindBetweenTagAddresses(startAddress, endAddress, routeType, shortest);
+            Dijkstra dijkstra = s.pathfindBetweenTagAddresses(startAddress, endAddress, routeType, shortest);
             //distanceText.setText(dijkstra.getDistanceOfPath());
             //speedText.setText(dijkstra.getMinutesOfPath());
 

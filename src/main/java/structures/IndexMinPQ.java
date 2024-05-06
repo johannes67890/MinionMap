@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 // Imports for docs
 import parser.Tag;
-import pathfinding.Dijsktra;
+import pathfinding.Dijkstra;
 
 /**
  * <p>
@@ -19,7 +19,7 @@ import pathfinding.Dijsktra;
  *  the keys.
  *  <p>
  *  This implementation uses a binary heap along with a {@link HashMap} with the key as the {@code id} of a {@link Tag} and 
- *  the value is a {@code id} for a {@link Tag} in the {@code distTo} field, used in {@link Dijsktra}.
+ *  the value is a {@code id} for a {@link Tag} in the {@code distTo} field, used in {@link Dijkstra}.
  * 
  *  The <em>insert</em>, <em>delete-the-minimum</em>, <em>delete</em>,
  *  <em>change-key</em>, <em>decrease-key</em>, and <em>increase-key</em>
@@ -36,7 +36,7 @@ import pathfinding.Dijsktra;
  *
  *  @see <a href="https://algs4.cs.princeton.edu/42digraph">Section 4.2</a> of
  *  <i>Algorithms, 4th Edition</i> by Robert Sedgewick and Kevin Wayne.
- *  @see {@link Dijsktra} The algorithm that uses this Priority Queue
+ *  @see {@link Dijkstra} The algorithm that uses this Priority Queue
  *  @author Robert Sedgewick
  *  @author Kevin Wayne
  * 
