@@ -28,8 +28,7 @@ public class Trie implements Serializable {
      * @param address the TagAddress object to be inserted
      */
     public TrieNode insert(TagAddress address) {
-        // address is made lowercase to make searching easier for the user, ie.
-        // writing "Svanevej" is read the same as "svanevej"
+        // address is made lowercase and all spaces are removed
         currentNode = root;
         String addressString = address.getStreet() + " " + address.getPostcode() + " " + address.getCity();
         String treatedAddressString = addressString.toLowerCase().replaceAll(" ", "");
@@ -125,6 +124,11 @@ public class Trie implements Serializable {
         }
     }
 
+    /**
+     * Method to move through the Trie
+     * @param searchInput - The input string to search for
+     * @return A boolean to determine if the searchInput is in the Trie
+     */
     private boolean moveThroughTree(String searchInput) {
         currentNode = root;
         searchInput = searchInput.toLowerCase().replaceAll(" ", "");
