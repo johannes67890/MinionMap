@@ -1,3 +1,6 @@
+
+
+
 package gui;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
@@ -5,6 +8,11 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
+/**
+ * The MainView class is the main view of the application
+ * It is responsible for drawing the main menu (Lobbyview.java) and the map view (MapView.java)
+ * It also initializes the stage and the scene for the application
+ */
 public class MainView {
 
     enum StageSelect {
@@ -23,6 +31,11 @@ public class MainView {
     static Rectangle2D screenBounds;
     public DrawingMap drawView;
 
+    /**
+     * Constructor for the MainView class
+     * Initializes stage, screenBounds and draws the main menu
+     * @param stage the Stage object
+     */
     public MainView(Stage stage){
         MainView.stage = stage;
         screenBounds = Screen.getPrimary().getVisualBounds();
@@ -33,10 +46,18 @@ public class MainView {
         drawScene(StageSelect.MainMenu);
     }
 
+    /**
+     * Getter for the stage
+     * @return the Stage object
+     */
     public Stage getStage(){
         return MainView.stage;
     }
 
+    /**
+     * Determines which scene to show
+     * @param selected the StageSelect object
+     */
     protected void drawScene(StageSelect selected){
         selectedStage = selected;
         View view;
@@ -57,6 +78,10 @@ public class MainView {
         }
     }
 
+    /**
+     * Initializes the stage with the scene
+     * @param scene the Scene object
+     */
     protected void stageInitializer(Scene scene){
         stage.setScene(scene);
         stage.show();

@@ -7,7 +7,10 @@ import javafx.scene.paint.Color;
 import util.FileDistributer;
 
 import java.net.URL;
-
+/**
+ * The MapView class is responsible for drawing the map view
+ * It extends the View class and uses the DrawingMap class to draw the map
+ */
 public class MapView extends View{
     private GraphicsContext gc;
     private ResizableCanvas c;
@@ -27,7 +30,7 @@ public class MapView extends View{
     }
 
     /**
-     * Draw the Drawingmap
+     * Draws the Drawingmap
      */
     public void draw(){
         if(!super.getDrawingMap().IsInitialized()) return;

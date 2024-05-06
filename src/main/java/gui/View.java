@@ -8,7 +8,10 @@ import gui.MainView.StageSelect;
 import parser.Model;
 
 import java.net.URL;
-
+/**
+ * The View class is the superclass for all views in the application
+ * It is responsible for initializing the controller and the scene of the view
+ */
 public abstract class View {
     private FXMLLoader loader;
     private VBox vBox;
