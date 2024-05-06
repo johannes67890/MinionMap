@@ -11,6 +11,8 @@ import structures.Trie;
 import util.TransportType;
 import util.Type;
 
+ 
+
 public class Search {
     private Trie trie;
     private MapView mapView;
