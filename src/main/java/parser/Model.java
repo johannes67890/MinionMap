@@ -15,6 +15,7 @@ public class Model implements Serializable{
 
     private static TagBound bound;
     private static TLongObjectHashMap<TagNode> nodes = new TLongObjectHashMap<TagNode>();
+    private static TLongObjectHashMap<TagNode> places = new TLongObjectHashMap<TagNode>();
     private static TLongObjectHashMap<TagRelation> relations = new TLongObjectHashMap<TagRelation>();
     private static TLongObjectHashMap<TagWay> ways = new TLongObjectHashMap<TagWay>();
     private static Trie trie = new Trie();
@@ -25,10 +26,12 @@ public class Model implements Serializable{
         bound = XMLReader.getBound();
         trie = XMLReader.getTrie();
         nodes = XMLReader.getNodes();
+        places = XMLReader.getPlaces();
         relations = XMLReader.getRelations();
         ways = XMLReader.getWays();
         tags.addAll(List.copyOf(ways.valueCollection()));
         tags.addAll(List.copyOf(relations.valueCollection()));
+        tags.addAll(List.copyOf(places.valueCollection()));
         tags.addAll(List.copyOf(XMLReader.getAddresses().valueCollection()));
         Tree.initialize(tags);
         clearReadertags();
@@ -37,6 +40,8 @@ public class Model implements Serializable{
     public static TagBound getBound(){return bound;}
 
     public static Trie getTrie(){return trie;}
+
+    public static TLongObjectHashMap<TagNode> getPlaces(){return places;}
 
     public static TLongObjectHashMap<TagNode> getNodes(){return nodes;}
 
