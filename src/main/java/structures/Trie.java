@@ -7,6 +7,15 @@ import parser.TagAddress;
 import java.util.HashMap;
 import gnu.trove.map.hash.TCharObjectHashMap;
 
+
+
+/**
+ * This data-structure is made to ensure quick auto-completion of a string search.
+ * 
+ * Through the use of a tree structure, where the children of a nodes describes the next possible
+ * character in the word. Such when reaching the end og a branch you get a full address and can choose
+ * to search for a specific house number.
+ */
 public class Trie implements Serializable {
     private TrieNode root;
     private TrieNode currentNode;
