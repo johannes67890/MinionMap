@@ -15,7 +15,11 @@ import java.util.zip.ZipInputStream;
 
 import parser.Model;
 import parser.XMLReader;
-
+/**
+ * FileHandler class is responsible for handling files, such as reading, writing, converting and unzipping files.
+ * It is also responsible for loading the files into the program.
+ * It is a utility class and should not be instantiated.
+ */
 public class FileHandler {
     
     //buffer size for reading and writing in kb
@@ -23,7 +27,6 @@ public class FileHandler {
     protected String zipPath = null;
     private static final String osmPath = System.getProperty("user.dir").toString() + "\\src\\main\\resources\\files\\osmFile\\";
     private static String savePath = System.getProperty("user.dir").toString() + "\\src\\main\\resources\\files\\savedFile\\";
-    private static Model model;
     public static Object getModel(File file){
 
         return loadUnknownFile(file);
@@ -52,15 +55,27 @@ public class FileHandler {
         return null;
     }
 
+    /**
+     * Loads Object from binary file
+     */
     private static Object loadBin(File file) {
         return loadObject(file);
     }
 
+    /**
+     * Loads Object from zip file
+     * @param file the file to load
+     * @return the object loaded from the file
+     */
     private static Object loadZip(File file){
         return loadFile(unzip(file));
     }
 
-
+    /**
+     * Takess file, reads it, converts it to binary, returns object loaded from the file
+     * @param file the file to load
+     * @return the object loaded from the file
+     */
     private static Object loadFile(File file) {
         String path = savePath + getBinaryFileName(file);
         File binaryFile = new File(path);
@@ -69,7 +84,7 @@ public class FileHandler {
         return loadBin(new File(path));
     }
 
-    private static FileInputStream getFileInputStream(File file) {
+    public static FileInputStream getFileInputStream(File file) {
         try{
             return new FileInputStream(file);
         } catch (FileNotFoundException e) {
@@ -79,6 +94,11 @@ public class FileHandler {
         return null;
     }
 
+    /**
+     * Loads the object from the file using ObjectInputStream
+     * @param file the file to load the object from
+     * @return the object loaded from the file
+     */
     private static Object loadObject(File file) {
 
         try {
@@ -193,6 +213,9 @@ public class FileHandler {
         bos.close();
     }
 
+    /**
+     * Clears all saved files from the directory of where saved files are stored
+     */
     private void clearSavedFiles() {
         File file = new File(savePath);
         if(file.isDirectory()){
@@ -201,6 +224,9 @@ public class FileHandler {
             }
         }
     }
+    /**
+     * Clears all osm files from the directory of where osm files are stored
+     */
     private void clearOsmFiles() {
         File file = new File(osmPath);
         System.out.println(file.listFiles());
