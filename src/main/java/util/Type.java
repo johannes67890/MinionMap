@@ -372,21 +372,41 @@ public enum Type  {
     }
 
         
+    /**
+     * 
+     * @return The hierarchy of the {@link Type} from 0 (least important) to 9 (most important) as an integer.
+     */
     public int getThisHierarchy(){
         return hierarchy;
     }
 
+    /**
+     * 
+     * @return The layer of the {@link Type} from 0 (far behind) to 9 (up front) as an integer.
+     */
     public int getLayer(){
         return layer;
     }
 
+    /**
+     * 
+     * @return The width of the {@link Type} as a double.
+     */
     public double getWidth(){
         return width;
     }
     
+    /**
+     * TODO - Remove this method?
+     * @return The color of the {@link Type} as a {@link Paint}.
+     */
     public Paint getPaint() {
         return color;
     }
+    /**
+     * 
+     * @return The color of the {@link Type}. Color is determined by the {@link GraphicsHandler}.
+     */
     public Color getColor(){
         switch (GraphicsHandler.getGraphicStyle()) {
             case DEFAULT:
@@ -398,6 +418,11 @@ public enum Type  {
             default: return color;
         }
     }
+
+    /**
+     * 
+     * @return The color of the polygon line. Color is determined by the {@link GraphicsHandler}.
+     */
     public Color getPolyLineColor(){
         switch (GraphicsHandler.getGraphicStyle()) {
             case DEFAULT:
@@ -409,13 +434,27 @@ public enum Type  {
             default: return polyLineColor;
         }
     }
+
+    /**
+     * 
+     * @return A boolean to determine if the {@link Type} should be drawn as a line.
+     */
     public boolean getIsLine(){
         return isLine;
     }
 
+    /**
+     * 
+     * @return The minimum width of the {@link Type} as a double.
+     */
     public double getMinWidth(){
         return minWidth;
     }
+
+    /**
+     * 
+     * @return The maximum width of the {@link Type} as a double.
+     */
     public double getMaxWidth(){
         return maxWidth;
     }
