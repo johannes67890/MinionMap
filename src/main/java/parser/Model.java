@@ -18,19 +18,40 @@ public class Model implements Serializable{
     private static TLongObjectHashMap<TagAddress> addresses = new TLongObjectHashMap<TagAddress>();
     private static Trie trie = new Trie();
 
+    private static Model instanceModel;
 
+    private Tree tree;
 
-    public Model(XMLReader reader) {
+    static {
+        instanceModel = new Model();
+    }
+
+    public static Model getInstanceModel(){
+        if(instanceModel == null){
+            instanceModel = new Model();
+        }
+
+        return instanceModel;
+    }
+
+    private Model() {
         bound = XMLReader.getBound();
         trie = XMLReader.getTrie();
         nodes = XMLReader.getNodes();
         addresses = XMLReader.getAddresses();
 
         clearReadertags();
+        System.gc();
+        System.out.println("Initializing tree: ");
+        long startTree = System.currentTimeMillis();
         initializeTrees();
+        long stopTree = System.currentTimeMillis();
+        System.out.println("Time to tree - total: " + (stopTree - startTree) + "ms");
     }
 
-
+    public Tree getTree(){
+        return this.tree;
+    }
 
     public static TagBound getBound(){return bound;}
 
@@ -43,76 +64,72 @@ public class Model implements Serializable{
     }
 
     private void initializeTrees(){
-        Tree.initialize();
+
+        this.tree = new Tree();
 
         Thread addWays = new Thread(() ->{
+            System.out.println("Loading ways");
             long start = System.currentTimeMillis();
             for(TagWay way : XMLReader.getWays().valueCollection()){
-                Tree.insertTagWayInTree(way);
+                tree.insertTagWayInTree(way);
             }
             long end = System.currentTimeMillis();
             System.out.println("Time to add ways - total: " + (end - start) + "ms");
-        });
-
-        Thread clearWays = new Thread(() ->{
             XMLReader.clearWays();
             System.out.println("Cleared ways");
             System.gc();
         });
 
+
+
         Thread addRelations = new Thread(() ->{
+            System.out.println("Loading relations");
             long start = System.currentTimeMillis();
 
             for(TagRelation relation : XMLReader.getRelations().valueCollection()){
-                Tree.insertTagRelationInTree(relation);
+                tree.insertTagRelationInTree(relation);
             }
 
             long end = System.currentTimeMillis();
             System.out.println("Time to add relations - total: " + (end - start) + "ms");
-        });
-
-        Thread clearRelations = new Thread(() ->{
             XMLReader.clearRelations();
-            System.out.println("Cleared ways");
+            System.out.println("Cleared relations");
             System.gc();
         });
+
+
 
         Thread addAddresses = new Thread(() ->{
+            System.out.println("Loading addresses");
             long start = System.currentTimeMillis();
             for(Tag tag : addresses.valueCollection()){
-                Tree.insertTagAdressInTree(tag);
+                tree.insertTagAdressInTree(tag);
             }
 
             long end = System.currentTimeMillis();
-            System.out.println("Time to add relations - total: " + (end - start) + "ms");
-        });
-
-        Thread clearAddresses = new Thread(() ->{
+            System.out.println("Time to add Addresses - total: " + (end - start) + "ms");
             XMLReader.clearAddresses();
-            System.out.println("Cleared ways");
+            System.out.println("Cleared addresses");
             System.gc();
         });
+
+
 
 
         addWays.start();
-        clearWays.start();
         addRelations.start();
-        clearRelations.start();
         addAddresses.start();
-        clearAddresses.start();
+
 
         try{
             addWays.join();
-            clearWays.join();
             addRelations.join();
-            clearRelations.join();
-            addAddresses.start();
-            clearAddresses.start();
+            addAddresses.join();
 
         } catch (Exception e) {
             System.out.println(e.getStackTrace()+ " Failed at threadjoining " + e.getMessage());
         }
 
-        Tree.isNowLoaded();
+        tree.isNowLoaded();
     }
 }

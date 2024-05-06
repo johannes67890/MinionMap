@@ -6,19 +6,17 @@
   <component name="ChangeListManager">
     <list default="true" id="3dc9cf24-bd1d-4512-abe4-fcab9aeaf2a3" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/gui/DrawingMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/gui/DrawingMap.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/gui/View.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/gui/View.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/parser/Model.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/parser/Model.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/parser/XMLReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/parser/XMLReader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/structures/KDTree/Tree.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/structures/KDTree/Tree.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/util/FileHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/util/FileHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/files/savedFile/3 - Copy (18) - Copy.bin" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/files/savedFile/3 - Copy (21) - Copy.bin" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/files/savedFile/3 - Copy (28) - Copy.bin" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/files/savedFile/3 - Copy (30) - Copy - Copy.bin" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/files/savedFile/map.bin" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/files/savedFile/testMap.bin" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/files/savedFile/testMap.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/parser/ChunkTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/parser/ChunkTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/parser/TagTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/parser/TagTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/parser/XMLReaderTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/parser/XMLReaderTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/parser/XMLWriterTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/parser/XMLWriterTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/pathfinding/DijstraTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/pathfinding/DijstraTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/files/savedFile/3 - Copy (32) - Copy - Copy.bin" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/files/savedFile/3 - Copy (32) - Copy - Copy.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/files/savedFile/3 - Copy (33) - Copy - Copy.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/files/savedFile/3 - Copy (37) - Copy - Copy.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/files/savedFile/born.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/files/savedFile/testMap.bin" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,12 +51,6 @@
                 <item name="MapOfDenmark" type="f1a62948:ProjectNode" />
                 <item name="Tasks" type="e4a08cd1:TasksNode" />
                 <item name="application" type="c8890929:TasksNode$1" />
-              </path>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="MapOfDenmark" type="f1a62948:ProjectNode" />
-                <item name="Tasks" type="e4a08cd1:TasksNode" />
-                <item name="build" type="c8890929:TasksNode$1" />
               </path>
             </expand>
             <select />
@@ -98,7 +90,7 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RunManager" selected="Gradle.MapOfDenmark [build]">
+  <component name="RunManager" selected="Gradle.MapOfDenmark [run]">
     <configuration name="MapOfDenmark [build]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -145,8 +137,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.MapOfDenmark [build]" />
         <item itemvalue="Gradle.MapOfDenmark [run]" />
+        <item itemvalue="Gradle.MapOfDenmark [build]" />
       </list>
     </recent_temporary>
   </component>

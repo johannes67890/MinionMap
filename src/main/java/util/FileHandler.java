@@ -19,12 +19,14 @@ public class FileHandler {
     private static String savePath = System.getProperty("user.dir").toString() + "\\src\\main\\resources\\files\\savedFile\\";
     private String absoluteBinaryFilePath;
 
+    private static Model model;
     @Serial
     private static final long serialVersionUID = 1L;
 
 
     public static Object getModel(File file) throws IOException{
-        return loadUnknownFile(file);
+        model = (Model) loadUnknownFile(file);
+        return model;
         //return new Model(new XMLReader(new FileInputStream(file)));
     }
 
@@ -65,7 +67,9 @@ public class FileHandler {
     }
 
     private static Model createModel(File file){
-        Model model = new Model(createXMLReader(getFileInputStream(file)));
+
+        createXMLReader(getFileInputStream(file));
+        Model model = XMLReader.getModelInstance();
         System.out.println("Created model " + model);
         return model;
     }
@@ -88,16 +92,16 @@ public class FileHandler {
 
     private static Object loadObject(File file) {
 
-        Object model = null;
-
         try {
             ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(getFileInputStream(file)));
-            model = in.readObject();
+            Object object = in.readObject();
             in.close();
+            return  object;
         } catch (IOException | ClassNotFoundException e) {
             System.out.println("Failed at loadModelStage" + e.getMessage());
         }
-        return model;
+
+        return null;
     }
 
 
@@ -129,10 +133,20 @@ public class FileHandler {
      * @param
      * @param destDir the directory to save the file
      */
-    private static void convertToBinary(Model objectToBeBinaried, String destDir) {
+    private static void convertToBinary(Serializable objectToBeBinaried, String destDir) {
         try {
-            var out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(destDir)));
+
+            ByteArrayOutputStream bao = new ByteArrayOutputStream();
+            ObjectOutputStream out = new ObjectOutputStream(bao);
+            FileOutputStream binFile = new FileOutputStream(destDir);
+
+            //bos.close();
+            //var out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(destDir)));
             out.writeObject(objectToBeBinaried);
+
+            bao.writeTo(binFile);
+
+
             out.close();
             System.out.println("Created object " + objectToBeBinaried + " in binary");
         } catch (IOException e) {

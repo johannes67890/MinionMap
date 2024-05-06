@@ -1,12 +1,12 @@
 package structures.KDTree;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
 import parser.Tag;
-import parser.TagAddress;
 import parser.TagBound;
 import parser.TagNode;
 import parser.TagRelation;
@@ -15,6 +15,8 @@ import structures.TagGrid;
 import util.Type;
 
 public class Tree implements Serializable{
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     ArrayList<Tag> nodesInBounds;
     ArrayList<TagWay> waysInBounds;
@@ -28,10 +30,13 @@ public class Tree implements Serializable{
      * and resets XMLReader
      * @param tags
      */
-    public static void initialize(){
+
+    public Tree(){
         multiTree = new K3DTree();
         multiTree.setBound(Float.MIN_VALUE, Float.MIN_VALUE, Byte.MIN_VALUE, Float.MAX_VALUE, Float.MAX_VALUE, Byte.MAX_VALUE);
     }
+
+
 
 
     public static void isNowLoaded(){
@@ -95,7 +100,6 @@ public class Tree implements Serializable{
     }
 
     public static void insertTagAdressInTree(Tag tag) {
-        System.out.println(tag.getLon()+""+ tag.getLat()+""+tag);
         multiTree.putMap(new Point3D(tag.getLon(), tag.getLat(), (byte) 0), tag);
     }
 

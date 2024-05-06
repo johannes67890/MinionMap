@@ -119,7 +119,8 @@ public class XMLReader implements Serializable{
     }
 
     private XMLBuilder tempBuilder = new XMLBuilder();
-    
+
+
     /**
      * Parses the XML File for a OSM file.
      * <p>
@@ -149,7 +150,6 @@ public class XMLReader implements Serializable{
                         switch (element) {
                             case "node":
                                 if(!tempBuilder.getAddressBuilder().isEmpty()){
-                                    System.out.println("x" + addresses.size());
                                     addresses.put(tempBuilder.getId(), new TagAddress(tempBuilder));
                                     trie.insert(new TagAddress(tempBuilder));
                                 } else {
@@ -179,8 +179,9 @@ public class XMLReader implements Serializable{
             }           
             // nodes = null; // Free up memory
             reader.close();
+
             //XMLWriter.appendToBinary();
-      
+
             // end timer
             long end = System.currentTimeMillis();
             System.out.println("Time total: " + (end - start) + "ms");
@@ -189,6 +190,10 @@ public class XMLReader implements Serializable{
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static Model getModelInstance(){
+        return Model.getInstanceModel();
     }
 
     protected static void clearWays(){
