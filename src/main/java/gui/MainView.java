@@ -30,6 +30,8 @@ public class MainView {
     static Scene lastScene;
     static Rectangle2D screenBounds;
     public DrawingMap drawView;
+    private View view;
+
 
     /**
      * Constructor for the MainView class
@@ -46,6 +48,21 @@ public class MainView {
         drawScene(StageSelect.MainMenu);
     }
 
+        /**
+     * Constructor for the MainView class
+     * Initializes stage, screenBounds and draws the main menu
+     * @param stage the Stage object
+     */
+    public MainView(){
+        MainView.stage = new Stage();
+        screenBounds = Screen.getPrimary().getVisualBounds();
+        MainView.stage.setMinWidth(sizeX);
+        MainView.stage.setMinHeight(sizeY);
+        MainView.stage.setResizable(true);
+
+        drawScene(StageSelect.MapView);
+    }
+
     /**
      * Getter for the stage
      * @return the Stage object
@@ -60,7 +77,6 @@ public class MainView {
      */
     protected void drawScene(StageSelect selected){
         selectedStage = selected;
-        View view;
         try{
             if (selectedStage == StageSelect.MainMenu){
                 view = new LobbyView(this);
@@ -85,6 +101,10 @@ public class MainView {
     protected void stageInitializer(Scene scene){
         stage.setScene(scene);
         stage.show();
+    }
+
+    public MapView getView(){
+        return (MapView) view;
     }
 
 

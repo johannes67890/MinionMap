@@ -13,6 +13,10 @@ public class Main extends Application {
 
     }
 
+    public void startTest(Stage stage) {
+        mainView = new MainView(stage);
+    }
+
     public static void main(String[] args) {
         launch(args);
     }

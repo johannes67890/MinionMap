@@ -47,8 +47,6 @@ import util.TransportType;
 import util.Type;
 
 public class Controller implements Initializable, ControllerInterface{
-    
-
     ObservableList<String> style = FXCollections.observableArrayList(
         "default", "dark", "gray scale");
 
@@ -116,6 +114,11 @@ public class Controller implements Initializable, ControllerInterface{
 
     long timer = 0;
     
+    /**
+     * Initializes the map view and sets up the necessary components.
+     *
+     * @param view The view component to be used as the map view.
+     */
     public void start(View view) { // this is only ran after the stage is shown
         mapView = (MapView) view;
         
@@ -131,7 +134,12 @@ public class Controller implements Initializable, ControllerInterface{
     }
 
     /**
-     * Initializes the pan and zoom functionality of the map
+     * Initializes the pan and zoom functionality for the map view.
+     * This method sets up event handlers for mouse press, mouse click, scroll, and mouse drag events.
+     * When the mouse is pressed, it records the last X and Y coordinates.
+     * When the mouse is clicked, it performs actions based on the point of interest state.
+     * When the mouse is scrolled, it zooms in or out based on the scroll direction.
+     * When the mouse is dragged, it pans the map based on the mouse movement.
      */
     private void panZoomInitialize(){
         mapView.getResizeableCanvas().setOnMousePressed(e -> {
@@ -139,6 +147,7 @@ public class Controller implements Initializable, ControllerInterface{
             lastY = e.getY();
         });
 
+        
         mapView.getResizeableCanvas().setOnMouseClicked(e -> {
             if (pointofInterestState){
                 DrawingMap drawingMap = mapView.getDrawingMap();
@@ -446,15 +455,8 @@ public class Controller implements Initializable, ControllerInterface{
                     if (!routeListView.isVisible() && routeListView.getItems().size() > 0){
                         routeListView.setVisible(true);
                     }
-                    // for (TagWay pathPoint : path.keySet()){
-                    //     System.out.println(pathPoint.getRefNodes().get(0).getLat() + " " + pathPoint.getRefNodes().get(0).getLon());
-                    //     mapView.getDrawingMap().drawPoint(pathPoint.getRefNodes().get(0));
-                    // }
                 }
             });
-            
-
-
         }
     }
 
@@ -521,11 +523,8 @@ public class Controller implements Initializable, ControllerInterface{
      * Switches the start and destination addresses in the comboboxes
      */
     private void switchStartAndDest(){
-
         String startAddressString = searchBarStart.getEditor().textProperty().getValue();
         String endAddressString = searchBarDestination.getEditor().textProperty().getValue();
-
-        
 
         if (startAddressString == ""){
             searchBarDestination.getEditor().textProperty().setValue(" ");
@@ -593,7 +592,6 @@ public class Controller implements Initializable, ControllerInterface{
         double x = ((bounds[2] - bounds[0]) / 2) + bounds[0];
         double y = ((bounds[3] - bounds[1]) / 2) + bounds[1];
 
-        //drawingMap.getTransform().determinant()
         Point2D pointCenter = drawingMap.getTransform().transform(x, y);
         Point2D point = drawingMap.getTransform().transform(tagAddress.getLon(), tagAddress.getLat());
         double deltaX = point.getX() - pointCenter.getX();
@@ -619,8 +617,5 @@ public class Controller implements Initializable, ControllerInterface{
         drawingMap.setMarkedTag(temp);
 
         mapView.getDrawingMap().pan(-deltaX, deltaY);
-
-
     }
-
 }
