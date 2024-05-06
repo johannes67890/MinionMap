@@ -14,7 +14,6 @@ import java.net.URL;
  */
 
 public class LobbyView extends View{
-
     /**
      * Constructor for the LobbyView class
      * @param main the MainView object

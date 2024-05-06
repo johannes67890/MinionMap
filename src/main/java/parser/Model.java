@@ -22,7 +22,6 @@ public class Model implements Serializable{
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private XMLReader reader;
     private TagBound bound;
     private TLongObjectHashMap<TagNode> nodes = new TLongObjectHashMap<TagNode>();
     private TLongObjectHashMap<TagAddress> addresses = new TLongObjectHashMap<TagAddress>();
@@ -58,12 +57,12 @@ public class Model implements Serializable{
      * @return the instance of the Model class
      */
     private Model setModelValues(InputStream is){
-        this.reader = new XMLReader(is);
-        bound = reader.getBound();
-        trie = reader.getTrie();
-        nodes = reader.getNodes();
-        addresses = reader.getAddresses();
-        reader.clearTags();
+        new XMLReader(is);
+        bound = XMLReader.getBound();
+        trie = XMLReader.getTrie();
+        nodes = XMLReader.getNodes();
+        addresses = XMLReader.getAddresses();
+        XMLReader.clearTags();
         System.gc();
 
         System.out.println("Initializing tree: ");
@@ -121,8 +120,6 @@ public class Model implements Serializable{
             System.gc();
         });
 
-
-
         Thread addRelations = new Thread(() ->{
             System.out.println("Loading relations");
             long start = System.currentTimeMillis();
@@ -137,8 +134,6 @@ public class Model implements Serializable{
             System.out.println("Cleared relations");
             System.gc();
         });
-
-
 
         Thread addAddresses = new Thread(() ->{
             System.out.println("Loading addresses");
@@ -157,7 +152,6 @@ public class Model implements Serializable{
         addWays.start();
         addRelations.start();
         addAddresses.start();
-
 
         try{
             addWays.join();

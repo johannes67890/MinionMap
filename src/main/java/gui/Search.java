@@ -12,11 +12,8 @@ import util.TransportType;
 
 public class Search {
     private Trie trie;
-    private MapView mapView;
-    private Trie.TrieNode pointOfInterestNode = null;
 
     public Search(MapView mw){
-        mapView = mw;
         trie = Model.getInstanceModel().getTrie();
     }
 

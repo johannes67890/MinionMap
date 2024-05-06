@@ -24,7 +24,6 @@ import structures.KDTree.Tree;
 import util.MathUtil;
 import util.Type;
 
-
 /**
  * 
  * The class that processes all ways and relations, and draws them using their types.
@@ -45,7 +44,6 @@ public class DrawingMap {
     public Zoombar zoombar;
     private Trie trie;
     private List<Tag> markedTag;
-    private List<TagNode> nodes;
     private List<TagWay> ways;
     private List<TagRelation> relations;
     private Tag pointOfInterestNode = null;
@@ -62,14 +60,9 @@ public class DrawingMap {
     private List<TagWay> waysToDrawWithType;
     private List<TagWay> waysToDrawWithoutType;
 
-
-
     public DrawingMap(MapView mapView){
         this.mapView = mapView;
-
     }
-
-
 
     /**
      * Initialization of the drawing map.
@@ -170,7 +163,6 @@ public class DrawingMap {
                 }
             }
         }
-
 
         if (!backGroundSet){
             setBackGroundColor(Color.web("#F2EFE9"));

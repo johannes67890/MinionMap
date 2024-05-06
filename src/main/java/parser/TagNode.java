@@ -2,7 +2,6 @@ package parser;
 import java.util.ArrayList;
 
 import gnu.trove.list.TLinkable;
-import javafx.util.Pair;
 import structures.KDTree.Tree;
 import util.Type;
 

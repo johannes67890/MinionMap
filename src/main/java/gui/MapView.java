@@ -102,5 +102,4 @@ public class MapView extends View{
     private void setResizeableCanvas(){
         c = new ResizableCanvas(this);
     }
-
 }
