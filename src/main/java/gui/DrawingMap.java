@@ -553,10 +553,6 @@ public class DrawingMap {
 
         return metersPerPixelRatio * meters;
     }
-    public void append(double dx, double dy) {
-        transform.appendTranslation(dx, dy);
-        mapView.draw();
-    }
 
     public void setZoomLabel(Label label){
         this.zoomLabel = label;
