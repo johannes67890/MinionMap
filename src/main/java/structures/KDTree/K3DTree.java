@@ -1,6 +1,5 @@
 package structures.KDTree;
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -547,23 +546,6 @@ public class K3DTree {
             return p.y() - n.p.y();
         }else{
             return p.z() - n.p.z();
-        }
-    }
-
-    /**
-     * A version of comparePoints that ignores the z axis
-     * @param p the point in question
-     * @param n the Node in question
-     * @param xyz are we looking a x-level, y-level or z-level?
-     * @return
-     */
-    private double comparePoints2D(Point3D p, Node n, int xyz){
-        if (xyz == 0) {
-            return p.x() - n.p.x();
-        }else if (xyz == 1){
-            return p.y() - n.p.y();
-        }else{
-            return 0;
         }
     }
     

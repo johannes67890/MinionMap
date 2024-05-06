@@ -8,8 +8,6 @@
 
 package structures.KDTree;
 
-import java.util.Comparator;
-
 /**
  * This class has been build on top of Robert and Kevins Point2D.
  * It has been changed to accomendate 3 dimensional points.
