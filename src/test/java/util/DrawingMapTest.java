@@ -2,6 +2,7 @@
 
 // import static org.junit.jupiter.api.Assertions.*;
 
+// import java.io.File;
 // import java.io.FileInputStream;
 
 // import org.junit.jupiter.api.BeforeEach;
@@ -10,6 +11,7 @@
 // import gui.DrawingMap;
 // import gui.MainView;
 // import gui.MapView;
+// import gui.ResizableCanvas;
 // import javafx.scene.canvas.Canvas;
 // import parser.TagBound;
 // import parser.XMLReader;
@@ -18,19 +20,13 @@
 
 //     XMLReader reader;
 
-//     Canvas canvas;
+//     ResizableCanvas canvas;
 
 //     DrawingMap drawingMap;
     
 //     @BeforeEach
 //     void testXMLReaderStartup() {
-//         try{
-
-//             this.reader = new XMLReader(new FileInputStream("src/main/ressources/testMap.osm"));
-//         }
-//         catch(Exception e){
-            
-//         }
+//         reader = new XMLReader(FileHandler.getFileInputStream(new File(FileDistributer.testMap.getFilePath())));
 //         assertNotNull(reader);
 //         assertDoesNotThrow(() -> this.reader);
 //         MainView mainView = new MainView();
@@ -67,51 +63,51 @@
 //         assertEquals(bound.getMaxLon(), bounds[2]);
 //     }
 
-//     @Test
-//     void zoom() {
-//         drawingMap.initialize(canvas);
+//     // @Test
+//     // void zoom() {
+//     //     drawingMap.initialize(canvas);
 
-//         TagBound bound = XMLReader.getBound();
+//     //     TagBound bound = XMLReader.getBound();
 
-//         double zoomlevel = drawingMap.getZoomLevel();
+//     //     double zoomlevel = drawingMap.getZoomLevel();
 
-//         assertEquals(drawingMap.getCanvas().getWidth() / (bound.getMaxLon() - bound.getMinLon()), zoomlevel);
+//     //     assertEquals(drawingMap.getCanvas().getWidth() / (bound.getMaxLon() - bound.getMinLon()), zoomlevel);
 
-//         drawingMap.zoom(1000000000, 0, 0);
+//     //     drawingMap.zoom(1000000000, 0, 0);
 
-//         zoomlevel = drawingMap.getZoomLevel();
+//     //     zoomlevel = drawingMap.getZoomLevel();
 
-//         assertEquals(drawingMap.getZoomLevelMax() -0.000001, zoomlevel);
+//     //     assertEquals(drawingMap.getZoomLevelMax() -0.000001, zoomlevel);
 
-//         drawingMap.zoom(0.0000000000001, 0, 0);
+//     //     drawingMap.zoom(0.0000000000001, 0, 0);
 
-//         zoomlevel = drawingMap.getZoomLevel();
+//     //     zoomlevel = drawingMap.getZoomLevel();
 
-//         assertEquals(drawingMap.getZoomLevelMin() + 0.000001, zoomlevel);
-//     }
+//     //     assertEquals(drawingMap.getZoomLevelMin() + 0.000001, zoomlevel);
+//     // }
 
-//     @Test
-//     void pan() {
-//         drawingMap.initialize(canvas);
+//     // @Test
+//     // void pan() {
+//     //     drawingMap.initialize(canvas);
 
-//         TagBound bound = XMLReader.getBound();
+//     //     TagBound bound = XMLReader.getBound();
 
-//         double zoomlevel = drawingMap.getZoomLevel();
+//     //     double zoomlevel = drawingMap.getZoomLevel();
 
-//         assertEquals(drawingMap.getCanvas().getWidth() / (bound.getMaxLon() - bound.getMinLon()), zoomlevel);
+//     //     assertEquals(drawingMap.getCanvas().getWidth() / (bound.getMaxLon() - bound.getMinLon()), zoomlevel);
 
-//         drawingMap.zoom(1000000000, 0, 0);
+//     //     drawingMap.zoom(1000000000, 0, 0);
 
-//         zoomlevel = drawingMap.getZoomLevel();
+//     //     zoomlevel = drawingMap.getZoomLevel();
 
-//         assertEquals(drawingMap.getZoomLevelMax() -0.000001, zoomlevel);
+//     //     assertEquals(drawingMap.getZoomLevelMax() -0.000001, zoomlevel);
 
-//         drawingMap.zoom(0.0000000000001, 0, 0);
+//     //     drawingMap.zoom(0.0000000000001, 0, 0);
 
-//         zoomlevel = drawingMap.getZoomLevel();
+//     //     zoomlevel = drawingMap.getZoomLevel();
 
-//         assertEquals(drawingMap.getZoomLevelMin() + 0.000001, zoomlevel);
-//     }
+//     //     assertEquals(drawingMap.getZoomLevelMin() + 0.000001, zoomlevel);
+//     // }
 
 
 

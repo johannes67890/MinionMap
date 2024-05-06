@@ -150,7 +150,7 @@ public class Dijkstra {
 
                     list.add(tagNode);
 
-                    if(tagNode.hasIntersection() || i == way.getRefNodes().size() || tagNode.getId() == finish.getId()){
+                    if(tagNode.hasIntersection() || i == way.getRefNodes().size() || tagNode.getId() == finish.getId() || tagNode.getId() == start.getId()){
                         addRoad(list, way);
                         list = new ArrayList<>();
                         list.add(tagNode);
