@@ -111,9 +111,14 @@ public class XMLReader implements Serializable{
         return ways;
     }
 
+    /**
+     * Get the {@link Trie} of the XML file.
+     * @return The {@link Trie} of the XML file.
+     */
     public static Trie getTrie(){
         return trie;
     }
+
 
     private XMLBuilder tempBuilder = new XMLBuilder();
 
@@ -189,16 +194,30 @@ public class XMLReader implements Serializable{
         }
     }
 
+    /**
+     * Clear the list in the XMLReader containing all {@link TagWay} from the XML file.
+     */
     protected static void clearWays(){
         ways = null;
     }
 
+    /**
+     * Clear the list in the XMLReader containing all {@link TagAddresses} from the XML file.
+     */
     protected static void clearAddresses(){
         addresses = null;
     }
 
+    /**
+     * Clear the list in the XMLReader containing all {@link TagRelation} from the XML file.
+     */
     protected static void clearRelations() {relations = null;}
 
+    /**
+     * Clear the list in the XMLReader containing all {@link TagBound} from the XML file.
+     * Clear the list in the XMLReader containing all {@link TagNode} from the XML file.
+     * Nulls the {@link Trie} in the XMLReader.
+     */
     protected static void clearTags(){
         bound = null;
         nodes = null;
