@@ -100,7 +100,7 @@ public enum Type  {
 
     // Urban and natural (Hierarchy: 7)
     ABANDONEDRAIL("railway",new String[]{"abandoned"}, 5, 9, Color.DARKGRAY, 2, true, 4, 1000),
-    MILITARY("landuse", new String[]{"military"}, 7, 10, Color.SALMON.interpolate(Color.WHITE.TRANSPARENT, 0.5), Color.SALMON.interpolate(Color.WHITE, 0.5).darker(), 5, false),
+    MILITARY("landuse", new String[]{"military"}, 7, 10, Color.SALMON.interpolate(Color.TRANSPARENT, 0.5), Color.SALMON.interpolate(Color.WHITE, 0.5).darker(), 5, false),
     BUILDING("building",new String[]{"", "yes"},7, 9, Color.web("#D9D0C9"), Color.web("#D9D0C9").darker(), 5, false),
     LEISURE("leisure",new String[]{"park", "dog_park", "garden", "horse_riding", "miniature_golf", 
     "pitch", "playground", "resort", "stadium", "summer_camp", "track", "sports_centre", "fitness_station", "disc_golf_course"},7, 8, Color.web("#C8FACC"), Color.web("#C8FACC").darker(), 5, false),
