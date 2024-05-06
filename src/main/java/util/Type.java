@@ -58,47 +58,36 @@ public enum Type  {
     
     // Landuse (Hierarchy: 8)
     RESIDENTIAL("landuse", new String[]{"residential"}, 8, 6, Color.web("#E0DFDF"), Color.LIGHTGRAY, 1, false),
-    INDUSTRIAL("landuse", new String[]{"industrial"}, 8, 8, Color.web("#EBDBE8"), Color.PLUM.darker(), 1, false),
     AEROWAY("aeroway", new String[]{"apron", "hangar", "spaceport", "terminal"}, 8, 8, Color.web("#DADAE0"), Color.LIGHTGRAY.darker(), 5, false),
     AEROWAYLINE("aeroway", new String[]{"taxiway", "runway"}, 8, 9, Color.web("#BDBDCE"), 5, true, 6, 75),
-    FARMFIELD("landuse", new String[]{"farmland"}, 8, 6, Color.web("#EEF0D5"), Color.web("#EEF0D5").darker(), 5, false),
     HELIPAD("aeroway", new String[]{"helipad", "heliport"}, 8, 9, Color.web("#E9E7E2"), Color.LIGHTGRAY.darker(), 5, false),
     AERODROME("aerodrome", new String[]{""}, 8, 3, Color.web("#E9E7E2"), Color.LIGHTGRAY.darker(), 5, false),
-
-
     BEACH("natural",new String[]{"beach"}, 8, 3, Color.web("#FBEDB7"), Color.YELLOW.darker(), 5, false),
     FOREST("landuse",new String[]{"forest"}, 8, 4, Color.web("#ADD19E"), Color.GREEN.darker(), 5, false),
-    GRASS("landuse",new String[]{"meadow","grass"}, 8, 5, Color.web("#CDEBB0"), Color.web("#CDEBB0").darker(), 5, false),
- 
-    NATURALS("natural",new String[]{"scrub","grassland","heath", "wood"}, 8, 5, Color.web("#C8D7AB"), Color.GREENYELLOW.darker(), 5, false),
-    WETLAND("natural",new String[]{"wetland"}, 8, 5, Color.web("#D6D99F"), Color.DARKKHAKI, 5, false), 
-    LANDUSE("landuse", new String[]{"commercial","construction","brownfield","greenfield","basin"
-    ,"depot","garages","greenhouse_horticulture","landfill","orchard","plant_nursery",
-    "railway","religious","reservoir","retail","salt_pond","village_green","vineyard",
-    "winter_sports"}, 8, 7, Color.web("#EBDBE8"), Color.BLANCHEDALMOND.darker(), 5, false),
     ALLOTMENTS("landuse", new String[]{"allotments"}, 8, 8, Color.web("#C9E1BF"), Color.BLANCHEDALMOND.darker(), 5, false),
-    TENTS("tents",new String[]{""}, 8, 5, Color.web("#CDEBB0"), Color.GREEN.darker(), 5, false),
     GRAVEYARD("amenity", new String[]{"grave_yard"}, 8, 7, Color.web("#AACBAF"), Color.BLANCHEDALMOND.darker(), 5, false),
     CEMETERY("landuse", new String[]{"cemetery"}, 8, 7, Color.web("#AACBAF"), Color.BLANCHEDALMOND.darker(), 5, false),
-
     PARKING("amenity", new String[]{"parking"}, 8, 7, Color.web("#EEEEEE"), Color.BLANCHEDALMOND.darker(), 5, false),
-    RECREATIONGROUND("landuse", new String[]{"recreation_ground"}, 8, 7, Color.web("#DFFCE2"), Color.BLANCHEDALMOND.darker(), 5, false),
-    HOSPITAL("amenity", new String[]{"hospital"}, 8, 8, Color.web("#FFFFE5"), Color.web("#FFFFE5").darker(), 5, false),
-    
-
-
-    QUARRY("landuse", new String[]{"quarry"}, 8, 7, Color.web("#C5C3C3"), Color.BLANCHEDALMOND.darker(), 5, false),
-    
-    FARMYARD("landuse", new String[]{"farmyard", "farm"}, 8, 7, Color.web("#F5DCBA"), Color.BLANCHEDALMOND.darker(), 5, false),
-    
-    ROCK("natural", new String[]{"arch", "bare_rock", "blockfield", "cave_entrance", "dune", "fumarole", "hill", "rock", "sand", "scree", "sinkhole", "stone"}, 8, 7, Color.web("#DBD6D0"), Color.LIGHTGRAY, 5, false),
-    ROCKLINE("natural", new String[]{"arete", "cliff", "earth_bank", "ridge", "valley"}, 8, 9, Color.web("#DBD6D0"), 5, true, 2, 50),
     SAND("natural", new String[]{"sand", "dune"}, 8, 7, Color.web("#F7EDD1"), Color.SANDYBROWN, 5, false),
-
     PORT("industrial", new String[]{"port"}, 8, 0, Color.TRANSPARENT, Color.TRANSPARENT, 5, false),
-
-
+    
     // Urban and natural (Hierarchy: 7)
+    INDUSTRIAL("landuse", new String[]{"industrial"}, 7, 8, Color.web("#EBDBE8"), Color.PLUM.darker(), 1, false),
+    FARMFIELD("landuse", new String[]{"farmland"}, 7, 6, Color.web("#EEF0D5"), Color.web("#EEF0D5").darker(), 5, false),
+    GRASS("landuse",new String[]{"meadow","grass"}, 7, 5, Color.web("#CDEBB0"), Color.web("#CDEBB0").darker(), 5, false),
+    NATURALS("natural",new String[]{"scrub","grassland","heath", "wood"}, 7, 5, Color.web("#C8D7AB"), Color.GREENYELLOW.darker(), 5, false),
+    WETLAND("natural",new String[]{"wetland"}, 7, 5, Color.web("#D6D99F"), Color.DARKKHAKI, 5, false), 
+    LANDUSE("landuse", new String[]{"brownfield","greenfield","basin","greenhouse_horticulture",
+    "landfill","orchard","plant_nursery","religious","reservoir","retail","salt_pond","village_green","vineyard","winter_sports"}, 
+    7, 7, Color.web("#EBDBE8"), Color.BLANCHEDALMOND.darker(), 5, false),
+    LANDUSE_URBAN("landuse", new String[]{"commercial","construction","depot", "garages", "railway"}, 7, 7,Color.web("#EBDBE8"), Color.BLANCHEDALMOND.darker(), 5, false),
+    TENTS("tents",new String[]{""}, 7, 5, Color.web("#CDEBB0"), Color.GREEN.darker(), 5, false),
+    HOSPITAL("amenity", new String[]{"hospital"}, 7, 8, Color.web("#FFFFE5"), Color.web("#FFFFE5").darker(), 5, false),
+    RECREATIONGROUND("landuse", new String[]{"recreation_ground"}, 7, 7, Color.web("#DFFCE2"), Color.BLANCHEDALMOND.darker(), 5, false),
+    QUARRY("landuse", new String[]{"quarry"}, 7, 7, Color.web("#C5C3C3"), Color.BLANCHEDALMOND.darker(), 5, false),
+    FARMYARD("landuse", new String[]{"farmyard", "farm"}, 7, 7, Color.web("#F5DCBA"), Color.BLANCHEDALMOND.darker(), 5, false),
+    ROCK("natural", new String[]{"arch", "bare_rock", "blockfield", "cave_entrance", "dune", "fumarole", "hill", "rock", "sand", "scree", "sinkhole", "stone"}, 7, 7, Color.web("#DBD6D0"), Color.LIGHTGRAY, 5, false),
+    ROCKLINE("natural", new String[]{"arete", "cliff", "earth_bank", "ridge", "valley"}, 7, 9, Color.web("#DBD6D0"), 5, true, 2, 50),
     ABANDONEDRAIL("railway",new String[]{"abandoned"}, 5, 9, Color.DARKGRAY, 2, true, 4, 1000),
     MILITARY("landuse", new String[]{"military"}, 7, 10, Color.SALMON.interpolate(Color.TRANSPARENT, 0.5), Color.SALMON.interpolate(Color.WHITE, 0.5).darker(), 5, false),
     BUILDING("building",new String[]{"", "yes"},5, 9, Color.web("#D9D0C9"), Color.web("#D9D0C9").darker(), 5, false),
