@@ -7,11 +7,13 @@ public enum FileDistributer {
     // Views
     main("view/main.fxml"),
     start_screen("view/start.fxml"),
+    copenhagenZip("files/defaultFile/Copenhagen.zip"),
+    bornholmZip("files/defaultFile/map.zip"),
     // Test Files
     testMap("testMap.osm"),
     RebakSopark("testRebakSopark.osm");
 
-    
+
 
     private String filePath;
 

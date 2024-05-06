@@ -1,12 +1,12 @@
 package structures.KDTree;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
 import parser.Tag;
-import parser.TagAddress;
 import parser.TagBound;
 import parser.TagNode;
 import parser.TagRelation;
@@ -15,6 +15,8 @@ import structures.TagGrid;
 import util.Type;
 
 public class Tree implements Serializable{
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     ArrayList<Tag> nodesInBounds;
     ArrayList<TagWay> waysInBounds;
@@ -28,37 +30,32 @@ public class Tree implements Serializable{
      * and resets XMLReader
      * @param tags
      */
-    public static void initialize(ArrayList<Tag> tags){
+    public static void initializeTree(){
         multiTree = new K3DTree();
         multiTree.setBound(Float.MIN_VALUE, Float.MIN_VALUE, Byte.MIN_VALUE, Float.MAX_VALUE, Float.MAX_VALUE, Byte.MAX_VALUE);
-        for (Tag tag : tags){
-            insertTagInTree(tag);
-        }
+    }
+
+    public static void isNowLoaded(){
         isLoaded = true;
     }
 
-    /**
-     * Inserts a tag in the tree
-     * @param tag Tag to be inserted in the tree
-     */
-    public static void insertTagInTree(Tag tag){
-        if (tag instanceof TagBound){
-            TagBound bound = (TagBound) tag;
-            
-            multiTree.insert(new Point3D(bound.getMinLon(), bound.getMinLat(),(byte) 10), tag);
-            multiTree.insert(new Point3D(bound.getMinLon(), bound.getMaxLat(),(byte) 10), tag);
-            multiTree.insert(new Point3D(bound.getMaxLon(), bound.getMinLat(),(byte) 10), tag);
-            multiTree.insert(new Point3D(bound.getMaxLon(), bound.getMaxLat(),(byte) 10), tag);
-        }else if (tag instanceof TagWay){
-            TagWay way = (TagWay) tag;
+    public static void insertTagBoundsInTree(TagBound bound){
+        multiTree.insert(new Point3D(bound.getMinLon(), bound.getMinLat(),(byte) 10), bound);
+        multiTree.insert(new Point3D(bound.getMinLon(), bound.getMaxLat(),(byte) 10), bound);
+        multiTree.insert(new Point3D(bound.getMaxLon(), bound.getMinLat(),(byte) 10), bound);
+        multiTree.insert(new Point3D(bound.getMaxLon(), bound.getMaxLat(),(byte) 10), bound);
+    }
+
+    public static void insertTagRelationInTree(TagRelation relation){
+        for (TagWay way : relation.getHandledOuter()){
             for (TagNode node : way.getRefNodes()){
                 Point3D temp;
-                if (way.getType() != null){
-                    temp = new Point3D(node.getLon(), node.getLat(),(byte) way.getType().getThisHierarchy());
-                }else{
+                if (relation.getType() != null){
+                    temp = new Point3D(node.getLon(), node.getLat(), (byte) relation.getType().getThisHierarchy());
+                }else {
                     temp = new Point3D(node.getLon(), node.getLat(), (byte) 0);
                 }
-                multiTree.insert(temp, tag);
+                multiTree.insert(temp, relation);
                 if(node.getNext() == null) break;
             }
             for (TagGrid gridPoint : way.getGrid()){
@@ -66,42 +63,43 @@ public class Tree implements Serializable{
                 Point3D temp;
                 if (way.getType() != null){
                     temp = new Point3D(gridPoint.getLon(), gridPoint.getLat(),(byte) way.getType().getThisHierarchy());
-                }else{
+                } else {
                     temp = new Point3D(gridPoint.getLon(), gridPoint.getLat(), (byte) 0);
                 }
-                multiTree.insert(temp, tag);
+                multiTree.insert(temp, relation);
             }
-           
-        }else if (tag instanceof TagRelation){
-            TagRelation relation = (TagRelation) tag;
-
-            for (TagWay way : relation.getHandledOuter()){
-                for (TagNode node : way.getRefNodes()){
-                    Point3D temp;
-                    if (relation.getType() != null){
-                        temp = new Point3D(node.getLon(), node.getLat(), (byte) relation.getType().getThisHierarchy());
-                    }else{
-                        temp = new Point3D(node.getLon(), node.getLat(), (byte) 0);
-                    }
-                    multiTree.insert(temp, tag);
-                    if(node.getNext() == null) break;
-                }
-                for (TagGrid gridPoint : way.getGrid()){
-
-                    Point3D temp;
-                    if (way.getType() != null){
-                        temp = new Point3D(gridPoint.getLon(), gridPoint.getLat(),(byte) way.getType().getThisHierarchy());
-                    }else{
-                        temp = new Point3D(gridPoint.getLon(), gridPoint.getLat(), (byte) 0);
-                    }
-                    multiTree.insert(temp, tag);
-                }
-            }
-        } else if (tag instanceof TagAddress){
-            multiTree.putMap(new Point3D(tag.getLon(), tag.getLat(), (byte) 0), tag);
         }
     }
-    
+
+    public static void insertTagWayInTree(TagWay way){
+        for (TagNode node : way.getRefNodes()){
+            Point3D temp;
+            if (way.getType() != null){
+                temp = new Point3D(node.getLon(), node.getLat(),(byte) way.getType().getThisHierarchy());
+            }else{
+                temp = new Point3D(node.getLon(), node.getLat(), (byte) 0);
+            }
+            multiTree.insert(temp, way);
+            if(node.getNext() == null) break;
+        }
+
+        for (TagGrid gridPoint : way.getGrid()){
+
+            Point3D temp;
+            if (way.getType() != null){
+                temp = new Point3D(gridPoint.getLon(), gridPoint.getLat(),(byte) way.getType().getThisHierarchy());
+            }else{
+                temp = new Point3D(gridPoint.getLon(), gridPoint.getLat(), (byte) 0);
+            }
+            multiTree.insert(temp, way);
+        }
+    }
+
+    public static void insertTagAdressInTree(Tag tag) {
+        multiTree.putMap(new Point3D(tag.getLon(), tag.getLat(), (byte) 0), tag);
+    }
+
+
     /**
      * Returns the tags near a point
      * @param point Point to search near

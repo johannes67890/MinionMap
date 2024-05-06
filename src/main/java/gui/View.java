@@ -63,7 +63,7 @@ public abstract class View {
      * @return the model
      */
     protected Model getModel(){
-        return model;
+        return Model.getInstanceModel();
     }
 
     /**

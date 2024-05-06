@@ -50,12 +50,7 @@ public class LobbyView extends View{
      * @param file the File object
      */
     public void loadModel(File file) {
-        try {
-            super.setModel((Model) FileHandler.getModel(file));
-        } catch (Exception e) {
-            // TODO: handle exception
-            e.printStackTrace();
-        }
+        super.setModel((Model) FileHandler.getModel(file));
     }
 
     /**

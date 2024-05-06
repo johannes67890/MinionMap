@@ -1,8 +1,11 @@
-// package parser;
+package parser;
 
-// import static org.junit.jupiter.api.Assertions.*;
-// import org.junit.jupiter.api.BeforeEach;
-// import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import util.FileDistributer;
+
+import java.io.FileInputStream;
 
 // public class TagTest {
 //     private XMLReader reader;

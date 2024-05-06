@@ -6,7 +6,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ResourceBundle;
 
-
 import gui.GraphicsHandler.GraphicStyle;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -16,6 +15,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -41,10 +41,10 @@ import parser.TagWay;
 import pathfinding.Dijsktra;
 import structures.KDTree.Point3D;
 import structures.KDTree.Tree;
-import util.TransportType;
-import util.Type;
 import util.AddressComparator;
 import util.MathUtil;
+import util.TransportType;
+import util.Type;
 
 public class Controller implements Initializable, ControllerInterface{
     ObservableList<String> style = FXCollections.observableArrayList(
@@ -63,7 +63,10 @@ public class Controller implements Initializable, ControllerInterface{
     @FXML private Button fastButton;
     @FXML private Button shortButton;
     @FXML private Button findRouteButton;
+    @FXML private CheckBox showAllRoutesCheckBox;
     @FXML private ListView<String> routeListView;
+    @FXML private Label routeDistanceLable;
+    @FXML private Label routeTimeLabel;
 
     @FXML private Text speedText;
     @FXML private Text distanceText;
@@ -172,7 +175,9 @@ public class Controller implements Initializable, ControllerInterface{
                     TagAddress address = (TagAddress) Tree.getNearestOfClassBruteForce(new TagNode(point.y(), point.x()), TagAddress.class).get(0);
                     poiText.setText(address.toString());
                     poiLoc.setText(MecatorProjection.unprojectLon(address.getLon()) + ", " + MecatorProjection.unprojectLat(address.getLat()));
-                    poiView.getItems().add(address.toString());
+                    if(!poiView.getItems().contains(address.toString())){
+                        poiView.getItems().add(address.toString());
+                    }
                 }else {
                     poiText.setText(nearestTag.get(0).toString()); 
                     if (!(nearestTag.get(0) instanceof TagRelation)){
@@ -398,7 +403,22 @@ public class Controller implements Initializable, ControllerInterface{
             Dijsktra dijkstra = s.pathfindBetweenTagAddresses(startAddress, endAddress, routeType, shortest);
             //distanceText.setText(dijkstra.getDistanceOfPath());
             //speedText.setText(dijkstra.getMinutesOfPath());
+
+            ArrayList<Tag> nodes = new ArrayList<>();
+            //nodes.addAll(dijkstra.allVisitedPaths());
+            TagWay sWay = new TagWay((long)0, "Route", dijkstra.shortestPathDetailed(), (short)0, Type.PATHWAY);
+            //System.out.println("Total distance: " + dijkstra.getTotalDistance());
+            
+            if(showAllRoutesCheckBox.isSelected()){
+                ArrayList<Tag> allPaths = dijkstra.allVisitedPaths();
+                nodes.addAll(allPaths);
+            }
+            nodes.add(sWay);
             LinkedHashMap<TagWay, Double> path = dijkstra.printPath();
+            
+            if (!nodes.isEmpty()){
+                mapView.getDrawingMap().setMarkedTag(nodes);
+            }
 
             Platform.runLater(() -> {
                 synchronized (pathList) {
@@ -428,6 +448,8 @@ public class Controller implements Initializable, ControllerInterface{
                         }
 
                     }
+                    routeDistanceLable.setText(dijkstra.getDistanceOfPath());
+                    routeTimeLabel.setText(dijkstra.getMinutesOfPath());
                     routeListView.getItems().setAll(pathList);
                     pathList.clear();
                     if (!routeListView.isVisible() && routeListView.getItems().size() > 0){
@@ -508,12 +530,16 @@ public class Controller implements Initializable, ControllerInterface{
             searchBarDestination.getEditor().textProperty().setValue(" ");
         } else{
             searchBarDestination.getEditor().textProperty().set(startAddressString);
+
         }
         if (endAddressString == ""){
             searchBarStart.getEditor().textProperty().setValue(" ");
         } else{
             searchBarStart.getEditor().textProperty().set(endAddressString);
         }
+
+        startAddress = comboBoxAddress(searchBarStart);
+        endAddress = comboBoxAddress(searchBarDestination);
     }
 
     /**

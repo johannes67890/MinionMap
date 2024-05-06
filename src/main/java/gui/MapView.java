@@ -59,8 +59,7 @@ public class MapView extends View{
      * Calls setDrawingMap function inside View class
      */
     public void setDrawingMap() {
-        
-        super.setDrawingMap(new DrawingMap(this, super.getModel()));
+        super.setDrawingMap(new DrawingMap(this));
     }
 
     /**

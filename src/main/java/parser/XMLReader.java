@@ -49,6 +49,7 @@ public class XMLReader implements Serializable{
         return nodes.get(id);
     }
 
+    public static TagAddress getAddressById(Long id) {return addresses.get(id);}
     /**
      * Get a {@link TagWay} by its id.
      * <p>
@@ -115,14 +116,15 @@ public class XMLReader implements Serializable{
     }
 
     private XMLBuilder tempBuilder = new XMLBuilder();
-    
+
+
     /**
      * Parses the XML File for a OSM file.
      * <p>
      * Uses the {@link XMLStreamReader} to read the file and parse the data into the different classes: {@link TagBound}, {@link TagNode}, {@link TagNode} , {@link TagAddress} and {@link TagWay}.
      * </p>
      * 
-     * @param iS inputstream from file
+     * @param is inputstream from file
      */
     public XMLReader(InputStream is) {
         try {
@@ -174,8 +176,9 @@ public class XMLReader implements Serializable{
             }           
             // nodes = null; // Free up memory
             reader.close();
+
             //XMLWriter.appendToBinary();
-      
+
             // end timer
             long end = System.currentTimeMillis();
             System.out.println("Time total: " + (end - start) + "ms");
@@ -186,12 +189,19 @@ public class XMLReader implements Serializable{
         }
     }
 
+    protected static void clearWays(){
+        ways = null;
+    }
+
+    protected static void clearAddresses(){
+        addresses = null;
+    }
+
+    protected static void clearRelations() {relations = null;}
+
     protected static void clearTags(){
         bound = null;
         nodes = null;
-        relations = null;
-        ways = null;
-        addresses = null;
         trie = null;
     }
 }

@@ -4,11 +4,13 @@ import java.util.HashSet;
 import java.util.List;
 
 import gui.GraphicsHandler.GraphicStyle;
+import javafx.geometry.VPos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
+import javafx.scene.text.TextAlignment;
 import javafx.scene.transform.Affine;
 import parser.Model;
 import parser.Tag;
@@ -35,8 +37,6 @@ import util.Type;
 @SuppressWarnings("ALL")
 public class DrawingMap {
     static Affine transform = new Affine();
-
-    private final Model model;
     public ResizableCanvas canvas;
     private MapView mapView;
     public double zoomLevel = 1;
@@ -65,14 +65,10 @@ public class DrawingMap {
     private List<TagWay> waysToDrawWithoutType;
 
 
-    /**
-     * Constructor for the DrawingMap class
-     * @param mapView - The mapview that the map is drawn on
-     * @param model - The model that the map is based on
-     */
-    public DrawingMap(MapView mapView, Model model){
+
+    public DrawingMap(MapView mapView){
         this.mapView = mapView;
-        this.model = model;
+
     }
 
 
@@ -86,7 +82,7 @@ public class DrawingMap {
 
         this.canvas = canvas;
         
-        TagBound bound = mapView.getModel().getBound();
+        TagBound bound = Model.getInstanceModel().getBound();
         
         double minlon = bound.getMinLon();
         double maxlat = bound.getMaxLat();
@@ -158,16 +154,13 @@ public class DrawingMap {
 
         float[] canvasBounds = getScreenBoundsBigger(0.2);
         Rect3D rect = new Rect3D(canvasBounds[0], canvasBounds[1], hierarchyLevel, canvasBounds[2], canvasBounds[3], 100);
-        nodes = new ArrayList<>();
         ways = new ArrayList<>();
         relations = new ArrayList<>();
 
         HashSet<Tag> tags = Tree.getTagsInBounds(rect);
         backGroundSet = false;
         for(Tag tag : tags){
-            if (tag instanceof TagNode){
-                nodes.add((TagNode) tag);
-            }else if (tag instanceof TagWay){
+            if (tag instanceof TagWay){
                 TagWay way = (TagWay) tag;
                 ways.add(way);
             }else if (tag instanceof TagRelation){
@@ -179,6 +172,7 @@ public class DrawingMap {
                 }
             }
         }
+
 
         if (!backGroundSet){
             setBackGroundColor(Color.web("#F2EFE9"));
@@ -297,7 +291,11 @@ public class DrawingMap {
         gc.beginPath();
         gc.moveTo(way.getRefNodes().getFirst().getLon(), -way.getRefNodes().getFirst().getLat());
     
-        gc.setStroke(Color.RED);    
+        if (way.getType() != null && way.getType() == Type.PATHGRID){
+            gc.setStroke(way.getType().getColor());
+        } else{
+            gc.setStroke(Color.RED);    
+        }
         for (TagNode n : way.getRefNodes()) {
             gc.lineTo(n.getLon(), -n.getLat());
             xPoints[counter] = n.getLon();
