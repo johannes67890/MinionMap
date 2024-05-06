@@ -18,6 +18,8 @@ enum Way {
  * Extends from the {@link Tag}, and implements {@link Comparable},
  * Ways will be drawn as either polygons or lines, and gets a lot of data through its {@link Type}
  * <p>
+ * Ways can be independent, or they can be linked up to a {@link TagRelation} as its parent.
+ * <p>
  * Contains the following tags:
  * <p>
  * {@link Way#ID}, {@link Way#REFS}, {@link Way#NAME}, {@link Way#TYPE}
