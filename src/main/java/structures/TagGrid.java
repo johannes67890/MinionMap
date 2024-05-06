@@ -7,6 +7,10 @@ import util.Type;
 
 /**
  * Class for storing a {@link HashMap} of a single node in a grid.
+ * The grids are meant to ensure that bigger relations and ways, will be drawn,
+ * despite zooming in on them.
+ * The {@link K3Dtree} will be able to recognize these taggrids and will draw whatever way
+ * these grids are meant for.
  * Contains the following tags:
  * <p>
  * </p>
