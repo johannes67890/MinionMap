@@ -28,12 +28,12 @@ import util.Type;
 /**
  * 
  * The class that processes all ways and relations, and draws them using their types.
- * 
+ * The DrawingMap class represents a map that can be drawn on a canvas.
+ * It provides methods for initializing the map, setting the background color,
+ * zooming in and out, and drawing various elements on the map.
  */
 @SuppressWarnings("ALL")
 public class DrawingMap {
-
-
     static Affine transform = new Affine();
 
     private final Model model;
@@ -80,7 +80,6 @@ public class DrawingMap {
      * The first drawing of the map.
      * @param canvas - the canvas to be drawn.
      */
-
     public void initialize(ResizableCanvas canvas){
 
         this.canvas = canvas;
@@ -148,7 +147,6 @@ public class DrawingMap {
         if (!Tree.isLoaded()){
             return;
         }
-
 
         //Resfreshes the screen
         gc = canvas.getGraphicsContext2D();
@@ -232,6 +230,10 @@ public class DrawingMap {
             pointOfInterestNode = node;
     }
 
+    /**
+     * Sets the marked tag
+     * @param tag - The tag that is set as marked
+     */
     public void setMarkedTag(ArrayList<Tag> tag){
         markedTag = tag;
         mapView.draw();
@@ -466,10 +468,6 @@ public class DrawingMap {
         bounds[3] += (height * (1.0 + multiplier));
         return bounds;
     }
-
-    // getZoomLevelMeters() removed in zoombarfix branch 2/5-2024
-
-
 
     /**
      * 
