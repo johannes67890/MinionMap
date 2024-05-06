@@ -90,10 +90,18 @@ public final class Rect3D {
         return ymax;
     }
 
+    /**
+     * Returns the minimum <em>z</em>-coordinate of any point in this rectangle.
+     * @return the minimum <em>z</em>-coordinate of any point in this rectangle.
+     */
     public double zmin() {
         return zmin;
     }
 
+    /**
+     * Returns the maximum <em>y</em>-coordinate of any point in this rectangle.
+     * @return the maximum <em>y</em>-coordinate of any point in this rectangle.
+     */
     public double zmax() {
         return zmax;
     }

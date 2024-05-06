@@ -1,7 +1,6 @@
 /******************************************************************************
  *  Compilation:  javac Point3D.java
  *  Execution:    java Point3D x0 y0 n
- *  Dependencies: StdDraw.java StdRandom.java
  *
  *  Immutable point data type for points in the plane.
  *
