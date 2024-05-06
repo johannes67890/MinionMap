@@ -1,7 +1,6 @@
 package parser;
 
-import util.FileDistributer;
-import util.FileHandler;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.util.HashSet;
@@ -15,11 +14,8 @@ import org.junit.jupiter.api.Test;
 import parser.chunking.XMLWriter;
 import parser.chunking.XMLWriter.ChunkFiles;
 import structures.KDTree.Tree;
-
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import util.FileDistributer;
+import util.FileHandler;
 
 /**
  * Warning: These test should be run one at a time, 
@@ -46,7 +42,6 @@ public class XMLWriterTest {
         for (TagAddress address : reader.getAddresses().valueCollection()){
             XMLWriter.appendToPool(address);
         }
-
         XMLWriter.appendToBinary();
     }
     
