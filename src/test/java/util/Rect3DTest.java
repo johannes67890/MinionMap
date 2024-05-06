@@ -3,6 +3,7 @@ package util;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import structures.KDTree.Point3D;
 import structures.KDTree.Rect3D;
@@ -53,11 +54,16 @@ public class Rect3DTest {
         point1 = new Point3D(0f, 10f, (byte) 0);
         distance = rect1.distanceTo(point1);
         assertEquals(5, distance);
-
     }
 
-
-
-
-    
+    @Test
+    public void constructor(){
+        Executable e = new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                new Rect3D(1, 1, 1, 0, 0, 0);
+            }
+        };
+        assertThrows(IllegalArgumentException.class, e);
+    }
 }
