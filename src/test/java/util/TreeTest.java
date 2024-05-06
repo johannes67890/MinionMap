@@ -1,71 +1,67 @@
-// package util;
+package util;
 
-// import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-// import java.util.ArrayList;
-// import java.util.HashMap;
-// import java.util.HashSet;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
 
-// import org.junit.jupiter.api.AfterEach;
-// import org.junit.jupiter.api.BeforeEach;
-// import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import parser.Tag;
+import parser.TagBound;
+import parser.TagNode;
+import parser.TagWay;
+import parser.XMLReader;
+import structures.KDTree.Point3D;
+import structures.KDTree.Rect3D;
+import structures.KDTree.Tree;
 
-// import edu.princeton.cs.algs4.Point2D;
-// import edu.princeton.cs.algs4.RectHV;
-// import parser.Tag;
-// import parser.TagNode;
-// import parser.XMLReader;
-// import structures.KDTree.K3DTree;
-// import structures.KDTree.Point3D;
-// import structures.KDTree.Rect3D;
-// import structures.KDTree.Tree;
+public class TreeTest {
+    private XMLReader reader;
+    private Tree tree;
+    @BeforeEach
+    void setUp() {
+        reader = new XMLReader(FileHandler.getFileInputStream(new File(FileDistributer.testMap.getFilePath())));
+        assertNotNull(reader);
+        assertDoesNotThrow(() -> this.reader);
+        Tree.initializeTree();
+        for (TagWay way : reader.getWays().valueCollection()){
+            Tree.insertTagWayInTree(way);
+        }
+    }
 
-// public class TreeTest {
-//     private XMLReader reader;
-//     private Tree tree;
-//     @BeforeEach
-//     void setUp() {
-//         this.reader = new XMLReader("src/test/java/org/ressources/map.osm");
-//         assertNotNull(reader);
-//         assertDoesNotThrow(() -> this.reader);
-//         ArrayList<Tag> tempList = new ArrayList<>();
-//         tempList.addAll(reader.getWays().valueCollection());
-
-//         Tree.initialize(tempList);
-//     }
-
-//     // @Test
-//     // void testInsertTagInTree() {
-//     //     assertNotNull(Tree.getNearestPoint(new Point3D(20, 20, 0)));
-//     // }
+    @Test
+    void testInsertTagInTree() {
+        
+        assertEquals(1 , Tree.getNearestOfClassBruteForce(new TagNode(0, 0), TagWay.class).size());
+    }
 
 
-//     // @Test
-//     // void testGetTagsInBounds() {
-//     //     ArrayList<Tag> tempList = new ArrayList<>(reader.getNodes().valueCollection());
-//     //     tempList.addAll(reader.getWays().valueCollection());
-//     //     tempList.addAll(reader.getRelations().valueCollection());
+    @Test
+    void testGetTagsInBounds() {
+        
+        TagBound bound = reader.getBound();
+        HashSet<Tag> tagsInBounds = Tree.getTagsInBounds(new Rect3D(bound.getMinLon(), bound.getMinLat(), 0, bound.getMaxLon(), bound.getMaxLat(), 10));
 
-//     //     HashSet<Tag> tagsInBounds = Tree.getTagsInBounds(new Rect3D(-200, -200, 0, 200, 200, 10));
+        assertEquals(211 ,tagsInBounds.size());
+    }
 
-//     //     assertTrue(tagsInBounds.size() > 0);
-//     // }
+    @Test
+    void testGetTagsNearPoint(){
+        ArrayList<Tag> tagList = new ArrayList<>(reader.getWays().valueCollection());
 
-//     // @Test
-//     // void testGetTagsNearPoint(){
-//     //     ArrayList<Tag> tagList = new ArrayList<>(reader.getNodes().valueCollection());
+        Point3D point = new Point3D(tagList.get(0).getLon(), tagList.get(0).getLat(), 0);
 
-//     //     Point3D point = new Point3D(tagList.get(0).getLon(), tagList.get(0).getLat(), 0);
+        assertTrue(Tree.getTagsNearPoint(point).size() > 0);
+    }
 
-//     //     assertTrue(Tree.getTagsNearPoint(point).size() > 0);
-//     // }
+    @Test
+    void testGetTagsFromPoint(){
+        ArrayList<Tag> tagList = new ArrayList<>(reader.getNodes().valueCollection());
 
-//     // @Test
-//     // void testGetTagsFromPoint(){
-//     //     ArrayList<Tag> tagList = new ArrayList<>(reader.getNodes().valueCollection());
+        Point3D point = new Point3D(tagList.get(0).getLon(), tagList.get(0).getLat(), 0);
 
-//     //     Point3D point = new Point3D(tagList.get(0).getLon(), tagList.get(0).getLat(), 0);
-
-//     //     assertTrue(Tree.getTagsFromPoint(point).size() > 0);
-//     // }   
-// }
+        assertTrue(Tree.getTagsFromPoint(point).size() > 0);
+    }   
+}
