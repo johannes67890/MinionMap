@@ -30,14 +30,10 @@ public class Tree implements Serializable{
      * and resets XMLReader
      * @param tags
      */
-
-    public Tree(){
+    public static void initializeTree(){
         multiTree = new K3DTree();
         multiTree.setBound(Float.MIN_VALUE, Float.MIN_VALUE, Byte.MIN_VALUE, Float.MAX_VALUE, Float.MAX_VALUE, Byte.MAX_VALUE);
     }
-
-
-
 
     public static void isNowLoaded(){
         isLoaded = true;

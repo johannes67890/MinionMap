@@ -160,7 +160,7 @@ public class Controller implements Initializable, ControllerInterface{
                 }
 
                 if(!(nearestTag.get(0) instanceof TagAddress) && nearestTag.get(0).getType() == Type.BUILDING){
-                    TagAddress address = (TagAddress) Model.getInstanceModel().getTree().getNearestOfClassBruteForce(new TagNode(point.y(), point.x()), TagAddress.class).get(0);
+                    TagAddress address = (TagAddress) Tree.getNearestOfClassBruteForce(new TagNode(point.y(), point.x()), TagAddress.class).get(0);
                     poiText.setText(address.toString());
                     poiLoc.setText(MecatorProjection.unprojectLon(address.getLon()) + ", " + MecatorProjection.unprojectLat(address.getLat()));
                     poiView.getItems().add(address.toString());

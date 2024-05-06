@@ -21,8 +21,6 @@ public class Model implements Serializable{
     private TLongObjectHashMap<TagAddress> addresses = new TLongObjectHashMap<TagAddress>();
     private Trie trie = new Trie();
 
-    private Tree tree;
-
     private static Model instanceModel;
 
 
@@ -47,6 +45,7 @@ public class Model implements Serializable{
         addresses = reader.getAddresses();
         reader.clearTags();
         System.gc();
+
         System.out.println("Initializing tree: ");
         long startTree = System.currentTimeMillis();
         initializeTrees();
@@ -59,10 +58,6 @@ public class Model implements Serializable{
     private Model() {
     }
 
-    public Tree getTree(){
-        return this.tree;
-    }
-
     public TagBound getBound(){return this.bound;}
 
     public Trie getTrie(){return trie;}
@@ -71,13 +66,13 @@ public class Model implements Serializable{
 
     private void initializeTrees(){
 
-        this.tree = new Tree();
+        Tree.initializeTree();
 
         Thread addWays = new Thread(() ->{
             System.out.println("Loading ways");
             long start = System.currentTimeMillis();
             for(TagWay way : XMLReader.getWays().valueCollection()){
-                tree.insertTagWayInTree(way);
+                Tree.insertTagWayInTree(way);
             }
             long end = System.currentTimeMillis();
             System.out.println("Time to add ways - total: " + (end - start) + "ms");
@@ -93,7 +88,7 @@ public class Model implements Serializable{
             long start = System.currentTimeMillis();
 
             for(TagRelation relation : XMLReader.getRelations().valueCollection()){
-                tree.insertTagRelationInTree(relation);
+                Tree.insertTagRelationInTree(relation);
             }
 
             long end = System.currentTimeMillis();
@@ -109,7 +104,7 @@ public class Model implements Serializable{
             System.out.println("Loading addresses");
             long start = System.currentTimeMillis();
             for(Tag tag : addresses.valueCollection()){
-                tree.insertTagAdressInTree(tag);
+                Tree.insertTagAdressInTree(tag);
             }
 
             long end = System.currentTimeMillis();
@@ -119,23 +114,19 @@ public class Model implements Serializable{
             System.gc();
         });
 
-
-
-
         addWays.start();
         addRelations.start();
-        //addAddresses.start();
+        addAddresses.start();
 
 
         try{
             addWays.join();
             addRelations.join();
-            //addAddresses.join();
-
+            addAddresses.join();
         } catch (Exception e) {
             System.out.println(e.getStackTrace()+ " Failed at threadjoining " + e.getMessage());
         }
 
-        tree.isNowLoaded();
+        Tree.isNowLoaded();
     }
 }

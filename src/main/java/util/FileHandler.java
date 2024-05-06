@@ -21,18 +21,12 @@ public class FileHandler {
     //buffer size for reading and writing in kb
     private static final int BUFFER_SIZE = 4096;
     protected String zipPath = null;
-
     private static final String osmPath = System.getProperty("user.dir").toString() + "\\src\\main\\resources\\files\\osmFile\\";
     private static String savePath = System.getProperty("user.dir").toString() + "\\src\\main\\resources\\files\\savedFile\\";
-
     private static Model model;
-    @Serial
-    private static final long serialVersionUID = 1L;
+    public static Object getModel(File file){
 
-
-    public static Object getModel(File file) throws IOException{
-        model = (Model) loadUnknownFile(file);
-        return model;
+        return Model.updateModelValues(getFileInputStream(file));
         //return new Model(new XMLReader(new FileInputStream(file)));
     }
 
