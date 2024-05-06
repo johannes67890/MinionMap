@@ -354,7 +354,7 @@ public enum Type  {
         }
     }
 
-        /**
+    /**
      * Returns the highest layered type of the two types.
      * @param type1 - The first type to compare.
      * @param type2 - The second type to compare.
@@ -370,7 +370,6 @@ public enum Type  {
 
         
     /**
-     * 
      * @return The hierarchy of the {@link Type} from 0 (least important) to 9 (most important) as an integer.
      */
     public int getThisHierarchy(){
@@ -378,7 +377,6 @@ public enum Type  {
     }
 
     /**
-     * 
      * @return The layer of the {@link Type} from 0 (far behind) to 9 (up front) as an integer.
      */
     public int getLayer(){
@@ -386,7 +384,6 @@ public enum Type  {
     }
 
     /**
-     * 
      * @return The width of the {@link Type} as a double.
      */
     public double getWidth(){
@@ -394,7 +391,6 @@ public enum Type  {
     }
     
     /**
-     * 
      * @return The color of the {@link Type}. Color is determined by the {@link GraphicsHandler}.
      */
     public Color getColor(){
@@ -410,7 +406,6 @@ public enum Type  {
     }
 
     /**
-     * 
      * @return The color of the polygon line. Color is determined by the {@link GraphicsHandler}.
      */
     public Color getPolyLineColor(){
@@ -426,7 +421,6 @@ public enum Type  {
     }
 
     /**
-     * 
      * @return A boolean to determine if the {@link Type} should be drawn as a line.
      */
     public boolean getIsLine(){
@@ -434,7 +428,6 @@ public enum Type  {
     }
 
     /**
-     * 
      * @return The minimum width of the {@link Type} as a double.
      */
     public double getMinWidth(){
@@ -442,11 +435,9 @@ public enum Type  {
     }
 
     /**
-     * 
      * @return The maximum width of the {@link Type} as a double.
      */
     public double getMaxWidth(){
         return maxWidth;
     }
-
 }
