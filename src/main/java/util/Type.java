@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 
 import gui.GraphicsHandler;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 
 
 
@@ -204,7 +203,6 @@ public enum Type  {
     private final Color polyLineColor;
     private final double width;
     private final boolean isLine;
-    private boolean toShow = true;
     private final double minWidth;
     private final double maxWidth;
 
@@ -309,17 +307,6 @@ public enum Type  {
             .collect(Collectors.toList());
     }
 
-    // /* Utility Methods */
-    // private List<String> filteredType(String[] unAllowed){
-    //     List<String> res = new ArrayList<>();
-    //         for (String str : this.getValue() ) {
-    //             if(!Arrays.asList(unAllowed).contains(str)){
-    //                 res.add(str);
-    //             }
-    //         }
-    //     return res;
-    // }
-
     public String getKey() {
         return key;
     }
@@ -395,13 +382,6 @@ public enum Type  {
     }
     
     /**
-     * TODO - Remove this method?
-     * @return The color of the {@link Type} as a {@link Paint}.
-     */
-    public Paint getPaint() {
-        return color;
-    }
-    /**
      * 
      * @return The color of the {@link Type}. Color is determined by the {@link GraphicsHandler}.
      */
@@ -456,13 +436,5 @@ public enum Type  {
     public double getMaxWidth(){
         return maxWidth;
     }
-
-    /* 
-    public boolean equals(Type type) {
-        if(this instanceof Type){
-            return this.getKey().equals(type.getKey());   
-        }
-        return false;
-    }*/
 
 }
