@@ -15,6 +15,10 @@ import org.junit.platform.reporting.shadow.org.opentest4j.reporting.events.core.
 
 import parser.Model;
 
+//Has to be run by itself due to the static nature of the Model class
+//This is because the Model class is a singleton and the tests will interfere with each other
+//If run together
+
 public class FileHandlerTest {
     
     @Test
