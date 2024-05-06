@@ -62,7 +62,6 @@ public enum Type  {
     HELIPAD("aeroway", new String[]{"helipad", "heliport"}, 8, 9, Color.web("#E9E7E2"), Color.LIGHTGRAY.darker(), 5, false),
     AERODROME("aerodrome", new String[]{""}, 8, 3, Color.web("#E9E7E2"), Color.LIGHTGRAY.darker(), 5, false),
     BEACH("natural",new String[]{"beach"}, 8, 3, Color.web("#FBEDB7"), Color.YELLOW.darker(), 5, false),
-    FOREST("landuse",new String[]{"forest"}, 8, 4, Color.web("#ADD19E"), Color.GREEN.darker(), 5, false),
     ALLOTMENTS("landuse", new String[]{"allotments"}, 8, 8, Color.web("#C9E1BF"), Color.BLANCHEDALMOND.darker(), 5, false),
     GRAVEYARD("amenity", new String[]{"grave_yard"}, 8, 7, Color.web("#AACBAF"), Color.BLANCHEDALMOND.darker(), 5, false),
     CEMETERY("landuse", new String[]{"cemetery"}, 8, 7, Color.web("#AACBAF"), Color.BLANCHEDALMOND.darker(), 5, false),
@@ -71,6 +70,7 @@ public enum Type  {
     PORT("industrial", new String[]{"port"}, 8, 0, Color.TRANSPARENT, Color.TRANSPARENT, 5, false),
     
     // Urban and natural (Hierarchy: 7)
+    FOREST("landuse",new String[]{"forest"}, 7, 4, Color.web("#ADD19E"), Color.GREEN.darker(), 5, false),
     INDUSTRIAL("landuse", new String[]{"industrial"}, 7, 8, Color.web("#EBDBE8"), Color.PLUM.darker(), 1, false),
     FARMFIELD("landuse", new String[]{"farmland"}, 7, 6, Color.web("#EEF0D5"), Color.web("#EEF0D5").darker(), 5, false),
     GRASS("landuse",new String[]{"meadow","grass"}, 7, 5, Color.web("#CDEBB0"), Color.web("#CDEBB0").darker(), 5, false),
