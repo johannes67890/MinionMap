@@ -84,12 +84,7 @@ public class FileHandler {
         return loadBin(new File(path));
     }
 
-    /**
-     * Gets the fileinputstream for the file
-     * @param file the file to get the fileinputstream for
-     * @return the fileinputstream for the file
-     */
-    private static FileInputStream getFileInputStream(File file) {
+    public static FileInputStream getFileInputStream(File file) {
         try{
             return new FileInputStream(file);
         } catch (FileNotFoundException e) {
