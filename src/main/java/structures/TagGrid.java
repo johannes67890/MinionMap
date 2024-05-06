@@ -11,9 +11,6 @@ import util.Type;
  * despite zooming in on them.
  * The {@link K3Dtree} will be able to recognize these taggrids and will draw whatever way
  * these grids are meant for.
- * Contains the following tags:
- * <p>
- * </p>
 */
 public class TagGrid extends Tag {
 
@@ -24,24 +21,35 @@ public class TagGrid extends Tag {
         this.lat = lat;
         this.lon = lon;
     }
-   
+    /**
+     * Returns zero, as TagGrid is not meanth to have an id.
+     */
     @Override
     public long getId(){
         return 0;
     }
 
+    /**
+     * Returns the lattitude (the y-value) of the TagGrid
+     */
     @Override
     public float getLat(){
         return this.lat;
     }
+    /**
+     * Returns the longitude (the x-value) of the TagGrid
+     */
     @Override
     public float getLon(){
         return this.lon;
     }
 
+    /**
+     * Cannot get a type from TagGrid!
+     */
     @Override
     public Type getType() {
-        throw new UnsupportedOperationException("TagNode does not have a type.");
+        throw new UnsupportedOperationException("TagGrid does not have a type.");
     }
  
 

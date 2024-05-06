@@ -101,7 +101,7 @@ public enum Type  {
     // Urban and natural (Hierarchy: 7)
     ABANDONEDRAIL("railway",new String[]{"abandoned"}, 5, 9, Color.DARKGRAY, 2, true, 4, 1000),
     MILITARY("landuse", new String[]{"military"}, 7, 10, Color.SALMON.interpolate(Color.TRANSPARENT, 0.5), Color.SALMON.interpolate(Color.WHITE, 0.5).darker(), 5, false),
-    BUILDING("building",new String[]{"", "yes"},7, 9, Color.web("#D9D0C9"), Color.web("#D9D0C9").darker(), 5, false),
+    BUILDING("building",new String[]{"", "yes"},5, 9, Color.web("#D9D0C9"), Color.web("#D9D0C9").darker(), 5, false),
     LEISURE("leisure",new String[]{"park", "dog_park", "garden", "horse_riding", "miniature_golf", 
     "pitch", "playground", "resort", "stadium", "summer_camp", "track", "sports_centre", "fitness_station", "disc_golf_course"},7, 8, Color.web("#C8FACC"), Color.web("#C8FACC").darker(), 5, false),
     GOLF("leisure",new String[]{"golf_course"},7, 8, Color.web("#DEF6C0"), Color.web("#DEF6C0").darker(), 5, false),
@@ -118,17 +118,17 @@ public enum Type  {
     AERIALWAYSTATION("aerialway", new String[]{"station"},5, 8, Color.GRAY, Color.GRAY.darker(), 5, false),
     RESIDENTIAL_ROAD("highway",new String[]{"residential"}, 7, 9, Color.WHITE, 5, true, 2, 7),
     UNCLASSIFIED("highway",new String[]{"unclassified"}, 7, 9, Color.WHITE, 5, true, 2, 7),
-    LIVING_STREET("highway",new String[]{"living_street"}, 7, 9, Color.WHITE, 5, true, 2, 7),
+    LIVING_STREET("highway",new String[]{"living_street"}, 6, 9, Color.WHITE, 5, true, 2, 7),
 
     ROAD("highway",new String[]{"road"}, 7, 9, Color.WHITE, 5, true, 2, 7),
 
 
-    SERVICE("highway",new String[]{"service"}, 7, 9, Color.WHITE, 5, true, 2, 7),
-    TRACK("highway",new String[]{"track"}, 7, 9, Color.WHITE, 5, true, 2, 7),
+    SERVICE("highway",new String[]{"service"}, 6, 9, Color.WHITE, 5, true, 2, 7),
+    TRACK("highway",new String[]{"track"}, 6, 9, Color.WHITE, 5, true, 2, 7),
 
-    BIKE_ROAD("cycleway",new String[]{"lane", "oppisite", "opposite_lane", "track", "opposite_track", "share_busway", "shared_lane", "opposite_share_busway"}, 7, 9, Color.WHITE, 5, true, 2, 7),
-    PEDESTRIAN_ROAD("highway",new String[]{"footway", "path", "steps", "bridleway", "pedestrian"}, 7, 9, Color.WHITE, 5, true, 2, 7),
-    OTHER_ROAD("highway",new String[]{"cycleway", "mini_roundabout"}, 7, 9, Color.WHITE, 5, true, 2, 2),
+    BIKE_ROAD("cycleway",new String[]{"lane", "oppisite", "opposite_lane", "track", "opposite_track", "share_busway", "shared_lane", "opposite_share_busway"}, 6, 9, Color.WHITE, 5, true, 2, 7),
+    PEDESTRIAN_ROAD("highway",new String[]{"footway", "path", "steps", "bridleway", "pedestrian"}, 6, 9, Color.WHITE, 5, true, 2, 7),
+    OTHER_ROAD("highway",new String[]{"cycleway", "mini_roundabout"}, 6, 9, Color.WHITE, 5, true, 2, 2),
     // Relations (Hierarchy: 3)
     MULTIPOLYGON("nothing must be mutlipolygon", new String[]{"multipolygon"}, 3, Color.BLACK, 0),
     RESTRICTION("type", new String[]{"restriction"}, 3, Color.BLACK, 0),
