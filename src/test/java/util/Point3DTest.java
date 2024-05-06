@@ -58,6 +58,7 @@ public class Point3DTest {
         Point3D point2 = new Point3D(3f, 3f, 0);
         Point3D point3 = new Point3D(3, 4, 0);
 
+        //assertEquals(point1.compareTo(point3), -1);
         assertTrue(point1.equals(point2));
         assertFalse(point3.equals(point1));
     }
