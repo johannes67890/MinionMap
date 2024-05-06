@@ -68,6 +68,8 @@ public class Controller implements Initializable, ControllerInterface{
     @FXML private Button findRouteButton;
     @FXML private CheckBox showAllRoutesCheckBox;
     @FXML private ListView<String> routeListView;
+    @FXML private Label routeDistanceLable;
+    @FXML private Label routeTimeLabel;
 
     @FXML private Text speedText;
     @FXML private Text distanceText;
@@ -432,6 +434,8 @@ public class Controller implements Initializable, ControllerInterface{
                         }
 
                     }
+                    routeDistanceLable.setText(dijkstra.getDistanceOfPath());
+                    routeTimeLabel.setText(dijkstra.getMinutesOfPath());
                     routeListView.getItems().setAll(pathList);
                     pathList.clear();
                     if (!routeListView.isVisible() && routeListView.getItems().size() > 0){

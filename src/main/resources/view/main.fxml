@@ -66,8 +66,8 @@
                </top>
             </BorderPane>
             <Pane fx:id="routeTypeMenu" styleClass="routeContainer" translateY="25.0" translateX="5" StackPane.alignment="CENTER_LEFT">
-               <VBox styleClass="routeGroup" alignment="CENTER" spacing="10">
-                  <Button fx:id="findRouteButton" styleClass="button" alignment="CENTER" mnemonicParsing="false" text="Find Route" />
+               <VBox styleClass="routeGroup" alignment="CENTER" spacing="20">
+                  <Button fx:id="findRouteButton" minWidth="75" styleClass="button" alignment="CENTER" mnemonicParsing="false" text="Find Route" />
                   <HBox spacing="10.0" alignment="CENTER">
                      <Button fx:id="shortButton" styleClass="button" mnemonicParsing="false" text="Shortest" />
                      <Button fx:id="fastButton" styleClass="button" mnemonicParsing="false" text="Fastest" />
@@ -95,11 +95,23 @@
                               </ImageView>
                            </graphic>
                         </Button>
-                        <!-- <Text fx:id="distanceText" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="texxt" /> -->
-                        <!-- <Text fx:id="speedText" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="texxt" /> -->
                      </children>
                   </HBox>
-                  <VBox alignment="CENTER" spacing="5" styleClass="listConatiner">
+                  <HBox spacing="35" alignment="CENTER">
+                     <HBox spacing="10">
+                        <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                              <Image url="@../visuals/distance.png" />
+                        </ImageView>
+                        <Label fx:id="routeDistanceLable" styleClass="nText" text="---" />
+                     </HBox>
+                     <HBox spacing="10">
+                        <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                              <Image url="@../visuals/clock.png" />
+                        </ImageView>
+                        <Label fx:id="routeTimeLabel" styleClass="nText" text="---" />
+                     </HBox>
+                  </HBox>
+                  <VBox  alignment="CENTER" spacing="5" styleClass="listConatiner">
                      <ListView fx:id="routeListView" styleClass="list-cell"/>
                   </VBox>
                </VBox>
@@ -107,22 +119,47 @@
             <Pane fx:id="leftBurgerMenu" translateY="55.0" visible="false" StackPane.alignment="CENTER_LEFT">
                   <VBox fx:id="mainMenuVBox" spacing="25" StackPane.alignment="CENTER" styleClass="burgermenu" visible="false">
                      <HBox spacing="10" alignment="CENTER">
-                        <Label alignment="CENTER" styleClass="texxt">
+                        <Label alignment="CENTER" styleClass="nText">
                            Color scheme
                         </Label>
                         <ChoiceBox fx:id="styleChoiceBox" styleClass="choice-box"/>
                      </HBox>
                      <HBox spacing="10" alignment="CENTER">
-                        <Label alignment="CENTER" styleClass="texxt">
+                        <Label alignment="CENTER" styleClass="nText">
                            View all visited routes
                         </Label>
                         <CheckBox fx:id="showAllRoutesCheckBox" styleClass=".check-box"/>
                      </HBox>
                      <VBox alignment="CENTER" spacing="5" styleClass="listConatiner">
-                        <Label alignment="CENTER" styleClass="texxt">
+                        <Label alignment="CENTER" styleClass="nText">
                            Points of interest
                         </Label>
                         <ListView fx:id="poiView" styleClass="list-cell" />
+                     </VBox>
+                     <VBox alignment="CENTER" spacing="2">
+                        <Label alignment="CENTER" styleClass="nText">
+                              Made by:
+                        </Label>
+                        <VBox alignment="CENTER" spacing="1">
+                           <Label alignment="CENTER" styleClass="nText">
+                                 Group 11.
+                           </Label>
+                           <Label alignment="CENTER" styleClass="sText">
+                                 Andreas Løvsgren Nielsen (anln)
+                           </Label>
+                           <Label alignment="CENTER" styleClass="sText">
+                                 Kevin Skovgaard Gravesen (kegr)
+                           </Label>
+                           <Label alignment="CENTER" styleClass="sText">
+                                 Elias Lildholdt (lild)
+                           </Label>
+                           <Label alignment="CENTER" styleClass="sText">
+                                 Marius Cornelius Wisniewski Larsen (coml)
+                           </Label>
+                           <Label alignment="CENTER" styleClass="sText">
+                                 Johannes Gunge Jørgensen (jgjo)
+                           </Label>
+                        </VBox>
                      </VBox>
                   </VBox>
             </Pane>
