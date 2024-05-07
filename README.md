@@ -1,6 +1,6 @@
-<p align="center">
-<img src="https://github.com/johannes67890/MapOfDenmark/tree/main/src/main/resources/visuals/minionEyes.png" alt="Minion Eyes" width="200" height="200">
-</p>
+<div align="center">
+    <img src="https://github.com/johannes67890/MinionMap/blob/main/src/main/resources/visuals/MinionEyes.png" alt="Minion Eyes" width="200" height="200">
+</div>
 
 # Minion Maps
 
@@ -8,7 +8,7 @@ Minion Map is a [Geographic information system](https://en.wikipedia.org/wiki/Ge
 
 ## Preview
 
-<img src="https://github.com/johannes67890/MapOfDenmark/tree/main/src/main/resources/visuals/MinionMap.png" alt="Minion Map preview">
+<img src="https://github.com/johannes67890/MinionMap/blob/main/src/main/resources/visuals/MinionMap.png" alt="Minion Map preview">
 
 ## Running the application
 Download the [latest release]() as a .jar file.
