@@ -1,5 +1,5 @@
 <div align="center">
-    <img src="https://github.com/johannes67890/MinionMap/blob/main/src/main/resources/visuals/MinionEyes.png" alt="Minion Eyes">
+    <img src="https://github.com/johannes67890/MinionMap/blob/main/src/main/resources/visuals/MinionEyes.png" alt="Minion Eyes" width="200" height="100">
 </div>
 
 # Minion Maps
