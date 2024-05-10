@@ -67,7 +67,7 @@ public class Model implements Serializable{
 
         System.out.println("Initializing tree: ");
         long startTree = System.currentTimeMillis();
-        initializeTrees();
+        //initializeTrees();
         long stopTree = System.currentTimeMillis();
         System.out.println("Time to tree - total: " + (stopTree - startTree) + "ms");
 

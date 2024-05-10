@@ -11,6 +11,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import gnu.trove.map.hash.TLongObjectHashMap;
+import parser.chunking.XMLWriter;
 import structures.Trie;
 
 /**
@@ -133,6 +134,7 @@ public class XMLReader implements Serializable{
                         String element = reader.getLocalName().intern();
                         if(element.equals("bounds")) {
                             bound = MecatorProjection.project(new TagBound(reader));
+                            new XMLWriter(bound);
                         }else {
                             tempBuilder.parse(element, reader);
                         };
@@ -142,19 +144,35 @@ public class XMLReader implements Serializable{
                         switch (element) {
                             case "node":
                                 if(!tempBuilder.getAddressBuilder().isEmpty()){
-                                    addresses.put(tempBuilder.getId(), new TagAddress(tempBuilder));
-                                    trie.insert(new TagAddress(tempBuilder));
+                                    // addresses.put(tempBuilder.getId(), new TagAddress(tempBuilder));
+                                    // trie.insert(new TagAddress(tempBuilder));
+                                    XMLWriter.appendToPool(new TagAddress(tempBuilder));
                                 } else {
                                     nodes.put(tempBuilder.getId(), new TagNode(tempBuilder));
                                 }
                                 tempBuilder = new XMLBuilder(); // Reset the builder
                                 break;
                             case "way":
-                                ways.put(tempBuilder.getId(), new TagWay(tempBuilder));
+                                TagWay way = new TagWay(tempBuilder);
+                            
+                                // ways.put(tempBuilder.getId(), way);
+                                for (TagNode node : way.getRefNodes()) {
+                                    XMLWriter.appendToPool(node);   
+                                    if(node.getNext() == null) break;
+                                }
+
                                 tempBuilder = new XMLBuilder();
                                 break;
                             case "relation":
-                                relations.put(tempBuilder.getId(), new TagRelation(tempBuilder));
+                                TagRelation relation = new TagRelation(tempBuilder);
+                                relations.put(tempBuilder.getId(), relation);
+                                for (TagWay RelationWay : relation.getHandledOuter()) {
+                                    RelationWay.setRelationParent(relation);
+                                    for (TagNode node : RelationWay.getRefNodes()) {
+                                        XMLWriter.appendToPool(node);
+                                        if(node.getNext() == null) break;
+                                    }
+                                }
                                 tempBuilder = new XMLBuilder();
                                 break;
                             default:
@@ -165,10 +183,10 @@ public class XMLReader implements Serializable{
                         break;
                     }
             }           
-            // nodes = null; // Free up memory
+            nodes = null; // Free up memory
             reader.close();
 
-            //XMLWriter.appendToBinary();
+            XMLWriter.appendToBinary();
 
             // end timer
             long end = System.currentTimeMillis();

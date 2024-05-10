@@ -17,6 +17,8 @@ import parser.TagBound;
 import parser.TagNode;
 import parser.TagRelation;
 import parser.TagWay;
+import parser.chunking.XMLWriter;
+import parser.chunking.XMLWriter.ChunkFiles;
 import structures.MinPQ;
 import structures.Trie;
 import structures.KDTree.Rect3D;
@@ -79,6 +81,13 @@ public class DrawingMap {
         double maxlat = bound.getMaxLat();
         double maxlon = bound.getMaxLon();
 
+        Tree.initializeTree();
+
+        for(TagBound b : ChunkFiles.getChunkFiles().keySet()){
+            Tree.insertTagBoundsInTree(b);
+        }
+
+        Tree.isNowLoaded();
         zoombar = new Zoombar(zoombarIntervals, zoomLevelMax, zoomLevelMin);
         setBackGroundColor(Color.web("#F2EFE9"));
         pan(-minlon, maxlat);
@@ -148,18 +157,18 @@ public class DrawingMap {
         ways = new ArrayList<>();
         relations = new ArrayList<>();
 
-        HashSet<Tag> tags = Tree.getTagsInBounds(rect);
-        backGroundSet = false;
-        for(Tag tag : tags){
-            if (tag instanceof TagWay){
-                TagWay way = (TagWay) tag;
-                ways.add(way);
-            }else if (tag instanceof TagRelation){
-                TagRelation relation = (TagRelation) tag;
-                relations.add(relation);
-                if (relation.getType() == Type.BORDER || relation.getType() == Type.REGION){
-                    setBackGroundColor(Color.web("#AAD3DF"));
-                    backGroundSet = true;
+        for (Tag tag : Tree.getTagsInBounds(rect)) {
+            if(tag instanceof TagBound){
+                TagBound bound = (TagBound) tag;
+                backGroundSet = false;
+                for (Tag chunkTag : XMLWriter.getTagsFromChunkByBounds(bound)) {
+                    if(chunkTag instanceof TagNode){
+                        TagNode node = (TagNode) chunkTag;
+                        ways.add(node.getParent());
+                        if(node.getParent().getRelationParent() != null){
+                            relations.add(node.getParent().getRelationParent());
+                        }
+                    }
                 }
             }
         }
