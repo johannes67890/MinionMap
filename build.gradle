@@ -27,7 +27,11 @@ javafx {
     modules = [ 'javafx.controls', 'javafx.fxml' ]
 
 }
-
+application {
+    // Define the main class for the application.
+    mainClass = 'Main'
+    applicationDefaultJvmArgs = ["-Xmx32000m","-XX:-UseGCOverheadLimit","-Xss64m"]
+}
 test {
     useJUnitPlatform()
     minHeapSize = "128m" // initial heap size
@@ -43,7 +47,7 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
-mainClassName = "Main"
+// mainClassName = "Main"
 
 
 
