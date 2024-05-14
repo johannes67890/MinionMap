@@ -1,0 +1,462 @@
+\newpage
+\section{Appendix}
+\subsection*{A Formal Requirements}
+\subsubsection*{A.1}
+\begin{enumerate}
+    \item Allow the user to specify a data file for the application. The system should support loading a zipped .OSM file, but you may support other formats as well.
+\item Include a default binary file embedded as a resource of the program, which is loaded if the user does not choose another input file at start-up.
+\item Draw all roads in the loaded map dataset, using different colors for the different types of roads in the dataset.
+\item Show any rectangle of the map, as indicated by the user.
+\item Show the current zoom level, e.g., in the form of a graphical scale bar.
+\item Allow the user to change the visual appearance of the map, e.g., toggle color blind mode, or customize which elements to show.
+\item Adjust the layout when the size of the window changes.
+\item Ensure a clean GUI which is reasonably easy to navigate.
+\item Allow the user to search for addresses typed as a single string, and show the results on the map. The program must handle ambiguous user input appropriately, e.g., by displaying a list of possible matches.
+\item Make the computation of a shortest route on the map between two points for specified by the user (e.g., by typing addresses or clicking on the map).
+\item Allow the user to choose between at least 2 types of routes: for example, for biking routes and cars routes. Car routes should take into account speed limits/expected average speeds. A route for biking/walking should be the shortest and cannot use highways.
+\item Allow the user to add something to the map, e.g., points of interest.
+\item Be fast enough for convenient use, even when working with a complete data set for Denmark. The load time for .OSM can be hard to improve, but loading a binary file should be fast. After the start-up the user interface should respond reasonably smooth.
+\end{enumerate}
+\subsection*{B Group of Conduct}
+\subsubsection*{B.1}
+\textbf{The working policy for the group.}
+\begin{enumerate}
+\item Any breach of the following rules will result in cake-penalty.
+\item Academic quarter.
+\item Don’t be late.
+\end{enumerate}
+\textbf{The frequency with which you will meet each other.}
+\newline
+2 times a week at a minimum
+\newline
+Usually Monday after lectures and the other day will depend on when the TA decides to have his meeting. So at the moment: Monday, Tuesday.
+\newline
+Bufferday if needed: Friday before lectures.
+\newline
+\textbf{Where you will work (normally)}
+\newline
+2 times a week at the school or another physical place. 1-2 times a week from home.
+\newline
+\textbf{How well as a group do you plan to do in this course.}
+\newline
+We don’t have any goal we strive for academically. But we do have a goal on having a great time with the project which will probably result in average performance. We will try our best, but not stress over striving for an exceptional grade.
+\newline
+\textbf{Progress plan for the first two weeks.}
+\newline
+ Github workflow, Discuss the idea of group rotations with last member, Contact David.
+\newpage
+\subsection*{C Log}
+\subsubsection*{C.1}
+\hypertarget{monday-04-03-2024}{%
+\subsubsection*{Monday 04-03-2024}\label{monday-04-03-2024}}
+
+\emph{Meeting time: 12:00-16:00}\\
+We started looking into the project description, and have discussed the
+different requirements for the project. We have started discussing
+different ways to render the map in chunks. We have discussed how
+relations outside our view-box could affect what chunks are rendered,
+and how we should render them. We decided that this discussion would be
+better suited for later.
+
+We used a lot of time trying to get a simple version of the program
+running on all of our machines. We had some issues with the people using
+IntelliJ not being able to run the program, while the Visual Studio Code
+users had none of those issues. People were generally fine with
+switching to VSCode to alleviate any issues, although we did try to fix
+the issues with IntelliJ.
+
+\hypertarget{tuesday-05-03-2024}{%
+\subsubsection*{Tuesday 05-03-2024}\label{tuesday-05-03-2024}}
+
+\emph{Meeting time: 10:00-16:00}\\
+The first meeting was made with our guidance counsellor, David. As much
+has yet to be implemented in our system, we mainly spoke about what was
+about to come in the following weeks, as well as what to expect in the
+exam.
+
+After the meeting, we mainly focused on the technical aspects of our
+work environment. Ensuring that our base project works on all computers,
+and ensuring that Visual Studio Code handles javaFX correctly.
+
+Otherwise, implementations have not been our highest priority, however,
+the parse related features have been further developed, and some
+previous features were moved from intelliJ projects into various
+branches in our git.
+
+\hypertarget{thursday-07-03-2024}{%
+\subsubsection*{Thursday 07-03-2024}\label{thursday-07-03-2024}}
+
+\emph{Meeting time: 10:00-14:30}\\
+Today we worked from home, at 10:00 we had a meeting were we discussed
+the schedule of the day. After that we split up into 3 groups and worked
+on these issues: Regex, GUI and XML Parsing. We called it at 14:30 ish.
+
+\hypertarget{monday-11-03-2024}{%
+\subsubsection*{Monday 11-03-2024}\label{monday-11-03-2024}}
+
+\emph{Meeting time: 12:00-14:00}\\
+Under this meeting we concluded on using milestones within git forward
+on. By using milestones we can set some clear boundaries for what we
+have to achieve every week and by knowing that having the ability to
+coordinate or estimate when we will take up issue \#x.
+
+In this week we will finish up making the first revision of the GUI for
+the map, Regex- and XML-parser.
+
+\hypertarget{tuesday-12-03-2024}{%
+\subsubsection*{Tuesday 12-03-2024}\label{tuesday-12-03-2024}}
+
+Minor changes to the parser and refactoring.
+
+\emph{Meeting time: 10:00-14:00}\\
+Due to disease, two of our members were unable to attend todays meeting.
+We had a meeting with our TA, where we talked about GANT diagrams, and
+spoke about some of the theory from a prior course we could make use of.
+We worked on implementing the Levenshtein distance algorithm to give us
+a sort of ``autocorrection'' in case the user made a spelling mistake
+when searching for an address. We implemented matching input with city
+and street names. We also refactored the parser.
+
+\hypertarget{thursday-14-03-2024}{%
+\subsubsection*{Thursday 14-03-2024}\label{thursday-14-03-2024}}
+
+\emph{Meeting time: 12:00-16:00}\\
+As we had a lecture, most of the group met up afterwards, although some
+members were prevented from being physically being at ITU. We split up
+in the same three groups as last Thursday, and worked some of the same
+things. We fixed bug so address parsing is possible. We also added types
+for OSM data.
+
+\hypertarget{monday-18-03-2024}{%
+\subsubsection*{Monday 18-03-2024}\label{monday-18-03-2024}}
+
+\emph{Meeting time: 12:00- 16:00 }\\
+Our meeting began with us having an internal meeting about what we
+accomplished and to what extend we did it last week. Then we talked
+about whats next, which issues would make the most sense to solve at the
+moment and after that we delegated the work out between us.
+
+\hypertarget{tuesday-19-03-2024}{%
+\subsubsection*{Tuesday 19-03-2024}\label{tuesday-19-03-2024}}
+
+\emph{Meeting time: 10:00- 16:00 }\\
+We started the day off with a meeting with our TA. We got some feedback
+on the project structure and guidance on what our different discussed
+ideas would benefit the project the most to prioritize. After that we
+had a clear goal in mind for the week. To display Bornholm.
+
+\hypertarget{thursday-21-03-2024}{%
+\subsubsection*{Thursday 21-03-2024}\label{thursday-21-03-2024}}
+
+\emph{Meeting time: 10:00- 16:00 }\\
+Make the \texttt{XMLWriter} to initilize chunk files.\\
+Other changes to how the map is displayed and more.
+
+\hypertarget{tuesday-0204-2024}{%
+\subsubsection*{Tuesday 02/04-2024}\label{tuesday-0204-2024}}
+
+\emph{Meeting time: 10:00- 16:00 }\\
+The day started off with us having the first progress presentation. The
+other groups presentations solved some roadblocks or inspired us to do
+things different. Things that we began working on after this meeting
+was, GUI-rebuild, K-D Trees, Weighting of different elements which will
+be used to decide if the element should be displayed at a given
+zoom-level.
+
+\hypertarget{thursday-0404-2024}{%
+\subsubsection*{Thursday 04/04-2024}\label{thursday-0404-2024}}
+
+\emph{Meeting time: 10:00- 16:00 }\\
+Switched to FXML for the UI. Added a few new types to parsed elements.
+
+\hypertarget{monday-0804-2024}{%
+\subsubsection*{Monday 08/04-2024}\label{monday-0804-2024}}
+
+\emph{Meeting time: 12:00- 16:00 }\\
+KD-tree group from home, agreed on what to prioritize this week.
+Kd-trees, relations, filestreaming, adress-searching.
+
+\hypertarget{tuesday-0904-2024}{%
+\subsubsection*{Tuesday 09/04-2024}\label{tuesday-0904-2024}}
+
+\emph{Meeting time: 10:00- 16:00 }\\
+Missed meeting, with TA David. But stilled worked together on tuesday.
+
+\hypertarget{thursday-1104-2024}{%
+\subsubsection*{Thursday 11/04-2024}\label{thursday-1104-2024}}
+
+\emph{Meeting time: 10:00- 16:00 }\\
+We worked from home, had a meeting at 10. ish. and then split up into
+our groups. Kd-Trees, Relations, Map-painting, File-streamer.
+
+\hypertarget{monday-1504-2024}{%
+\subsubsection*{Monday 15/04-2024}\label{monday-1504-2024}}
+
+\emph{Meeting time: 12:00- 16:00 }\\
+Grouped up and agreed on to do the following this week. - Implementation
+of custom collections library, that takes primitive datatypes directly.
+So no reference of object, instead just object. - Adress-searching and
+UI - Pathfinding-implementation - Finishing up KD-trees. Closest node
+and comment/documentation
+
+\hypertarget{tuesday-1604-2024}{%
+\subsubsection*{Tuesday 16/04-2024}\label{tuesday-1604-2024}}
+
+\emph{Meeting time: 10:00- 16:00 }\\
+Fix major bugs in the Mercator Projection code. The core problem was
+that we didn't negate the latitude in the parser, so originally we did
+it in the Mercator Projector. This was a mistake because it messed up
+calculations with everything else.\\
+This also came with a small refactor of the \texttt{DrawMap} class.
+
+\hypertarget{wednesday-1704-2024}{%
+\subsubsection*{Wednesday 17/04-2024}\label{wednesday-1704-2024}}
+
+\emph{Meeting time: 10:00- XX:XX }\\
+On Wednesday we experimented with making \texttt{TagWay}'s as a
+linked-list, that could benefit us in the long run.\\
+This will mean hopefully better chunking capabilities and more. \#
+Wednesday 17/04-2024
+
+\hypertarget{thursday-1804-2024}{%
+\subsubsection*{Thursday 18/04-2024}\label{thursday-1804-2024}}
+
+\emph{Meeting time: 10:00- XX:XX }\\
+Used most of the day to refactor code in Mecator Projection and other
+parts of the code. Also a lot of focus for memory optimization.
+
+\hypertarget{monday-2204-2024}{%
+\subsubsection*{Monday 22/04-2024}\label{monday-2204-2024}}
+
+\emph{Meeting time: 10:00- 16:00 }\\
+We merged a lot of code into main from the previous week.~ Work-on
+KDTree and Chunks was also in focus, where we fixed alot of problems
+with writeing to chunks and improved the KDTree to be used later.
+
+\hypertarget{tuesday-2304-2024}{%
+\subsubsection*{Tuesday 23/04-2024}\label{tuesday-2304-2024}}
+
+\emph{Meeting time: 10:00- 16:00 }\\
+Start to work on 3D KDTrees, where the their dimension is for a
+hierarchy system for what to draw and when.\\
+Start to workon how to read from chunks.\\
+Achived functional address searching.
+
+\hypertarget{thursday-2504-2024}{%
+\subsubsection*{Thursday 25/04-2024}\label{thursday-2504-2024}}
+
+\emph{Meeting time: 10:00- 16:00 }\\
+Made the complete switch to linked-list based \texttt{TagWay}'s.\\
+Memory improvements and a new feature for a zoom-bar has been made.
+
+\hypertarget{monday-2904-2024}{%
+\subsubsection*{Monday 29/04-2024}\label{monday-2904-2024}}
+
+\emph{Meeting time: 10:00- 16:00 }\\
+Working to improve the searching for an address and more!\\
+We also try to use a new tree data structure for searching, the
+structure is \texttt{Trie}.
+
+\hypertarget{tuesday-3004-2024}{%
+\subsubsection*{Tuesday 30/04-2024}\label{tuesday-3004-2024}}
+
+\emph{Meeting time: 10:00- 19:00 }\\
+Trie is now fully functional, and allows us to search for a given
+adddress, where the program will autocomplete throughout. Additional
+development has been made on pathfind, which now has had a working
+instance.
+
+\hypertarget{wednesday-0105-2024}{%
+\subsubsection*{Wednesday 01/05-2024}\label{wednesday-0105-2024}}
+
+\emph{Meeting time: 10:00- 22:00 }\\
+New color palette, inspired by OpenStreetMap's color theme, and added
+more ui for searching and pathfinding.
+
+\hypertarget{thursday-0205-2024}{%
+\subsubsection*{Thursday 02/05-2024}\label{thursday-0205-2024}}
+
+\emph{Meeting time: 10:00- 18:00 }\\
+Functional incorporation with a*.
+
+\hypertarget{friday-0305-2024}{%
+\subsubsection*{Friday 03/05-2024}\label{friday-0305-2024}}
+
+\emph{Meeting time: 10:00- 23:00 }\\
+Tests added, refactoring directory.
+
+\hypertarget{saturday-0405-2024}{%
+\subsubsection*{Saturday 04/05-2024}\label{saturday-0405-2024}}
+
+\emph{Meeting time: 10:00- 19:00 }\\
+Most branches merged into main.
+
+\hypertarget{sunday-0505-2024}{%
+\subsubsection*{Sunday 05/05-2024}\label{sunday-0505-2024}}
+
+\emph{Meeting time: 10:00- 20:00 }\\
+Documentation, tests, css style.
+
+\hypertarget{monday-0605-2024}{%
+\subsubsection*{Monday 06/05-2024}\label{monday-0605-2024}}
+
+\emph{Meeting time: 12:00- 01:30 }\\
+Final changes, testing, functional zipping.
+\newpage
+\subsection*{D Git Log}
+\subsubsection*{D.1}
+
+\hypertarget{officiel-release-version-1.0}{%
+\subsubsection*{Officiel Release version
+1.0}\label{officiel-release-version-1.0}}
+
+\hypertarget{whats-changed}{%
+\subsubsection*{What's Changed}\label{whats-changed}}
+
+\begin{itemize}
+\tightlist
+\item
+  init project by @johannes67890 in\\
+  https://github.com/johannes67890/MinionMap/pull/1
+\item
+  Java fx init by @johannes67890 in\\
+  https://github.com/johannes67890/MinionMap/pull/15
+\item
+  Initial OSMParser by @johannes67890 in\\
+  https://github.com/johannes67890/MinionMap/pull/21
+\item
+  Address search by @johannes67890 in\\
+  https://github.com/johannes67890/MinionMap/pull/23
+\item
+  GUI by @johannes67890 in\\
+  https://github.com/johannes67890/MinionMap/pull/25
+\item
+  Address search integration by @Spurberino in\\
+  https://github.com/johannes67890/MinionMap/pull/28
+\item
+  Map drawing by @AndreasLN in\\
+  https://github.com/johannes67890/MinionMap/pull/31
+\item
+  Add MecatorProjection class and update TagNode constructor by\\
+  @johannes67890 in https://github.com/johannes67890/MinionMap/pull/32
+\item
+  Zip file and pathfinder implementation by @MessiGames30 in\\
+  https://github.com/johannes67890/MinionMap/pull/30
+\item
+  Merge from main by @AndreasLN in\\
+  https://github.com/johannes67890/MinionMap/pull/33
+\item
+  Merge with FXML rebuild by @Hopsasasa in\\
+  https://github.com/johannes67890/MinionMap/pull/37
+\item
+  OSMParser Version 2 by @johannes67890 in\\
+  https://github.com/johannes67890/MinionMap/pull/38
+\item
+  Osm parser v2 by @johannes67890 in\\
+  https://github.com/johannes67890/MinionMap/pull/39
+\item
+  Filestreaming by @johannes67890 in\\
+  https://github.com/johannes67890/MinionMap/pull/40
+\item
+  Import alg4 lib by @AndreasLN in\\
+  https://github.com/johannes67890/MinionMap/pull/42
+\item
+  Map coloring relations by @AndreasLN in\\
+  https://github.com/johannes67890/MinionMap/pull/43
+\item
+  K d tree implementation by @MessiGames30 in\\
+  https://github.com/johannes67890/MinionMap/pull/44
+\item
+  Map coloring relations by @johannes67890 in\\
+  https://github.com/johannes67890/MinionMap/pull/45
+\item
+  Zoom scale made, comments made, want to merge into main by\\
+  @MessiGames30 in https://github.com/johannes67890/MinionMap/pull/47
+\item
+  Macatorprojection fix by @johannes67890 in\\
+  https://github.com/johannes67890/MinionMap/pull/49
+\item
+  KDTree implementation with Mecator by @Hopsasasa in\\
+  https://github.com/johannes67890/MinionMap/pull/50
+\item
+  Memory opt by @johannes67890 in\\
+  https://github.com/johannes67890/MinionMap/pull/51
+\item
+  Merge pull request \#51 from johannes67890/memoryOpt by @AndreasLN in\\
+  https://github.com/johannes67890/MinionMap/pull/52
+\item
+  Kd tree optimization into main by @AndreasLN in\\
+  https://github.com/johannes67890/MinionMap/pull/53
+\item
+  main into search by @AndreasLN in\\
+  https://github.com/johannes67890/MinionMap/pull/55
+\item
+  Kd tree memory opt by @johannes67890 in\\
+  https://github.com/johannes67890/MinionMap/pull/57
+\item
+  Zoombar scaling by @MessiGames30 in\\
+  https://github.com/johannes67890/MinionMap/pull/56
+\item
+  relations fix into main by @AndreasLN in\\
+  https://github.com/johannes67890/MinionMap/pull/58
+\item
+  Color optimization into main by @AndreasLN in\\
+  https://github.com/johannes67890/MinionMap/pull/59
+\item
+  Updated when to load smaller streets by @Spurberino in\\
+  https://github.com/johannes67890/MinionMap/pull/60
+\item
+  Zoombar fixed by @MessiGames30 in\\
+  https://github.com/johannes67890/MinionMap/pull/61
+\item
+  Zoominonrelation into main by @AndreasLN in\\
+  https://github.com/johannes67890/MinionMap/pull/62
+\item
+  Testing into main by @AndreasLN in\\
+  https://github.com/johannes67890/MinionMap/pull/63
+\item
+  UI by @johannes67890 in\\
+  https://github.com/johannes67890/MinionMap/pull/64
+\item
+  Docs by @johannes67890 in\\
+  https://github.com/johannes67890/MinionMap/pull/65
+\item
+  Swap button fix by @johannes67890 in\\
+  https://github.com/johannes67890/MinionMap/pull/66
+\item
+  Bin last chance by @johannes67890 in\\
+  https://github.com/johannes67890/MinionMap/pull/67
+\item
+  Zip file fix by @johannes67890 in\\
+  https://github.com/johannes67890/MinionMap/pull/68
+\item
+  Tests by @johannes67890 in\\
+  https://github.com/johannes67890/MinionMap/pull/69
+\end{itemize}
+
+\hypertarget{new-contributors}{%
+\subsection*{E New Contributors}\label{new-contributors}}
+\subsubsection*{E.1}
+
+\begin{itemize}
+\tightlist
+\item
+  @johannes67890 made their first contribution in\\
+  https://github.com/johannes67890/MinionMap/pull/1
+\item
+  @Spurberino made their first contribution in\\
+  https://github.com/johannes67890/MinionMap/pull/28
+\item
+  @AndreasLN made their first contribution in\\
+  https://github.com/johannes67890/MinionMap/pull/31
+\item
+  @MessiGames30 made their first contribution in\\
+  https://github.com/johannes67890/MinionMap/pull/30
+\item
+  @Hopsasasa made their first contribution in\\
+  https://github.com/johannes67890/MinionMap/pull/37
+\end{itemize}
+
+\textbf{Full Changelog}:
+https://github.com/johannes67890/MinionMap/commits/1.0
+

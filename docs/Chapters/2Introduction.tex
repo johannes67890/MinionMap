@@ -1,0 +1,44 @@
+\section{Introduction}
+For millennia, humans have understood and recognised the importance and utility of maps and cartography. The history of mapping can be dated back more than 5.000 years, where humans would map places of interest on clay tablets or delicate maps on silk. In the modern era satellite systems, surveying techniques and contemporary cartographers are used to map the earth with very high precision and consistency. \cite*{littertur/icsm}
+This has as a result made the cartographic data of the earth widely available to the general public, both from web-map services such as Google Maps and Apple Maps or from open source databases as OpenStreetMap.com. \\
+\linebreak
+While there already exists an abundance of digital maps, they generally adhere to many common features and design standards. Developing a straightforward and user-friendly digital map demands a substantial amount of coding and attentive use of algorithms and data structures. 
+
+\subsection{Data set} \label{DataSet}
+Minion Map uses data from the online cartographic database OpenStreetMap.com. The data is uploaded and maintained by volunteers worldwide, and is freely available to the public.\cite*{osm} 
+The data comes in the form of .OSM files that are written in XML format, which contain all the necessary data needed to compile and run Minion Maps.
+\par	The .OSM data consists of three data elements, which is nodes, ways and relations.   
+\\Each of the three elements consist of a unique id, but the data elements have different structure for their data.\cite*{osm/XMLReader-Writer}
+\newpage
+\begin{itemize}
+    \item Nodes(TagNode): A node is a pair of latitude and longitude.
+    \item Ways(TagWay): A way comprises a list of at least two reference nodes, describing a linear feature. Closed ways exhibit identical first and last reference nodes. 
+    \item Relations(TagRelation): Relations are a group of zero or more data elements with an associated role. 
+\end{itemize}
+All of the three data elements can contain a sub-data element named \textit{Tag}s, which can describe additional information about the data element.  
+\subsection{Requirements} \label{Introduction/Requirements}
+Through the project description, from our course BFST F2024, we were given a set of specific requirements that our final product have to include [A.1].
+The formal requirements were then processed, interpreted and split up into the following system- and user-based requirements.
+\subsubsection{System-Based Requirements}
+\begin{enumerate}
+\setlength{\itemsep}{0.1em}
+    \item Compatibility for the “.zip” format, included default file for the program to use out of the box.
+    \item Drawing roads different from what type they are.
+    \item Graphical illustration of the map data contained within the bounds of a given rectangle chosen by the user.
+    \item Showing the current zoom level.
+    \item Multiple color themes for the user to pick from.
+    \item Dynamic layout listening to window changes.
+    \item Allowing address search.
+    \item Pathfinding.
+    \item Allowing the user to have multiple choices of transportation and allowing the user to place point of interests.
+\end{enumerate}
+\newpage
+\subsubsection{User-Based Requirements}
+\begin{enumerate}
+    \setlength{\itemsep}{0.1em}
+    \item Ensuring a clean GUI which is reasonably easy to navigate in and be fast enough for convenient use. 
+    \item All of the system requirements will be developed having the user-based requirements in mind and by that not interfering with their fulfillment.
+    \item By having the User-based requirements in mind, we gave ourselves some informal requirements for the final product. These include autocompletion of addresses in the searchmenu, the color scheme of the map shall be simple and clear, and all of the fulfilled requirements should be supported by a simple GUI.
+    \item The formal and informal requirements prompt a multitude of different problems with the modern hardware and the chosen language, which we will try to solve with our final product.
+\end{enumerate}
+

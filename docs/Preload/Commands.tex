@@ -1,0 +1,15 @@
+\newcommand{\class}[1]{\textbf{#1}}
+
+\newcommand{\interface}[1]{\textit{#1}}
+
+\newcommand{\aclass}[1]{\textbf{\underline{#1}}}
+
+\newcommand{\package}[1]{\textit{\underline{#1}}}
+
+\newcommand{\method}[1]{\textbf{\textit{#1}}}
+
+\newcommand{\charactercount}[1]{
+    \immediate\write18{
+        expr `texcount -1 -sum -inc #1.tex` + `texcount -1 -sum -inc -char #1.tex` - 1 > chars.txt
+    }\input{chars.txt}
+}
