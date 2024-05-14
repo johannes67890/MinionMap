@@ -12,6 +12,10 @@
 \usepackage{fancyhdr}
 \usepackage{listings}
 \usepackage{subfig}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\usepackage{subfloat}
 \usepackage{floatrow}
 \usepackage{float}
 \usepackage{xcolor}
@@ -26,10 +30,19 @@
 \usepackage{graphicx}
 \usepackage{array}
 \usepackage{booktabs}
+\usepackage{algorithm} 
+\usepackage{algpseudocode} 
 \usepackage{subcaption}
 \usepackage[T1]{fontenc}
 \usepackage{stix}
 \DeclareUnicodeCharacter{0360}{\eth}
+%% papir layout
+\geometry{
+a4paper,
+total={170mm,257mm},
+left=15mm,
+top=20mm,
+}
 \usepackage{tipa}
 %% Layout og farve til hyperlinks
 \definecolor{link}{rgb}{0,0,215}
@@ -84,15 +97,24 @@
   morestring=[b]"
 }
 
+%% display \code{..}
+\definecolor{light-gray}{gray}{0.95}
+\newcommand{\code}[1]{\colorbox{light-gray}{\texttt{#1}}}
+\usepackage{tocloft} \setlength\cftparskip{-5.5pt}
+
 %% Litteraturliste
 \usepackage[sorting=none]{biblatex}
 \addbibresource{main.bib}
 \input{Preload/Preamble}
 \begin{document}
-
+\setcounter{tocdepth}{2}
 % Title page
 \begin{center}
-    \huge{\textbf{Map of Denmark}}\\
+    \huge{\textbf{Minion Map}}\\
+    \begin{figure}[ht]%
+  \centering
+  \includegraphics[width=11.5cm]{docs/material/Denmark_Photo.png}%
+    \end{figure}\\
     \Large{Group 11.}\\
   \end{center}
   \begin{center}
@@ -110,9 +132,7 @@
     \vspace{0.5cm}
     First-Year Project, Bachelor in Software Development, IT Univ. of Copenhagen\\
     BSFDVNS1KU\\
-    \vspace{0.5cm}
-    Characters: xx \\
-    \today
+    May 14, 2024
   \end{center}
 \newpage
 % header and footer
@@ -129,6 +149,7 @@
 \newpage
 
 \include{Content}
+\addcontentsline{toc}{section}{References}
 
 \printbibliography[title={References}]
 
